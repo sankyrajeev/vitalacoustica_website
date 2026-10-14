@@ -1,3 +1,4 @@
+import { show } from './show'
 import { site } from '../content/site'
 
 // A shared tempo clock so every fixture in the scene moves to the same groove.
@@ -31,16 +32,17 @@ export const barInLook = (t: number) => (beatsAt(t) / 4) % BARS_PER_LOOK
 export const LOOK_BARS = BARS_PER_LOOK
 
 /**
- * Sharpies only ever run red or amber. Each look picks how they're split:
- * alternating, all red, halves, all amber.
+ * Sharpies only ever run red or amber. In auto, each look picks how they're split:
+ * alternating, all red, halves, all amber. The desk can lock one of those.
  */
 export function sharpyColor(t: number, i: number, n: number) {
-  switch (lookAt(t) % 4) {
-    case 0:
+  const mode = show.colour === 'auto' ? (['alternate', 'red', 'split', 'amber'] as const)[lookAt(t) % 4] : show.colour
+  switch (mode) {
+    case 'alternate':
       return i % 2 ? AMBER : RED
-    case 1:
+    case 'red':
       return RED
-    case 2:
+    case 'split':
       return i < n / 2 ? RED : AMBER
     default:
       return AMBER

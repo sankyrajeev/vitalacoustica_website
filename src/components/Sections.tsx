@@ -1,5 +1,7 @@
 import { useRef, type PointerEvent } from 'react'
+import { gear, RIG_GROUPS } from '../content/gear'
 import { site, type Service } from '../content/site'
+import { openExplore } from '../events'
 import { logoSrc } from '../brand/logo'
 import { useTheme } from '../hooks/useTheme'
 
@@ -32,19 +34,24 @@ export function Rig() {
         </h2>
       </div>
       <div className="rig">
-        {site.rig.map((g, gi) => (
-          <div key={g.group} className="rig__group" data-reveal style={{ transitionDelay: `${gi * 90}ms` }}>
-            <h3 className="rig__label">{g.group}</h3>
+        {RIG_GROUPS.map((group, gi) => (
+          <div key={group} className="rig__group" data-reveal style={{ transitionDelay: `${gi * 90}ms` }}>
+            <h3 className="rig__label">{group}</h3>
             <ul>
-              {g.items.map((it) => (
-                <li key={it.name}>
-                  <div>
-                    <strong>{it.name}</strong>
-                    <span className="rig__role">{it.role}</span>
-                  </div>
-                  <p className="rig__spec">{it.spec}</p>
-                </li>
-              ))}
+              {gear
+                .filter((g) => g.group === group)
+                .map((it) => (
+                  <li key={it.id}>
+                    <div>
+                      <strong>{it.name}</strong>
+                      <span className="rig__role">{it.role}</span>
+                    </div>
+                    <p className="rig__spec">{it.spec}</p>
+                    <button className="link-btn" onClick={() => openExplore(it.id)}>
+                      View in 3D →
+                    </button>
+                  </li>
+                ))}
             </ul>
           </div>
         ))}

@@ -22,6 +22,7 @@ export const site = {
   cities: ['Bangalore', 'Mysore', 'Hubli', 'Belgaum', 'Mangalore', 'Hyderabad'],
 
   nav: [
+    { label: 'Shows', href: '#shows' },
     { label: 'The rig', href: '#rig' },
     { label: 'Services', href: '#services' },
     { label: 'Reach', href: '#reach' },
@@ -32,41 +33,6 @@ export const site = {
     { value: '1,000', label: 'Guests per show, max capacity' },
     { value: '6+', label: 'Cities across South India' },
     { value: '1 crew', label: 'Sound, light, visuals — end to end' },
-  ],
-
-  // The house rig — what's in the 3D stage, grouped the way a production manager reads a spec.
-  rig: [
-    {
-      group: 'Sound',
-      items: [
-        {
-          name: 'd&b audiotechnik V10P',
-          role: 'Main tops',
-          spec: '2 × 10" + 8" + 1.4" HF · 110° × 40° · 139 dB SPL max',
-        },
-        {
-          name: 'd&b audiotechnik B22-SUB',
-          role: 'Subwoofers',
-          spec: '2 × 18" bandpass · cardioid-capable arrays',
-        },
-      ],
-    },
-    {
-      group: 'Lighting',
-      items: [
-        { name: 'Sharpy beam moving heads', role: 'Beams', spec: 'Tight aerial beams, run in red or amber' },
-        { name: 'Retro wash lights', role: 'Warm wash', spec: 'Tungsten-style glow with a pixel ring' },
-        { name: 'Retro 3-blade fans', role: 'Effect', spec: 'Rotating LED blades, synced to the music' },
-      ],
-    },
-    {
-      group: 'LED & visuals',
-      items: [
-        { name: 'LED matrix screen', role: '2 × 2 panels', spec: 'Logos, content and looks behind the booth' },
-        { name: 'LED pixel bars', role: 'Pixel effects', spec: 'Individually driven pixels for chases' },
-        { name: 'LED rope', role: 'Outlines', spec: 'Stage edges, booth fronts and structures' },
-      ],
-    },
   ],
 
   services: [

@@ -1,20 +1,40 @@
-import { Environment, Lightformer, Sparkles } from '@react-three/drei'
+import { Environment, Html, Lightformer, OrbitControls, Sparkles } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
 import { Suspense, useEffect, useRef } from 'react'
 import { Euler, MathUtils, Vector3 } from 'three'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
+import { gear, type GearId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
-import { LedMatrix, LedRope, PixelBars, RetroFan, RetroWashes } from './gear/Effects'
+import { HexRetro, LedRope, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
 import { PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
-import { PALETTES, PaletteContext, type SceneTheme, usePalette } from './palette'
+import { EXPLORE_HOME, HOTSPOTS } from './hotspots'
 import { DECK, VENUE } from './layout'
+import { PALETTES, PaletteContext, type SceneTheme, usePalette } from './palette'
+import { tickShow } from './show'
 import { Venue } from './Venue'
 
-type SceneProps = { small: boolean; reducedMotion: boolean; theme: SceneTheme; drone: boolean }
+export type SceneMode = 'hero' | 'drone' | 'explore'
+
+type SceneProps = {
+  small: boolean
+  reducedMotion: boolean
+  theme: SceneTheme
+  mode: SceneMode
+  focus: GearId | null
+  onSelect: (id: GearId) => void
+  haze: number
+}
+
+/** Advances the shared show clock once per frame, before any fixture reads it. */
+function ShowClock({ timeScale }: { timeScale: number }) {
+  useFrame((_, dt) => tickShow(dt, timeScale), -1)
+  return null
+}
 
 const LOOK = new Vector3()
 
@@ -33,7 +53,7 @@ function HeroCamera({ reducedMotion }: { reducedMotion: boolean }) {
     // eye height of someone on the FOH riser, so the crowd sits low in frame
     const ty = 3.5 + (reducedMotion ? 0 : pointer.y * 0.35)
     const tz = baseZ + (1 - ease) * 8
-    // during the intro z is driven directly; afterwards everything eases (also back from drone mode)
+    // during the intro z is driven directly; afterwards everything eases (also back from other modes)
     const k = 0.04
     camera.position.x += (tx - camera.position.x) * k
     camera.position.y += (ty - camera.position.y) * k
@@ -98,39 +118,86 @@ function DroneCamera() {
   return null
 }
 
-function Stage({ small, timeScale }: { small: boolean; timeScale: number }) {
+const goalPos = new Vector3()
+const goalTarget = new Vector3()
+
+/** Orbit around the stage; when a piece of gear is picked, glide the camera to it. */
+function ExploreCamera({ focus }: { focus: GearId | null }) {
+  const controls = useRef<OrbitControlsImpl>(null)
+  const flying = useRef(true)
+
+  useEffect(() => {
+    const spot = focus ? HOTSPOTS[focus] : null
+    goalPos.set(...(spot ? spot.camera : EXPLORE_HOME.camera))
+    goalTarget.set(...(spot ? spot.at : EXPLORE_HOME.target))
+    flying.current = true
+  }, [focus])
+
+  useFrame(({ camera }, dt) => {
+    const c = controls.current
+    if (!c || !flying.current) return
+    const k = 1 - Math.exp(-dt * 3)
+    camera.position.lerp(goalPos, k)
+    c.target.lerp(goalTarget, k)
+    c.update()
+    if (camera.position.distanceTo(goalPos) < 0.02 && c.target.distanceTo(goalTarget) < 0.02) flying.current = false
+  })
+
+  return (
+    <OrbitControls
+      ref={controls}
+      makeDefault
+      enablePan={false}
+      enableDamping
+      minDistance={1.2}
+      maxDistance={20}
+      minPolarAngle={0.25}
+      maxPolarAngle={Math.PI / 2 - 0.04}
+      // the user grabbing the view cancels any fly-to in progress
+      onStart={() => (flying.current = false)}
+    />
+  )
+}
+
+/** Clickable markers pinned to each piece of gear. */
+function Hotspots({ focus, onSelect }: { focus: GearId | null; onSelect: (id: GearId) => void }) {
+  return (
+    <>
+      {gear.map((g) => (
+        <Html key={g.id} position={HOTSPOTS[g.id].at} center zIndexRange={[20, 0]}>
+          <button
+            className={`hotspot ${focus === g.id ? 'is-active' : ''}`}
+            onClick={() => onSelect(g.id)}
+            aria-label={`${g.name}: show details`}
+          >
+            <span className="hotspot__dot" />
+            <span className="hotspot__label">{g.name}</span>
+          </button>
+        </Html>
+      ))}
+    </>
+  )
+}
+
+function Stage({ small }: { small: boolean }) {
   const p = usePalette()
   const deckTop = DECK.height
   return (
     <group>
       <GoalPostTruss span={10} height={5.2} z={-0.6} />
-      <Sharpies count={small ? 6 : 8} timeScale={timeScale} lights={!small && p.theme === 'dark'} />
-      <LedMatrix timeScale={timeScale} position={[0, deckTop + 2.55, -2.2]} />
-      <RetroFan timeScale={timeScale} position={[-2.45, deckTop + 1.6, -2.1]} />
-      <RetroFan timeScale={timeScale} direction={-1} position={[2.45, deckTop + 1.6, -2.1]} />
-      <PixelBars
-        timeScale={timeScale}
-        positions={[
-          [-3.6, deckTop, -2.2],
-          [-4.2, deckTop, -1.6],
-          [3.6, deckTop, -2.2],
-          [4.2, deckTop, -1.6],
-        ]}
-      />
-      <RetroWashes
-        timeScale={timeScale}
-        positions={[
-          [-5, 1.6, -0.36],
-          [-5, 2.7, -0.36],
-          [-5, 3.8, -0.36],
-          [5, 1.6, -0.36],
-          [5, 2.7, -0.36],
-          [5, 3.8, -0.36],
-        ]}
-      />
-      {/* LED rope along the deck edge and the booth front */}
+      <Sharpies count={small ? 6 : 8} lights={!small && p.theme === 'dark'} />
+      <Wing side={-1} deckTop={deckTop} />
+      <Wing side={1} deckTop={deckTop} />
+      {/* hex retros on the goal-post towers */}
+      <HexRetro index={0} position={[-5, 1.8, -0.36]} />
+      <HexRetro index={1} position={[-5, 3.3, -0.36]} />
+      <HexRetro index={2} position={[5, 1.8, -0.36]} />
+      <HexRetro index={3} position={[5, 3.3, -0.36]} />
+      {/* LED rope: neon columns behind the booth, the deck edge and the booth front */}
+      <LedRope points={[[-1.5, deckTop, -2.0], [-1.5, deckTop + 1.2, -2.0], [-1.5, deckTop + 2.5, -2.0]]} />
+      <LedRope points={[[1.5, deckTop, -2.0], [1.5, deckTop + 1.2, -2.0], [1.5, deckTop + 2.5, -2.0]]} />
       <LedRope
-        timeScale={timeScale}
+        warm
         points={[
           [-DECK.halfWidth, deckTop + 0.01, DECK.front + 0.01],
           [0, deckTop + 0.01, DECK.front + 0.01],
@@ -138,7 +205,6 @@ function Stage({ small, timeScale }: { small: boolean; timeScale: number }) {
         ]}
       />
       <LedRope
-        timeScale={timeScale}
         points={[
           [-1.1, deckTop + 0.98, 0.18],
           [0, deckTop + 0.98, 0.18],
@@ -151,11 +217,26 @@ function Stage({ small, timeScale }: { small: boolean; timeScale: number }) {
   )
 }
 
-function Scene({ small, reducedMotion, theme, drone }: SceneProps) {
+/** Haze particles; density follows the desk's haze fader. */
+function Haze({ small, theme, haze }: { small: boolean; theme: SceneTheme; haze: number }) {
+  return (
+    <Sparkles
+      count={small ? 70 : 160}
+      scale={[22, 7, 24]}
+      position={[0, 3.5, 8]}
+      size={2.4}
+      speed={0.2}
+      opacity={(theme === 'dark' ? 0.6 : 0.25) * haze}
+      color={AMBER}
+    />
+  )
+}
+
+function Scene({ small, reducedMotion, theme, mode, focus, onSelect, haze }: SceneProps) {
   const p = PALETTES[theme]
-  const timeScale = reducedMotion ? 0.25 : 1
   return (
     <PaletteContext.Provider value={p}>
+      <ShowClock timeScale={reducedMotion ? 0.25 : 1} />
       <color attach="background" args={[p.background]} />
       <fog attach="fog" args={[p.background, p.fogNear, p.fogFar]} />
       <ambientLight intensity={p.ambient} />
@@ -184,20 +265,18 @@ function Scene({ small, reducedMotion, theme, drone }: SceneProps) {
         <Lightformer form="rect" intensity={theme === 'light' ? 2 : 0.6} color="#ffffff" position={[0, 3, 14]} scale={[10, 4, 1]} />
       </Environment>
 
-      <Venue small={small} timeScale={timeScale} />
-      <Stage small={small} timeScale={timeScale} />
+      <Venue small={small} />
+      <Stage small={small} />
+      <Haze small={small} theme={theme} haze={haze} />
 
-      <Sparkles
-        count={small ? 70 : 160}
-        scale={[22, 7, 24]}
-        position={[0, 3.5, 8]}
-        size={2.4}
-        speed={0.2}
-        opacity={theme === 'dark' ? 0.35 : 0.15}
-        color={AMBER}
-      />
-
-      {drone ? <DroneCamera /> : <HeroCamera reducedMotion={reducedMotion} />}
+      {mode === 'drone' && <DroneCamera />}
+      {mode === 'hero' && <HeroCamera reducedMotion={reducedMotion} />}
+      {mode === 'explore' && (
+        <>
+          <ExploreCamera focus={focus} />
+          <Hotspots focus={focus} onSelect={onSelect} />
+        </>
+      )}
 
       <EffectComposer multisampling={0}>
         <Bloom mipmapBlur intensity={p.bloomIntensity} luminanceThreshold={p.bloomThreshold} luminanceSmoothing={0.3} />
@@ -216,7 +295,6 @@ export default function HeroScene({ active, ...props }: SceneProps & { active: b
       camera={{ position: [0, 2.2, 22], fov: 42, near: 0.05, far: 120 }}
       gl={{ antialias: false, powerPreference: 'high-performance', alpha: false }}
       frameloop={active ? 'always' : 'never'}
-      aria-hidden
     >
       <Suspense fallback={null}>
         <Scene {...props} />

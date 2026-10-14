@@ -4,6 +4,7 @@ import { Color, CylinderGeometry, Group, MeshStandardMaterial, Object3D, SpotLig
 import { BEAT_SECONDS, barInLook, kickAt, LOOK_BARS, lookAt, sharpyColor, smoothstep } from '../beat'
 import { createBeamMaterial } from '../BeamMaterial'
 import { usePalette } from '../palette'
+import { show } from '../show'
 import { TrussClamp } from './Truss'
 
 // Sharpy-style beam moving heads, hung under the header truss.
@@ -33,6 +34,8 @@ const PATTERNS: Pattern[] = [
 ]
 
 function aim(t: number, i: number, n: number): Aim {
+  // the desk can lock one movement; otherwise the show cycles through them
+  if (show.look !== null) return PATTERNS[show.look](t, i, n)
   const look = lookAt(t)
   const a = PATTERNS[look % PATTERNS.length](t, i, n)
   const b = PATTERNS[(look + 1) % PATTERNS.length](t, i, n)
@@ -49,9 +52,9 @@ const beamGeometry = (() => {
   return g
 })()
 
-type HeadProps = { index: number; count: number; x: number; timeScale: number; withLight: boolean }
+type HeadProps = { index: number; count: number; x: number; withLight: boolean }
 
-function Sharpy({ index, count, x, timeScale, withLight }: HeadProps) {
+function Sharpy({ index, count, x, withLight }: HeadProps) {
   const palette = usePalette()
   const yoke = useRef<Group>(null)
   const head = useRef<Group>(null)
@@ -65,8 +68,8 @@ function Sharpy({ index, count, x, timeScale, withLight }: HeadProps) {
     if (light.current && target.current) light.current.target = target.current
   }, [])
 
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime * timeScale
+  useFrame(() => {
+    const t = show.time
     const { pan, tilt } = aim(t, index, count)
     if (yoke.current) yoke.current.rotation.y = pan
     // head hangs lens-down; tilt swings it out towards the audience (+Z)
@@ -75,15 +78,15 @@ function Sharpy({ index, count, x, timeScale, withLight }: HeadProps) {
     const kick = kickAt(t + (index % 2 ? BEAT_SECONDS / 2 : 0), 3.5)
     const level = 0.5 + 0.5 * kick
     beam.uniforms.uColor.value.copy(color)
-    beam.uniforms.uOpacity.value = 0.62 * level * palette.beamOpacity
+    beam.uniforms.uOpacity.value = 0.62 * level * palette.beamOpacity * show.master * (0.2 + show.haze * 1.35)
     beam.uniforms.uTime.value = t
     if (lens.current) {
       lens.current.emissive.copy(color)
-      lens.current.emissiveIntensity = 8 + 14 * kick
+      lens.current.emissiveIntensity = (8 + 14 * kick) * show.master
     }
     if (light.current) {
       light.current.color.copy(color)
-      light.current.intensity = 60 + 80 * kick
+      light.current.intensity = (60 + 80 * kick) * show.master
     }
   })
 
@@ -133,7 +136,7 @@ function Sharpy({ index, count, x, timeScale, withLight }: HeadProps) {
 }
 
 /** A row of sharpies along the header truss's bottom chords. */
-export function Sharpies({ count = 8, span = 8.4, y = 4.88, z = -0.6, timeScale = 1, lights = true }) {
+export function Sharpies({ count = 8, span = 8.4, y = 4.88, z = -0.6, lights = true }) {
   const xs = Array.from({ length: count }, (_, i) => -span / 2 + (span * i) / (count - 1))
   return (
     <group position={[0, y, z]}>
@@ -143,7 +146,6 @@ export function Sharpies({ count = 8, span = 8.4, y = 4.88, z = -0.6, timeScale 
           index={i}
           count={count}
           x={x}
-          timeScale={timeScale}
           // real lights are expensive — every other head throws one for floor hits
           withLight={lights && i % 2 === 0}
         />

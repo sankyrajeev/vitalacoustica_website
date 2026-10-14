@@ -4,32 +4,47 @@ import {
   CanvasTexture,
   CatmullRomCurve3,
   Color,
+  ExtrudeGeometry,
   Group,
   InstancedMesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
   Object3D,
   ShaderMaterial,
+  Shape,
   Vector3,
 } from 'three'
 import { VA_MARK_POLYGONS, VA_MARK_SIZE } from '../../brand/vaMark'
 import { AMBER, BEAT_SECONDS, beatsAt, kickAt, lookAt, RED } from '../beat'
+import { show } from '../show'
+
+// Lighting effects modelled on the house rig as it appears in show photos:
+// tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex
+// retro lights, amber dot bars, red pixel bars and LED rope.
 
 const housing = new MeshStandardMaterial({ color: '#141414', metalness: 0.6, roughness: 0.45 })
 const stand = new MeshStandardMaterial({ color: '#222', metalness: 0.9, roughness: 0.35 })
 const red = new Color(RED)
 const amber = new Color(AMBER)
+const WARM = new Color('#ffb066')
 
-/* ─────────────── LED matrix screen: 2 × 2 panels ─────────────── */
+type V3 = [number, number, number]
 
+/* ─────────────── LED matrix panel (2' × 2', hung as a diamond) ─────────────── */
+
+let logoTex: CanvasTexture | null = null
 function logoTexture() {
+  if (logoTex) return logoTex
   const c = document.createElement('canvas')
   c.width = c.height = 256
   const g = c.getContext('2d')!
   g.fillStyle = '#000'
   g.fillRect(0, 0, 256, 256)
-  const s = 200 / VA_MARK_SIZE.width
-  g.translate(128 - (VA_MARK_SIZE.width * s) / 2, 128 - (VA_MARK_SIZE.height * s) / 2)
+  const s = 190 / VA_MARK_SIZE.width
+  // the panel hangs rotated 45°, so counter-rotate the logo to read level
+  g.translate(128, 128)
+  g.rotate(Math.PI / 4)
+  g.translate(-(VA_MARK_SIZE.width * s) / 2, -(VA_MARK_SIZE.height * s) / 2)
   g.scale(s, s)
   g.fillStyle = '#fff'
   for (const poly of VA_MARK_POLYGONS) {
@@ -38,11 +53,13 @@ function logoTexture() {
     g.closePath()
     g.fill()
   }
-  return new CanvasTexture(c)
+  logoTex = new CanvasTexture(c)
+  return logoTex
 }
 
-/** 2 m × 2 m screen built from four 1 m matrix panels; shows the VA mark and red/amber looks. */
-export function LedMatrix({ timeScale = 1, ...props }: { timeScale?: number } & ThreeElements['group']) {
+const PANEL = 0.61
+
+export function MatrixPanel({ phase = 0, ...props }: { phase?: number } & ThreeElements['group']) {
   const material = useMemo(
     () =>
       new ShaderMaterial({
@@ -51,6 +68,7 @@ export function LedMatrix({ timeScale = 1, ...props }: { timeScale?: number } & 
           uTime: { value: 0 },
           uKick: { value: 0 },
           uLook: { value: 0 },
+          uMaster: { value: 1 },
           uLogo: { value: logoTexture() },
           uRed: { value: red },
           uAmber: { value: amber },
@@ -60,125 +78,217 @@ export function LedMatrix({ timeScale = 1, ...props }: { timeScale?: number } & 
           void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
         `,
         fragmentShader: /* glsl */ `
-          uniform float uTime, uKick, uLook;
+          uniform float uTime, uKick, uLook, uMaster;
           uniform sampler2D uLogo;
           uniform vec3 uRed, uAmber;
           varying vec2 vUv;
-          const float GRID = 48.0; // pixels across the whole 2x2 screen
+          const float GRID = 32.0;
           void main() {
             vec2 cell = (floor(vUv * GRID) + 0.5) / GRID;
-            vec2 local = fract(vUv * GRID);
-            float led = 1.0 - smoothstep(0.32, 0.46, length(local - 0.5));
-            // seams between the four panels
-            vec2 seam = abs(vUv - 0.5);
-            float panel = step(0.006, seam.x) * step(0.006, seam.y);
+            float led = 1.0 - smoothstep(0.3, 0.46, length(fract(vUv * GRID) - 0.5));
             float logo = texture2D(uLogo, cell).r;
             float look = mod(uLook, 4.0);
-            vec3 col;
-            float lvl;
             vec2 c = cell - 0.5;
+            float lvl;
+            vec3 col;
             if (look < 1.0) {
-              // logo, red→amber sweep, breathing on the kick
-              lvl = logo * (0.45 + 0.55 * uKick);
+              lvl = logo * (0.35 + 0.65 * uKick);
               col = mix(uRed, uAmber, 0.5 + 0.5 * sin(cell.y * 6.0 - uTime * 2.0));
             } else if (look < 2.0) {
-              // amber rings out from the centre
-              lvl = pow(0.5 + 0.5 * sin(length(c) * 40.0 - uTime * 6.0), 3.0) * (0.3 + 0.7 * uKick);
+              lvl = pow(0.5 + 0.5 * sin(length(c) * 30.0 - uTime * 6.0), 3.0) * (0.3 + 0.7 * uKick);
               col = uAmber;
             } else if (look < 3.0) {
-              // logo cut out of red scan bars
-              float bars = step(0.5, fract(cell.y * 8.0 - uTime * 1.5));
-              lvl = max(logo, bars * 0.35 * (1.0 - logo)) * (0.4 + 0.6 * uKick);
-              col = mix(uRed, uAmber, logo);
+              // full red wash punching on the kick, like the photos
+              lvl = 0.25 + 0.75 * uKick;
+              col = uRed;
             } else {
-              // sparkle field with the logo outline glowing
               float n = fract(sin(dot(floor(vUv * GRID), vec2(12.9898, 78.233)) + floor(uTime * 8.0)) * 43758.5453);
-              lvl = max(step(0.92, n) * 0.8, logo * 0.6 * uKick);
+              lvl = max(step(0.88, n), logo * 0.5 * uKick);
               col = mix(uAmber, uRed, n);
             }
-            gl_FragColor = vec4(col * led * panel * lvl * 2.2, 1.0);
+            gl_FragColor = vec4(col * led * lvl * 2.4 * uMaster, 1.0);
           }
         `,
       }),
     [],
   )
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime * timeScale
+  useFrame(() => {
+    const t = show.time + phase
     material.uniforms.uTime.value = t
     material.uniforms.uKick.value = kickAt(t, 4)
-    material.uniforms.uLook.value = lookAt(t)
+    material.uniforms.uLook.value = lookAt(show.time)
+    material.uniforms.uMaster.value = show.master
   })
   return (
     <group {...props}>
-      <mesh material={material}>
-        <planeGeometry args={[2, 2]} />
-      </mesh>
-      <mesh material={housing} position={[0, 0, -0.06]}>
-        <boxGeometry args={[2.06, 2.06, 0.1]} />
-      </mesh>
-      {/* ground-support legs down to the deck */}
-      {[-0.8, 0.8].map((x) => (
-        <mesh key={x} material={stand} position={[x, -1.25, -0.1]}>
-          <boxGeometry args={[0.05, 0.5, 0.05]} />
+      <group rotation-z={Math.PI / 4}>
+        <mesh material={material}>
+          <planeGeometry args={[PANEL, PANEL]} />
         </mesh>
-      ))}
+        <mesh material={housing} position={[0, 0, -0.04]}>
+          <boxGeometry args={[PANEL + 0.03, PANEL + 0.03, 0.07]} />
+        </mesh>
+      </group>
     </group>
   )
 }
 
-/* ─────────────── LED pixel bars ─────────────── */
+/* ─────────────── Trefoil "3-blade fan" ─────────────── */
 
-const PIXELS = 16
+const petalGeometry = (() => {
+  const s = new Shape()
+  s.moveTo(0, 0.07)
+  s.lineTo(0.1, 0.21)
+  s.lineTo(0, 0.38)
+  s.lineTo(-0.1, 0.21)
+  s.closePath()
+  return new ExtrudeGeometry(s, { depth: 0.04, bevelEnabled: false })
+})()
+const petalCoreGeometry = (() => {
+  const s = new Shape()
+  s.moveTo(0, 0.11)
+  s.lineTo(0.065, 0.21)
+  s.lineTo(0, 0.33)
+  s.lineTo(-0.065, 0.21)
+  s.closePath()
+  return new ExtrudeGeometry(s, { depth: 0.005, bevelEnabled: false })
+})()
 
-/** Vertical 1 m pixel bars, 16 cells each, chasing red/amber. */
-export function PixelBars({ positions, timeScale = 1 }: { positions: [number, number, number][]; timeScale?: number }) {
-  const cells = useRef<InstancedMesh>(null)
-  const count = positions.length * PIXELS
+/** Three kite-shaped LED petals around a white-hot centre lens; the head spins. */
+export function TrefoilFan({ direction = 1, phase = 0, ...props }: { direction?: number; phase?: number } & ThreeElements['group']) {
+  const rotor = useRef<Group>(null)
+  const petal = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+  const core = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+  const lens = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+  const last = useRef(show.time)
+  useFrame(() => {
+    const t = show.time + phase
+    const dt = show.time - last.current
+    last.current = show.time
+    const kick = kickAt(t, 5)
+    if (rotor.current) rotor.current.rotation.z += dt * direction * (0.4 + (lookAt(show.time) % 2) * 1.6)
+    const m = show.master
+    petal.color.copy(red).multiplyScalar((0.5 + 1.4 * kick) * m)
+    core.color.copy(red).lerp(WARM, 0.35).multiplyScalar((1 + 2.4 * kick) * m)
+    lens.color.copy(WARM).multiplyScalar((1.6 + 2 * kick) * m)
+  })
+  return (
+    <group {...props}>
+      <mesh material={housing} rotation-x={Math.PI / 2} position={[0, 0, -0.06]}>
+        <cylinderGeometry args={[0.09, 0.1, 0.12, 20]} />
+      </mesh>
+      <group ref={rotor}>
+        {[0, 1, 2].map((i) => (
+          <group key={i} rotation-z={(i * Math.PI * 2) / 3}>
+            <mesh geometry={petalGeometry} material={housing} position={[0, 0, -0.03]} />
+            <mesh geometry={petalCoreGeometry} material={i === 0 ? core : petal} position={[0, 0, 0.012]} />
+          </group>
+        ))}
+        <mesh material={lens} position={[0, 0, 0.015]}>
+          <circleGeometry args={[0.055, 24]} />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
+/* ─────────────── 7-cell hex retro light ─────────────── */
+
+const HEX_CELLS: [number, number][] = [[0, 0], ...Array.from({ length: 6 }, (_, i): [number, number] => [Math.cos((i * Math.PI) / 3) * 0.105, Math.sin((i * Math.PI) / 3) * 0.105])]
+
+/** Round housing with seven hexagonal warm-white cells; one punches per beat. */
+export function HexRetro({ index = 0, ...props }: { index?: number } & ThreeElements['group']) {
+  const cells = useMemo(() => HEX_CELLS.map(() => new MeshBasicMaterial({ toneMapped: false })), [])
+  useFrame(() => {
+    const t = show.time
+    const beat = Math.floor(beatsAt(t))
+    const decay = Math.exp(-((t % BEAT_SECONDS) / BEAT_SECONDS) * 3)
+    const lit = (beat + index) % 4 === 0 ? decay : 0
+    const tint = lookAt(t) % 2 ? WARM : red
+    cells.forEach((m, i) => {
+      // centre cell glows like a filament; ring chases round on the off-beats
+      const chase = i > 0 && (Math.floor(beatsAt(t) * 2) % 6) + 1 === i ? 0.8 : 0
+      m.color.copy(tint).multiplyScalar((0.35 + lit * 3 + chase + (i === 0 ? 0.4 : 0)) * show.master)
+    })
+  })
+  return (
+    <group {...props}>
+      <mesh material={housing} rotation-x={Math.PI / 2}>
+        <cylinderGeometry args={[0.2, 0.18, 0.14, 32]} />
+      </mesh>
+      {HEX_CELLS.map(([x, y], i) => (
+        <mesh key={i} material={cells[i]} position={[x, y, 0.072]} rotation-z={Math.PI / 6}>
+          <circleGeometry args={[0.05, 6]} />
+        </mesh>
+      ))}
+      {/* yoke bracket */}
+      <mesh material={stand} position={[0, -0.22, -0.02]}>
+        <boxGeometry args={[0.04, 0.08, 0.04]} />
+      </mesh>
+    </group>
+  )
+}
+
+/* ─────────────── LED bars (amber dot bars & red pixel bars) ─────────────── */
+
+type BarProps = { from: V3; to: V3; kind: 'dots' | 'pixels'; phase?: number }
+
+/** A straight LED bar between two points (in the XY plane), chasing on the beat. */
+export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
+  const cellsRef = useRef<InstancedMesh>(null)
+  const count = kind === 'dots' ? 10 : 28
   const color = useMemo(() => new Color(), [])
+  const { mid, length, angle } = useMemo(() => {
+    const dx = to[0] - from[0]
+    const dy = to[1] - from[1]
+    return {
+      mid: [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2, (from[2] + to[2]) / 2] as V3,
+      length: Math.hypot(dx, dy),
+      angle: Math.atan2(dy, dx),
+    }
+  }, [from, to])
+
   useLayoutEffect(() => {
     const o = new Object3D()
-    positions.forEach((p, b) => {
-      for (let i = 0; i < PIXELS; i++) {
-        o.position.set(p[0], p[1] + 0.05 + (i + 0.5) * (0.92 / PIXELS), p[2] + 0.032)
-        o.updateMatrix()
-        cells.current!.setMatrixAt(b * PIXELS + i, o.matrix)
-        cells.current!.setColorAt(b * PIXELS + i, color.setRGB(0, 0, 0))
-      }
-    })
-    cells.current!.instanceMatrix.needsUpdate = true
-  }, [positions, color])
+    for (let i = 0; i < count; i++) {
+      o.position.set(-length / 2 + ((i + 0.5) * length) / count, 0, 0.03)
+      o.updateMatrix()
+      cellsRef.current!.setMatrixAt(i, o.matrix)
+      cellsRef.current!.setColorAt(i, color.setRGB(0, 0, 0))
+    }
+    cellsRef.current!.instanceMatrix.needsUpdate = true
+  }, [count, length, color])
 
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime * timeScale
+  useFrame(() => {
+    const t = show.time + phase
     const beats = beatsAt(t)
     const kick = kickAt(t, 4)
-    positions.forEach((_, b) => {
-      for (let i = 0; i < PIXELS; i++) {
-        // a chase running up the bars, offset per bar
-        const phase = (i / PIXELS - beats * 0.5 + b * 0.25) % 1
-        const head = Math.pow(Math.max(0, 1 - Math.abs(((phase + 1) % 1) - 0.5) * 4), 2)
-        const lvl = 0.06 + head * 2.4 + kick * 0.35
-        color.copy(b % 2 ? amber : red).multiplyScalar(lvl)
-        cells.current!.setColorAt(b * PIXELS + i, color)
+    for (let i = 0; i < count; i++) {
+      let lvl: number
+      if (kind === 'dots') {
+        // warm dots fill outward on the bar, reset each bar
+        const fill = (beats % 4) / 4
+        lvl = 0.25 + (i / count < fill ? 1.6 : 0) + kick * 0.4
+        color.copy(WARM).lerp(amber, 0.5)
+      } else {
+        const p = (i / count - beats * 0.5) % 1
+        const head = Math.pow(Math.max(0, 1 - Math.abs(((p + 1) % 1) - 0.5) * 3), 2)
+        lvl = 0.5 + head * 2.2 + kick * 0.5
+        color.copy(red)
       }
-    })
-    cells.current!.instanceColor!.needsUpdate = true
+      color.multiplyScalar(lvl * show.master)
+      cellsRef.current!.setColorAt(i, color)
+    }
+    cellsRef.current!.instanceColor!.needsUpdate = true
   })
 
   return (
-    <group>
-      {positions.map((p, i) => (
-        <group key={i} position={p}>
-          <mesh material={housing} position={[0, 0.5, 0]}>
-            <boxGeometry args={[0.06, 1, 0.06]} />
-          </mesh>
-          <mesh material={stand} position={[0, 0.01, 0]}>
-            <boxGeometry args={[0.2, 0.02, 0.14]} />
-          </mesh>
-        </group>
-      ))}
-      <instancedMesh ref={cells} args={[undefined, undefined, count]}>
-        <boxGeometry args={[0.044, 0.052, 0.006]} />
+    <group position={mid} rotation-z={angle}>
+      <mesh material={housing}>
+        <boxGeometry args={[length + 0.04, kind === 'dots' ? 0.08 : 0.035, 0.06]} />
+      </mesh>
+      <instancedMesh ref={cellsRef} args={[undefined, undefined, count]}>
+        {kind === 'dots' ? <circleGeometry args={[0.03, 16]} /> : <planeGeometry args={[(length / count) * 0.9, 0.02]} />}
         <meshBasicMaterial toneMapped={false} />
       </instancedMesh>
     </group>
@@ -187,107 +297,50 @@ export function PixelBars({ positions, timeScale = 1 }: { positions: [number, nu
 
 /* ─────────────── LED rope ─────────────── */
 
-/** Flexible LED rope run along a path; pulses between red and amber. */
-export function LedRope({ points, timeScale = 1 }: { points: [number, number, number][]; timeScale?: number }) {
+/** Flexible LED rope / neon run along a path; pulses between red and amber. */
+export function LedRope({ points, warm = false }: { points: V3[]; warm?: boolean }) {
   const curve = useMemo(() => new CatmullRomCurve3(points.map((p) => new Vector3(...p)), false, 'catmullrom', 0.05), [points])
   const material = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime * timeScale
-    material.color.copy(red).lerp(amber, 0.5 + 0.5 * Math.sin(t * 0.8)).multiplyScalar(1.4 + 1.6 * kickAt(t, 6))
+  useFrame(() => {
+    const t = show.time
+    material.color
+      .copy(red)
+      .lerp(amber, warm ? 0.5 + 0.5 * Math.sin(t * 0.8) : 0.1)
+      .multiplyScalar((1.4 + 1.4 * kickAt(t, 6)) * show.master)
   })
   return (
     <mesh material={material}>
-      <tubeGeometry args={[curve, 120, 0.012, 6, false]} />
+      <tubeGeometry args={[curve, 64, 0.014, 6, false]} />
     </mesh>
   )
 }
 
-/* ─────────────── Retro 3-blade fan ─────────────── */
+/* ─────────────── Wing: one side of the booth, as rigged at The Park ─────────────── */
 
-/** Retro fan effect: 3 rotating blades lined with amber LEDs inside a round housing. */
-export function RetroFan({ timeScale = 1, direction = 1, ...props }: { timeScale?: number; direction?: number } & ThreeElements['group']) {
-  const rotor = useRef<Group>(null)
-  const strip = useMemo(() => new MeshBasicMaterial({ color: amber.clone(), toneMapped: false }), [])
-  const hub = useMemo(() => new MeshBasicMaterial({ color: red.clone(), toneMapped: false }), [])
-  const angle = useRef(0)
-  useFrame(({ clock }, dt) => {
-    const t = clock.elapsedTime * timeScale
-    const kick = kickAt(t, 5)
-    angle.current += dt * timeScale * direction * (1.2 + (lookAt(t) % 2) * 2.2)
-    if (rotor.current) rotor.current.rotation.z = angle.current
-    strip.color.copy(amber).multiplyScalar(0.8 + 2.4 * kick)
-    hub.color.copy(red).multiplyScalar(1 + 2 * kick)
-  })
-  return (
-    <group {...props}>
-      <mesh material={housing}>
-        <torusGeometry args={[0.46, 0.035, 10, 48]} />
-      </mesh>
-      <mesh material={housing} position={[0, 0, -0.06]}>
-        <cylinderGeometry args={[0.46, 0.46, 0.04, 40]} />
-      </mesh>
-      <group ref={rotor} position={[0, 0, 0.02]}>
-        {[0, 1, 2].map((i) => (
-          <group key={i} rotation-z={(i * Math.PI * 2) / 3}>
-            <mesh material={housing} position={[0, 0.22, 0]} rotation-z={0.25}>
-              <boxGeometry args={[0.13, 0.36, 0.02]} />
-            </mesh>
-            <mesh material={strip} position={[0, 0.22, 0.012]} rotation-z={0.25}>
-              <boxGeometry args={[0.03, 0.32, 0.006]} />
-            </mesh>
-          </group>
-        ))}
-        <mesh material={hub} position={[0, 0, 0.02]}>
-          <circleGeometry args={[0.06, 20]} />
-        </mesh>
-      </group>
-      {/* floor stand */}
-      <mesh material={stand} position={[0, -0.9, -0.06]}>
-        <cylinderGeometry args={[0.02, 0.02, 1.3, 8]} />
-      </mesh>
-      <mesh material={stand} position={[0, -1.54, -0.06]}>
-        <cylinderGeometry args={[0.22, 0.24, 0.03, 20]} />
-      </mesh>
-    </group>
-  )
-}
-
-/* ─────────────── Retro wash lights ─────────────── */
-
-const WARM = new Color('#ffb066')
-
-/** Retro wash: a big warm "tungsten" centre with a red pixel ring, chasing on the beat. */
-export function RetroWashes({ positions, timeScale = 1 }: { positions: [number, number, number][]; timeScale?: number }) {
-  const mats = useMemo(
-    () => positions.map(() => ({ core: new MeshBasicMaterial({ toneMapped: false }), ring: new MeshBasicMaterial({ toneMapped: false }) })),
-    [positions],
-  )
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime * timeScale
-    const beat = Math.floor(beatsAt(t))
-    const decay = Math.exp(-((t % BEAT_SECONDS) / BEAT_SECONDS) * 3)
-    mats.forEach((m, i) => {
-      // one lamp punches per beat, the rest glow low like warm filaments
-      const hit = beat % mats.length === i ? decay : 0
-      m.core.color.copy(WARM).multiplyScalar(0.35 + hit * 3.2)
-      m.ring.color.copy(red).multiplyScalar(0.6 + 1.6 * kickAt(t, 5))
-    })
-  })
+/** A ground-support post carrying a matrix panel, trefoil, hex retro, dot bar and pixel bars. */
+export function Wing({ side, deckTop, z = -1.7 }: { side: 1 | -1; deckTop: number; z?: number }) {
+  const s = side
+  const f = z + 0.22 // front face of the post
+  const y = (h: number) => deckTop + h
+  const phase = s > 0 ? BEAT_SECONDS / 2 : 0
   return (
     <group>
-      {positions.map((p, i) => (
-        <group key={i} position={p}>
-          <mesh material={housing} rotation-x={Math.PI / 2}>
-            <cylinderGeometry args={[0.17, 0.15, 0.14, 28]} />
-          </mesh>
-          <mesh material={mats[i].core} position={[0, 0, 0.072]}>
-            <circleGeometry args={[0.11, 28]} />
-          </mesh>
-          <mesh material={mats[i].ring} position={[0, 0, 0.073]}>
-            <ringGeometry args={[0.125, 0.155, 32]} />
-          </mesh>
-        </group>
-      ))}
+      {/* post */}
+      <mesh material={stand} position={[s * 3.0, y(1.4), z]}>
+        <boxGeometry args={[0.2, 2.8, 0.2]} />
+      </mesh>
+      <mesh material={stand} position={[s * 3.0, y(0.02), z]}>
+        <boxGeometry args={[0.6, 0.04, 0.6]} />
+      </mesh>
+      <mesh material={stand} position={[s * 2.95, y(2.55), z + 0.1]}>
+        <boxGeometry args={[1.3, 0.05, 0.05]} />
+      </mesh>
+      <MatrixPanel phase={phase} position={[s * 3.4, y(2.5), f]} rotation-y={-s * 0.3} />
+      <TrefoilFan phase={phase} direction={s} position={[s * 2.4, y(2.3), f]} />
+      <HexRetro index={s > 0 ? 2 : 0} position={[s * 3.5, y(1.55), f]} />
+      <LedBar kind="dots" phase={phase} from={[s * 3.25, y(1.6), f]} to={[s * 2.2, y(2.0), f]} />
+      <LedBar kind="pixels" phase={phase} from={[s * 2.45, y(1.35), f]} to={[s * 3.55, y(0.35), f]} />
+      <LedBar kind="pixels" phase={phase} from={[s * 3.55, y(0.3), f]} to={[s * 2.4, y(0.3), f]} />
     </group>
   )
 }

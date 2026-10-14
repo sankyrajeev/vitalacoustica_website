@@ -4,6 +4,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import { CanvasTexture, InstancedMesh, MeshStandardMaterial, Object3D, RepeatWrapping, SRGBColorSpace, Vector2 } from 'three'
 import { kickAt } from './beat'
 import { usePalette } from './palette'
+import { show } from './show'
 
 // A warehouse room for the show: concrete shell, steel roof trusses, columns,
 // a raised stage deck, DJ booth, FOH position and a crowd that moves to the kick.
@@ -220,7 +221,7 @@ const BODY_PROFILE: [number, number][] = [
 const BODY_HEIGHT = 1.52
 
 /** Crowd silhouettes — instanced bodies, heads and raised hands, moving on the kick with their own timing. */
-function Crowd({ count, timeScale }: { count: number; timeScale: number }) {
+function Crowd({ count }: { count: number }) {
   const p = usePalette()
   const bodies = useRef<InstancedMesh>(null)
   const heads = useRef<InstancedMesh>(null)
@@ -247,8 +248,8 @@ function Crowd({ count, timeScale }: { count: number; timeScale: number }) {
     for (const m of [bodies, heads, arms]) if (m.current) m.current.material = material
   }, [material])
 
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime * timeScale
+  useFrame(() => {
+    const t = show.time
     let a = 0
     people.forEach((pp, i) => {
       const bob = kickAt(t + pp.phase, 6) * pp.amp
@@ -321,7 +322,7 @@ function Barrier() {
   )
 }
 
-export function Venue({ small, timeScale }: { small: boolean; timeScale: number }) {
+export function Venue({ small }: { small: boolean }) {
   return (
     <group>
       <Shell />
@@ -329,7 +330,7 @@ export function Venue({ small, timeScale }: { small: boolean; timeScale: number 
       <Floor small={small} />
       <StageDeck />
       <FOH />
-      <Crowd count={small ? 180 : 420} timeScale={timeScale} />
+      <Crowd count={small ? 180 : 420} />
     </group>
   )
 }

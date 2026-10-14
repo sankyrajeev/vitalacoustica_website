@@ -18,9 +18,14 @@ npm run lint
 | What | Where |
 | --- | --- |
 | All business copy, cities, services, contact details | `src/content/site.ts` |
+| Gear list (names, specs, descriptions) | `src/content/gear.ts` |
+| Show photos, captions and gear markers on them | `src/content/shows.ts` + `public/shows/` |
+| Where each piece of gear sits in 3D | `src/three/hotspots.ts` |
 | Brand colours, fonts, spacing | top of `src/index.css` |
 | Logo files (PNG + vector) | `public/brand/` |
 | 3D hero scene | `src/three/` — `HeroScene.tsx` composes the stage |
 | Page sections | `src/components/` |
 
-The 3D lights run on a shared tempo clock (`site.bpm`, default 124 BPM) — see `src/three/beat.ts`.
+The 3D lights run on a shared show clock (`src/three/show.ts`, default 124 BPM). The lighting desk in "Explore the rig" writes to the same object, so BPM, movement, colour, master and haze change live.
+
+To add a show photo: export it as `name-1600.webp` and `name-800.webp` into `public/shows/`, then add an entry in `src/content/shows.ts` with marker positions as percentages of the image.

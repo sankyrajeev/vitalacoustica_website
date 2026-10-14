@@ -1,9 +1,14 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
+import type { GearId } from '../content/gear'
 import { site } from '../content/site'
+import { EXPLORE_EVENT } from '../events'
 import { useInView, useMediaQuery } from '../hooks/useMedia'
 import { useTheme } from '../hooks/useTheme'
 import { droneInput } from '../three/drone'
+import type { SceneMode } from '../three/HeroScene'
+import { show } from '../three/show'
 import { DroneHud } from './DroneHud'
+import { ExploreUi } from './ExploreUi'
 
 // three.js is large — load it separately so the page text paints immediately.
 const HeroScene = lazy(() => import('../three/HeroScene'))
@@ -15,25 +20,43 @@ export function Hero() {
   const touch = useMediaQuery('(pointer: coarse)')
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const { theme } = useTheme()
-  const [drone, setDrone] = useState(false)
+  const [mode, setMode] = useState<SceneMode>('hero')
+  const [focus, setFocus] = useState<GearId | null>(null)
+  const [haze, setHaze] = useState(show.haze)
+  const fullscreen = mode !== 'hero'
 
-  const exit = useCallback(() => setDrone(false), [])
+  const exit = useCallback(() => {
+    setMode('hero')
+    setFocus(null)
+  }, [])
 
-  // lock page scroll while flying
+  // lock page scroll while flying or exploring
   useEffect(() => {
-    document.documentElement.classList.toggle('is-flying', drone)
+    document.documentElement.classList.toggle('is-flying', fullscreen)
     return () => document.documentElement.classList.remove('is-flying')
-  }, [drone])
+  }, [fullscreen])
 
-  // drag anywhere on the feed to look around
+  // photos elsewhere on the page can send visitors straight to a fixture
+  useEffect(() => {
+    const open = (e: Event) => {
+      const id = (e as CustomEvent<GearId | null>).detail
+      window.scrollTo({ top: 0, behavior: 'auto' })
+      setMode('explore')
+      setFocus(id)
+    }
+    window.addEventListener(EXPLORE_EVENT, open)
+    return () => window.removeEventListener(EXPLORE_EVENT, open)
+  }, [])
+
+  // drone: drag anywhere on the feed to look around
   const last = useRef<{ x: number; y: number } | null>(null)
   const onPointerDown = (e: PointerEvent) => {
-    if (!drone) return
+    if (mode !== 'drone') return
     e.currentTarget.setPointerCapture(e.pointerId)
     last.current = { x: e.clientX, y: e.clientY }
   }
   const onPointerMove = (e: PointerEvent) => {
-    if (!drone || !last.current) return
+    if (mode !== 'drone' || !last.current) return
     droneInput.look.dx += e.clientX - last.current.x
     droneInput.look.dy += e.clientY - last.current.y
     last.current = { x: e.clientX, y: e.clientY }
@@ -41,7 +64,7 @@ export function Hero() {
   const onPointerUp = () => (last.current = null)
 
   return (
-    <section id="top" ref={ref} className={`hero ${drone ? 'hero--drone' : ''}`}>
+    <section id="top" ref={ref} className={`hero ${fullscreen ? `hero--full hero--${mode}` : ''}`}>
       <div
         className="hero__canvas"
         onPointerDown={onPointerDown}
@@ -50,13 +73,22 @@ export function Hero() {
         onPointerCancel={onPointerUp}
       >
         <Suspense fallback={null}>
-          <HeroScene active={inView || drone} small={small} reducedMotion={reducedMotion} theme={theme} drone={drone} />
+          <HeroScene
+            active={inView || fullscreen}
+            small={small}
+            reducedMotion={reducedMotion}
+            theme={theme}
+            mode={mode}
+            focus={focus}
+            onSelect={setFocus}
+            haze={haze}
+          />
         </Suspense>
       </div>
 
-      {drone ? (
-        <DroneHud onExit={exit} touch={touch} />
-      ) : (
+      {mode === 'drone' && <DroneHud onExit={exit} touch={touch} />}
+      {mode === 'explore' && <ExploreUi focus={focus} onFocus={setFocus} onExit={exit} haze={haze} onHaze={setHaze} />}
+      {mode === 'hero' && (
         <>
           <div className="hero__shade" />
           <div className="hero__content container">
@@ -73,17 +105,31 @@ export function Hero() {
               <a href="#contact" className="btn btn--primary">
                 Plan your show
               </a>
-              <button className="btn btn--ghost" onClick={() => setDrone(true)}>
+              <button className="btn btn--ghost" onClick={() => setMode('explore')}>
+                <RigIcon /> Explore the rig
+              </button>
+              <button className="btn btn--ghost" onClick={() => setMode('drone')}>
                 <DroneIcon /> Fly the venue
               </button>
             </div>
           </div>
-          <a href="#rig" className="hero__scroll" aria-label="Scroll down">
+          <a href="#shows" className="hero__scroll" aria-label="Scroll down">
             <span />
           </a>
         </>
       )}
     </section>
+  )
+}
+
+function RigIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+      <path d="M3 4h18M5 4v16M19 4v16M5 8l14-4M5 4l14 4" />
+      <circle cx="9" cy="11" r="1.6" />
+      <circle cx="15" cy="11" r="1.6" />
+      <path d="m9 12.6-2 7M15 12.6l2 7" />
+    </svg>
   )
 }
 

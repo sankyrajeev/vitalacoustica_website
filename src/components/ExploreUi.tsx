@@ -1,0 +1,169 @@
+import { useEffect, useState } from 'react'
+import { gear, gearById, type GearId } from '../content/gear'
+import { LOOK_NAMES, REFERENCE_BPM, resetShow, show, type ColourMode } from '../three/show'
+
+const COLOURS: { id: ColourMode; label: string }[] = [
+  { id: 'auto', label: 'Auto' },
+  { id: 'red', label: 'Red' },
+  { id: 'amber', label: 'Amber' },
+  { id: 'split', label: 'Split' },
+  { id: 'alternate', label: 'Alt' },
+]
+
+type Props = {
+  focus: GearId | null
+  onFocus: (id: GearId | null) => void
+  onExit: () => void
+  haze: number
+  onHaze: (v: number) => void
+}
+
+/** Overlay for explore mode: gear list, spec card and a compact lighting desk. */
+export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
+  const [look, setLook] = useState<number | null>(show.look)
+  const [colour, setColour] = useState<ColourMode>(show.colour)
+  const [bpm, setBpm] = useState(show.bpm)
+  const [master, setMaster] = useState(show.master)
+  // on phones the desk starts folded so the stage stays visible
+  const [deskOpen, setDeskOpen] = useState(() => !window.matchMedia('(max-width: 760px)').matches)
+  const item = focus ? gearById[focus] : null
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && (focus ? onFocus(null) : onExit())
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [focus, onFocus, onExit])
+
+  const reset = () => {
+    resetShow()
+    setLook(null)
+    setColour('auto')
+    setBpm(REFERENCE_BPM)
+    setMaster(1)
+    onHaze(show.haze)
+  }
+
+  return (
+    <div className={`explore ${deskOpen ? 'explore--desk' : ''}`} role="region" aria-label="Explore the rig">
+      <div className="explore__top">
+        <p className="explore__title">
+          <span className="eyebrow">Explore the rig</span>
+          <span className="explore__hint">Drag to orbit · scroll or pinch to zoom · tap a marker</span>
+        </p>
+        <button className="hud__exit" onClick={onExit}>
+          Back to site <kbd>Esc</kbd>
+        </button>
+      </div>
+
+      <nav className="explore__list" aria-label="Gear">
+        {gear.map((g) => (
+          <button key={g.id} className={focus === g.id ? 'is-active' : ''} onClick={() => onFocus(focus === g.id ? null : g.id)}>
+            {g.name}
+          </button>
+        ))}
+      </nav>
+
+      {item && (
+        <article className="spec-card" aria-live="polite">
+          <header>
+            <span className="spec-card__group">{item.group}</span>
+            <button className="spec-card__close" onClick={() => onFocus(null)} aria-label="Close details">
+              ×
+            </button>
+          </header>
+          <h3>{item.name}</h3>
+          <p className="spec-card__role">{item.role}</p>
+          <p className="spec-card__spec">{item.spec}</p>
+          <p className="spec-card__about">{item.about}</p>
+        </article>
+      )}
+
+      <section className={`desk ${deskOpen ? '' : 'desk--closed'}`} aria-label="Lighting desk">
+        <button className="desk__toggle" onClick={() => setDeskOpen((o) => !o)} aria-expanded={deskOpen}>
+          Lighting desk <span aria-hidden>{deskOpen ? '▾' : '▴'}</span>
+        </button>
+        {deskOpen && (
+          <div className="desk__body">
+            <div className="desk__group">
+              <span className="desk__label">Movement</span>
+              <div className="desk__buttons">
+                <button className={look === null ? 'is-on' : ''} onClick={() => ((show.look = null), setLook(null))}>
+                  Auto
+                </button>
+                {LOOK_NAMES.map((name, i) => (
+                  <button key={name} className={look === i ? 'is-on' : ''} onClick={() => ((show.look = i), setLook(i))}>
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="desk__group">
+              <span className="desk__label">Sharpy colour</span>
+              <div className="desk__buttons">
+                {COLOURS.map((c) => (
+                  <button
+                    key={c.id}
+                    className={`${colour === c.id ? 'is-on' : ''} swatch swatch--${c.id}`}
+                    onClick={() => ((show.colour = c.id), setColour(c.id))}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="desk__faders">
+              <label className="fader">
+                <span>BPM</span>
+                <input
+                  id="desk-bpm"
+                  type="range"
+                  min={90}
+                  max={150}
+                  value={bpm}
+                  onChange={(e) => {
+                    show.bpm = +e.target.value
+                    setBpm(show.bpm)
+                  }}
+                />
+                <output htmlFor="desk-bpm">{bpm}</output>
+              </label>
+              <label className="fader">
+                <span>Master</span>
+                <input
+                  id="desk-master"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(master * 100)}
+                  onChange={(e) => {
+                    show.master = +e.target.value / 100
+                    setMaster(show.master)
+                  }}
+                />
+                <output htmlFor="desk-master">{Math.round(master * 100)}%</output>
+              </label>
+              <label className="fader">
+                <span>Haze</span>
+                <input
+                  id="desk-haze"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(haze * 100)}
+                  onChange={(e) => {
+                    show.haze = +e.target.value / 100
+                    onHaze(show.haze)
+                  }}
+                />
+                <output htmlFor="desk-haze">{Math.round(haze * 100)}%</output>
+              </label>
+              <button className="desk__reset" onClick={reset}>
+                Reset
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+    </div>
+  )
+}
