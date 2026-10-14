@@ -1,12 +1,12 @@
-import { AdditiveBlending, Color, DoubleSide, ShaderMaterial } from 'three'
+import { AdditiveBlending, Color, DoubleSide, NormalBlending, ShaderMaterial } from 'three'
 
 // Soft volumetric light cone: bright at the lens, fading with distance,
 // feathered at the silhouette so it reads like a beam cutting through haze.
-export function createBeamMaterial(color: string) {
+export function createBeamMaterial(color: string, additive = true) {
   return new ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    blending: AdditiveBlending,
+    blending: additive ? AdditiveBlending : NormalBlending,
     side: DoubleSide,
     uniforms: {
       uColor: { value: new Color(color) },
@@ -40,7 +40,8 @@ export function createBeamMaterial(color: string) {
         // slow drifting haze texture
         float haze = 0.85 + 0.15 * sin(vUv.y * 18.0 - uTime * 1.3 + vUv.x * 6.2831);
         float a = along * edge * haze * uOpacity;
-        gl_FragColor = vec4(uColor * a, a);
+        // both blend modes weight the colour by alpha (additive = SrcAlpha, One)
+        gl_FragColor = vec4(uColor, a);
       }
     `,
   })

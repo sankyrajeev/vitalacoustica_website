@@ -1,0 +1,111 @@
+import { useMemo } from 'react'
+import { CanvasTexture, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three'
+
+// d&b audiotechnik cabinets, modelled to their published dimensions:
+//   V10P     — 308 W × 700 H × 466 D mm, 2×10" + 8" + 1.4" HF, 110°×40°
+//   B22-SUB  — 1160 W × 585 H × 920 D mm, 2×18" bandpass
+
+/** Perforated steel grille as a tiling texture. */
+function useGrilleTexture(repeatX: number, repeatY: number) {
+  return useMemo(() => {
+    const c = document.createElement('canvas')
+    c.width = c.height = 64
+    const g = c.getContext('2d')!
+    g.fillStyle = '#1a1a1a'
+    g.fillRect(0, 0, 64, 64)
+    g.fillStyle = '#020202'
+    for (let y = 0; y < 4; y++)
+      for (let x = 0; x < 4; x++) {
+        g.beginPath()
+        g.arc(x * 16 + 8 + (y % 2) * 8, y * 16 + 8, 5, 0, Math.PI * 2)
+        g.fill()
+      }
+    const t = new CanvasTexture(c)
+    t.wrapS = t.wrapT = RepeatWrapping
+    t.repeat.set(repeatX, repeatY)
+    t.colorSpace = SRGBColorSpace
+    t.anisotropy = 4
+    return t
+  }, [repeatX, repeatY])
+}
+
+const cabinet = new MeshStandardMaterial({ color: '#141414', metalness: 0.1, roughness: 0.85 })
+const hardware = new MeshStandardMaterial({ color: '#2e2e2e', metalness: 0.9, roughness: 0.4 })
+const badge = new MeshStandardMaterial({ color: '#d8d8d8', metalness: 1, roughness: 0.25 })
+
+export function V10P({ tilt = -0.06 }) {
+  const grille = useGrilleTexture(5, 11)
+  const W = 0.308
+  const H = 0.7
+  const D = 0.466
+  return (
+    <group rotation-x={tilt}>
+      <mesh material={cabinet} position={[0, H / 2, 0]}>
+        <boxGeometry args={[W, H, D]} />
+      </mesh>
+      <mesh position={[0, H / 2, D / 2 + 0.003]}>
+        <planeGeometry args={[W - 0.02, H - 0.02]} />
+        <meshStandardMaterial map={grille} metalness={0.7} roughness={0.55} />
+      </mesh>
+      {/* d&b badge */}
+      <mesh material={badge} position={[0, 0.045, D / 2 + 0.006]}>
+        <boxGeometry args={[0.06, 0.016, 0.004]} />
+      </mesh>
+      {/* side handles */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} material={hardware} position={[(s * W) / 2 + s * 0.006, H * 0.62, -0.05]}>
+          <boxGeometry args={[0.012, 0.03, 0.14]} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+export function B22Sub() {
+  const grille = useGrilleTexture(14, 3)
+  const W = 1.16
+  const H = 0.585
+  const D = 0.92
+  return (
+    <group>
+      <mesh material={cabinet} position={[0, H / 2, 0]}>
+        <boxGeometry args={[W, H, D]} />
+      </mesh>
+      {/* bandpass mouth behind the grille */}
+      <mesh position={[0, H / 2, D / 2 + 0.003]}>
+        <planeGeometry args={[W - 0.06, H - 0.1]} />
+        <meshStandardMaterial map={grille} metalness={0.7} roughness={0.55} />
+      </mesh>
+      <mesh material={badge} position={[W / 2 - 0.09, 0.03, D / 2 + 0.006]}>
+        <boxGeometry args={[0.08, 0.02, 0.004]} />
+      </mesh>
+      {/* recessed side handles */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} material={hardware} position={[(s * W) / 2 + s * 0.004, H * 0.6, 0]}>
+          <boxGeometry args={[0.01, 0.05, 0.22]} />
+        </mesh>
+      ))}
+      {/* castor board feet */}
+      {[-1, 1].map((s) => (
+        <mesh key={`f${s}`} material={hardware} position={[s * (W / 2 - 0.12), -0.01, 0]}>
+          <boxGeometry args={[0.12, 0.02, D - 0.1]} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** One side of the PA: two stacked B22-SUBs with a V10P on top, toed in. */
+export function PAStack({ x = 0, z = 0, toe = 0 }) {
+  return (
+    <group position={[x, 0.02, z]} rotation-y={toe}>
+      <B22Sub />
+      <group position={[0, 0.605, 0]}>
+        <B22Sub />
+      </group>
+      <group position={[0, 1.21, 0.15]}>
+        <V10P />
+      </group>
+    </group>
+  )
+}

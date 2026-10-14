@@ -19,3 +19,30 @@ export const smoothstep = (a: number, b: number, x: number) => {
 
 export const RED = '#ff2414'
 export const AMBER = '#ff9a1f'
+
+const BARS_PER_LOOK = 4
+
+/** Which 4-bar "look" of the show we're in — patterns and colours change together. */
+export const lookAt = (t: number) => Math.floor(beatsAt(t) / 4 / BARS_PER_LOOK)
+
+/** Position (0..BARS_PER_LOOK) inside the current look, in bars. */
+export const barInLook = (t: number) => (beatsAt(t) / 4) % BARS_PER_LOOK
+
+export const LOOK_BARS = BARS_PER_LOOK
+
+/**
+ * Sharpies only ever run red or amber. Each look picks how they're split:
+ * alternating, all red, halves, all amber.
+ */
+export function sharpyColor(t: number, i: number, n: number) {
+  switch (lookAt(t) % 4) {
+    case 0:
+      return i % 2 ? AMBER : RED
+    case 1:
+      return RED
+    case 2:
+      return i < n / 2 ? RED : AMBER
+    default:
+      return AMBER
+  }
+}

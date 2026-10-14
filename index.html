@@ -18,6 +18,16 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://vitalacoustica.com/" />
     <meta property="og:image" content="https://vitalacoustica.com/brand/logo-full-white.png" />
+    <script>
+      // apply the saved (or OS) colour theme before first paint to avoid a flash
+      try {
+        var t = localStorage.getItem('va-theme')
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+        document.documentElement.dataset.theme = t
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -27,6 +27,11 @@ export function useInView(ref: RefObject<Element | null>, rootMargin = '0px') {
 export function useRevealOnScroll() {
   useEffect(() => {
     const els = document.querySelectorAll<HTMLElement>('[data-reveal]')
+    // anything already on screen stays visible; only content below the fold animates in
+    els.forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('is-visible')
+    })
+    document.documentElement.classList.add('reveal-ready')
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {

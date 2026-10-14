@@ -1,5 +1,7 @@
 import { useRef, type PointerEvent } from 'react'
 import { site, type Service } from '../content/site'
+import { logoSrc } from '../brand/logo'
+import { useTheme } from '../hooks/useTheme'
 
 export function CityTicker() {
   // duplicated so the marquee loops seamlessly
@@ -18,11 +20,44 @@ export function CityTicker() {
   )
 }
 
+export function Rig() {
+  return (
+    <section id="rig" className="section container">
+      <div className="section__head" data-reveal>
+        <p className="eyebrow">The rig</p>
+        <h2>
+          Everything on that stage
+          <br />
+          <span className="muted">is in our warehouse.</span>
+        </h2>
+      </div>
+      <div className="rig">
+        {site.rig.map((g, gi) => (
+          <div key={g.group} className="rig__group" data-reveal style={{ transitionDelay: `${gi * 90}ms` }}>
+            <h3 className="rig__label">{g.group}</h3>
+            <ul>
+              {g.items.map((it) => (
+                <li key={it.name}>
+                  <div>
+                    <strong>{it.name}</strong>
+                    <span className="rig__role">{it.role}</span>
+                  </div>
+                  <p className="rig__spec">{it.spec}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export function Reach() {
   return (
     <section id="reach" className="section container">
       <div className="section__head" data-reveal>
-        <p className="eyebrow">Based in {site.homeBase}</p>
+        <p className="eyebrow">Where we've played</p>
         <h2>
           Across Karnataka
           <br />
@@ -138,9 +173,10 @@ export function Contact() {
 const YEAR = new Date().getFullYear()
 
 export function Footer() {
+  const { theme } = useTheme()
   return (
     <footer className="footer container">
-      <img src={`${import.meta.env.BASE_URL}brand/va-mark-white.png`} alt="" width={1501} height={822} className="footer__mark" />
+      <img src={logoSrc('va-mark', theme)} alt="" width={1501} height={822} className="footer__mark" />
       <p>
         © {YEAR} {site.name} · {site.descriptor}
       </p>
