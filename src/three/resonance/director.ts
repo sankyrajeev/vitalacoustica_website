@@ -22,7 +22,7 @@ const base: SceneParams = { opacity: 1, dist: 9, x: 1.75, y: 0, turn: 0, tilt: 0
 
 export const SCENES: Record<string, Partial<SceneParams>> = {
   entrance: {},
-  manifesto: { dist: 6.2, x: 1.9, turn: 1.1, tilt: 0.25, opacity: 0.6 },
+  manifesto: { dist: 6.6, x: 2.5, turn: 1.1, tilt: 0.25, opacity: 0.5 },
   'cap-intro': { dist: 9.5, x: 1.9, turn: 2.2, opacity: 0.85 },
   'cap-sound': { dist: 8, x: 1.9, turn: 2.6, wave: 1 },
   'cap-light': { dist: 7.2, x: 1.8, turn: 3.2, sweep: 1, tilt: -0.15 },

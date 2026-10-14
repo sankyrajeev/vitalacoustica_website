@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { site } from '../content/site'
 import { useTheme } from '../hooks/useTheme'
 import { Link } from './Link'
-import { Wordmark } from './ui'
+import { Logo } from './ui'
 
-/** Top navigation: wordmark, the main sections, and the quote CTA. */
+/** Top navigation: logo, the main sections, and the quote CTA. */
 export function Nav({ path }: { path: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -31,7 +31,7 @@ export function Nav({ path }: { path: string }) {
   return (
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''}`}>
       <Link to="/" className="nav__brand" onClick={close}>
-        <Wordmark />
+        <Logo />
       </Link>
 
       <nav id="site-menu" className="nav__menu" aria-label="Main">

@@ -5,17 +5,17 @@ import { openExplore } from '../events'
 import { img } from '../media'
 import { Link } from './Link'
 
-/** The typographic wordmark: VITAL over a widely spaced ACOUSTICA. */
-export function Wordmark({ size = 'md' }: { size?: 'md' | 'lg' }) {
+/**
+ * The Vital Acoustica logo (VA mark + VITAL ACOUSTICA), drawn in the current text colour so it
+ * follows the light and dark editions. `tagline` adds "PRO AUDIO • LIGHTING • RENTALS".
+ */
+export function Logo({ tagline, className = '' }: { tagline?: boolean; className?: string }) {
   return (
-    <span className={`wordmark wordmark--${size}`} aria-label="Vital Acoustica">
-      <span className="wordmark__vital" aria-hidden>
-        VITAL
-      </span>
-      <span className="wordmark__acoustica" aria-hidden>
-        ACOUSTICA
-      </span>
-    </span>
+    <span
+      className={`logo ${tagline ? 'logo--full' : ''} ${className}`}
+      role="img"
+      aria-label={tagline ? 'Vital Acoustica: pro audio, lighting, rentals' : 'Vital Acoustica'}
+    />
   )
 }
 

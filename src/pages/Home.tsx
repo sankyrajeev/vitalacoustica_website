@@ -3,7 +3,7 @@ import { EnquiryForm } from '../components/EnquiryForm'
 import { gearImg } from '../components/gearImg'
 import { ProjectCard } from '../components/ProjectCard'
 import { ResonanceBackdrop } from '../components/ResonanceBackdrop'
-import { Arrow, Cta, Label, TextLink } from '../components/ui'
+import { Arrow, Cta, Label, Logo, TextLink } from '../components/ui'
 import { capabilities } from '../content/capabilities'
 import { gearById } from '../content/gear'
 import { projects } from '../content/projects'
@@ -65,7 +65,7 @@ function Statement() {
   return (
     <section id="statement" className="statement" data-scene="manifesto" aria-labelledby="statement-title">
       <div className="wrap statement__inner">
-        <Label index="01">Vital Acoustica</Label>
+        <Logo tagline className="statement__logo" />
         <h2 id="statement-title" className="h1">
           Production is more than equipment.
         </h2>

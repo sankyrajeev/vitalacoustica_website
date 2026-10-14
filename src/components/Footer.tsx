@@ -1,7 +1,7 @@
 import { capabilities } from '../content/capabilities'
 import { site } from '../content/site'
 import { Link } from './Link'
-import { Wordmark } from './ui'
+import { Logo } from './ui'
 
 const YEAR = new Date().getFullYear()
 
@@ -12,7 +12,7 @@ export function Footer() {
       <div className="footer__inner wrap">
         <div className="footer__brand">
           <Link to="/" aria-label="Vital Acoustica, home">
-            <Wordmark size="lg" />
+            <Logo tagline className="logo--lg" />
           </Link>
           <p className="footer__disciplines">
             {capabilities.map((c, i) => (
@@ -26,8 +26,14 @@ export function Footer() {
 
         <nav className="footer__cols" aria-label="Footer">
           <div>
-            <p className="label">Studio</p>
+            <p className="label">Explore</p>
             <ul>
+              <li>
+                <Link to="/equipment">Equipment</Link>
+              </li>
+              <li>
+                <Link to="/capabilities">Services</Link>
+              </li>
               <li>
                 <Link to="/work">Selected work</Link>
               </li>
@@ -46,7 +52,7 @@ export function Footer() {
             <p className="label">Contact</p>
             <ul>
               <li>
-                <Link to="/contact">Start a project</Link>
+                <Link to="/contact">Get a quote</Link>
               </li>
               {email && (
                 <li>

@@ -246,8 +246,7 @@ main {
 .h3,
 .quote,
 .cap__name,
-.project__title,
-.wordmark-serif {
+.project__title {
   font-family: var(--serif);
   font-weight: 400;
   text-wrap: balance;
@@ -347,35 +346,34 @@ main {
   font-style: italic;
 }
 
-/* ─────────────── Wordmark ─────────────── */
+/* ─────────────── Logo ─────────────── */
 
-.wordmark {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.36em;
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 1;
+/* the logo artwork is used as a mask, so it takes the text colour of each edition */
+.logo {
+  display: inline-block;
+  height: 34px;
+  aspect-ratio: 1100 / 189;
+  background: currentColor;
+  -webkit-mask: url('./brand/logo-lockup.png') center / contain no-repeat;
+  mask: url('./brand/logo-lockup.png') center / contain no-repeat;
   color: var(--text);
+  vertical-align: middle;
 }
 
-.wordmark--lg {
-  font-size: clamp(30px, 4vw, 52px);
+.logo--full {
+  aspect-ratio: 1100 / 251;
+  -webkit-mask-image: url('./brand/logo-full.png');
+  mask-image: url('./brand/logo-full.png');
 }
 
-.wordmark__vital {
-  letter-spacing: 0.46em;
-  margin-right: -0.46em;
+.logo--lg {
+  height: clamp(56px, 6vw, 84px);
 }
 
-.wordmark__acoustica {
-  font-size: 0.5em;
-  letter-spacing: 0.62em;
-  margin-right: -0.62em;
-  color: var(--text-soft);
-  font-weight: 600;
+@media (max-width: 640px) {
+  .nav .logo {
+    height: 26px;
+  }
 }
 
 /* ─────────────── Actions ─────────────── */
@@ -1436,8 +1434,9 @@ main {
   gap: var(--s6);
 }
 
-.statement__inner .label {
-  margin: 0;
+.statement__logo {
+  height: clamp(52px, 5.4vw, 76px);
+  margin-bottom: var(--s5);
 }
 
 .statement__body {
