@@ -42,7 +42,42 @@ export function EquipmentIndex() {
           ))}
         </div>
       </section>
+      <HowHiringWorks />
     </>
+  )
+}
+
+const STEPS = [
+  ['Enquire', 'Tell us the date, venue, audience size and what you need. Equipment only, or with crew.'],
+  ['Proposal & quote', 'We recommend a system for the space and send a clear, itemised quote.'],
+  ['Delivery, setup & tuning', 'We deliver, rig and cable everything, then tune the sound and focus the lights before doors.'],
+  ['Show & collection', 'Our engineer and lighting operator run the show if you want them, and we load out afterwards.'],
+]
+
+function HowHiringWorks() {
+  return (
+    <section className="section section--solid hiring" aria-labelledby="hiring-title">
+      <div className="wrap">
+        <header className="section-head">
+          <Label>How hiring works</Label>
+          <h2 id="hiring-title" className="h1">
+            From enquiry to load-out.
+          </h2>
+        </header>
+        <ol className="steps">
+          {STEPS.map(([t, b], i) => (
+            <li key={t}>
+              <span className="steps__n">0{i + 1}</span>
+              <strong>{t}</strong>
+              <p>{b}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="hiring__cta">
+          <Cta to="/contact">Get a quote</Cta>
+        </div>
+      </div>
+    </section>
   )
 }
 

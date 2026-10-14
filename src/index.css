@@ -804,10 +804,10 @@ main {
   transform: translateY(28px);
 }
 
-/* ─────────────── Resonance Form (behind the homepage enquiry) ─────────────── */
+/* ─────────────── 3D backdrop (homepage) ─────────────── */
 
 .resonance {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
@@ -847,215 +847,6 @@ main {
 
 .resonance__canvas canvas {
   display: block;
-}
-
-/* ─────────────── Homepage hero: what we hire, over one of our stages ─────────────── */
-
-/* the hero stays a dark stage photo in both editions */
-.hire-hero {
-  --text: var(--ivory);
-  --text-soft: rgba(240, 237, 229, 0.82);
-  --muted: var(--grey);
-  --accent-text: var(--brass);
-  --line: rgba(240, 237, 229, 0.14);
-  --line-strong: rgba(240, 237, 229, 0.3);
-  --invert-bg: var(--ivory);
-  --invert-text: var(--obsidian);
-  position: relative;
-  display: grid;
-  align-content: end;
-  min-height: 100svh;
-  padding-top: clamp(120px, 18vh, 180px);
-  overflow: hidden;
-  background: var(--obsidian);
-  color: var(--text);
-}
-
-.hire-hero__photo {
-  position: absolute;
-  inset: 0;
-}
-
-.hire-hero__photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 62% 45%;
-}
-
-.hire-hero__photo::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(16, 16, 16, 0.92) 0%, rgba(16, 16, 16, 0.66) 42%, rgba(16, 16, 16, 0.12) 78%),
-    linear-gradient(0deg, rgba(16, 16, 16, 0.95) 0%, rgba(16, 16, 16, 0) 40%);
-}
-
-.hire-hero__inner {
-  position: relative;
-  display: grid;
-  gap: var(--s5);
-  justify-items: start;
-}
-
-.hire-hero__inner .label {
-  margin: 0;
-  color: var(--brass);
-}
-
-.hire-hero .display {
-  font-size: clamp(44px, 6.4vw, 108px);
-}
-
-.hire-hero__lede {
-  max-width: 34em;
-  font-size: clamp(16.5px, 1.35vw, 19px);
-  line-height: 1.6;
-  color: var(--text-soft);
-}
-
-.facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s2);
-}
-
-.facts li {
-  padding: 7px 12px;
-  border: var(--hair) solid var(--line-strong);
-  border-radius: var(--radius);
-  background: rgba(16, 16, 16, 0.4);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.hire-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s3);
-  margin-top: var(--s2);
-}
-
-/* the navigation reads light over the hero photo in both editions */
-.nav--on-photo {
-  --text: var(--ivory);
-  --text-soft: rgba(240, 237, 229, 0.82);
-  --muted: var(--grey);
-  --accent-text: var(--brass);
-  --line-strong: rgba(240, 237, 229, 0.3);
-  color: var(--text);
-}
-
-/* a row of the actual kit along the bottom of the hero */
-.hire-hero__strip {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: var(--s3);
-  margin-top: clamp(40px, 7vh, 80px);
-  padding-block: var(--s5) var(--s6);
-}
-
-/* hairline aligned to the content edge, not the padded box */
-.hire-hero__strip::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: max(var(--gutter), env(safe-area-inset-left, 0px));
-  right: max(var(--gutter), env(safe-area-inset-right, 0px));
-  height: 1px;
-  background: var(--line);
-}
-
-.strip-item {
-  display: grid;
-  gap: var(--s2);
-  align-content: start;
-  min-width: 0;
-}
-
-.strip-item__img {
-  display: block;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: #e9e6de;
-}
-
-.strip-item__img img {
-  width: 100%;
-  height: 100%;
-  padding: 8%;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-  transition: transform var(--t-med) var(--ease);
-}
-
-.strip-item__img--show img,
-.strip-item__img--model img,
-.strip-item__img--cover img {
-  padding: 0;
-  object-fit: cover;
-  mix-blend-mode: normal;
-}
-
-.strip-item:hover .strip-item__img img {
-  transform: scale(1.05);
-}
-
-.strip-item__name {
-  overflow: hidden;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: var(--text-soft);
-}
-
-.strip-item:hover .strip-item__name {
-  color: var(--brass);
-}
-
-.strip-item--all {
-  align-content: center;
-  justify-items: center;
-  border: var(--hair) solid var(--line);
-  border-radius: var(--radius);
-}
-
-.strip-item--all .strip-item__name {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s2);
-  color: var(--text);
-}
-
-@media (max-width: 900px) {
-  .hire-hero__photo::after {
-    background: linear-gradient(0deg, rgba(16, 16, 16, 0.96) 0%, rgba(16, 16, 16, 0.78) 55%, rgba(16, 16, 16, 0.35) 100%);
-  }
-  /* the strip becomes a swipeable row */
-  .hire-hero__strip {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-  .hire-hero__strip::-webkit-scrollbar {
-    display: none;
-  }
-  .strip-item {
-    flex: 0 0 120px;
-    scroll-snap-align: start;
-  }
-  .strip-item--all {
-    aspect-ratio: 4 / 3;
-  }
 }
 
 /* ─────────────── Equipment: photo first, then the 3D rig ─────────────── */
@@ -1397,66 +1188,7 @@ main {
   text-decoration-thickness: 1px;
 }
 
-/* ─────────────── Services & how hiring works ─────────────── */
-
-.services {
-  background: var(--surface-2);
-}
-
-.service-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 32px);
-}
-
-.service {
-  display: grid;
-  gap: var(--s3);
-  align-content: start;
-}
-
-.service__media {
-  display: block;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  margin-bottom: var(--s3);
-  background: var(--surface);
-}
-
-.service__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 1.6s var(--ease);
-}
-
-.service:hover .service__media img {
-  transform: scale(1.04);
-}
-
-.service__body {
-  font-size: 14.5px;
-  color: var(--text-soft);
-}
-
-.service__more {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s2);
-  justify-self: start;
-  margin-top: var(--s2);
-  padding-bottom: 6px;
-  border-bottom: var(--hair) solid var(--line-strong);
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.service:hover .service__more {
-  border-color: var(--accent);
-  color: var(--accent-text);
-}
+/* ─────────────── How hiring works (equipment page) ─────────────── */
 
 .steps {
   display: grid;
@@ -1495,11 +1227,6 @@ main {
   margin-top: var(--s8);
 }
 
-.workflow--stacked {
-  grid-template-columns: minmax(0, 1fr);
-  margin-top: 0;
-}
-
 /* the enquiry section holds the Resonance Form behind its content */
 .final {
   overflow: hidden;
@@ -1511,7 +1238,6 @@ main {
 }
 
 @media (max-width: 1100px) {
-  .service-grid,
   .steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1528,12 +1254,8 @@ main {
 }
 
 @media (max-width: 640px) {
-  .service-grid,
   .steps {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .service__media {
-    aspect-ratio: 16 / 10;
   }
   .spec-table > div {
     grid-template-columns: minmax(0, 1fr);
@@ -1593,6 +1315,396 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s4);
+}
+
+/* ─────────────── 01 Entrance ─────────────── */
+
+.entrance {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 100svh;
+  padding-bottom: clamp(72px, 12vh, 140px);
+}
+
+.entrance::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(var(--shade), 0.7) 0%, rgba(var(--shade), 0.2) 48%, transparent 70%);
+  pointer-events: none;
+}
+
+.entrance__inner {
+  position: relative;
+}
+
+.entrance .display {
+  animation: rise 1.6s var(--ease) both 0.2s;
+}
+
+.entrance .label {
+  animation: rise 1.6s var(--ease) both 0.05s;
+}
+
+.entrance__intro {
+  max-width: 30em;
+  margin-top: var(--s6);
+  font-size: clamp(16px, 1.3vw, 18px);
+  color: var(--text-soft);
+  animation: rise 1.6s var(--ease) both 0.4s;
+}
+
+.entrance__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-top: var(--s7);
+  animation: rise 1.6s var(--ease) both 0.55s;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+
+.entrance__scroll {
+  position: absolute;
+  right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  bottom: clamp(72px, 12vh, 140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s3);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  writing-mode: vertical-rl;
+}
+
+.entrance__scroll span {
+  width: var(--hair);
+  height: 56px;
+  background: linear-gradient(var(--accent), transparent);
+  animation: drip 2.4s var(--ease-in-out) infinite;
+  transform-origin: top;
+}
+
+@keyframes drip {
+  0% {
+    transform: scaleY(0);
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+@media (max-width: 760px) {
+  .entrance::before {
+    background: linear-gradient(0deg, rgba(var(--shade), 0.92) 0%, rgba(var(--shade), 0.4) 55%, transparent 80%);
+  }
+  .entrance__scroll {
+    display: none;
+  }
+  .entrance__actions .cta {
+    flex: 1 1 100%;
+  }
+}
+
+/* ─────────────── 02 Statement ─────────────── */
+
+.statement {
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: var(--section);
+}
+
+.statement__inner {
+  display: grid;
+  gap: var(--s6);
+}
+
+.statement__inner .label {
+  margin: 0;
+}
+
+.statement__body {
+  max-width: 30em;
+  font-family: var(--serif);
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.3;
+  color: var(--text-soft);
+}
+
+/* four facts on hairlines */
+.facts-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s5);
+  max-width: 980px;
+  margin: var(--s6) 0 0;
+}
+
+.facts-row > div {
+  display: grid;
+  gap: var(--s2);
+  padding-top: var(--s4);
+  border-top: var(--hair) solid var(--line-strong);
+}
+
+.facts-row dt {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.facts-row dd {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(20px, 1.7vw, 26px);
+  line-height: 1.15;
+}
+
+@media (max-width: 900px) {
+  .facts-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.entrance__scroll {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.cap__kit {
+  display: grid;
+  gap: var(--s2);
+  max-width: 26em;
+  font-size: 13.5px;
+  color: var(--text-soft);
+}
+
+.cap__kit .label {
+  margin: 0;
+  color: var(--accent-text);
+}
+
+/* ─────────────── 04 Renders of the stage model ─────────────── */
+
+.renders {
+  background: var(--obsidian);
+  color: var(--ivory);
+  --text: var(--ivory);
+  --text-soft: rgba(240, 237, 229, 0.8);
+  --muted: var(--grey);
+  --accent-text: var(--brass);
+  --line: rgba(240, 237, 229, 0.1);
+  --line-strong: rgba(240, 237, 229, 0.22);
+}
+
+.renders__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  grid-template-rows: auto auto;
+  gap: clamp(12px, 1.6vw, 24px);
+}
+
+.render {
+  position: relative;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #0b0b0b;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ivory);
+}
+
+.render img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform 1.6s var(--ease),
+    filter var(--t-med) var(--ease);
+}
+
+.render:hover img {
+  transform: scale(1.035);
+  filter: brightness(1.12);
+}
+
+.render::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0) 45%);
+  pointer-events: none;
+}
+
+.render--0 {
+  grid-row: span 2;
+}
+
+.render--0 img {
+  position: absolute;
+  inset: 0;
+}
+
+.render--1,
+.render--2 {
+  aspect-ratio: 4 / 3;
+}
+
+.render__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  padding: 4px 8px;
+  border: var(--hair) solid rgba(240, 237, 229, 0.3);
+  border-radius: var(--radius);
+  background: rgba(10, 10, 10, 0.5);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.render__caption {
+  position: absolute;
+  left: clamp(16px, 2vw, 28px);
+  right: clamp(16px, 2vw, 28px);
+  bottom: clamp(16px, 2vw, 26px);
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+  font-size: 13.5px;
+  color: rgba(240, 237, 229, 0.78);
+}
+
+.render__caption strong {
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.2vw, 36px);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ivory);
+}
+
+.render--1 .render__caption strong,
+.render--2 .render__caption strong {
+  font-size: clamp(22px, 1.7vw, 28px);
+}
+
+.render__open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s2);
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+@media (max-width: 900px) {
+  .renders__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .render--0 {
+    grid-row: auto;
+    aspect-ratio: 4 / 3;
+  }
+  .render--0 img {
+    position: static;
+  }
+  .render__caption > span:not(.render__open) {
+    display: none;
+  }
+}
+
+/* ─────────────── 05 The sound system ─────────────── */
+
+.sound-feature {
+  background: var(--bg);
+}
+
+.sound-feature__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(32px, 5vw, 96px);
+  align-items: center;
+}
+
+.sound-feature__media {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  align-items: end;
+  gap: 2px;
+  padding: clamp(24px, 4vw, 56px);
+  background: #e9e6de;
+}
+
+.sound-feature__item {
+  margin: 0;
+  display: grid;
+  gap: var(--s3);
+  justify-items: center;
+}
+
+.sound-feature__item img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.sound-feature__item figcaption {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #67635b;
+}
+
+.sound-feature__text {
+  display: grid;
+  gap: var(--s5);
+  justify-items: start;
+}
+
+.sound-feature__text .label {
+  margin: 0;
+}
+
+.sound-feature__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-top: var(--s3);
+}
+
+@media (max-width: 900px) {
+  .sound-feature__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* ─────────────── Media frames & placeholders ─────────────── */
@@ -1906,7 +2018,75 @@ main {
   }
 }
 
-/* list of what a service covers (service pages) */
+/* ─────────────── 04 Capabilities ─────────────── */
+
+.capabilities {
+  position: relative;
+}
+
+.capabilities__intro {
+  display: grid;
+  align-content: end;
+  min-height: 70vh;
+  padding-top: var(--section);
+  padding-bottom: var(--s8);
+}
+
+.cap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: var(--s8);
+}
+
+.cap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(var(--shade), 0.78) 0%, rgba(var(--shade), 0.35) 45%, transparent 62%);
+  pointer-events: none;
+}
+
+.cap__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s6);
+}
+
+.cap__text {
+  display: grid;
+  gap: var(--s5);
+  align-content: start;
+}
+
+.cap__index {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent-text);
+}
+
+.cap__index span {
+  color: var(--muted);
+}
+
+.cap__name {
+  font-size: clamp(64px, 9vw, 150px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+.cap__statement {
+  max-width: 22em;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(20px, 1.8vw, 26px);
+  line-height: 1.3;
+  color: var(--text-soft);
+}
+
 .cap__covers {
   display: grid;
   max-width: 26em;
@@ -1918,6 +2098,24 @@ main {
   border-bottom: var(--hair) solid var(--line);
   font-size: 14px;
   color: var(--text-soft);
+}
+
+.cap--sound .cap__covers {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--s5);
+}
+
+.cap__text .text-link {
+  justify-self: start;
+}
+
+@media (max-width: 900px) {
+  .cap::before {
+    background: linear-gradient(0deg, rgba(var(--shade), 0.9) 0%, rgba(var(--shade), 0.55) 60%, rgba(var(--shade), 0.2) 100%);
+  }
+  .cap__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* ─────────────── 05 Technical ─────────────── */

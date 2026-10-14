@@ -1,3 +1,4 @@
+import { CoverageDrawing } from '../components/CoverageDrawing'
 import { FaderReveal } from '../components/FaderReveal'
 import { PageHead } from '../components/PageHead'
 import { StageModelLauncher } from '../components/StageModel'
@@ -88,6 +89,19 @@ export function CapabilityPage({ id }: { id: string }) {
             ))}
           </ol>
         </section>
+
+        {c.id === 'sound' && (
+          <section className="cap-page__section">
+            <Label>Coverage planning</Label>
+            <figure className="tech-drawing">
+              <CoverageDrawing />
+              <figcaption>
+                Plan view of a stereo pair of V10P tops with their nominal 110° horizontal dispersion, aimed to overlap at the
+                audience centre line.
+              </figcaption>
+            </figure>
+          </section>
+        )}
 
         {c.id === 'light' && (
           <section className="cap-page__section">

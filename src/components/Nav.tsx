@@ -29,7 +29,7 @@ export function Nav({ path }: { path: string }) {
   const close = () => setOpen(false)
 
   return (
-    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''} ${path === '/' && !scrolled && !open ? 'nav--on-photo' : ''}`}>
+    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''}`}>
       <Link to="/" className="nav__brand" onClick={close}>
         <Wordmark />
       </Link>

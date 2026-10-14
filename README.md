@@ -21,8 +21,8 @@ Routes use the URL hash (`/#/work`), so the site runs on any static host with no
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: hero over a show photo with the kit strip, Equipment, Services, How hiring works, Selected work, Technical, Get a quote |
-| `/equipment`, `/equipment/<id>` | Hire catalogue: photo, description and specs for each item, then "View in the 3D rig" |
+| `/` | Home: the 3D Resonance Form across Entrance, Statement and the four disciplines; renders of the stage model; the d&b system; Selected work; Get a quote |
+| `/equipment`, `/equipment/<id>` | Hire catalogue: photo, description and specs for each item, then "View in the 3D rig"; how hiring works |
 | `/work`, `/work/<slug>` | Selected work index and case studies |
 | `/capabilities`, `/capabilities/<sound\|light\|visuals\|production>` | Services |
 | `/studio` | Philosophy and process |
@@ -41,7 +41,7 @@ Routes use the URL hash (`/#/work`), so the site runs on any static host with no
 | Equipment: names, descriptions, specs, photos | `src/content/gear.ts` + photos in `public/gear/` |
 | Journal entries | `src/content/journal.ts` |
 | Design tokens (palette, type, spacing, motion) | top of `src/index.css` |
-| The Resonance Form (behind the homepage enquiry) | `src/three/resonance/` |
+| The Resonance Form (homepage sculpture) | `src/three/resonance/` — `director.ts` maps sections to sculpture states |
 | Stage model (explore, lighting desk, drone) | `src/three/StageScene.tsx`, `src/three/gear/`, `src/components/StageModel.tsx` |
 
 ### Palette
@@ -64,6 +64,8 @@ Until one is set, the form validates normally but tells visitors it can’t send
 Gaps are filled with stand-ins until the photo shoot: equipment models and stock counts, contact details, company details, project years and some case-study text, plus sample photos (tagged "Sample photo") in empty photo slots. Every stand-in value is marked `DUMMY` in the code (`grep -rn DUMMY src`). The shot list and everything to replace is in [`docs/photo-shoot.md`](docs/photo-shoot.md).
 
 Until an enquiry endpoint is set, the form opens the visitor's email app with the enquiry written out and addressed to `site.contact.email`.
+
+Homepage renders of the stage model live in `public/media/render-*.webp`.
 
 To add an equipment photo: put a square-ish `.webp` in `public/gear/` and set `photo` on the item in `src/content/gear.ts` (`source: 'product'` for white-background shots, which sit on the studio surface; add `fit: 'cover'` for photos with their own background).
 
