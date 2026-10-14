@@ -1,75 +1,58 @@
-// Single source of truth for business copy and details.
+// Single source of truth for brand copy and business details.
 // Edit text here and it updates everywhere on the site.
 
 export const site = {
   name: 'Vital Acoustica',
   domain: 'vitalacoustica.com',
-  tagline: 'Experience, Amplified.',
-  descriptor: 'Pro Audio · Lighting · Rentals',
-  homeBase: 'Bangalore',
-  region: 'South India',
-  maxCapacity: 1000,
+  eyebrow: 'Independent creative production',
+  headline: 'We shape the way an experience feels.',
+  supporting: 'Sound, light and production. Conceived as one.',
+  intro:
+    'Sound, light and production, conceived as one. We create carefully considered experiences where technical precision meets creative intent.',
   bpm: 124,
 
-  // TODO: fill in once confirmed — sections that need these hide gracefully while empty.
-  contact: {
-    phone: '' as string,
-    whatsapp: '' as string, // digits only with country code, e.g. 919800000000
-    email: '' as string,
-    instagram: '' as string, // handle without @
+  // Approved brand lines — use sparingly, one at a time.
+  lines: {
+    felt: 'Sound is felt. Light is experienced.',
+    equipment: 'Production is more than equipment.',
+    purpose: 'Every detail has a purpose.',
+    intent: 'Designed with intent. Engineered with precision.',
+    noise: 'Less noise. More intention.',
+    space: 'Where sound meets space.',
+    selective: 'Selective by design.',
+    precision: 'Precision behind the experience.',
+    different: 'A different kind of production.',
+    built: 'Built around the experience.',
+    art: 'The art of how it feels.',
+    exceptional: 'Let’s shape something exceptional.',
   },
 
-  cities: ['Bangalore', 'Mysore', 'Hubli', 'Belgaum', 'Mangalore', 'Hyderabad'],
-
   nav: [
-    { label: 'Shows', href: '#shows' },
-    { label: 'The rig', href: '#rig' },
-    { label: 'Services', href: '#services' },
-    { label: 'Reach', href: '#reach' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Work', to: '/work' },
+    { label: 'Capabilities', to: '/capabilities' },
+    { label: 'Studio', to: '/studio' },
   ],
 
-  stats: [
-    { value: '1,000', label: 'Guests per show, max capacity' },
-    { value: '6+', label: 'Cities across South India' },
-    { value: '1 crew', label: 'Sound, light, visuals — end to end' },
-  ],
+  /*
+   * TODO (Vital Acoustica): fill these in. Anything left empty is simply not shown.
+   */
+  contact: {
+    email: '' as string,
+    phone: '' as string,
+    whatsapp: '' as string, // digits only with country code, e.g. 919800000000
+    instagram: '' as string, // handle without @
+    location: '' as string, // e.g. 'Bangalore, India' — only once approved for publication
+  },
 
-  services: [
-    {
-      id: 'production',
-      index: '01',
-      title: 'Event Production & Rentals',
-      body:
-        'd&b tops and subs, sharpies, LED and haze, plus the crew who run them. Built for techno and house, from warehouse floors to 1,000-capacity rooms.',
-      tags: ['Sound systems', 'Stage lighting', 'Crew & operation'],
-    },
-    {
-      id: 'installations',
-      index: '02',
-      title: 'Permanent Installations',
-      body:
-        'Consulting, system design and installation for clubs, bars and venues that need their room to sound and look right every single night.',
-      tags: ['Consulting', 'System design', 'Install & tuning'],
-    },
-    {
-      id: 'mapping',
-      index: '03',
-      title: '3D Projection Mapping',
-      body:
-        'Visual content mapped onto stages, walls and structures — turning the venue itself into part of the show.',
-      tags: ['Stage mapping', 'Visual content', 'LED & projection'],
-      badge: 'New',
-    },
-    {
-      id: 'experience',
-      index: '04',
-      title: 'Experience Design',
-      body:
-        'Lights programmed to the music, sound tuned to the room, timing planned with the artist. The difference between a rental and a night people remember.',
-      tags: ['Show design', 'Programming', 'Artist liaison'],
-    },
-  ],
-} as const
-
-export type Service = (typeof site.services)[number]
+  /*
+   * Where the enquiry form sends submissions. Set ONE of these:
+   *  - Formspree:  endpoint 'https://formspree.io/f/<form-id>'
+   *  - FormSubmit: endpoint 'https://formsubmit.co/ajax/<your-email>' (confirm the first email it sends you)
+   *  - Web3Forms:  endpoint 'https://api.web3forms.com/submit' plus accessKey
+   * Can also be set at build time with VITE_ENQUIRY_ENDPOINT / VITE_ENQUIRY_KEY.
+   */
+  enquiry: {
+    endpoint: (import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined) ?? '',
+    accessKey: (import.meta.env.VITE_ENQUIRY_KEY as string | undefined) ?? '',
+  },
+}

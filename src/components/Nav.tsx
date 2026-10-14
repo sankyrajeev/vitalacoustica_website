@@ -1,72 +1,77 @@
 import { useEffect, useState } from 'react'
 import { site } from '../content/site'
-import { logoSrc } from '../brand/logo'
 import { useTheme } from '../hooks/useTheme'
+import { Link } from './Link'
+import { Wordmark } from './ui'
 
-export function Nav() {
+/** Minimal top navigation: wordmark, three sections, and the enquiry CTA. */
+export function Nav({ path }: { path: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const { theme, toggle } = useTheme()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 40)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('menu-open', open)
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
+  const isActive = (to: string) => path === to || path.startsWith(`${to}/`)
+  const close = () => setOpen(false)
+
   return (
-    <header className={`nav ${scrolled ? 'nav--solid' : ''} ${open ? 'nav--open' : ''}`}>
-      <a href="#top" className="nav__logo" aria-label={`${site.name} home`}>
-        <img src={logoSrc('logo-full', theme)} alt={site.name} width={1712} height={403} />
-      </a>
-      <div className="nav__right">
-        <nav id="nav-links" className="nav__links" onClick={() => setOpen(false)}>
-          {site.nav.map((l) => (
-            <a key={l.href} href={l.href}>
-              {l.label}
-            </a>
+    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''}`}>
+      <Link to="/" className="nav__brand" onClick={close}>
+        <Wordmark />
+      </Link>
+
+      <nav id="site-menu" className="nav__menu" aria-label="Main">
+        <ul>
+          {site.nav.map((item, i) => (
+            <li key={item.to}>
+              <Link to={item.to} aria-current={isActive(item.to) ? 'page' : undefined} onClick={close}>
+                <span className="nav__num" aria-hidden>
+                  0{i + 1}
+                </span>
+                {item.label}
+              </Link>
+            </li>
           ))}
-          <a href="#contact" className="btn btn--primary btn--sm">
-            Book a show
-          </a>
-        </nav>
+          <li className="nav__cta">
+            <Link to="/contact" aria-current={isActive('/contact') ? 'page' : undefined} onClick={close}>
+              Start a project
+            </Link>
+          </li>
+        </ul>
+        <p className="nav__line" aria-hidden>
+          {site.lines.felt}
+        </p>
+      </nav>
+
+      <div className="nav__tools">
         <button
           className="icon-btn"
           onClick={toggle}
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          aria-label={theme === 'dark' ? 'Switch to the light edition' : 'Switch to the dark edition'}
+          title={theme === 'dark' ? 'Light edition' : 'Dark edition'}
         >
-          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+          <span className={`theme-dot theme-dot--${theme}`} aria-hidden />
         </button>
-        <button
-          className="icon-btn nav__toggle"
-          aria-expanded={open}
-          aria-controls="nav-links"
-          onClick={() => setOpen((o) => !o)}
-        >
-          <span />
-          <span />
-          <span className="sr-only">Menu</span>
+        <button className="icon-btn nav__burger" aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen((o) => !o)}>
+          <span aria-hidden />
+          <span aria-hidden />
+          <span className="sr-only">{open ? 'Close menu' : 'Menu'}</span>
         </button>
       </div>
     </header>
-  )
-}
-
-function SunIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
-      <circle cx="12" cy="12" r="4.2" />
-      <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" />
-    </svg>
-  )
-}
-
-function MoonIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
-      <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" />
-    </svg>
   )
 }

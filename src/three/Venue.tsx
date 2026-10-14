@@ -1,13 +1,10 @@
 import { MeshReflectorMaterial } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
-import { useLayoutEffect, useMemo, useRef } from 'react'
-import { CanvasTexture, InstancedMesh, MeshStandardMaterial, Object3D, RepeatWrapping, SRGBColorSpace, Vector2 } from 'three'
-import { kickAt } from './beat'
+import { useMemo } from 'react'
+import { CanvasTexture, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three'
 import { usePalette } from './palette'
-import { show } from './show'
 
 // A warehouse room for the show: concrete shell, steel roof trusses, columns,
-// a raised stage deck, DJ booth, FOH position and a crowd that moves to the kick.
+// a raised stage deck, DJ booth and FOH position.
 
 import { DECK, VENUE } from './layout'
 
@@ -205,100 +202,6 @@ function FOH() {
   )
 }
 
-/** Body profile (radius, height) for a lathe — legs, hips, waist, chest, shoulders, neck. */
-const BODY_PROFILE: [number, number][] = [
-  [0.001, 0],
-  [0.13, 0.02],
-  [0.12, 0.78],
-  [0.165, 0.92],
-  [0.15, 1.1],
-  [0.2, 1.3],
-  [0.23, 1.4],
-  [0.16, 1.46],
-  [0.06, 1.5],
-  [0.001, 1.52],
-]
-const BODY_HEIGHT = 1.52
-
-/** Crowd silhouettes — instanced bodies, heads and raised hands, moving on the kick with their own timing. */
-function Crowd({ count }: { count: number }) {
-  const p = usePalette()
-  const bodies = useRef<InstancedMesh>(null)
-  const heads = useRef<InstancedMesh>(null)
-  const arms = useRef<InstancedMesh>(null)
-  const profile = useMemo(() => BODY_PROFILE.map(([r, h]) => new Vector2(r, h)), [])
-  const people = useMemo(() => {
-    const out: { x: number; z: number; h: number; phase: number; amp: number; r: number; hands: boolean }[] = []
-    let seed = 7
-    const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647
-    while (out.length < count) {
-      const x = (rand() * 2 - 1) * 10.5
-      // denser near the stage
-      const z = 4.3 + Math.pow(rand(), 1.5) * 20
-      if (Math.abs(x) < 2.2 && z > 18.4 && z < 21.8) continue // keep FOH clear
-      out.push({ x, z, h: 1.6 + rand() * 0.3, phase: rand() * 0.25, amp: 0.03 + rand() * 0.05, r: (rand() - 0.5) * 0.6, hands: rand() < 0.13 })
-    }
-    return out
-  }, [count])
-  const raised = useMemo(() => people.filter((pp) => pp.hands), [people])
-  const material = useMemo(() => new MeshStandardMaterial({ color: p.crowd, roughness: 0.9 }), [p.crowd])
-  const o = useMemo(() => new Object3D(), [])
-
-  useLayoutEffect(() => {
-    for (const m of [bodies, heads, arms]) if (m.current) m.current.material = material
-  }, [material])
-
-  useFrame(() => {
-    const t = show.time
-    let a = 0
-    people.forEach((pp, i) => {
-      const bob = kickAt(t + pp.phase, 6) * pp.amp
-      const s = (pp.h - 0.24) / BODY_HEIGHT
-      const sway = Math.sin(t * 1.7 + i) * 0.03
-      o.position.set(pp.x, bob, pp.z)
-      o.rotation.set(0, pp.r, sway)
-      o.scale.set(s, s, s * 0.62)
-      o.updateMatrix()
-      bodies.current!.setMatrixAt(i, o.matrix)
-      const top = BODY_HEIGHT * s
-      o.position.set(pp.x - sway * top, top + 0.11 + bob * 1.3, pp.z)
-      o.rotation.set(0, 0, 0)
-      o.scale.set(1, 1.12, 1)
-      o.updateMatrix()
-      heads.current!.setMatrixAt(i, o.matrix)
-      if (pp.hands) {
-        // two arms up in a V, pumping a little on the kick
-        const lift = 0.25 + 0.2 * kickAt(t + pp.phase, 4)
-        for (const side of [-1, 1]) {
-          o.position.set(pp.x + side * 0.2 * s - sway * top, top - 0.02 + bob, pp.z)
-          o.rotation.set(0, pp.r, -side * lift)
-          o.scale.set(1, 1, 1)
-          o.translateY(0.33)
-          o.updateMatrix()
-          arms.current!.setMatrixAt(a++, o.matrix)
-        }
-      }
-    })
-    bodies.current!.instanceMatrix.needsUpdate = true
-    heads.current!.instanceMatrix.needsUpdate = true
-    arms.current!.instanceMatrix.needsUpdate = true
-  })
-
-  return (
-    <group>
-      <instancedMesh ref={bodies} args={[undefined, material, count]} frustumCulled={false}>
-        <latheGeometry args={[profile, 14]} />
-      </instancedMesh>
-      <instancedMesh ref={heads} args={[undefined, material, count]} frustumCulled={false}>
-        <sphereGeometry args={[0.105, 14, 10]} />
-      </instancedMesh>
-      <instancedMesh ref={arms} args={[undefined, material, raised.length * 2]} frustumCulled={false}>
-        <capsuleGeometry args={[0.032, 0.56, 3, 8]} />
-      </instancedMesh>
-    </group>
-  )
-}
-
 /** Front-of-stage crowd barrier with a pit between it and the stage/PA. */
 function Barrier() {
   const steel = useMemo(() => new MeshStandardMaterial({ color: '#8a8c8f', metalness: 0.9, roughness: 0.35 }), [])
@@ -330,7 +233,6 @@ export function Venue({ small }: { small: boolean }) {
       <Floor small={small} />
       <StageDeck />
       <FOH />
-      <Crowd count={small ? 180 : 420} />
     </group>
   )
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { gear, gearById, type GearId } from '../content/gear'
+import { registerMarker } from '../three/markers'
 import { LOOK_NAMES, REFERENCE_BPM, resetShow, show, type ColourMode } from '../three/show'
 
 const COLOURS: { id: ColourMode; label: string }[] = [
@@ -47,12 +48,28 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
     <div className={`explore ${deskOpen ? 'explore--desk' : ''}`} role="region" aria-label="Explore the rig">
       <div className="explore__top">
         <p className="explore__title">
-          <span className="eyebrow">Explore the rig</span>
+          <span className="label">Stage model</span>
           <span className="explore__hint">Drag to orbit · scroll or pinch to zoom · tap a marker</span>
         </p>
         <button className="hud__exit" onClick={onExit}>
           Back to site <kbd>Esc</kbd>
         </button>
+      </div>
+
+      <div className="stage-markers">
+        {gear.map((g) => (
+          <button
+            key={g.id}
+            ref={(el) => registerMarker(g.id, el)}
+            className={`marker stage-marker ${focus === g.id ? 'is-active' : ''}`}
+            onClick={() => onFocus(g.id)}
+            aria-label={`${g.name}: show details`}
+            tabIndex={-1}
+          >
+            <span className="marker__dot" />
+            <span className="marker__label">{g.name}</span>
+          </button>
+        ))}
       </div>
 
       <nav className="explore__list" aria-label="Gear">
@@ -112,7 +129,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
               </div>
             </div>
             <div className="desk__faders">
-              <label className="fader">
+              <label className="desk__fader">
                 <span>BPM</span>
                 <input
                   id="desk-bpm"
@@ -127,7 +144,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
                 />
                 <output htmlFor="desk-bpm">{bpm}</output>
               </label>
-              <label className="fader">
+              <label className="desk__fader">
                 <span>Master</span>
                 <input
                   id="desk-master"
@@ -142,7 +159,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
                 />
                 <output htmlFor="desk-master">{Math.round(master * 100)}%</output>
               </label>
-              <label className="fader">
+              <label className="desk__fader">
                 <span>Haze</span>
                 <input
                   id="desk-haze"

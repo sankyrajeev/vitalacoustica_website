@@ -1,4 +1,4 @@
-import { Environment, Html, Lightformer, OrbitControls, Sparkles } from '@react-three/drei'
+import { Environment, Lightformer, OrbitControls, Sparkles } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
@@ -13,12 +13,13 @@ import { Sharpies } from './gear/Sharpies'
 import { PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
 import { EXPLORE_HOME, HOTSPOTS } from './hotspots'
+import { markerEls } from './markers'
 import { DECK, VENUE } from './layout'
 import { PALETTES, PaletteContext, type SceneTheme, usePalette } from './palette'
 import { tickShow } from './show'
 import { Venue } from './Venue'
 
-export type SceneMode = 'hero' | 'drone' | 'explore'
+export type SceneMode = 'drone' | 'explore'
 
 type SceneProps = {
   small: boolean
@@ -26,42 +27,12 @@ type SceneProps = {
   theme: SceneTheme
   mode: SceneMode
   focus: GearId | null
-  onSelect: (id: GearId) => void
   haze: number
 }
 
 /** Advances the shared show clock once per frame, before any fixture reads it. */
 function ShowClock({ timeScale }: { timeScale: number }) {
   useFrame((_, dt) => tickShow(dt, timeScale), -1)
-  return null
-}
-
-const LOOK = new Vector3()
-
-/** Audience-eye view: slow push-in on load, then gentle parallax with the pointer. */
-function HeroCamera({ reducedMotion }: { reducedMotion: boolean }) {
-  const { camera, size, pointer } = useThree()
-  const start = useRef<number | null>(null)
-  useFrame(({ clock }) => {
-    if (start.current === null) start.current = clock.elapsedTime
-    const aspect = size.width / size.height
-    const portrait = aspect < 1
-    const baseZ = portrait ? Math.min(17.5, 14 + (1 - aspect) * 7) : 12
-    const intro = reducedMotion ? 1 : Math.min(1, (clock.elapsedTime - start.current) / 3.5)
-    const ease = 1 - Math.pow(1 - intro, 3)
-    const tx = reducedMotion ? 0 : pointer.x * 1.1
-    // eye height of someone on the FOH riser, so the crowd sits low in frame
-    const ty = 3.5 + (reducedMotion ? 0 : pointer.y * 0.35)
-    const tz = baseZ + (1 - ease) * 8
-    // during the intro z is driven directly; afterwards everything eases (also back from other modes)
-    const k = 0.04
-    camera.position.x += (tx - camera.position.x) * k
-    camera.position.y += (ty - camera.position.y) * k
-    camera.position.z = intro < 1 ? tz : camera.position.z + (tz - camera.position.z) * k
-    // aim low so the rig sits in the upper part of the frame, above the headline
-    LOOK.set(0, portrait ? -0.6 : 0.1, 0)
-    camera.lookAt(LOOK)
-  })
   return null
 }
 
@@ -159,24 +130,21 @@ function ExploreCamera({ focus }: { focus: GearId | null }) {
   )
 }
 
-/** Clickable markers pinned to each piece of gear. */
-function Hotspots({ focus, onSelect }: { focus: GearId | null; onSelect: (id: GearId) => void }) {
-  return (
-    <>
-      {gear.map((g) => (
-        <Html key={g.id} position={HOTSPOTS[g.id].at} center zIndexRange={[20, 0]}>
-          <button
-            className={`hotspot ${focus === g.id ? 'is-active' : ''}`}
-            onClick={() => onSelect(g.id)}
-            aria-label={`${g.name}: show details`}
-          >
-            <span className="hotspot__dot" />
-            <span className="hotspot__label">{g.name}</span>
-          </button>
-        </Html>
-      ))}
-    </>
-  )
+const projected = new Vector3()
+
+/** Moves the DOM gear markers to their fixtures' on-screen positions. */
+function MarkerProjector() {
+  useFrame(({ camera, size }) => {
+    for (const g of gear) {
+      const el = markerEls.get(g.id)
+      if (!el) continue
+      projected.set(...HOTSPOTS[g.id].at).project(camera)
+      const visible = projected.z < 1 && Math.abs(projected.x) < 1.1 && Math.abs(projected.y) < 1.1
+      el.style.visibility = visible ? 'visible' : 'hidden'
+      if (visible) el.style.transform = `translate(${((projected.x + 1) / 2) * size.width}px, ${((1 - projected.y) / 2) * size.height}px)`
+    }
+  })
+  return null
 }
 
 function Stage({ small }: { small: boolean }) {
@@ -232,7 +200,7 @@ function Haze({ small, theme, haze }: { small: boolean; theme: SceneTheme; haze:
   )
 }
 
-function Scene({ small, reducedMotion, theme, mode, focus, onSelect, haze }: SceneProps) {
+function Scene({ small, reducedMotion, theme, mode, focus, haze }: SceneProps) {
   const p = PALETTES[theme]
   return (
     <PaletteContext.Provider value={p}>
@@ -270,11 +238,10 @@ function Scene({ small, reducedMotion, theme, mode, focus, onSelect, haze }: Sce
       <Haze small={small} theme={theme} haze={haze} />
 
       {mode === 'drone' && <DroneCamera />}
-      {mode === 'hero' && <HeroCamera reducedMotion={reducedMotion} />}
       {mode === 'explore' && (
         <>
           <ExploreCamera focus={focus} />
-          <Hotspots focus={focus} onSelect={onSelect} />
+          <MarkerProjector />
         </>
       )}
 
@@ -292,7 +259,7 @@ export default function HeroScene({ active, ...props }: SceneProps & { active: b
   return (
     <Canvas
       dpr={props.small ? [1, 1.5] : [1, 1.75]}
-      camera={{ position: [0, 2.2, 22], fov: 42, near: 0.05, far: 120 }}
+      camera={{ position: [0, 3.2, 14], fov: 42, near: 0.05, far: 120 }}
       gl={{ antialias: false, powerPreference: 'high-performance', alpha: false }}
       frameloop={active ? 'always' : 'never'}
     >

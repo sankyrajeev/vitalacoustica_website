@@ -23,12 +23,30 @@ export function useInView(ref: RefObject<Element | null>, rootMargin = '0px') {
   return inView
 }
 
-/** Adds `is-visible` to every `[data-reveal]` element as it scrolls into view. */
-export function useRevealOnScroll() {
+// Editorial blocks that ease in as they reach the viewport.
+const REVEAL = [
+  '[data-reveal]',
+  '.section-head',
+  '.project',
+  '.cap__text',
+  '.cap__aside',
+  '.spec',
+  '.tech-drawing',
+  '.workflow li',
+  '.process li',
+  '.case__section',
+  '.journal__entry',
+  '.approach li',
+  '.manifesto__body',
+].join(',')
+
+/** Adds `is-visible` to revealable blocks as they scroll into view. Re-runs when the page changes. */
+export function useRevealOnScroll(key: string) {
   useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>('[data-reveal]')
+    const els = document.querySelectorAll<HTMLElement>(REVEAL)
     // anything already on screen stays visible; only content below the fold animates in
     els.forEach((el) => {
+      el.classList.add('reveal')
       if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('is-visible')
     })
     document.documentElement.classList.add('reveal-ready')
@@ -40,9 +58,9 @@ export function useRevealOnScroll() {
             io.unobserve(e.target)
           }
         }),
-      { threshold: 0.15 },
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
     )
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
-  }, [])
+  }, [key])
 }

@@ -5,10 +5,9 @@ export type Theme = 'light' | 'dark'
 const STORAGE_KEY = 'va-theme'
 
 function initialTheme(): Theme {
-  // index.html sets this before first paint (saved choice, else the OS setting)
+  // index.html sets this before first paint; the dark edition is the default
   const attr = document.documentElement.dataset.theme
-  if (attr === 'light' || attr === 'dark') return attr
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+  return attr === 'light' ? 'light' : 'dark'
 }
 
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({ theme: 'dark', toggle: () => {} })
@@ -18,7 +17,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#030303' : '#f2f1ee')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#101010' : '#f0ede5')
   }, [theme])
 
   const toggle = useCallback(() => {
