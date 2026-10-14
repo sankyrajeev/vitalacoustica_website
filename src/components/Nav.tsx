@@ -15,7 +15,7 @@ export function Nav() {
   return (
     <header className={`nav ${scrolled ? 'nav--solid' : ''} ${open ? 'nav--open' : ''}`}>
       <a href="#top" className="nav__logo" aria-label={`${site.name} home`}>
-        <img src="/brand/logo-full-white.png" alt={site.name} width={1712} height={403} />
+        <img src={`${import.meta.env.BASE_URL}brand/logo-full-white.png`} alt={site.name} width={1712} height={403} />
       </a>
       <button
         className="nav__toggle"

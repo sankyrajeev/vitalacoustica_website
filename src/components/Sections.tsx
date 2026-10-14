@@ -140,7 +140,7 @@ const YEAR = new Date().getFullYear()
 export function Footer() {
   return (
     <footer className="footer container">
-      <img src="/brand/va-mark-white.png" alt="" width={1501} height={822} className="footer__mark" />
+      <img src={`${import.meta.env.BASE_URL}brand/va-mark-white.png`} alt="" width={1501} height={822} className="footer__mark" />
       <p>
         © {YEAR} {site.name} · {site.descriptor}
       </p>
