@@ -2,10 +2,11 @@ import { EnquiryForm } from '../components/EnquiryForm'
 import { PageHead } from '../components/PageHead'
 import { Cta, Label, Placeholder, TextLink } from '../components/ui'
 import { capabilities, process } from '../content/capabilities'
-import { gear, RIG_GROUPS } from '../content/gear'
+import { fullName, gear, gearById, RIG_GROUPS, type GearGroup, type GearId } from '../content/gear'
 import { journal } from '../content/journal'
 import { site } from '../content/site'
 import { Link } from '../components/Link'
+import { queryParam } from '../router'
 
 /* ─────────────── Studio ─────────────── */
 
@@ -126,7 +127,7 @@ export function DeckPage() {
               <ul className="sheet__list">
                 {RIG_GROUPS.map((group) => (
                   <li key={group}>
-                    <strong>{group}</strong> {gear.filter((g) => g.group === group).map((g) => g.name).join(', ')}.
+                    <strong>{group}</strong> {gear.filter((g) => g.group === group).map(fullName).join(', ')}.
                   </li>
                 ))}
               </ul>
@@ -156,8 +157,17 @@ export function DeckPage() {
 
 /* ─────────────── Contact ─────────────── */
 
+const SERVICE_FOR_GROUP: Record<GearGroup, string> = {
+  Sound: 'Sound system',
+  Lighting: 'Lighting',
+  'LED & visuals': 'LED & visuals',
+  Structure: 'Full production',
+}
+
 export function ContactPage() {
   const { email, phone, whatsapp, instagram } = site.contact
+  // arriving from an equipment page: "#/contact?item=b22"
+  const item = gearById[queryParam('item') as GearId]
   const direct = [
     email && { label: 'Email', value: email, href: `mailto:${email}` },
     phone && { label: 'Phone', value: phone, href: `tel:${phone.replace(/\s/g, '')}` },
@@ -167,13 +177,17 @@ export function ContactPage() {
 
   return (
     <>
-      <PageHead label="Start a project" title="Let’s shape something exceptional.">
-        Tell us about the experience you’re planning. We’ll work with you to understand the brief and develop the right
-        approach.
+      <PageHead label="Get a quote" title="Tell us about your event.">
+        The date, the venue and roughly how many people. We’ll come back with the right system, a quote, and who will be
+        on site to run it.
       </PageHead>
       <section className="section section--tight">
         <div className="wrap contact">
-          <EnquiryForm id="contact" />
+          <EnquiryForm
+            id="contact"
+            initialServices={item ? [SERVICE_FOR_GROUP[item.group]] : []}
+            initialDescription={item ? `Interested in: ${fullName(item)}\n\n` : ''}
+          />
           <aside className="contact__aside">
             {direct.length > 0 && (
               <>

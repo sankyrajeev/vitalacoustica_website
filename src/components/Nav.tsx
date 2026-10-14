@@ -4,7 +4,7 @@ import { useTheme } from '../hooks/useTheme'
 import { Link } from './Link'
 import { Wordmark } from './ui'
 
-/** Minimal top navigation: wordmark, three sections, and the enquiry CTA. */
+/** Top navigation: wordmark, the main sections, and the quote CTA. */
 export function Nav({ path }: { path: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -29,7 +29,7 @@ export function Nav({ path }: { path: string }) {
   const close = () => setOpen(false)
 
   return (
-    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''}`}>
+    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''} ${path === '/' && !scrolled && !open ? 'nav--on-photo' : ''}`}>
       <Link to="/" className="nav__brand" onClick={close}>
         <Wordmark />
       </Link>
@@ -48,7 +48,7 @@ export function Nav({ path }: { path: string }) {
           ))}
           <li className="nav__cta">
             <Link to="/contact" aria-current={isActive('/contact') ? 'page' : undefined} onClick={close}>
-              Start a project
+              Get a quote
             </Link>
           </li>
         </ul>

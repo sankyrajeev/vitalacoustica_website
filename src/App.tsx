@@ -3,6 +3,7 @@ import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
 import { StageModelOverlay } from './components/StageModel'
 import { capabilityById } from './content/capabilities'
+import { fullName, gearById, type GearId } from './content/gear'
 import { projectBySlug } from './content/projects'
 import { site } from './content/site'
 import { useRevealOnScroll } from './hooks/useMedia'
@@ -11,22 +12,29 @@ import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
 import { ContactPage, DeckPage, JournalPage, LegalPage, NotFoundPage, StudioPage } from './pages/Other'
 import { CaseStudy, WorkIndex } from './pages/Work'
+import { EquipmentDetail, EquipmentIndex } from './pages/Equipment'
 import { match, useRoute } from './router'
 
 type Resolved = { title: string; page: ReactNode }
 
 function resolve(path: string): Resolved {
-  if (path === '/') return { title: `${site.name} — ${site.headline}`, page: <Home /> }
+  if (path === '/') return { title: `${site.name} — Sound & lighting rental and production`, page: <Home /> }
   if (path === '/work') return { title: 'Selected work', page: <WorkIndex /> }
   const work = match('/work/:slug', path)
   if (work) return { title: projectBySlug(work.slug)?.title ?? 'Not found', page: <CaseStudy slug={work.slug} /> }
-  if (path === '/capabilities') return { title: 'Capabilities', page: <CapabilitiesIndex /> }
+  if (path === '/equipment') return { title: 'Equipment for hire', page: <EquipmentIndex /> }
+  const item = match('/equipment/:id', path)
+  if (item) {
+    const g = gearById[item.id as GearId]
+    return { title: g ? `${fullName(g)} for hire` : 'Not found', page: <EquipmentDetail id={item.id} /> }
+  }
+  if (path === '/capabilities') return { title: 'Services', page: <CapabilitiesIndex /> }
   const cap = match('/capabilities/:id', path)
   if (cap) return { title: capabilityById(cap.id)?.name ?? 'Not found', page: <CapabilityPage id={cap.id} /> }
   if (path === '/studio') return { title: 'Studio', page: <StudioPage /> }
   if (path === '/journal') return { title: 'Journal', page: <JournalPage /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
-  if (path === '/contact') return { title: 'Start a project', page: <ContactPage /> }
+  if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }
   if (path === '/privacy') return { title: 'Privacy', page: <LegalPage kind="privacy" /> }
   if (path === '/legal') return { title: 'Legal', page: <LegalPage kind="legal" /> }
   return { title: 'Not found', page: <NotFoundPage /> }

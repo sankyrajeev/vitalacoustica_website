@@ -4,7 +4,7 @@
 export const site = {
   name: 'Vital Acoustica',
   domain: 'vitalacoustica.com',
-  eyebrow: 'Independent creative production',
+  eyebrow: 'Sound & lighting rental · Production',
   headline: 'We shape the way an experience feels.',
   supporting: 'Sound, light and production. Conceived as one.',
   intro:
@@ -27,9 +27,14 @@ export const site = {
     exceptional: 'Let’s shape something exceptional.',
   },
 
+  // what the company does, in one plain sentence (homepage hero, meta description)
+  rental:
+    'Professional sound and lighting hire, with the crew to run it. d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated for club nights, festivals, brand events and private celebrations.',
+
   nav: [
+    { label: 'Equipment', to: '/equipment' },
+    { label: 'Services', to: '/capabilities' },
     { label: 'Work', to: '/work' },
-    { label: 'Capabilities', to: '/capabilities' },
     { label: 'Studio', to: '/studio' },
   ],
 

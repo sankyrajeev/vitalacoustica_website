@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { gear, gearById, type GearId } from '../content/gear'
+import { fullName, gear, gearById, type GearId } from '../content/gear'
+import { navigate } from '../router'
+import { gearImg } from './gearImg'
 import { registerMarker } from '../three/markers'
 import { LOOK_NAMES, REFERENCE_BPM, resetShow, show, type ColourMode } from '../three/show'
 
@@ -63,7 +65,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
             ref={(el) => registerMarker(g.id, el)}
             className={`marker stage-marker ${focus === g.id ? 'is-active' : ''}`}
             onClick={() => onFocus(g.id)}
-            aria-label={`${g.name}: show details`}
+            aria-label={`${fullName(g)}: show details`}
             tabIndex={-1}
           >
             <span className="marker__dot" />
@@ -88,10 +90,25 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
               ×
             </button>
           </header>
-          <h3>{item.name}</h3>
+          <div className={`spec-card__photo spec-card__photo--${item.photo.fit ?? item.photo.source}`}>
+            <img src={gearImg(item.photo.file)} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} />
+          </div>
+          <h3>
+            {item.maker && <span className="spec-card__maker">{item.maker}</span>}
+            {item.name}
+          </h3>
           <p className="spec-card__role">{item.role}</p>
           <p className="spec-card__spec">{item.spec}</p>
           <p className="spec-card__about">{item.about}</p>
+          <button
+            className="text-link"
+            onClick={() => {
+              onExit()
+              navigate(`/equipment/${item.id}`)
+            }}
+          >
+            Full details <span aria-hidden>→</span>
+          </button>
         </article>
       )}
 

@@ -21,18 +21,8 @@ export type SceneParams = {
 const base: SceneParams = { opacity: 1, dist: 9, x: 1.75, y: 0, turn: 0, tilt: 0, scale: 1, wave: 0, sweep: 0.15, mesh: 0, grid: 0, calm: 0 }
 
 export const SCENES: Record<string, Partial<SceneParams>> = {
-  entrance: {},
-  manifesto: { dist: 5.6, x: 1.9, turn: 1.1, tilt: 0.25, opacity: 0.55 },
-  media: { opacity: 0, dist: 3.4, turn: 1.6 },
-  work: { opacity: 0 },
-  'cap-intro': { dist: 9.5, x: 1.9, turn: 2.2, opacity: 0.85 },
-  'cap-sound': { dist: 8, x: 1.9, turn: 2.6, wave: 1 },
-  'cap-light': { dist: 7.2, x: 1.8, turn: 3.2, sweep: 1, tilt: -0.15 },
-  'cap-visuals': { dist: 8.4, x: 1.9, turn: 3.8, mesh: 1, tilt: 0.1 },
-  'cap-production': { dist: 10.5, x: 2.0, turn: 4.4, grid: 1, tilt: 0.55, y: 0.35 },
-  technical: { opacity: 0 },
-  studio: { opacity: 0 },
-  enquiry: { dist: 13, x: 0, y: 0.1, turn: 5.4, scale: 0.85, calm: 1, opacity: 0.5 },
+  // the homepage enquiry: the sculpture sits centred behind the call to action
+  enquiry: { dist: 13, x: 0, y: 0.1, turn: 5.4, scale: 0.85, calm: 1, opacity: 0.55 },
 }
 
 const KEYS = Object.keys(base) as (keyof SceneParams)[]

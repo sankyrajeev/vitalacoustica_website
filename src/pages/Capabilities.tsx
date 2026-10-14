@@ -4,15 +4,16 @@ import { StageModelLauncher } from '../components/StageModel'
 import { Arrow, Label, MediaFrame, TextLink } from '../components/ui'
 import { capabilities, capabilityById, type Capability } from '../content/capabilities'
 import { gearById } from '../content/gear'
-import { openExplore } from '../events'
+import { GearCard } from '../components/Equipment'
 import { Link } from '../components/Link'
 import { NotFound } from './NotFound'
 
 export function CapabilitiesIndex() {
   return (
     <>
-      <PageHead label="Capabilities" title="Different disciplines. One considered outcome.">
-        Four disciplines, planned together from the start so that sound, light and image serve the same idea.
+      <PageHead label="Services" title="Sound, light and production, for hire.">
+        Hire the equipment on its own, or with the crew to design, set up and run it. Everything is planned together so the
+        sound, the light and the stage serve the same night.
       </PageHead>
       <section className="section section--tight">
         <ol className="wrap cap-index">
@@ -35,26 +36,12 @@ export function CapabilitiesIndex() {
 function Equipment({ c }: { c: Capability }) {
   return (
     <section className="cap-page__section">
-      <Label>Equipment</Label>
-      <div className="equipment">
-        {c.gear.map((id) => {
-          const g = gearById[id]
-          return (
-            <dl key={id} className="spec">
-              <dt>{g.name}</dt>
-              <dd className="spec__role">{g.role}</dd>
-              <dd className="spec__data">{g.spec}</dd>
-              <dd className="spec__about">{g.about}</dd>
-              <dd>
-                <button className="text-link" onClick={() => openExplore(id)}>
-                  View in the stage model <Arrow />
-                </button>
-              </dd>
-            </dl>
-          )
-        })}
+      <Label>Equipment for hire</Label>
+      <div className="gear-grid">
+        {c.gear.map((id) => (
+          <GearCard key={id} g={gearById[id]} />
+        ))}
       </div>
-      {c.id === 'sound' && <p className="fineprint">Specifications as published by d&b audiotechnik.</p>}
     </section>
   )
 }
@@ -67,7 +54,7 @@ export function CapabilityPage({ id }: { id: string }) {
 
   return (
     <article className="cap-page">
-      <PageHead label={`Capability ${c.index} — ${c.name}`} title={c.statement} />
+      <PageHead label={`Services ${c.index} — ${c.name}`} title={c.statement} />
 
       {c.image && (
         <div className="cap-page__hero">
@@ -131,7 +118,7 @@ export function CapabilityPage({ id }: { id: string }) {
         <Equipment c={c} />
       </div>
 
-      <nav className="wrap case__next" aria-label="Next capability">
+      <nav className="wrap case__next" aria-label="Next service">
         <span className="label">Next</span>
         <TextLink to={`/capabilities/${next.id}`}>{next.name}</TextLink>
       </nav>

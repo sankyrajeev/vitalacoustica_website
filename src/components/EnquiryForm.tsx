@@ -5,7 +5,7 @@ import { site } from '../content/site'
 // (Formspree, FormSubmit or Web3Forms all accept this shape).
 
 const EVENT_TYPES = ['Concert or club night', 'Festival or open air', 'Corporate or brand event', 'Private event', 'Permanent installation', 'Other']
-const SERVICES = ['Sound', 'Light', 'Visuals', 'Production']
+const SERVICES = ['Sound system', 'Lighting', 'LED & visuals', 'Full production', 'Installation consulting']
 const AUDIENCE = ['Under 100', '100–300', '300–600', '600–1,000', 'Over 1,000']
 const BUDGET = ['Prefer not to say', 'To be discussed', 'Under ₹2 lakh', '₹2–5 lakh', '₹5–10 lakh', 'Over ₹10 lakh']
 
@@ -15,9 +15,16 @@ function enquiryConfigured() {
   return Boolean(site.enquiry.endpoint)
 }
 
-export function EnquiryForm({ id = 'enquiry' }: { id?: string }) {
+type FormProps = {
+  id?: string
+  /** pre-selected services and description, e.g. when arriving from an equipment page */
+  initialServices?: string[]
+  initialDescription?: string
+}
+
+export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescription = '' }: FormProps) {
   const [status, setStatus] = useState<Status>({ state: 'idle' })
-  const [services, setServices] = useState<string[]>([])
+  const [services, setServices] = useState<string[]>(initialServices)
   const f = (name: string) => `${id}-${name}`
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -54,9 +61,9 @@ export function EnquiryForm({ id = 'enquiry' }: { id?: string }) {
         body: JSON.stringify({
           ...data,
           services: services.join(', '),
-          _subject: `Project enquiry: ${data.eventType || 'New project'} — ${data.name}`,
+          _subject: `Hire enquiry: ${data.eventType || 'New event'} — ${data.name}`,
           _replyto: data.email,
-          subject: `Project enquiry from ${data.name}`,
+          subject: `Hire enquiry from ${data.name}`,
           ...(site.enquiry.accessKey ? { access_key: site.enquiry.accessKey } : {}),
         }),
       })
@@ -84,7 +91,7 @@ export function EnquiryForm({ id = 'enquiry' }: { id?: string }) {
   return (
     <form className="form" onSubmit={submit} noValidate>
       <fieldset className="form__group">
-        <legend className="label">The experience</legend>
+        <legend className="label">The event</legend>
         <div className="form__grid">
           <label className="field" htmlFor={f('eventType')}>
             <span>Type of event</span>
@@ -148,7 +155,8 @@ export function EnquiryForm({ id = 'enquiry' }: { id?: string }) {
             name="description"
             rows={5}
             required
-            placeholder="What should the audience feel? The space, the artists or programme, anything already decided."
+            defaultValue={initialDescription}
+            placeholder="The venue, the music or programme, timings, and any equipment you already have in mind."
           />
         </label>
       </fieldset>
@@ -182,7 +190,7 @@ export function EnquiryForm({ id = 'enquiry' }: { id?: string }) {
 
       <div className="form__foot">
         <button className="cta cta--primary" type="submit" disabled={status.state === 'sending'}>
-          <span>{status.state === 'sending' ? 'Sending…' : 'Send enquiry'}</span>
+          <span>{status.state === 'sending' ? 'Sending…' : 'Request a quote'}</span>
         </button>
         <p className="form__note muted">We use your details only to reply to this enquiry.</p>
       </div>

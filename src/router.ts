@@ -7,12 +7,18 @@ import { useEffect, useState } from 'react'
 export const href = (path: string) => `#${path.startsWith('/') ? path : `/${path}`}`
 
 export function currentPath() {
-  const h = window.location.hash
+  const h = window.location.hash.split('?')[0]
   return h.startsWith('#/') ? h.slice(1).replace(/\/+$/, '') || '/' : '/'
 }
 
+/** A query parameter from the hash, e.g. "#/contact?item=b22" → item = "b22". */
+export function queryParam(name: string) {
+  const q = window.location.hash.split('?')[1]
+  return q ? new URLSearchParams(q).get(name) : null
+}
+
 export function navigate(path: string) {
-  if (currentPath() === path) {
+  if (window.location.hash === href(path)) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     return
   }

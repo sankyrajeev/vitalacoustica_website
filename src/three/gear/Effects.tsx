@@ -20,9 +20,11 @@ import { show } from '../show'
 
 // Lighting effects modelled on the house rig as it appears in show photos:
 // tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex
-// retro lights, amber dot bars, red pixel bars and LED rope.
+// retro lights, LED wall washer bars, red pixel bars and LED neon flex.
 
 const housing = new MeshStandardMaterial({ color: '#141414', metalness: 0.6, roughness: 0.45 })
+// brushed aluminium, as on the wall washer bars
+const aluminium = new MeshStandardMaterial({ color: '#8d8f91', metalness: 0.85, roughness: 0.38 })
 const stand = new MeshStandardMaterial({ color: '#222', metalness: 0.9, roughness: 0.35 })
 const red = new Color(RED)
 const amber = new Color(AMBER)
@@ -82,31 +84,44 @@ export function MatrixPanel({ phase = 0, ...props }: { phase?: number } & ThreeE
           uniform sampler2D uLogo;
           uniform vec3 uRed, uAmber;
           varying vec2 vUv;
-          const float GRID = 32.0;
+          // as on the real panel: a 7 × 7 grid of big warm-white dots over a fine RGB pixel field
+          const float GRID = 28.0;
+          const float DOTS = 7.0;
           void main() {
             vec2 cell = (floor(vUv * GRID) + 0.5) / GRID;
-            float led = 1.0 - smoothstep(0.3, 0.46, length(fract(vUv * GRID) - 0.5));
+            vec2 dotCell = floor(vUv * DOTS);
+            float bigDot = 1.0 - smoothstep(0.26, 0.33, length(fract(vUv * DOTS) - 0.5));
+            float pix = (1.0 - smoothstep(0.16, 0.26, length(fract(vUv * GRID) - 0.5))) * (1.0 - bigDot);
             float logo = texture2D(uLogo, cell).r;
             float look = mod(uLook, 4.0);
             vec2 c = cell - 0.5;
             float lvl;
             vec3 col;
+            float dotLvl;
             if (look < 1.0) {
               lvl = logo * (0.35 + 0.65 * uKick);
               col = mix(uRed, uAmber, 0.5 + 0.5 * sin(cell.y * 6.0 - uTime * 2.0));
+              // dots chase down the panel row by row
+              dotLvl = step(abs(dotCell.y - mod(floor(uTime * 4.0), DOTS)), 0.5) * 0.9 + 0.08;
             } else if (look < 2.0) {
               lvl = pow(0.5 + 0.5 * sin(length(c) * 30.0 - uTime * 6.0), 3.0) * (0.3 + 0.7 * uKick);
               col = uAmber;
+              dotLvl = pow(0.5 + 0.5 * sin(length(dotCell - 3.0) * 1.4 - uTime * 6.0), 4.0);
             } else if (look < 3.0) {
               // full red wash punching on the kick, like the photos
               lvl = 0.25 + 0.75 * uKick;
               col = uRed;
+              dotLvl = uKick;
             } else {
               float n = fract(sin(dot(floor(vUv * GRID), vec2(12.9898, 78.233)) + floor(uTime * 8.0)) * 43758.5453);
               lvl = max(step(0.88, n), logo * 0.5 * uKick);
               col = mix(uAmber, uRed, n);
+              float m = fract(sin(dot(dotCell, vec2(39.3468, 11.135)) + floor(uTime * 6.0)) * 43758.5453);
+              dotLvl = step(0.8, m);
             }
-            gl_FragColor = vec4(col * led * lvl * 2.4 * uMaster, 1.0);
+            vec3 warm = vec3(1.0, 0.62, 0.28);
+            vec3 outCol = col * pix * lvl * 2.4 + warm * bigDot * (0.035 + dotLvl * 2.2);
+            gl_FragColor = vec4(outCol * uMaster, 1.0);
           }
         `,
       }),
@@ -229,14 +244,18 @@ export function HexRetro({ index = 0, ...props }: { index?: number } & ThreeElem
   )
 }
 
-/* ─────────────── LED bars (amber dot bars & red pixel bars) ─────────────── */
+/* ─────────────── LED bars (wall washers & pixel bars) ─────────────── */
 
 type BarProps = { from: V3; to: V3; kind: 'dots' | 'pixels'; phase?: number }
 
-/** A straight LED bar between two points (in the XY plane), chasing on the beat. */
+/**
+ * A straight LED bar between two points (in the XY plane), chasing on the beat.
+ * 'dots' is the wall washer: 18 round LEDs in a grey aluminium body on brackets.
+ * 'pixels' is the pixel bar: a slim black bar of small square RGB cells.
+ */
 export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
   const cellsRef = useRef<InstancedMesh>(null)
-  const count = kind === 'dots' ? 10 : 28
+  const count = kind === 'dots' ? 18 : 40
   const color = useMemo(() => new Color(), [])
   const { mid, length, angle } = useMemo(() => {
     const dx = to[0] - from[0]
@@ -251,7 +270,7 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
   useLayoutEffect(() => {
     const o = new Object3D()
     for (let i = 0; i < count; i++) {
-      o.position.set(-length / 2 + ((i + 0.5) * length) / count, 0, 0.03)
+      o.position.set(-length / 2 + ((i + 0.5) * length) / count, 0, 0.034)
       o.updateMatrix()
       cellsRef.current!.setMatrixAt(i, o.matrix)
       cellsRef.current!.setColorAt(i, color.setRGB(0, 0, 0))
@@ -284,11 +303,29 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
 
   return (
     <group position={mid} rotation-z={angle}>
-      <mesh material={housing}>
-        <boxGeometry args={[length + 0.04, kind === 'dots' ? 0.08 : 0.035, 0.06]} />
-      </mesh>
+      {kind === 'dots' ? (
+        <>
+          <mesh material={aluminium}>
+            <boxGeometry args={[length + 0.04, 0.07, 0.06]} />
+          </mesh>
+          {/* mounting brackets at each end */}
+          {[-1, 1].map((e) => (
+            <mesh key={e} material={aluminium} position={[(e * length) / 2.6, -0.05, -0.02]}>
+              <boxGeometry args={[0.03, 0.05, 0.05]} />
+            </mesh>
+          ))}
+        </>
+      ) : (
+        <mesh material={housing}>
+          <boxGeometry args={[length + 0.03, 0.03, 0.04]} />
+        </mesh>
+      )}
       <instancedMesh ref={cellsRef} args={[undefined, undefined, count]}>
-        {kind === 'dots' ? <circleGeometry args={[0.03, 16]} /> : <planeGeometry args={[(length / count) * 0.9, 0.02]} />}
+        {kind === 'dots' ? (
+          <circleGeometry args={[Math.min(0.022, (length / count) * 0.36), 16]} />
+        ) : (
+          <planeGeometry args={[Math.min(0.02, (length / count) * 0.7), Math.min(0.02, (length / count) * 0.7)]} />
+        )}
         <meshBasicMaterial toneMapped={false} />
       </instancedMesh>
     </group>

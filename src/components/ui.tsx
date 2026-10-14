@@ -1,5 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
-import { gearById, type GearId } from '../content/gear'
+import { fullName, gearById, type GearId } from '../content/gear'
 import type { Hotspot, Media } from '../content/projects'
 import { openExplore } from '../events'
 import { img } from '../media'
@@ -128,7 +128,7 @@ export function PhotoHotspots({ hotspots, visible }: { hotspots: Hotspot[]; visi
             className={`marker spot ${isOpen ? 'is-active' : ''}`}
             style={{ left: `${h.x}%`, top: `${h.y}%` }}
             aria-expanded={isOpen}
-            aria-label={gearById[h.gear].name}
+            aria-label={fullName(gearById[h.gear])}
             tabIndex={visible ? 0 : -1}
             onClick={() => setPicked(isOpen ? null : h.gear)}
           >
@@ -144,11 +144,16 @@ export function PhotoHotspots({ hotspots, visible }: { hotspots: Hotspot[]; visi
           style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
         >
           <span className="spot-note__role">{g.role}</span>
-          <strong>{g.name}</strong>
+          <strong>{fullName(g)}</strong>
           <p>{g.about}</p>
-          <button className="text-link" onClick={() => openExplore(g.id)}>
-            View in the stage model <Arrow />
-          </button>
+          <span className="spot-note__links">
+            <Link to={`/equipment/${g.id}`} className="text-link">
+              Details <Arrow />
+            </Link>
+            <button className="text-link" onClick={() => openExplore(g.id)}>
+              3D rig <Arrow />
+            </button>
+          </span>
         </div>
       )}
     </div>
