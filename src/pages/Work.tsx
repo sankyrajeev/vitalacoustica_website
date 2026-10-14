@@ -35,6 +35,8 @@ export function CaseStudy({ slug }: { slug: string }) {
   const p = real.find((x) => x.slug === slug)
   if (!p) return <NotFound />
   const next = real[(real.indexOf(p) + 1) % real.length]
+  // DUMMY: a sample photo from a different show, so it doesn't repeat this gallery
+  const sample = ['park-blue', 'club-down', 'park-dusk', 'club-neon'].find((src) => !p.gallery.some((m) => m.src === src))
   const details: [string, string][] = [
     ['Venue', p.venue],
     ['Year', p.year],
@@ -86,7 +88,7 @@ export function CaseStudy({ slug }: { slug: string }) {
           {p.gallery.slice(1).map((m) => (
             <MediaFrame key={m.src} media={m} showGear sizes="(max-width: 900px) 100vw, 50vw" />
           ))}
-          <Placeholder ratio="4 / 3">Load-in, rigging and system-tuning photographs.</Placeholder>
+          <Placeholder ratio="4 / 3" sample={sample}>Load-in, rigging and system-tuning photographs.</Placeholder>
         </div>
       </section>
 
@@ -95,7 +97,7 @@ export function CaseStudy({ slug }: { slug: string }) {
         {p.film ? (
           <video src={p.film} controls preload="none" playsInline />
         ) : (
-          <Placeholder ratio="16 / 9">The final production film for this project.</Placeholder>
+          <Placeholder ratio="16 / 9" sample={sample}>The final production film for this project.</Placeholder>
         )}
       </section>
 

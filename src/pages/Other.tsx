@@ -249,7 +249,12 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'legal' }) {
           ) : (
             <>
               <h2 className="h3">Company details</h2>
-              <p>Registered name, address and registration numbers to be added.</p>
+              {/* DUMMY: replace with the registered details */}
+              <p>
+                Vital Acoustica, Bangalore, Karnataka, India.
+                <br />
+                GSTIN: 29XXXXXXXXXX1ZX
+              </p>
               <h2 className="h3">Content</h2>
               <p>
                 Photographs show productions by {site.name}. Visual studies and renders are labelled as such. Equipment

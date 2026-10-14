@@ -58,12 +58,17 @@ export function TextLink({ to, children }: { to: string; children: ReactNode }) 
   )
 }
 
-/** A clearly marked slot for material Vital Acoustica still needs to supply. */
-export function Placeholder({ children, ratio = '16 / 10' }: { children: ReactNode; ratio?: string }) {
+// DUMMY: until the photo shoot, empty photo slots show one of the show photos, tagged as a sample.
+const SAMPLES = ['club-down', 'park-blue', 'club-neon', 'park-dusk', 'club-full']
+
+/** A photo slot still to be shot: shows a sample photograph, tagged as such. `children` says what belongs here. */
+export function Placeholder({ children, ratio = '16 / 10', sample }: { children: ReactNode; ratio?: string; sample?: string }) {
+  const note = typeof children === 'string' ? children : ''
+  const src = sample ?? SAMPLES[[...note].reduce((n, c) => n + c.charCodeAt(0), 0) % SAMPLES.length]
   return (
-    <div className="placeholder" style={{ aspectRatio: ratio }}>
-      <span className="placeholder__tag">To be supplied</span>
-      <p>{children}</p>
+    <div className="placeholder" style={{ aspectRatio: ratio }} title={note || undefined}>
+      <img src={img(src, 800)} alt="" loading="lazy" decoding="async" />
+      <span className="placeholder__tag">Sample photo</span>
     </div>
   )
 }

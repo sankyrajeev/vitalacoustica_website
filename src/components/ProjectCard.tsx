@@ -1,20 +1,21 @@
 import { TBC, type Project } from '../content/projects'
 import { img } from '../media'
 import { Link } from './Link'
-import { Arrow } from './ui'
+import { Arrow, Placeholder } from './ui'
 
-/** A project in an editorial grid. Placeholders stay visibly unfinished. */
+/** A project in an editorial grid. A placeholder project shows a sample photo and isn't linked. */
 export function ProjectCard({ project: p, variant = 'small' }: { project: Project; variant?: 'lead' | 'offset' | 'small' }) {
-  const meta = [p.venue, p.year].filter((x) => x && x !== TBC).join(' · ') || 'Details to be confirmed'
+  const meta = [p.venue, p.year].filter((x) => x && x !== TBC).join(' · ')
   if (p.placeholder) {
     return (
       <article className={`project project--${variant} project--placeholder`}>
-        <div className="project__media placeholder" style={{ aspectRatio: '4 / 3' }}>
-          <span className="placeholder__tag">To be supplied</span>
-          <p>Photography or film from a production you’d like to feature.</p>
+        <div className="project__media">
+          <Placeholder ratio="4 / 3" sample="club-neon">
+            Photography from a production you’d like to feature.
+          </Placeholder>
         </div>
         <div className="project__body">
-          <p className="project__meta">Reserved</p>
+          <p className="project__meta">Coming soon</p>
           <h3 className="project__title">{p.title}</h3>
           <p className="project__summary muted">{p.summary}</p>
         </div>

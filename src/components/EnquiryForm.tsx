@@ -1,15 +1,16 @@
 import { useState, type FormEvent } from 'react'
 import { site } from '../content/site'
 
-// Project enquiry. Posts JSON to the endpoint configured in site.enquiry
-// (Formspree, FormSubmit or Web3Forms all accept this shape).
+// Hire enquiry. Posts JSON to the endpoint configured in site.enquiry
+// (Formspree, FormSubmit or Web3Forms all accept this shape). With no endpoint set,
+// it falls back to the visitor's email app, addressed to site.contact.email.
 
 const EVENT_TYPES = ['Concert or club night', 'Festival or open air', 'Corporate or brand event', 'Private event', 'Permanent installation', 'Other']
 const SERVICES = ['Sound system', 'Lighting', 'LED & visuals', 'Full production', 'Installation consulting']
 const AUDIENCE = ['Under 100', '100–300', '300–600', '600–1,000', 'Over 1,000']
 const BUDGET = ['Prefer not to say', 'To be discussed', 'Under ₹2 lakh', '₹2–5 lakh', '₹5–10 lakh', 'Over ₹10 lakh']
 
-type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string }
+type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaEmail?: boolean }
 
 function enquiryConfigured() {
   return Boolean(site.enquiry.endpoint)
@@ -44,12 +45,29 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
     delete data._gotcha
 
     if (!enquiryConfigured()) {
-      setStatus({
-        state: 'error',
-        message: import.meta.env.DEV
-          ? 'Not connected yet: set site.enquiry.endpoint in src/content/site.ts.'
-          : 'Enquiries can’t be sent from the site right now. Please contact us directly.',
-      })
+      if (!site.contact.email) {
+        setStatus({ state: 'error', message: 'Enquiries can’t be sent from the site right now. Please contact us directly.' })
+        return
+      }
+      // no form service yet: hand the enquiry to the visitor's email app
+      const lines = [
+        ['Event', data.eventType],
+        ['Date', data.date],
+        ['Location', data.location],
+        ['Audience', data.audience],
+        ['Services', services.join(', ')],
+        ['Budget', data.budget],
+        ['Name', data.name],
+        ['Organisation', data.organisation],
+        ['Email', data.email],
+        ['Phone', data.phone],
+      ]
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${k}: ${v}`)
+      const body = `${lines.join('\n')}\n\n${data.description}`
+      const subject = `Hire enquiry: ${data.eventType || 'New event'} — ${data.name}`
+      window.location.href = `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+      setStatus({ state: 'sent', viaEmail: true })
       return
     }
 
@@ -77,7 +95,19 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
   }
 
   if (status.state === 'sent') {
-    return (
+    return status.viaEmail ? (
+      <div className="form-done" role="status">
+        <p className="label">Almost there</p>
+        <h3>Your email app should now be open.</h3>
+        <p className="muted">
+          The enquiry is written and addressed to us: just press send. If nothing opened, write to{' '}
+          <a className="underline" href={`mailto:${site.contact.email}`}>
+            {site.contact.email}
+          </a>
+          .
+        </p>
+      </div>
+    ) : (
       <div className="form-done" role="status">
         <p className="label">Received</p>
         <h3>Thank you. We’ll be in touch.</h3>

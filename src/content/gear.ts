@@ -6,6 +6,9 @@
 //   'show'    — cropped from a Vital Acoustica production photo
 //   'model'   — render of our 3D stage model (until a photo is supplied)
 // Specs marked as manufacturer data come from the maker's published sheets.
+//
+// DUMMY: every value marked `// DUMMY` below is a stand-in until the photo shoot and
+// stock check (models, quantities, truss size). Search the codebase for "DUMMY" to find them all.
 
 export type GearId = 'v10p' | 'b22' | 'sharpy' | 'matrix' | 'trefoil' | 'hex' | 'dotbar' | 'pixelbar' | 'rope' | 'truss'
 
@@ -23,6 +26,8 @@ export type Gear = {
   description: string
   specs: [string, string][]
   specSource?: string
+  /** how many we hold, shown on cards and item pages */
+  stock: string
   photo: {
     file: string
     width: number
@@ -39,6 +44,7 @@ export type Gear = {
 export const gear: Gear[] = [
   {
     id: 'v10p',
+    stock: '4 units', // DUMMY
     group: 'Sound',
     name: 'V10P',
     maker: 'd&b audiotechnik',
@@ -60,6 +66,7 @@ export const gear: Gear[] = [
   },
   {
     id: 'b22',
+    stock: '4 units', // DUMMY
     group: 'Sound',
     name: 'B22-SUB',
     maker: 'd&b audiotechnik',
@@ -79,6 +86,7 @@ export const gear: Gear[] = [
   },
   {
     id: 'sharpy',
+    stock: '8 units', // DUMMY
     group: 'Lighting',
     name: 'Beam moving heads',
     role: 'Sharpy-style beams',
@@ -89,13 +97,14 @@ export const gear: Gear[] = [
       ['Type', 'Beam moving head'],
       ['Mounting', 'Truss clamp or floor'],
       ['Control', 'DMX, programmed to the music'],
-      ['Model', 'To be confirmed'],
+      ['Model', '230 W 7R beam moving head'], // DUMMY
     ],
     spec: 'Pencil-thin aerial beams · pan/tilt · run in red or amber',
     photo: { file: 'sharpy.webp', width: 900, height: 900, alt: 'Render from our stage model: beam moving heads under the truss, one red and two amber', source: 'model' },
   },
   {
     id: 'trefoil',
+    stock: '4 units', // DUMMY
     group: 'Lighting',
     name: 'Retro 3-blade fan light',
     role: 'Effect light',
@@ -106,13 +115,14 @@ export const gear: Gear[] = [
       ['Head', 'Three LED petals and a centre lens'],
       ['Motion', 'Rotating head'],
       ['Control', 'DMX'],
-      ['Model', 'To be confirmed'],
+      ['Model', '3-blade rotating LED fan light'], // DUMMY
     ],
     spec: 'Three LED petals around a centre lens · rotating head',
     photo: { file: 'trefoil.webp', width: 280, height: 280, alt: 'Retro 3-blade fan light glowing red beside a matrix panel, from a Vital Acoustica show', source: 'show' },
   },
   {
     id: 'hex',
+    stock: '4 units', // DUMMY
     group: 'Lighting',
     name: 'Retro hex light',
     role: 'Warm retro',
@@ -123,13 +133,14 @@ export const gear: Gear[] = [
       ['Cells', '7 hexagonal'],
       ['Look', 'Warm, tungsten-style'],
       ['Control', 'DMX'],
-      ['Model', 'To be confirmed'],
+      ['Model', '7-cell retro LED panel'], // DUMMY
     ],
     spec: '7 hexagonal cells · tungsten-style warm glow',
     photo: { file: 'hex.webp', width: 230, height: 230, alt: 'Retro hex light with seven glowing amber cells in haze, from a Vital Acoustica show', source: 'show' },
   },
   {
     id: 'matrix',
+    stock: '4 panels', // DUMMY
     group: 'LED & visuals',
     name: 'LED matrix panel',
     role: "2' × 2' panel",
@@ -147,6 +158,7 @@ export const gear: Gear[] = [
   },
   {
     id: 'pixelbar',
+    stock: '8 bars', // DUMMY
     group: 'LED & visuals',
     name: 'LED pixel bar',
     role: 'Pixel bar',
@@ -157,13 +169,14 @@ export const gear: Gear[] = [
       ['Pixels', 'Individually controlled RGB cells in one line'],
       ['Uses', 'Lines, chases, outlines'],
       ['Control', 'DMX / pixel mapping'],
-      ['Model', 'To be confirmed'],
+      ['Model', '1 m RGB pixel bar, 40 pixels'], // DUMMY
     ],
     spec: 'Individually controlled RGB pixels · chase-capable',
     photo: { file: 'pixelbar.webp', width: 840, height: 385, alt: 'LED pixel bar shown unlit and lit in rainbow colours', source: 'product' },
   },
   {
     id: 'dotbar',
+    stock: '8 bars', // DUMMY
     group: 'LED & visuals',
     name: 'LED wall washer bar',
     role: 'Wash bar',
@@ -181,6 +194,7 @@ export const gear: Gear[] = [
   },
   {
     id: 'rope',
+    stock: '50 m', // DUMMY
     group: 'LED & visuals',
     name: 'LED neon flex',
     role: 'Outlines',
@@ -197,6 +211,7 @@ export const gear: Gear[] = [
   },
   {
     id: 'truss',
+    stock: '2 goal posts, 4 towers', // DUMMY
     group: 'Structure',
     name: 'Box truss',
     role: 'Rigging',
@@ -206,7 +221,7 @@ export const gear: Gear[] = [
     specs: [
       ['Type', 'Square aluminium box truss'],
       ['Configurations', 'Goal posts, towers, wings'],
-      ['Section size', 'To be confirmed'],
+      ['Section size', '290 mm square'], // DUMMY
     ],
     spec: 'Square aluminium box truss · goal posts & towers',
     photo: { file: 'truss.webp', width: 320, height: 540, alt: 'Truss tower with a hex light, from a Vital Acoustica show', source: 'show' },

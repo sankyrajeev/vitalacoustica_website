@@ -39,13 +39,14 @@ export const site = {
   ],
 
   /*
-   * TODO (Vital Acoustica): fill these in. Anything left empty is simply not shown.
+   * Contact details. Anything left empty is simply not shown.
+   * DUMMY: the values below are stand-ins — replace with the real ones.
    */
   contact: {
-    email: '' as string,
-    phone: '' as string,
-    whatsapp: '' as string, // digits only with country code, e.g. 919800000000
-    instagram: '' as string, // handle without @
+    email: 'hello@vitalacoustica.com' as string, // DUMMY
+    phone: '+91 98765 43210' as string, // DUMMY
+    whatsapp: '919876543210' as string, // DUMMY — digits only with country code
+    instagram: 'vitalacoustica' as string, // DUMMY — handle without @
     location: '' as string, // e.g. 'Bangalore, India' — only once approved for publication
   },
 
@@ -55,6 +56,7 @@ export const site = {
    *  - FormSubmit: endpoint 'https://formsubmit.co/ajax/<your-email>' (confirm the first email it sends you)
    *  - Web3Forms:  endpoint 'https://api.web3forms.com/submit' plus accessKey
    * Can also be set at build time with VITE_ENQUIRY_ENDPOINT / VITE_ENQUIRY_KEY.
+   * Until one is set, the form opens the visitor's email app addressed to contact.email.
    */
   enquiry: {
     endpoint: (import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined) ?? '',

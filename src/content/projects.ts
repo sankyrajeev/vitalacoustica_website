@@ -102,52 +102,60 @@ export const projects: Project[] = [
     slug: 'the-park-bangalore',
     title: 'Open air at The Park',
     venue: 'The Park, Bangalore',
-    year: TBC,
+    year: '2025', // DUMMY
     scope: ['Sound', 'Light', 'Production'],
     summary:
       'An open-air stage under canopy. d&b point-source tops on stands with B22 subwoofers in front, and a symmetrical lighting composition built from matrix panels, trefoil fixtures, hex retros and LED bars.',
     hero: parkDusk,
     gallery: [parkDusk, parkBlue],
     study: {
-      objectives: '',
+      // DUMMY
+      objectives:
+        'An open-air night that had to feel like a club once the sun went down, with full-range sound for the dancefloor and nothing spilling far beyond the garden.',
       direction:
         'A mirrored composition either side of the booth: each wing pairs a diamond-hung matrix panel with a trefoil fixture above a hex retro, joined by an amber dot bar and red pixel lines. The palette stays within red and amber as the evening moves from dusk to blue hour.',
       audio:
         'd&b audiotechnik V10P tops on stands either side of the stage, with B22-SUB subwoofers ground-stacked at the front edge.',
       lighting:
         'Diamond-hung LED matrix panels, trefoil 3-blade fixtures, 7-cell hex retros, amber dot bars and red pixel bars, with haze to give the light volume under the canopy.',
-      planning: '',
+      // DUMMY
+      planning:
+        'Load-in in the afternoon, system tuned before sunset, lighting focused at dusk. Power from the venue supply with our own distribution, and a crew of four through to load-out.',
     },
     film: '',
   },
   {
     slug: 'a-night-with-jovah',
     title: 'A Night with Jovah',
-    venue: TBC,
-    year: TBC,
+    venue: 'Bangalore', // DUMMY
+    year: '2025', // DUMMY
     scope: ['Light', 'Production'],
     summary:
       'A brick-arched room lit from within. The same position photographed with the effects at rest and with the full rig running shows how much of the room the lighting composes.',
     hero: clubFull,
     gallery: [clubFull, clubDown, clubNeon],
     study: {
-      objectives: '',
+      // DUMMY
+      objectives: 'Turn a brick-arched room into one red space around the artist, with the booth as the brightest point.',
       direction:
         'Red throughout, with neon columns framing the booth and the arches left to hold the light. Matrix panels and trefoil fixtures flank the sign; hex retros sit on the side truss towers.',
-      audio: '',
+      // DUMMY
+      audio: 'd&b audiotechnik V10P tops either side of the booth with B22-SUB subwoofers, tuned for the room with the crowd in.',
       lighting:
         'Trefoil 3-blade fixtures, LED matrix panels, hex retros on truss towers, beam moving heads at the booth corners and LED neon columns.',
-      planning: '',
+      // DUMMY
+      planning: 'Truss towers built in the afternoon, fixtures focused and looks programmed before doors, one operator each for sound and light.',
     },
     film: '',
   },
   {
+    // DUMMY: replace with a real production after the photo shoot
     slug: 'placeholder',
-    title: 'Project to be added',
-    venue: TBC,
-    year: TBC,
+    title: 'Your next show',
+    venue: '',
+    year: '',
     scope: ['Sound'],
-    summary: 'Space reserved for a production with strong photography of the sound system and the room.',
+    summary: 'A full d&b system and red-and-amber lighting for a club night. Photos from our next production go here.',
     hero: { src: '', width: 1600, height: 1066, alt: '' },
     gallery: [],
     study: { objectives: '', direction: '', audio: '', lighting: '', planning: '' },

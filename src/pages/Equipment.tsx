@@ -83,8 +83,8 @@ export function EquipmentDetail({ id }: { id: string }) {
           <p className="lede">{g.description}</p>
 
           <dl className="spec-table">
-            {g.specs.map(([k, v]) => (
-              <div key={k} className={v === 'To be confirmed' ? 'is-tbc' : ''}>
+            {[...g.specs, ['In stock', g.stock]].map(([k, v]) => (
+              <div key={k}>
                 <dt>{k}</dt>
                 <dd>{v}</dd>
               </div>

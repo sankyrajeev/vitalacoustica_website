@@ -40,6 +40,7 @@ export function GearCard({ g }: { g: Gear }) {
           </Link>
         </h3>
         <p className="gear-card__about">{g.about}</p>
+        <p className="gear-card__stock">In stock: {g.stock}</p>
         <div className="gear-card__actions">
           <Link to={`/equipment/${g.id}`} className="text-link">
             Details <Arrow />

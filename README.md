@@ -59,17 +59,11 @@ The form posts JSON to the endpoint in `site.enquiry` (or the `VITE_ENQUIRY_ENDP
 
 Until one is set, the form validates normally but tells visitors it can’t send.
 
-## Still to supply
+## Dummy content
 
-- Photos of our own kit for the beam moving heads (currently a 3D render), retro 3-blade fan, retro hex light and truss (currently crops from show photos), plus model names and quantities — `src/content/gear.ts`
-- The d&b and LED product images are manufacturer/supplier photos; replace them with photos of our own units when possible
+Gaps are filled with stand-ins until the photo shoot: equipment models and stock counts, contact details, company details, project years and some case-study text, plus sample photos (tagged "Sample photo") in empty photo slots. Every stand-in value is marked `DUMMY` in the code (`grep -rn DUMMY src`). The shot list and everything to replace is in [`docs/photo-shoot.md`](docs/photo-shoot.md).
 
-- Contact details (email, phone, WhatsApp, Instagram) and an approved location line — `site.contact`
-- An enquiry endpoint — see above
-- Project facts: years, venues, objectives, technical planning notes, production films
-- More project photography, especially the d&b system, amplifiers and control positions
-- Team portraits and short biographies (Studio page)
-- Company registration details and a reviewed privacy notice
+Until an enquiry endpoint is set, the form opens the visitor's email app with the enquiry written out and addressed to `site.contact.email`.
 
 To add an equipment photo: put a square-ish `.webp` in `public/gear/` and set `photo` on the item in `src/content/gear.ts` (`source: 'product'` for white-background shots, which sit on the studio surface; add `fit: 'cover'` for photos with their own background).
 
