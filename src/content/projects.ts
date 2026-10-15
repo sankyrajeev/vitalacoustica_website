@@ -1,9 +1,9 @@
-import type { GearId } from './gear'
+import type { RigId } from './gear'
 
 // Selected work. Only real productions with real photography go here.
 // Anything not yet confirmed by Vital Acoustica is marked `TBC` and shown as such on the site.
 
-export type Hotspot = { gear: GearId; x: number; y: number }
+export type Hotspot = { gear: RigId; x: number; y: number }
 
 export type Media = {
   src: string // base name in /public/shows, without -800/-1600.webp

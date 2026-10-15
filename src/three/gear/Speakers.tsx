@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { CanvasTexture, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three'
 
-// d&b audiotechnik cabinets, modelled to their published dimensions:
-//   V10P     — 308 W × 700 H × 466 D mm, 2×10" + 8" + 1.4" HF, 110°×40°
-//   B22-SUB  — 1160 W × 585 H × 920 D mm, 2×18" bandpass
+// Loudspeakers, modelled to their published dimensions:
+//   d&b V10P      — 308 W × 700 H × 466 D mm, 2×10" + 8" + 1.4" HF, 110°×40°
+//   d&b B22-SUB   — 1160 W × 585 H × 920 D mm, 2×18" bandpass
+//   RCF ART 915-A — 410 W × 716 H × 415 D mm, 15" + 1.75" HF, 100°×60°
 
 /** Perforated steel grille as a tiling texture. */
 function useGrilleTexture(repeatX: number, repeatY: number) {
@@ -90,6 +91,52 @@ export function B22Sub() {
         <mesh key={`f${s}`} material={hardware} position={[s * (W / 2 - 0.12), -0.01, 0]}>
           <boxGeometry args={[0.12, 0.02, D - 0.1]} />
         </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** RCF ART 915-A: tapered moulded cabinet with a full-front grille and side handle pockets. */
+export function ART915() {
+  const grille = useGrilleTexture(6, 10)
+  const W = 0.41
+  const H = 0.716
+  const D = 0.415
+  return (
+    <group>
+      {/* front section, then the tapered back */}
+      <mesh material={cabinet} position={[0, H / 2, D * 0.2]}>
+        <boxGeometry args={[W, H, D * 0.6]} />
+      </mesh>
+      <mesh material={cabinet} position={[0, H / 2, -D * 0.2]}>
+        <boxGeometry args={[W * 0.8, H * 0.94, D * 0.4]} />
+      </mesh>
+      <mesh position={[0, H / 2, D / 2 + 0.003]}>
+        <planeGeometry args={[W - 0.03, H - 0.03]} />
+        <meshStandardMaterial map={grille} metalness={0.7} roughness={0.55} />
+      </mesh>
+      {/* RCF badge */}
+      <mesh material={hardware} position={[0, 0.07, D / 2 + 0.006]}>
+        <boxGeometry args={[0.05, 0.05, 0.004]} />
+      </mesh>
+      {/* side handle pockets */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} material={hardware} position={[(s * W) / 2 + s * 0.004, H * 0.6, D * 0.05]}>
+          <boxGeometry args={[0.01, 0.15, 0.1]} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** DJ booth monitors: a pair of ART 915-A on the deck either side of the booth, angled at the DJ. */
+export function BoothMonitors({ deckTop }: { deckTop: number }) {
+  return (
+    <group>
+      {[-1, 1].map((s) => (
+        <group key={s} position={[s * 1.55, deckTop, -0.35]} rotation-y={-s * 1.9}>
+          <ART915 />
+        </group>
       ))}
     </group>
   )

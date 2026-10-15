@@ -1,5 +1,5 @@
 import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from 'react'
-import type { GearId } from '../content/gear'
+import type { RigId } from '../content/gear'
 import { openDrone, openExplore, STAGE_EVENT, type StageRequest } from '../events'
 import { useMediaQuery } from '../hooks/useMedia'
 import { useTheme } from '../hooks/useTheme'
@@ -52,7 +52,7 @@ export function StageModelLauncher({ caption }: { caption?: string }) {
 /** Full-screen stage model, opened from anywhere via openExplore()/openDrone(). */
 export function StageModelOverlay() {
   const [req, setReq] = useState<StageRequest | null>(null)
-  const [focus, setFocus] = useState<GearId | null>(null)
+  const [focus, setFocus] = useState<RigId | null>(null)
   const [haze, setHaze] = useState(show.haze)
   const [failed, setFailed] = useState(false)
   const small = useMediaQuery('(max-width: 760px)')

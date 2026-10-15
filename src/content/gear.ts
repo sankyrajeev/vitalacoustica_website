@@ -10,9 +10,26 @@
 // DUMMY: every value marked `// DUMMY` below is a stand-in until the photo shoot and
 // stock check (models, quantities, truss size). Search the codebase for "DUMMY" to find them all.
 
-export type GearId = 'v10p' | 'b22' | 'sharpy' | 'matrix' | 'trefoil' | 'hex' | 'dotbar' | 'pixelbar' | 'rope' | 'truss'
+/** Items modelled in the 3D stage (positions in src/three/hotspots.ts). */
+export type RigId =
+  | 'v10p'
+  | 'b22'
+  | 'art915'
+  | 'dm3'
+  | 'pioneer'
+  | 'sharpy'
+  | 'matrix'
+  | 'trefoil'
+  | 'hex'
+  | 'dotbar'
+  | 'pixelbar'
+  | 'rope'
+  | 'truss'
 
-export type GearGroup = 'Sound' | 'Lighting' | 'LED & visuals' | 'Structure'
+/** Every hire item; DI boxes are listed but not modelled. */
+export type GearId = RigId | 'di'
+
+export type GearGroup = 'Sound' | 'Control & DJ' | 'Lighting' | 'LED & visuals' | 'Structure'
 
 export type Gear = {
   id: GearId
@@ -33,7 +50,8 @@ export type Gear = {
     width: number
     height: number
     alt: string
-    source: 'product' | 'show' | 'model'
+    /** 'none': no photo yet, the card shows a "photo to come" tile */
+    source: 'product' | 'show' | 'model' | 'none'
     /** 'cover' fills the frame (photos with their own background); otherwise the item sits on a studio surface */
     fit?: 'cover'
   }
@@ -83,6 +101,87 @@ export const gear: Gear[] = [
     specSource: 'd&b audiotechnik',
     spec: '2 × 18" bandpass · cardioid-capable',
     photo: { file: 'b22.webp', width: 800, height: 522, alt: 'd&b audiotechnik B22-SUB subwoofer with recessed side handles', source: 'product' },
+  },
+  {
+    id: 'art915',
+    stock: '2 units',
+    group: 'Sound',
+    name: 'ART 915-A',
+    maker: 'RCF',
+    role: 'Active loudspeaker',
+    about: 'Self-powered 15" two-way speaker for booth monitors, smaller rooms and side fills.',
+    description:
+      'A self-powered two-way cabinet with a 15" woofer and a 1.75" compression driver, driven by a 2100 W bi-amplified Class-D amplifier with onboard DSP. We use them as DJ booth monitors, as side fills, or as the main system for smaller rooms and private events.',
+    specs: [
+      ['Drivers', '15" LF (2.5" voice coil) · 1.75" HF compression driver'],
+      ['Amplifier', '2100 W peak, Class-D bi-amplified'],
+      ['Max SPL', '131 dB'],
+      ['Frequency response', '45 Hz – 20 kHz'],
+      ['Dispersion', '100° × 60°'],
+      ['Dimensions', '410 × 716 × 415 mm (W × H × D)'],
+      ['Weight', '22.4 kg'],
+    ],
+    specSource: 'RCF',
+    spec: '15" + 1.75" HF · 2100 W · 131 dB SPL max',
+    photo: { file: 'art915.webp', width: 800, height: 800, alt: 'RCF ART 915-A active loudspeaker, black cabinet with steel grille', source: 'product' },
+  },
+  {
+    id: 'dm3',
+    stock: '2 units', // DUMMY
+    group: 'Control & DJ',
+    name: 'DM3',
+    maker: 'Yamaha',
+    role: 'Digital mixer',
+    about: 'Compact 22-channel digital console with a 9" touchscreen, for front of house or monitors.',
+    description:
+      'A compact digital mixing console: 16 mono channels, a stereo channel and two FX returns, with onboard processing and scene recall. Small enough for a booth or a tight front-of-house position, and set up in advance so the show starts from a tested scene.',
+    specs: [
+      ['Input channels', '16 mono + 1 stereo + 2 FX returns'],
+      ['Local I/O', '16 mic/line in (12 XLR + 4 combo) · 8 XLR out'],
+      ['Busses', 'Stereo · 6 mix · 2 FX · 2 matrix'],
+      ['Control', '9" multi-touch screen · 8 + 1 faders'],
+      ['Sample rate', '48 / 96 kHz'],
+      ['Dimensions', '320 × 140 × 455 mm (W × H × D)'],
+      ['Weight', '6.5 kg'],
+    ],
+    specSource: 'Yamaha',
+    spec: '22 channels · 16 mic/line in · 9" touchscreen',
+    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo from the shoot
+  },
+  {
+    id: 'pioneer',
+    stock: '1 setup', // DUMMY
+    group: 'Control & DJ',
+    name: 'DJ setup',
+    maker: 'Pioneer DJ',
+    role: 'DJ console',
+    about: 'Club-standard players and mixer, set up and linked for the booth.',
+    description:
+      'Club-standard Pioneer DJ players and a four-channel mixer, the setup most DJs expect to find in the booth. We cable it to the system, link the players and check every channel before the first set.',
+    specs: [
+      ['Setup', '2 × CDJ-3000 players · DJM-900NXS2 mixer'], // DUMMY
+      ['Inputs', 'USB and SD, rekordbox, Pro DJ Link'], // DUMMY
+      ['Use', 'DJ booth, festival and club stages'],
+    ],
+    spec: 'Club-standard players and mixer',
+    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo from the shoot
+  },
+  {
+    id: 'di',
+    stock: '8 units', // DUMMY
+    group: 'Control & DJ',
+    name: 'DI boxes',
+    role: 'Direct injection',
+    about: 'Clean, balanced connections for laptops, synths, instruments and playback.',
+    description:
+      'Direct-injection boxes that turn unbalanced sources into balanced mic-level lines for the mixer, with ground lift to keep hum out. For live acts, laptops, synths and playback.',
+    specs: [
+      ['Types', 'Mono and stereo, passive'], // DUMMY
+      ['Connections', '1/4" jack in · XLR out · ground lift'], // DUMMY
+      ['Use', 'Laptops, synths, instruments, playback'],
+    ],
+    spec: 'Balanced lines for laptops, synths and instruments',
+    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo from the shoot
   },
   {
     id: 'sharpy',
@@ -230,8 +329,13 @@ export const gear: Gear[] = [
 
 export const gearById = Object.fromEntries(gear.map((g) => [g.id, g])) as Record<GearId, Gear>
 
-export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Lighting', 'LED & visuals', 'Structure']
-export const RIG_GROUPS = ['Sound', 'Lighting', 'LED & visuals'] as const
+export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Control & DJ', 'Lighting', 'LED & visuals', 'Structure']
+export const RIG_GROUPS = ['Sound', 'Control & DJ', 'Lighting', 'LED & visuals'] as const
+
+const NOT_MODELLED: GearId[] = ['di']
+/** True when the item has a place in the 3D stage model. */
+export const inRig = (g: Gear): g is Gear & { id: RigId } => !NOT_MODELLED.includes(g.id)
+export const rigGear = gear.filter(inRig)
 
 export const fullName = (g: Gear) => (g.maker ? `${g.maker} ${g.name}` : g.name)
 
@@ -239,4 +343,5 @@ export const PHOTO_SOURCE: Record<Gear['photo']['source'], string> = {
   product: 'Product photo',
   show: 'From one of our shows',
   model: '3D model render · photo to come',
+  none: 'Photo to come',
 }

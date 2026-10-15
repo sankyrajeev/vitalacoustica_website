@@ -2,7 +2,7 @@ import { GearCard, GearPhoto } from '../components/Equipment'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { Arrow, Cta, Label, MediaFrame } from '../components/ui'
-import { fullName, gear, GEAR_GROUPS, PHOTO_SOURCE } from '../content/gear'
+import { fullName, gear, GEAR_GROUPS, inRig, PHOTO_SOURCE } from '../content/gear'
 import { projects } from '../content/projects'
 import { openDrone, openExplore } from '../events'
 import { NotFound } from './NotFound'
@@ -128,11 +128,13 @@ export function EquipmentDetail({ id }: { id: string }) {
           {g.specSource && <p className="fineprint">Specifications as published by {g.specSource}.</p>}
 
           <div className="gear-detail__actions">
-            <button className="cta cta--primary" onClick={() => openExplore(g.id)}>
-              <span>View in the 3D rig</span>
-              <Arrow />
-            </button>
-            <Cta to={`/contact?item=${g.id}`} variant="quiet">
+            {inRig(g) && (
+              <button className="cta cta--primary" onClick={() => openExplore(g.id)}>
+                <span>View in the 3D rig</span>
+                <Arrow />
+              </button>
+            )}
+            <Cta to={`/contact?item=${g.id}`} variant={inRig(g) ? 'quiet' : 'primary'}>
               Get a quote for this
             </Cta>
           </div>

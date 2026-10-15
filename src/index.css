@@ -975,6 +975,20 @@ main {
   transform: scale(1.04);
 }
 
+.gear-photo--none {
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 14px, rgba(16, 16, 16, 0.035) 14px 15px),
+    #e9e6de;
+}
+
+.gear-photo__name {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3vw, 44px);
+  color: #3a3833;
+}
+
 .gear-photo__source {
   position: absolute;
   left: 10px;
@@ -1357,6 +1371,12 @@ main {
   animation: rise 1.6s var(--ease) both 1.4s;
 }
 
+.intro__scroll.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-med) var(--ease);
+}
+
 .intro__scroll span {
   width: var(--hair);
   height: 48px;
@@ -1434,29 +1454,6 @@ main {
   }
 }
 
-.entrance__scroll {
-  position: absolute;
-  right: max(var(--gutter), env(safe-area-inset-right, 0px));
-  bottom: clamp(72px, 12vh, 140px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--s3);
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--muted);
-  writing-mode: vertical-rl;
-}
-
-.entrance__scroll span {
-  width: var(--hair);
-  height: 56px;
-  background: linear-gradient(var(--accent), transparent);
-  animation: drip 2.4s var(--ease-in-out) infinite;
-  transform-origin: top;
-}
-
 @keyframes drip {
   0% {
     transform: scaleY(0);
@@ -1477,9 +1474,6 @@ main {
 @media (max-width: 760px) {
   .entrance::before {
     background: linear-gradient(0deg, rgba(var(--shade), 0.92) 0%, rgba(var(--shade), 0.4) 55%, transparent 80%);
-  }
-  .entrance__scroll {
-    display: none;
   }
   .entrance__actions .cta {
     flex: 1 1 100%;
@@ -1549,10 +1543,59 @@ main {
   }
 }
 
-.entrance__scroll {
+/* "What we do": a short introduction and an index of the four disciplines */
+.capabilities__intro .lede {
+  margin-top: var(--s5);
+}
+
+.cap-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s5);
+  margin-top: var(--s7);
+}
+
+.cap-overview button {
+  display: grid;
+  gap: var(--s2);
+  width: 100%;
+  height: 100%;
+  padding: var(--s4) 0 0;
   border: 0;
+  border-top: var(--hair) solid var(--line-strong);
   background: none;
+  text-align: left;
   cursor: pointer;
+  transition: border-color var(--t-fast);
+}
+
+.cap-overview button:hover {
+  border-color: var(--accent);
+}
+
+.cap-overview__n {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--accent-text);
+}
+
+.cap-overview strong {
+  font-family: var(--serif);
+  font-size: clamp(26px, 2.4vw, 36px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.cap-overview__line {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+@media (max-width: 900px) {
+  .cap-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .cap__kit {

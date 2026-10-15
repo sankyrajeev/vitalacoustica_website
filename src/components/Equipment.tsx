@@ -1,4 +1,4 @@
-import { fullName, PHOTO_SOURCE, type Gear } from '../content/gear'
+import { fullName, inRig, PHOTO_SOURCE, type Gear } from '../content/gear'
 import { openExplore } from '../events'
 import { gearImg } from './gearImg'
 import { Link } from './Link'
@@ -6,6 +6,14 @@ import { Arrow } from './ui'
 
 /** The product photograph on a neutral studio surface (white product backgrounds blend into it). */
 export function GearPhoto({ g, large }: { g: Gear; large?: boolean }) {
+  if (g.photo.source === 'none') {
+    return (
+      <div className={`gear-photo gear-photo--none ${large ? 'gear-photo--large' : ''}`}>
+        <span className="gear-photo__name">{g.name}</span>
+        <span className="gear-photo__source">Photo to come</span>
+      </div>
+    )
+  }
   return (
     <div className={`gear-photo gear-photo--${g.photo.fit ?? g.photo.source} ${large ? 'gear-photo--large' : ''}`}>
       <img
@@ -45,9 +53,11 @@ export function GearCard({ g }: { g: Gear }) {
           <Link to={`/equipment/${g.id}`} className="text-link">
             Details <Arrow />
           </Link>
-          <button className="text-link text-link--quiet" onClick={() => openExplore(g.id)}>
-            View in the 3D rig <Arrow />
-          </button>
+          {inRig(g) && (
+            <button className="text-link text-link--quiet" onClick={() => openExplore(g.id)}>
+              View in the 3D rig <Arrow />
+            </button>
+          )}
         </div>
       </div>
     </article>

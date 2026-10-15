@@ -180,20 +180,52 @@ function StageDeck() {
   )
 }
 
-/** Front-of-house: mix position on a riser in the middle of the room. */
+/** Yamaha DM3: 320 W × 140 H × 455 D mm, 9" touchscreen above 8 + 1 faders. */
+function DM3() {
+  return (
+    <group rotation-x={0.12}>
+      <mesh material={gearMat} position={[0, 0.035, 0]}>
+        <boxGeometry args={[0.32, 0.07, 0.455]} />
+      </mesh>
+      {/* raised screen bay at the back */}
+      <mesh material={gearMat} position={[0, 0.085, -0.13]} rotation-x={-0.35}>
+        <boxGeometry args={[0.3, 0.02, 0.17]} />
+      </mesh>
+      <mesh position={[0, 0.097, -0.127]} rotation-x={-Math.PI / 2 - 0.35}>
+        <planeGeometry args={[0.2, 0.12]} />
+        <meshBasicMaterial color="#3d6c94" toneMapped={false} />
+      </mesh>
+      {/* faders */}
+      {Array.from({ length: 9 }, (_, i) => (
+        <mesh key={i} material={fader} position={[-0.135 + i * 0.033 + (i === 8 ? 0.008 : 0), 0.074, 0.12 - (i * 7) % 5 * 0.006]}>
+          <boxGeometry args={[0.012, 0.01, 0.02]} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+const fader = new MeshStandardMaterial({ color: '#d9d9d9', roughness: 0.4 })
+
+/** Front-of-house: a table on a riser in the middle of the room with the DM3. */
 function FOH() {
   return (
     <group position={[0, 0, 20]}>
       <mesh material={deckMat} position={[0, 0.15, 0]}>
         <boxGeometry args={[3.2, 0.3, 2.2]} />
       </mesh>
-      <mesh material={gearMat} position={[0, 0.75, -0.3]}>
-        <boxGeometry args={[1.8, 0.9, 0.7]} />
+      {/* table */}
+      <mesh material={gearMat} position={[0, 1.0, -0.3]}>
+        <boxGeometry args={[1.6, 0.04, 0.7]} />
       </mesh>
-      <mesh position={[0, 1.22, -0.3]} rotation-x={-0.25}>
-        <planeGeometry args={[1.7, 0.6]} />
-        <meshStandardMaterial color="#111" emissive="#2b4a66" emissiveIntensity={0.6} />
-      </mesh>
+      {[-0.75, 0.75].map((x) => (
+        <mesh key={x} material={gearMat} position={[x, 0.65, -0.3]}>
+          <boxGeometry args={[0.04, 0.68, 0.62]} />
+        </mesh>
+      ))}
+      <group position={[0, 1.02, -0.25]}>
+        <DM3 />
+      </group>
       {/* FOH barrier */}
       <mesh material={gearMat} position={[0, 0.55, 1.2]}>
         <boxGeometry args={[3.4, 1.1, 0.05]} />

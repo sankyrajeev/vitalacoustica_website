@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { EnquiryForm } from '../components/EnquiryForm'
 import { gearImg } from '../components/gearImg'
 import { ProjectCard } from '../components/ProjectCard'
@@ -32,12 +32,25 @@ export function Home() {
 
 /* 00 — The opening frame: the logo beside the sculpture, nothing else */
 function Intro() {
+  // the scroll hint goes as soon as the visitor starts scrolling
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
   return (
     <section className="intro" data-scene="intro" aria-label="Vital Acoustica: pro audio, lighting, rentals">
       <div className="wrap intro__inner">
         <Logo tagline className="intro__logo" />
       </div>
-      <button className="intro__scroll" onClick={() => scrollToId('entrance')} aria-label="Scroll to the introduction">
+      <button
+        className={`intro__scroll ${scrolled ? 'is-hidden' : ''}`}
+        onClick={() => scrollToId('entrance')}
+        aria-label="Scroll to the introduction"
+        tabIndex={scrolled ? -1 : 0}
+      >
         Scroll
         <span aria-hidden />
       </button>
@@ -62,10 +75,6 @@ function Entrance() {
           </Cta>
         </div>
       </div>
-      <button className="entrance__scroll" onClick={() => scrollToId('statement')} aria-label="Scroll to the next section">
-        <span aria-hidden />
-        Scroll
-      </button>
     </section>
   )
 }
@@ -102,6 +111,13 @@ function Statement() {
   )
 }
 
+const OVERVIEW: Record<string, string> = {
+  sound: 'd&b and RCF systems, mixers and DJ setups, tuned for the room.',
+  light: 'Beam moving heads, retro fixtures and LED, programmed to the music.',
+  visuals: 'Matrix panels, pixel mapping and projection mapping.',
+  production: 'Truss, power, crew and the running of the show.',
+}
+
 /* 03 — What we do: the sculpture changes material beside each discipline */
 function Disciplines() {
   return (
@@ -111,9 +127,24 @@ function Disciplines() {
         <h2 id="cap-title" className="h1">
           Sound, light and production. Conceived as one.
         </h2>
+        <p className="lede">
+          Most nights need all of it working together. We plan the sound system, the lighting and the stage as one design,
+          then bring the kit and the crew to deliver it, whether you hire a pair of speakers or the whole production.
+        </p>
+        <ol className="cap-overview">
+          {capabilities.map((c) => (
+            <li key={c.id}>
+              <button onClick={() => scrollToId(`cap-${c.id}`)}>
+                <span className="cap-overview__n">{c.index}</span>
+                <strong>{c.name}</strong>
+                <span className="cap-overview__line">{OVERVIEW[c.id]}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
       </div>
       {capabilities.map((c) => (
-        <article key={c.id} className={`cap cap--${c.id}`} data-scene={`cap-${c.id}`} aria-labelledby={`cap-${c.id}-title`}>
+        <article key={c.id} id={`cap-${c.id}`} className={`cap cap--${c.id}`} data-scene={`cap-${c.id}`} aria-labelledby={`cap-${c.id}-title`}>
           <div className="wrap cap__inner">
             <div className="cap__text">
               <p className="cap__index">

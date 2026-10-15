@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fullName, gear, gearById, type GearId } from '../content/gear'
+import { fullName, gearById, rigGear, type RigId } from '../content/gear'
 import { navigate } from '../router'
 import { gearImg } from './gearImg'
 import { registerMarker } from '../three/markers'
@@ -14,8 +14,8 @@ const COLOURS: { id: ColourMode; label: string }[] = [
 ]
 
 type Props = {
-  focus: GearId | null
-  onFocus: (id: GearId | null) => void
+  focus: RigId | null
+  onFocus: (id: RigId | null) => void
   onExit: () => void
   haze: number
   onHaze: (v: number) => void
@@ -59,7 +59,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
       </div>
 
       <div className="stage-markers">
-        {gear.map((g) => (
+        {rigGear.map((g) => (
           <button
             key={g.id}
             ref={(el) => registerMarker(g.id, el)}
@@ -75,7 +75,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
       </div>
 
       <nav className="explore__list" aria-label="Gear">
-        {gear.map((g) => (
+        {rigGear.map((g) => (
           <button key={g.id} className={focus === g.id ? 'is-active' : ''} onClick={() => onFocus(focus === g.id ? null : g.id)}>
             {g.name}
           </button>
@@ -90,9 +90,11 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
               ×
             </button>
           </header>
-          <div className={`spec-card__photo spec-card__photo--${item.photo.fit ?? item.photo.source}`}>
-            <img src={gearImg(item.photo.file)} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} />
-          </div>
+          {item.photo.source !== 'none' && (
+            <div className={`spec-card__photo spec-card__photo--${item.photo.fit ?? item.photo.source}`}>
+              <img src={gearImg(item.photo.file)} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} />
+            </div>
+          )}
           <h3>
             {item.maker && <span className="spec-card__maker">{item.maker}</span>}
             {item.name}

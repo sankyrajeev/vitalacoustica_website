@@ -32,6 +32,7 @@ export const site = {
     'Professional sound and lighting hire, with the crew to run it. d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated for club nights, festivals, brand events and private celebrations.',
 
   nav: [
+    { label: 'Home', to: '/' },
     { label: 'Equipment', to: '/equipment' },
     { label: 'Services', to: '/capabilities' },
     { label: 'Work', to: '/work' },

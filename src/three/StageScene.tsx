@@ -5,12 +5,12 @@ import { ToneMappingMode } from 'postprocessing'
 import { Suspense, useEffect, useRef } from 'react'
 import { Euler, MathUtils, Vector3 } from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
-import { gear, type GearId } from '../content/gear'
+import { rigGear, type RigId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
 import { HexRetro, LedRope, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
-import { PAStack } from './gear/Speakers'
+import { BoothMonitors, PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
 import { EXPLORE_HOME, HOTSPOTS } from './hotspots'
 import { markerEls } from './markers'
@@ -26,7 +26,7 @@ type SceneProps = {
   reducedMotion: boolean
   theme: SceneTheme
   mode: SceneMode
-  focus: GearId | null
+  focus: RigId | null
   haze: number
 }
 
@@ -93,7 +93,7 @@ const goalPos = new Vector3()
 const goalTarget = new Vector3()
 
 /** Orbit around the stage; when a piece of gear is picked, glide the camera to it. */
-function ExploreCamera({ focus }: { focus: GearId | null }) {
+function ExploreCamera({ focus }: { focus: RigId | null }) {
   const controls = useRef<OrbitControlsImpl>(null)
   const flying = useRef(true)
 
@@ -135,7 +135,7 @@ const projected = new Vector3()
 /** Moves the DOM gear markers to their fixtures' on-screen positions. */
 function MarkerProjector() {
   useFrame(({ camera, size }) => {
-    for (const g of gear) {
+    for (const g of rigGear) {
       const el = markerEls.get(g.id)
       if (!el) continue
       projected.set(...HOTSPOTS[g.id].at).project(camera)
@@ -179,6 +179,7 @@ function Stage({ small }: { small: boolean }) {
           [1.1, deckTop + 0.98, 0.18],
         ]}
       />
+      <BoothMonitors deckTop={deckTop} />
       <PAStack x={-6.3} z={0.9} toe={0.2} />
       <PAStack x={6.3} z={0.9} toe={-0.2} />
     </group>

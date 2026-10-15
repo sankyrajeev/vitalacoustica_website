@@ -30,7 +30,7 @@ export const capabilities: Capability[] = [
       { title: 'Design the system', body: 'Tops and subwoofers are placed for even coverage, with sub arrays arranged to control energy where it isn’t wanted.' },
       { title: 'Tune on site', body: 'The system is time-aligned and tuned in the venue, then listened to with the room full, not empty.' },
     ],
-    gear: ['v10p', 'b22'],
+    gear: ['v10p', 'b22', 'art915', 'dm3', 'pioneer', 'di'],
     image: { src: 'park-dusk', alt: 'Open-air stage with d&b tops on stands and subwoofers at the front' },
   },
   {

@@ -1,5 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
-import { fullName, gearById, type GearId } from '../content/gear'
+import { fullName, gearById, type RigId } from '../content/gear'
 import type { Hotspot, Media } from '../content/projects'
 import { openExplore } from '../events'
 import { img } from '../media'
@@ -119,7 +119,7 @@ export function MediaFrame({ media, sizes = '100vw', priority, showGear, caption
 
 /** Markers on a photograph pointing at each piece of equipment, with a short note. */
 export function PhotoHotspots({ hotspots, visible }: { hotspots: Hotspot[]; visible: boolean }) {
-  const [picked, setPicked] = useState<GearId | null>(null)
+  const [picked, setPicked] = useState<RigId | null>(null)
   const open = visible ? picked : null
   const spot = hotspots.find((h) => h.gear === open)
   const g = spot ? gearById[spot.gear] : null
@@ -155,7 +155,7 @@ export function PhotoHotspots({ hotspots, visible }: { hotspots: Hotspot[]; visi
             <Link to={`/equipment/${g.id}`} className="text-link">
               Details <Arrow />
             </Link>
-            <button className="text-link" onClick={() => openExplore(g.id)}>
+            <button className="text-link" onClick={() => openExplore(spot.gear)}>
               3D rig <Arrow />
             </button>
           </span>

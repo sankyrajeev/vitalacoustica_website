@@ -30,7 +30,7 @@ export function Nav({ path }: { path: string }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
-  const isActive = (to: string) => path === to || path.startsWith(`${to}/`)
+  const isActive = (to: string) => path === to || (to !== '/' && path.startsWith(`${to}/`))
   const close = () => setOpen(false)
 
   return (
