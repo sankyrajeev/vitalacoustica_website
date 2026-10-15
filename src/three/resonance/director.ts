@@ -21,7 +21,9 @@ export type SceneParams = {
 const base: SceneParams = { opacity: 1, dist: 9, x: 1.75, y: 0, turn: 0, tilt: 0, scale: 1, wave: 0, sweep: 0.15, mesh: 0, grid: 0, calm: 0 }
 
 export const SCENES: Record<string, Partial<SceneParams>> = {
-  entrance: {},
+  // the opening frame, composed like the share image: sculpture on the right, logo on the left
+  intro: {},
+  entrance: { dist: 8.2, x: 1.9, turn: 0.75, tilt: 0.12 },
   manifesto: { dist: 6.6, x: 2.5, turn: 1.1, tilt: 0.25, opacity: 0.5 },
   'cap-intro': { dist: 9.5, x: 1.9, turn: 2.2, opacity: 0.85 },
   'cap-sound': { dist: 8, x: 1.9, turn: 2.6, wave: 1 },

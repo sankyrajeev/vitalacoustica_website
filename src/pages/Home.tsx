@@ -18,6 +18,7 @@ export function Home() {
   return (
     <>
       <ResonanceBackdrop />
+      <Intro />
       <Entrance />
       <Statement />
       <Disciplines />
@@ -29,10 +30,25 @@ export function Home() {
   )
 }
 
+/* 00 — The opening frame: the logo beside the sculpture, nothing else */
+function Intro() {
+  return (
+    <section className="intro" data-scene="intro" aria-label="Vital Acoustica: pro audio, lighting, rentals">
+      <div className="wrap intro__inner">
+        <Logo tagline className="intro__logo" />
+      </div>
+      <button className="intro__scroll" onClick={() => scrollToId('entrance')} aria-label="Scroll to the introduction">
+        Scroll
+        <span aria-hidden />
+      </button>
+    </section>
+  )
+}
+
 /* 01 — The entrance: the sculpture, the line, and what we do */
 function Entrance() {
   return (
-    <section className="entrance" data-scene="entrance" aria-labelledby="entrance-title">
+    <section id="entrance" className="entrance" data-scene="entrance" aria-labelledby="entrance-title">
       <div className="wrap entrance__inner">
         <Label>{site.eyebrow}</Label>
         <h1 id="entrance-title" className="display">
@@ -65,7 +81,7 @@ function Statement() {
   return (
     <section id="statement" className="statement" data-scene="manifesto" aria-labelledby="statement-title">
       <div className="wrap statement__inner">
-        <Logo tagline className="statement__logo" />
+        <Label index="01">Vital Acoustica</Label>
         <h2 id="statement-title" className="h1">
           Production is more than equipment.
         </h2>

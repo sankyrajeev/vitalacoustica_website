@@ -26,6 +26,7 @@ export function useInView(ref: RefObject<Element | null>, rootMargin = '0px') {
 // Editorial blocks that ease in as they reach the viewport.
 const REVEAL = [
   '[data-reveal]',
+  '.entrance__inner',
   '.gear-card',
   '.service',
   '.steps li',

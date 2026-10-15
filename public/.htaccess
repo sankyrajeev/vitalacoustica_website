@@ -1,0 +1,7 @@
+# Clean URLs: serve index.html for any path that isn't a real file,
+# so vitalacoustica.com/equipment/v10p loads the site (Apache / GoDaddy cPanel hosting).
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

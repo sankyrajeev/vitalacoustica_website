@@ -249,11 +249,11 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'legal' }) {
           ) : (
             <>
               <h2 className="h3">Company details</h2>
-              {/* DUMMY: replace with the registered details */}
+              {/* DUMMY: the address line is a stand-in; the GSTIN is real */}
               <p>
                 Vital Acoustica, Bangalore, Karnataka, India.
                 <br />
-                GSTIN: 29XXXXXXXXXX1ZX
+                GSTIN: 29ABCFV2853P1ZF
               </p>
               <h2 className="h3">Content</h2>
               <p>

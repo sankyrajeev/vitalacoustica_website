@@ -17,7 +17,13 @@ Requires Node 20.19+ (or 22.12+).
 
 ## Pages
 
-Routes use the URL hash (`/#/work`), so the site runs on any static host with no rewrite rules.
+Routes are clean URLs (`vitalacoustica.com/equipment/v10p`). The host must serve `index.html` for every path that isn't a file; the rules for that ship with the site:
+
+- Apache / GoDaddy cPanel hosting: `public/.htaccess` (copied into `dist/`)
+- Netlify or Cloudflare Pages: `public/_redirects`
+- Vercel: `vercel.json`
+
+Old `/#/page` links redirect to `/page`. A build with `VITE_HASH_ROUTER=1` uses `#/` routes and relative asset paths instead, for previews that can only serve one file.
 
 | Route | Page |
 | --- | --- |

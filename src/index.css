@@ -1315,6 +1315,72 @@ main {
   gap: var(--s4);
 }
 
+/* ─────────────── 00 Opening frame ─────────────── */
+
+.intro {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+}
+
+.intro__logo {
+  width: min(42vw, 680px);
+  height: auto;
+  animation: intro-in 2.2s var(--ease) both 0.2s;
+}
+
+@keyframes intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(6px);
+  }
+}
+
+.intro__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(28px, 6vh, 56px);
+  display: grid;
+  justify-items: center;
+  gap: var(--s3);
+  padding: 0;
+  border: 0;
+  background: none;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  animation: rise 1.6s var(--ease) both 1.4s;
+}
+
+.intro__scroll span {
+  width: var(--hair);
+  height: 48px;
+  background: linear-gradient(var(--accent), transparent);
+  animation: drip 2.4s var(--ease-in-out) infinite;
+  transform-origin: top;
+}
+
+/* the nav logo waits until the big one has scrolled away */
+.nav .nav__brand {
+  transition: opacity var(--t-med) var(--ease);
+}
+
+.nav--intro .nav__brand {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .intro__logo {
+    width: 86vw;
+  }
+}
+
 /* ─────────────── 01 Entrance ─────────────── */
 
 .entrance {
@@ -1434,9 +1500,8 @@ main {
   gap: var(--s6);
 }
 
-.statement__logo {
-  height: clamp(52px, 5.4vw, 76px);
-  margin-bottom: var(--s5);
+.statement__inner .label {
+  margin: 0;
 }
 
 .statement__body {
