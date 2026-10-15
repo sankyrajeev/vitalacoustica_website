@@ -123,6 +123,7 @@ export function PrivacyPage() {
             <ul>
               <li>the form or email service that delivers your enquiry to us;</li>
               <li>our website hosting provider;</li>
+              <li>for shop orders, the checkout provider (Gumroad) and our print-on-demand partner, to take payment and deliver;</li>
               <li>our accountants and tax advisers, for invoicing and statutory records;</li>
               <li>authorities, where we are legally required to.</li>
             </ul>
@@ -287,14 +288,35 @@ export function LegalPage() {
             </p>
           </Section>
 
-          <Section n={8} title="Links to other sites">
+          <Section n={8} title="Shop">
+            <p>
+              <strong>Sample packs and VJ loops</strong> are sold through Gumroad, which processes the payment, charges any
+              tax due in your country and delivers the download. Buying one gives you a non-exclusive, royalty-free licence
+              to use it in your own music, DJ sets, performances, videos and streams. You may not resell, share or
+              redistribute the files themselves, on their own or in another sample or loop pack. Because files are delivered
+              instantly, digital purchases can't be returned; if a file is faulty or missing, contact us and we'll replace it
+              or refund you.
+            </p>
+            <p>
+              <strong>Merch</strong> is printed to order by our printing partner and shipped within India. Prices include GST.
+              If an item arrives damaged, misprinted or wrong, tell us within 7 days of delivery with a photo and we'll replace
+              it or refund you. As each piece is made for you, we can't take returns for a change of mind or the wrong size,
+              so please check the size guide before ordering.
+            </p>
+            <p>
+              To complete an order, the checkout provider and our printing partner receive the details needed to take payment
+              and deliver it, such as your name, email and delivery address. See our <Link to="/privacy">privacy notice</Link>.
+            </p>
+          </Section>
+
+          <Section n={9} title="Links to other sites">
             <p>
               The site may link to other websites, such as Instagram or manufacturer pages. We aren't responsible for their
               content or privacy practices.
             </p>
           </Section>
 
-          <Section n={9} title="Liability">
+          <Section n={10} title="Liability">
             <p>
               We work to keep the site accurate and available, but it is provided "as is". To the extent the law allows, we
               aren't liable for any loss arising from your use of the website or reliance on its content. Nothing in these
@@ -302,20 +324,20 @@ export function LegalPage() {
             </p>
           </Section>
 
-          <Section n={10} title="Privacy">
+          <Section n={11} title="Privacy">
             <p>
               How we handle personal data is explained in our <Link to="/privacy">privacy notice</Link>.
             </p>
           </Section>
 
-          <Section n={11} title="Governing law">
+          <Section n={12} title="Governing law">
             <p>
               These terms are governed by the laws of India. The courts at {LEGAL.jurisdiction} have exclusive jurisdiction
               over any dispute arising from them.
             </p>
           </Section>
 
-          <Section n={12} title="Changes">
+          <Section n={13} title="Changes">
             <p>We may update these terms from time to time. The date at the top shows when they last changed.</p>
           </Section>
         </div>

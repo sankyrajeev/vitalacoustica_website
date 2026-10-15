@@ -115,6 +115,12 @@ export const INTENTS: Record<string, string[]> = {
     'what kind of events do you do', 'do you only rent', 'full production', 'what do you guys do',
     'do you do weddings', 'do you do corporate events', 'do you do concerts', 'do you do college fests', 'what types of events', 'do you do private parties',
   ],
+  shop: [
+    'do you sell merch', 'merch', 'tshirts', 'do you have t shirts', 'hoodie', 'where can i buy your tee', 'shop', 'store',
+    'online store', 'sample packs', 'do you sell samples', 'drum samples', 'sound packs', 'audio packs', 'vj loops',
+    'buy vj loops', 'visual loops for resolume', 'loops for my set', 'can i buy your sounds', 'download packs',
+    'tote bag', 'hoodies', 'is the tee in stock', 'are the t shirts available', 'merch sizes', 'price of the hoodie', 'how much is the tshirt', 'cost of a sample pack', 'how much are the vj loops', 'do you sell stuff', 'buy something', 'kick samples', 'merchandise',
+  ],
   story: [
     'who are you', 'about you', 'who started vital acoustica', 'who are the founders', 'your story', 'tell me about the company',
     'who owns this', 'who is sankarsh', 'who is harsh', 'how did you start', 'about the team',
@@ -180,6 +186,8 @@ export const TEST: [string, string][] = [
   ['events you have done', 'work'],
   ['do you need advance', 'payment'],
   ['your instagram handle', 'contact'],
+  ['are your hoodies available', 'shop'],
+  ['where do i get techno samples', 'shop'],
   ['whats the cricket score', 'unknown'],
   ['tell me something funny', 'unknown'],
 ]

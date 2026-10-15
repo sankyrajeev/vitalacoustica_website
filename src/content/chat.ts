@@ -85,6 +85,7 @@ const TOPIC: Record<string, string> = {
   lighting: 'Stage Lighting',
   structure: 'Structure',
   services: 'Our services',
+  shop: 'The shop',
   story: 'Our story',
   careers: 'Careers',
   contact: 'Contact',
@@ -246,6 +247,11 @@ const HANDLERS: Record<string, Handler> = {
   services: () => ({
     text: `We do ${capabilities.map((c) => c.name.toLowerCase()).join(', ')}: hire the kit on its own, or with the crew to design, set up and run the night.`,
     actions: [{ kind: 'link', label: 'Our services', to: '/capabilities' }, quote],
+  }),
+
+  shop: () => ({
+    text: 'Our shop is opening soon: sample packs and VJ loops you can download anywhere in the world, and merch printed to order in India. You can already have a look and ask to be told when things go on sale.',
+    actions: [{ kind: 'link', label: 'Visit the shop', to: '/shop' }],
   }),
 
   story: () => ({

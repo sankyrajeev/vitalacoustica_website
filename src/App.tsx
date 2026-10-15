@@ -18,6 +18,8 @@ import { CareersPage } from './pages/Careers'
 import { StoryPage } from './pages/Story'
 import { CaseStudy, WorkIndex } from './pages/Work'
 import { EquipmentDetail, EquipmentIndex } from './pages/Equipment'
+import { ShopIndex, ShopItem } from './pages/Shop'
+import { productById } from './content/shop'
 import { match, useRoute } from './router'
 
 type Resolved = { title: string; page: ReactNode }
@@ -33,6 +35,9 @@ function resolve(path: string): Resolved {
     const g = gearById[item.id as GearId]
     return { title: g ? `${fullName(g)} for hire` : 'Not found', page: <EquipmentDetail id={item.id} /> }
   }
+  if (path === '/shop') return { title: 'Shop', page: <ShopIndex /> }
+  const prod = match('/shop/:id', path)
+  if (prod) return { title: productById(prod.id)?.name ?? 'Not found', page: <ShopItem id={prod.id} /> }
   if (path === '/capabilities') return { title: 'Services', page: <CapabilitiesIndex /> }
   const cap = match('/capabilities/:id', path)
   if (cap) return { title: capabilityById(cap.id)?.name ?? 'Not found', page: <CapabilityPage id={cap.id} /> }
