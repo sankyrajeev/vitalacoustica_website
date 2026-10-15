@@ -153,16 +153,11 @@ function StageDeck() {
           <boxGeometry args={[0.7, 0.2 + i * 0.2, 0.8]} />
         </mesh>
       ))}
-      {/* DJ booth */}
+      {/* DJ booth: the Pioneer set on a quickie table */}
       <group position={[0, height, -0.2]}>
-        <mesh material={skirtMat} position={[0, 0.5, 0]}>
-          <boxGeometry args={[2.2, 1, 0.75]} />
-        </mesh>
-        <mesh material={deckMat} position={[0, 1.01, 0]}>
-          <boxGeometry args={[2.3, 0.03, 0.8]} />
-        </mesh>
+        <QuickieTable halfW={0.85} halfD={0.38} top={1.0} />
         {/* two CDJ-3000X and a DJM-V10-LF */}
-        <group position={[0, 1.025, 0]}>
+        <group position={[0, 1.0, 0]}>
           <DJSet />
         </group>
       </group>
@@ -216,17 +211,18 @@ function Strut({ a, b, r = 0.008 }: { a: [number, number, number]; b: [number, n
   )
 }
 
-/** Pop-up quickie table as in the product photo: posts at the corners and mid-points, X-braced in two tiers. */
-function QuickieTable() {
-  const W = 0.8
-  const D = 0.35
-  const H = 0.98
-  const xs = [-W, 0, W]
-  const zs = [-D, D]
-  const tiers = [0.3, 0.64, H]
+/**
+ * Pop-up quickie table as in the product photo: posts at the corners and mid-points,
+ * X-braced in two tiers, black top. `top` is the height of the top surface.
+ */
+function QuickieTable({ halfW = 0.8, halfD = 0.35, top = 0.72 }: { halfW?: number; halfD?: number; top?: number }) {
+  const frameTop = top - 0.03
+  const xs = [-halfW, 0, halfW]
+  const zs = [-halfD, halfD]
+  const tiers = [0, frameTop / 2, frameTop]
   const posts = xs.flatMap((x) => zs.map((z) => [x, z] as const))
   const struts: [[number, number, number], [number, number, number]][] = []
-  // front and back faces: X between neighbouring posts, per tier
+  // front and back faces: an X between neighbouring posts on each tier
   for (const z of zs)
     for (let k = 0; k < xs.length - 1; k++)
       for (let t = 0; t < tiers.length - 1; t++) {
@@ -240,15 +236,15 @@ function QuickieTable() {
       struts.push([[x, tiers[t], zs[1]], [x, tiers[t + 1], zs[0]]])
     }
   return (
-    <group position={[0, 0.3, -0.3]}>
-      <mesh material={topMat} position={[0, H - 0.27, 0]}>
-        <boxGeometry args={[W * 2 + 0.06, 0.03, D * 2 + 0.06]} />
+    <group>
+      <mesh material={topMat} position={[0, top - 0.015, 0]}>
+        <boxGeometry args={[halfW * 2 + 0.06, 0.03, halfD * 2 + 0.06]} />
       </mesh>
       {posts.map(([x, z]) => (
-        <Strut key={`${x}${z}`} a={[x, 0, z]} b={[x, H - 0.285, z]} r={0.01} />
+        <Strut key={`${x}${z}`} a={[x, 0, z]} b={[x, frameTop, z]} r={0.01} />
       ))}
-      {struts.map(([a, b2], k) => (
-        <Strut key={k} a={[a[0], a[1] - 0.3, a[2]]} b={[b2[0], b2[1] - 0.3, b2[2]]} />
+      {struts.map(([a, b], k) => (
+        <Strut key={k} a={a} b={b} />
       ))}
     </group>
   )
@@ -262,7 +258,9 @@ function FOH() {
         <boxGeometry args={[3.2, 0.3, 2.2]} />
       </mesh>
       {/* quickie table: black top on a silver scissor frame */}
-      <QuickieTable />
+      <group position={[0, 0.3, -0.3]}>
+        <QuickieTable top={0.72} />
+      </group>
       <group position={[0, 1.02, -0.25]}>
         <DM3 />
       </group>

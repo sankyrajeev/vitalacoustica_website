@@ -2,17 +2,17 @@ import { Environment, Lightformer, OrbitControls, Sparkles } from '@react-three/
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
-import { Suspense, useEffect, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Euler, MathUtils, Vector3 } from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
-import { rigGear, type RigId } from '../content/gear'
+import { type RigId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
 import { HexRetro, NeonSwags, WarcraftRetro, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
 import { BoothMonitors, PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
-import { EXPLORE_HOME, HOTSPOTS } from './hotspots'
+import { EXPLORE_HOME, rigSpots, spotView } from './hotspots'
 import { markerEls } from './markers'
 import { DECK, VENUE } from './layout'
 import { PALETTES, PaletteContext, type SceneTheme, usePalette } from './palette'
@@ -27,8 +27,12 @@ type SceneProps = {
   theme: SceneTheme
   mode: SceneMode
   focus: RigId | null
+  /** the particular fixture picked, when there are several of the item */
+  focusAt?: V3 | null
   haze: number
 }
+
+type V3 = [number, number, number]
 
 /** Advances the shared show clock once per frame, before any fixture reads it. */
 function ShowClock({ timeScale }: { timeScale: number }) {
@@ -93,16 +97,16 @@ const goalPos = new Vector3()
 const goalTarget = new Vector3()
 
 /** Orbit around the stage; when a piece of gear is picked, glide the camera to it. */
-function ExploreCamera({ focus }: { focus: RigId | null }) {
+function ExploreCamera({ focus, focusAt }: { focus: RigId | null; focusAt: V3 | null }) {
   const controls = useRef<OrbitControlsImpl>(null)
   const flying = useRef(true)
 
   useEffect(() => {
-    const spot = focus ? HOTSPOTS[focus] : null
+    const spot = focus ? spotView(focus, focusAt) : null
     goalPos.set(...(spot ? spot.camera : EXPLORE_HOME.camera))
     goalTarget.set(...(spot ? spot.at : EXPLORE_HOME.target))
     flying.current = true
-  }, [focus])
+  }, [focus, focusAt])
 
   useFrame(({ camera }, dt) => {
     const c = controls.current
@@ -133,12 +137,13 @@ function ExploreCamera({ focus }: { focus: RigId | null }) {
 const projected = new Vector3()
 
 /** Moves the DOM gear markers to their fixtures' on-screen positions. */
-function MarkerProjector() {
+function MarkerProjector({ small }: { small: boolean }) {
+  const spots = useMemo(() => rigSpots(small), [small])
   useFrame(({ camera, size }) => {
-    for (const g of rigGear) {
-      const el = markerEls.get(g.id)
+    for (const s of spots) {
+      const el = markerEls.get(s.key)
       if (!el) continue
-      projected.set(...HOTSPOTS[g.id].at).project(camera)
+      projected.set(s.at[0], s.at[1], s.at[2]).project(camera)
       const visible = projected.z < 1 && Math.abs(projected.x) < 1.1 && Math.abs(projected.y) < 1.1
       el.style.visibility = visible ? 'visible' : 'hidden'
       if (visible) el.style.transform = `translate(${((projected.x + 1) / 2) * size.width}px, ${((1 - projected.y) / 2) * size.height}px)`
@@ -188,7 +193,7 @@ function Haze({ small, theme, haze }: { small: boolean; theme: SceneTheme; haze:
   )
 }
 
-function Scene({ small, reducedMotion, theme, mode, focus, haze }: SceneProps) {
+function Scene({ small, reducedMotion, theme, mode, focus, focusAt = null, haze }: SceneProps) {
   const p = PALETTES[theme]
   return (
     <PaletteContext.Provider value={p}>
@@ -228,8 +233,8 @@ function Scene({ small, reducedMotion, theme, mode, focus, haze }: SceneProps) {
       {mode === 'drone' && <DroneCamera />}
       {mode === 'explore' && (
         <>
-          <ExploreCamera focus={focus} />
-          <MarkerProjector />
+          <ExploreCamera focus={focus} focusAt={focusAt} />
+          <MarkerProjector small={small} />
         </>
       )}
 

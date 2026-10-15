@@ -23,4 +23,65 @@ export const HOTSPOTS: Record<RigId, { at: V3; camera: V3 }> = {
   truss: { at: [-5, 3.6, -0.6], camera: [-2.8, 3.1, 4.2] },
 }
 
+// Every other instance of each item in the model, so each fixture gets its own marker.
+// (Wing fixtures mirror across the centre line; sharpies are spread along the front truss.)
+const EXTRA: Partial<Record<RigId, V3[]>> = {
+  v10p: [[6.53, 2.12, -0.23]],
+  b22: [[-6.3, 0.75, 1.4]],
+  art915: [[1.55, 1.96, -0.35]],
+  cdj: [[0.41, 1.75, -0.2]],
+  matrix: [[3.4, 3.1, -1.45]],
+  trefoil: [[-2.4, 2.9, -1.45]],
+  hex: [
+    [-3.6, 2.05, -1.45],
+    [-5, 1.8, -0.36],
+    [-5, 3.3, -0.36],
+    [5, 1.8, -0.36],
+    [5, 3.3, -0.36],
+  ],
+  warcraft: [[3.9, 0.92, 0.55]],
+  dotbar: [[2.75, 2.4, -1.45]],
+  pixelbar: [
+    [-3.0, 1.45, -1.45],
+    [2.98, 0.9, -1.45],
+    [-2.98, 0.9, -1.45],
+  ],
+  rope: [
+    [0, 3.55, -2.25],
+    [2.3, 3.55, -2.25],
+  ],
+  truss: [[5, 3.6, -0.6]],
+  table: [[0.92, 1.3, -0.2]],
+}
+
+export type Spot = { id: RigId; key: string; at: V3 }
+
+const SHARPY_SPAN = 8.4
+
+/** Every marker position in the model: one per fixture, not one per product. */
+export function rigSpots(small: boolean): Spot[] {
+  const out: Spot[] = []
+  for (const id of Object.keys(HOTSPOTS) as RigId[]) {
+    if (id === 'sharpy') {
+      const n = small ? 6 : 8
+      for (let i = 0; i < n; i++) out.push({ id, key: `${id}:${i}`, at: [-SHARPY_SPAN / 2 + (SHARPY_SPAN * i) / (n - 1), 4.45, -0.6] })
+      continue
+    }
+    out.push({ id, key: `${id}:0`, at: HOTSPOTS[id].at })
+    EXTRA[id]?.forEach((at, i) => out.push({ id, key: `${id}:${i + 1}`, at }))
+  }
+  return out
+}
+
+/** Camera framing for one instance: the item's usual view, moved to that fixture (mirrored across the centre line). */
+export function spotView(id: RigId, at: V3 | null): { at: V3; camera: V3 } {
+  const base = HOTSPOTS[id]
+  if (!at) return base
+  const flip = at[0] * base.at[0] < 0 ? -1 : 1
+  return {
+    at,
+    camera: [at[0] + (base.camera[0] - base.at[0]) * flip, at[1] + base.camera[1] - base.at[1], at[2] + base.camera[2] - base.at[2]],
+  }
+}
+
 export const EXPLORE_HOME = { camera: [0, 3.0, 11] as V3, target: [0, 2.0, -0.5] as V3 }

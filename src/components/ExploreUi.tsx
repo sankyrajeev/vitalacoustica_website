@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { fullName, gearById, rigGear, type RigId } from '../content/gear'
 import { navigate } from '../router'
 import { gearImg } from './gearImg'
+import { rigSpots } from '../three/hotspots'
 import { registerMarker } from '../three/markers'
 import { LOOK_NAMES, REFERENCE_BPM, resetShow, show, type ColourMode } from '../three/show'
 
@@ -15,14 +16,17 @@ const COLOURS: { id: ColourMode; label: string }[] = [
 
 type Props = {
   focus: RigId | null
-  onFocus: (id: RigId | null) => void
+  onFocus: (id: RigId | null, at?: [number, number, number]) => void
   onExit: () => void
   haze: number
   onHaze: (v: number) => void
+  small: boolean
 }
 
 /** Overlay for explore mode: gear list, spec card and a compact lighting desk. */
-export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
+export function ExploreUi({ focus, onFocus, onExit, haze, onHaze, small }: Props) {
+  // a marker on every fixture in the rig, not one per product
+  const spots = useMemo(() => rigSpots(small), [small])
   const [look, setLook] = useState<number | null>(show.look)
   const [colour, setColour] = useState<ColourMode>(show.colour)
   const [bpm, setBpm] = useState(show.bpm)
@@ -59,19 +63,22 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
       </div>
 
       <div className="stage-markers">
-        {rigGear.map((g) => (
-          <button
-            key={g.id}
-            ref={(el) => registerMarker(g.id, el)}
-            className={`marker stage-marker ${focus === g.id ? 'is-active' : ''}`}
-            onClick={() => onFocus(g.id)}
-            aria-label={`${fullName(g)}: show details`}
-            tabIndex={-1}
-          >
-            <span className="marker__dot" />
-            <span className="marker__label">{g.name}</span>
-          </button>
-        ))}
+        {spots.map((s) => {
+          const g = gearById[s.id]
+          return (
+            <button
+              key={s.key}
+              ref={(el) => registerMarker(s.key, el)}
+              className={`marker stage-marker ${focus === s.id ? 'is-active' : ''}`}
+              onClick={() => onFocus(s.id, s.at)}
+              aria-label={`${fullName(g)}: show details`}
+              tabIndex={-1}
+            >
+              <span className="marker__dot" />
+              <span className="marker__label">{g.name}</span>
+            </button>
+          )
+        })}
       </div>
 
       <nav className="explore__list" aria-label="Gear">

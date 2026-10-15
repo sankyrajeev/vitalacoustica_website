@@ -53,6 +53,12 @@ export function StageModelLauncher({ caption }: { caption?: string }) {
 export function StageModelOverlay() {
   const [req, setReq] = useState<StageRequest | null>(null)
   const [focus, setFocus] = useState<RigId | null>(null)
+  // which fixture was picked when the item appears more than once in the rig
+  const [focusAt, setFocusAt] = useState<[number, number, number] | null>(null)
+  const pick = useCallback((id: RigId | null, at?: [number, number, number]) => {
+    setFocus(id)
+    setFocusAt(at ?? null)
+  }, [])
   const [haze, setHaze] = useState(show.haze)
   const [failed, setFailed] = useState(false)
   const small = useMediaQuery('(max-width: 760px)')
@@ -68,6 +74,7 @@ export function StageModelOverlay() {
       setFailed(false)
       setReq(detail)
       setFocus(detail.focus)
+      setFocusAt(null)
     }
     window.addEventListener(STAGE_EVENT, open)
     return () => window.removeEventListener(STAGE_EVENT, open)
@@ -112,6 +119,7 @@ export function StageModelOverlay() {
               theme={theme}
               mode={req.mode}
               focus={focus}
+              focusAt={focusAt}
               haze={haze}
             />
           </Suspense>
@@ -126,7 +134,7 @@ export function StageModelOverlay() {
       {req.mode === 'drone' ? (
         <DroneHud onExit={close} touch={touch} />
       ) : (
-        <ExploreUi focus={focus} onFocus={setFocus} onExit={close} haze={haze} onHaze={setHaze} />
+        <ExploreUi focus={focus} onFocus={pick} onExit={close} haze={haze} onHaze={setHaze} small={small} />
       )}
     </div>
   )
