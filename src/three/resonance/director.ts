@@ -24,16 +24,12 @@ export const SCENES: Record<string, Partial<SceneParams>> = {
   // the opening frame, composed like the share image: sculpture on the right, logo on the left
   intro: {},
   entrance: { dist: 8.2, x: 1.9, turn: 0.75, tilt: 0.12 },
-  manifesto: { dist: 6.6, x: 2.5, turn: 1.1, tilt: 0.25, opacity: 0.5 },
-  'cap-intro': { dist: 9.5, x: 1.9, turn: 2.2, opacity: 0.85 },
-  'cap-sound': { dist: 8, x: 1.9, turn: 2.6, wave: 1 },
-  'cap-light': { dist: 7.2, x: 1.8, turn: 3.2, sweep: 1, tilt: -0.15 },
-  'cap-visuals': { dist: 8.4, x: 1.9, turn: 3.8, mesh: 1, tilt: 0.1 },
-  'cap-production': { dist: 10.5, x: 2.0, turn: 4.4, grid: 1, tilt: 0.55, y: 0.35 },
-  // sections with their own imagery: the sculpture steps back
+  // the sound wave runs along the ribbon beside the statement
+  manifesto: { dist: 7.2, x: 2.4, turn: 1.1, tilt: 0.2, opacity: 0.6, wave: 1 },
+  // testimonials: the light sweep, the form turning slowly behind the quotes
+  voices: { dist: 10, x: 0, y: 0.2, turn: 3.2, sweep: 1, mesh: 0.4, opacity: 0.35, calm: 0.5 },
+  // the renders carry their own imagery: the sculpture steps back
   renders: { opacity: 0 },
-  'sound-feature': { opacity: 0 },
-  work: { opacity: 0 },
   enquiry: { dist: 13, x: 0, y: 0.1, turn: 5.4, scale: 0.85, calm: 1, opacity: 0.55 },
 }
 

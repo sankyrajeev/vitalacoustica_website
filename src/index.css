@@ -1581,74 +1581,6 @@ main {
   }
 }
 
-/* "What we do": a short introduction and an index of the four disciplines */
-.capabilities__intro .lede {
-  margin-top: var(--s5);
-}
-
-.cap-overview {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--s5);
-  margin-top: var(--s7);
-}
-
-.cap-overview button {
-  display: grid;
-  gap: var(--s2);
-  width: 100%;
-  height: 100%;
-  padding: var(--s4) 0 0;
-  border: 0;
-  border-top: var(--hair) solid var(--line-strong);
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--t-fast);
-}
-
-.cap-overview button:hover {
-  border-color: var(--accent);
-}
-
-.cap-overview__n {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: var(--accent-text);
-}
-
-.cap-overview strong {
-  font-family: var(--serif);
-  font-size: clamp(26px, 2.4vw, 36px);
-  font-weight: 400;
-  line-height: 1.05;
-}
-
-.cap-overview__line {
-  font-size: 14px;
-  color: var(--text-soft);
-}
-
-@media (max-width: 900px) {
-  .cap-overview {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.cap__kit {
-  display: grid;
-  gap: var(--s2);
-  max-width: 26em;
-  font-size: 13.5px;
-  color: var(--text-soft);
-}
-
-.cap__kit .label {
-  margin: 0;
-  color: var(--accent-text);
-}
-
 /* ─────────────── 04 Renders of the stage model ─────────────── */
 
 .renders {
@@ -1782,73 +1714,6 @@ main {
   }
   .render__caption > span:not(.render__open) {
     display: none;
-  }
-}
-
-/* ─────────────── 05 The sound system ─────────────── */
-
-.sound-feature {
-  background: var(--bg);
-}
-
-.sound-feature__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(32px, 5vw, 96px);
-  align-items: center;
-}
-
-.sound-feature__media {
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
-  align-items: end;
-  gap: 2px;
-  padding: clamp(24px, 4vw, 56px);
-  background: #e9e6de;
-}
-
-.sound-feature__item {
-  margin: 0;
-  display: grid;
-  gap: var(--s3);
-  justify-items: center;
-}
-
-.sound-feature__item img {
-  width: 100%;
-  max-height: 420px;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-}
-
-.sound-feature__item figcaption {
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #67635b;
-}
-
-.sound-feature__text {
-  display: grid;
-  gap: var(--s5);
-  justify-items: start;
-}
-
-.sound-feature__text .label {
-  margin: 0;
-}
-
-.sound-feature__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s3);
-  margin-top: var(--s3);
-}
-
-@media (max-width: 900px) {
-  .sound-feature__inner {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -2163,75 +2028,7 @@ main {
   }
 }
 
-/* ─────────────── 04 Capabilities ─────────────── */
-
-.capabilities {
-  position: relative;
-}
-
-.capabilities__intro {
-  display: grid;
-  align-content: end;
-  min-height: 70vh;
-  padding-top: var(--section);
-  padding-bottom: var(--s8);
-}
-
-.cap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 100svh;
-  padding-block: var(--s8);
-}
-
-.cap::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(var(--shade), 0.78) 0%, rgba(var(--shade), 0.35) 45%, transparent 62%);
-  pointer-events: none;
-}
-
-.cap__inner {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: var(--s6);
-}
-
-.cap__text {
-  display: grid;
-  gap: var(--s5);
-  align-content: start;
-}
-
-.cap__index {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  color: var(--accent-text);
-}
-
-.cap__index span {
-  color: var(--muted);
-}
-
-.cap__name {
-  font-size: clamp(64px, 9vw, 150px);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-}
-
-.cap__statement {
-  max-width: 22em;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(20px, 1.8vw, 26px);
-  line-height: 1.3;
-  color: var(--text-soft);
-}
-
+/* list of what a service covers (service pages) */
 .cap__covers {
   display: grid;
   max-width: 26em;
@@ -2243,24 +2040,6 @@ main {
   border-bottom: var(--hair) solid var(--line);
   font-size: 14px;
   color: var(--text-soft);
-}
-
-.cap--sound .cap__covers {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--s5);
-}
-
-.cap__text .text-link {
-  justify-self: start;
-}
-
-@media (max-width: 900px) {
-  .cap::before {
-    background: linear-gradient(0deg, rgba(var(--shade), 0.9) 0%, rgba(var(--shade), 0.55) 60%, rgba(var(--shade), 0.2) 100%);
-  }
-  .cap__inner {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 /* ─────────────── 05 Technical ─────────────── */
@@ -3272,6 +3051,50 @@ main {
   padding: var(--s6);
   border: var(--hair) solid var(--line);
   background: var(--surface);
+}
+
+.quote-card {
+  position: relative;
+}
+
+.quote-card__sample {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 3px 7px;
+  border: var(--hair) solid var(--line-strong);
+  border-radius: var(--radius);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* homepage testimonials: three quotes over the sculpture */
+.voices {
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+}
+
+.voices__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 32px);
+  align-items: start;
+}
+
+.voices .quote-card {
+  margin: 0;
+  background: rgba(var(--shade), 0.86);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 900px) {
+  .voices__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .quote-card blockquote {

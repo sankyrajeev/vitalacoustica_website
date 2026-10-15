@@ -1,22 +1,19 @@
 import { useEffect, useState } from 'react'
 import { EnquiryForm } from '../components/EnquiryForm'
-import { gearImg } from '../components/gearImg'
-import { ProjectCard } from '../components/ProjectCard'
+import { QuoteCard } from '../components/QuoteCard'
 import { ResonanceBackdrop } from '../components/ResonanceBackdrop'
 import { Arrow, Cta, Label, Logo, TextLink } from '../components/ui'
-import { capabilities } from '../content/capabilities'
-import { gearById } from '../content/gear'
-import { projects } from '../content/projects'
 import { site } from '../content/site'
+import { testimonials } from '../content/testimonials'
 import { openDrone, openExplore } from '../events'
 import { mediaUrl } from '../media'
 import { useSectionSnap } from '../hooks/useSectionSnap'
 import { scrollToId } from '../router'
 
-const SNAP_SECTIONS = '.intro, .entrance, .statement, .capabilities__intro, .cap, .renders, .sound-feature, .work, .final'
+const SNAP_SECTIONS = '.intro, .entrance, .statement, .renders, .voices, .final'
 
-// The homepage: the Resonance Form (a fixed 3D layer) carries the page, changing
-// with each section. The full equipment list lives on /equipment.
+// The homepage: the brand, the 3D, what clients say, and the enquiry. The Resonance Form
+// (a fixed 3D layer) changes with each section. Equipment, services and work have their own pages.
 export function Home() {
   // each section settles centred on screen instead of stopping wherever the scroll ends
   useSectionSnap(SNAP_SECTIONS)
@@ -26,10 +23,8 @@ export function Home() {
       <Intro />
       <Entrance />
       <Statement />
-      <Disciplines />
       <Renders />
-      <SoundSystem />
-      <SelectedWork />
+      <Voices />
       <FinalEnquiry />
     </>
   )
@@ -116,80 +111,19 @@ function Statement() {
   )
 }
 
-const OVERVIEW: Record<string, string> = {
-  sound: 'd&b and RCF systems, mixers and DJ setups, tuned for the room.',
-  light: 'Beam moving heads, retro fixtures and LED, programmed to the music.',
-  visuals: 'Matrix panels, pixel mapping and projection mapping.',
-  production: 'Truss, power, crew and the running of the show.',
-}
-
-/* 03 — What we do: the sculpture changes material beside each discipline */
-function Disciplines() {
-  return (
-    <section id="capabilities" className="capabilities" aria-labelledby="cap-title">
-      <div className="wrap capabilities__intro" data-scene="cap-intro">
-        <Label index="02">What we do</Label>
-        <h2 id="cap-title" className="h1">
-          Sound, light and production. Conceived as one.
-        </h2>
-        <p className="lede">
-          Most nights need all of it working together. We plan the sound system, the lighting and the stage as one design,
-          then bring the kit and the crew to deliver it, whether you hire a pair of speakers or the whole production.
-        </p>
-        <ol className="cap-overview">
-          {capabilities.map((c) => (
-            <li key={c.id}>
-              <button onClick={() => scrollToId(`cap-${c.id}`)}>
-                <span className="cap-overview__n">{c.index}</span>
-                <strong>{c.name}</strong>
-                <span className="cap-overview__line">{OVERVIEW[c.id]}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
-      {capabilities.map((c) => (
-        <article key={c.id} id={`cap-${c.id}`} className={`cap cap--${c.id}`} data-scene={`cap-${c.id}`} aria-labelledby={`cap-${c.id}-title`}>
-          <div className="wrap cap__inner">
-            <div className="cap__text">
-              <p className="cap__index">
-                {c.index} <span>/ 04</span>
-              </p>
-              <h3 id={`cap-${c.id}-title`} className="cap__name">
-                {c.name}
-              </h3>
-              <p className="cap__statement">{c.statement}</p>
-              <ul className="cap__covers">
-                {c.covers.map((x) => (
-                  <li key={x}>{x}</li>
-                ))}
-              </ul>
-              <p className="cap__kit">
-                <span className="label">In the rig</span>
-                {c.gear.map((id) => gearById[id].name).join(' · ')}
-              </p>
-              <TextLink to={`/capabilities/${c.id}`}>{c.name} services</TextLink>
-            </div>
-          </div>
-        </article>
-      ))}
-    </section>
-  )
-}
-
 const RENDERS = [
   { file: 'render-stage.webp', w: 1600, h: 1000, title: 'The stage', note: 'Goal-post truss, beams, lighting wings and the d&b system', open: () => openExplore(null) },
   { file: 'render-wing.webp', w: 1200, h: 900, title: 'Lighting wing', note: 'Matrix panel, fan light, hex retro and LED bars', open: () => openExplore('matrix') },
   { file: 'render-drone.webp', w: 1200, h: 900, title: 'Drone view', note: 'Fly the venue from the audience to the booth', open: openDrone },
 ]
 
-/* 04 — Renders of our stage model, each one a way into the live 3D view */
+/* 03 — Renders of our stage model, each one a way into the live 3D view */
 function Renders() {
   return (
     <section className="section renders" data-scene="renders" aria-labelledby="renders-title">
       <div className="wrap">
         <header className="section-head renders__head">
-          <Label index="03">The rig in 3D</Label>
+          <Label index="02">The rig in 3D</Label>
           <h2 id="renders-title" className="h1">
             Step inside before the show.
           </h2>
@@ -218,58 +152,23 @@ function Renders() {
   )
 }
 
-/* 05 — The sound system, as the one piece of kit worth naming on the homepage */
-function SoundSystem() {
-  const tops = gearById.v10p
-  const subs = gearById.b22
+/* 04 — Testimonials: a few voices over the sculpture's light sweep */
+function Voices() {
+  const shown = testimonials.slice(0, 3)
+  if (shown.length === 0) return null
   return (
-    <section className="section sound-feature" data-scene="sound-feature" aria-labelledby="sound-title">
-      <div className="wrap sound-feature__inner">
-        <div className="sound-feature__media">
-          {[tops, subs].map((g) => (
-            <figure key={g.id} className={`sound-feature__item sound-feature__item--${g.id}`}>
-              <img src={gearImg(g.photo.file)} alt={g.photo.alt} width={g.photo.width} height={g.photo.height} loading="lazy" />
-              <figcaption>{g.name}</figcaption>
-            </figure>
-          ))}
-        </div>
-        <div className="sound-feature__text">
-          <Label index="04">The sound</Label>
-          <h2 id="sound-title" className="h1">
-            d&b audiotechnik, end to end.
-          </h2>
-          <p className="lede">
-            V10P point-source tops over B22 bandpass subwoofers: clean at full club level, with the low end a kick drum needs
-            and the control to keep it off the stage.
-          </p>
-          <div className="sound-feature__actions">
-            <Cta to="/equipment">See all equipment</Cta>
-            <button className="cta cta--quiet" onClick={() => openExplore('v10p')}>
-              <span>View in 3D</span>
-              <Arrow />
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* 06 — Selected work */
-function SelectedWork() {
-  return (
-    <section id="work" className="section section--solid work" data-scene="work" aria-labelledby="work-title">
+    <section className="section voices" data-scene="voices" aria-labelledby="voices-title">
       <div className="wrap">
         <header className="section-head">
-          <Label index="05">Selected work</Label>
-          <h2 id="work-title" className="h1">
-            Shows we’ve put on.
+          <Label index="03">Testimonials</Label>
+          <h2 id="voices-title" className="h1">
+            In their words.
           </h2>
-          <TextLink to="/work">All work</TextLink>
+          <TextLink to="/testimonials">All testimonials</TextLink>
         </header>
-        <div className="work-grid">
-          {projects.map((p, i) => (
-            <ProjectCard key={p.slug} project={p} variant={i === 0 ? 'lead' : i === 1 ? 'offset' : 'small'} />
+        <div className="voices__grid">
+          {shown.map((t) => (
+            <QuoteCard key={t.name} t={t} />
           ))}
         </div>
       </div>
@@ -277,13 +176,13 @@ function SelectedWork() {
   )
 }
 
-/* 07 — Enquiry: the sculpture returns, centred and calm */
+/* 05 — Enquiry: the sculpture returns, centred and calm */
 function FinalEnquiry() {
   const [open, setOpen] = useState(false)
   return (
     <section className="final" data-scene="enquiry" aria-labelledby="final-title">
       <div className="wrap final__inner">
-        <Label index="06">Get a quote</Label>
+        <Label index="04">Get a quote</Label>
         <h2 id="final-title" className="display display--sm">
           Let’s shape something exceptional.
         </h2>

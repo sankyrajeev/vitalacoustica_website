@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
+import { QuoteCard } from '../components/QuoteCard'
 import { Cta, Label } from '../components/ui'
-import { projectBySlug } from '../content/projects'
 import { site } from '../content/site'
 import { testimonials } from '../content/testimonials'
 
@@ -18,25 +18,9 @@ export function TestimonialsPage() {
         <div className="wrap">
           {testimonials.length > 0 ? (
             <div className="quotes">
-              {testimonials.map((t) => {
-                const project = t.project ? projectBySlug(t.project) : undefined
-                return (
-                  <figure key={t.name + t.quote.slice(0, 20)} className="quote-card">
-                    <blockquote>
-                      <p>“{t.quote}”</p>
-                    </blockquote>
-                    <figcaption>
-                      <strong>{t.name}</strong>
-                      {t.context && <span>{t.context}</span>}
-                      {project && (
-                        <Link to={`/work/${project.slug}`} className="underline">
-                          {project.title}
-                        </Link>
-                      )}
-                    </figcaption>
-                  </figure>
-                )
-              })}
+              {testimonials.map((t) => (
+                <QuoteCard key={t.name + t.quote.slice(0, 20)} t={t} />
+              ))}
             </div>
           ) : (
             <div className="coming-soon">

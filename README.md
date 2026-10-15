@@ -27,7 +27,7 @@ Old `/#/page` links redirect to `/page`. A build with `VITE_HASH_ROUTER=1` uses 
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: the 3D Resonance Form across Entrance, Statement and the four disciplines; renders of the stage model; the d&b system; Selected work; Get a quote |
+| `/` | Home: logo opening frame, Entrance, Statement, renders of the 3D rig, Testimonials, Get a quote; the 3D Resonance Form changes with each section |
 | `/equipment`, `/equipment/<id>` | Hire catalogue: photo, description and specs for each item, then "View in the 3D rig"; how hiring works |
 | `/work`, `/work/<slug>` | Selected work index and case studies |
 | `/capabilities`, `/capabilities/<sound\|light\|visuals\|production>` | Services |
