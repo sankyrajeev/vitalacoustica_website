@@ -1,3 +1,4 @@
+import { Coverflow, type Slide } from '../components/Coverflow'
 import { FaderReveal } from '../components/FaderReveal'
 import { PageHead } from '../components/PageHead'
 import { ProjectCard } from '../components/ProjectCard'
@@ -5,17 +6,40 @@ import { Label, MediaFrame, Placeholder, TextLink } from '../components/ui'
 import { projects, TBC, type Project } from '../content/projects'
 import { NotFound } from './NotFound'
 
+/** Every photograph from every real project, each linking to its case study. */
+function showSlides(only?: Project): Slide[] {
+  return projects
+    .filter((p) => !p.placeholder && (!only || p === only))
+    .flatMap((p) =>
+      [p.hero, ...p.gallery]
+        .filter((m, i, all) => m.src && all.findIndex((x) => x.src === m.src) === i)
+        .map((m) => ({
+          src: m.src,
+          alt: m.alt,
+          title: p.title,
+          meta: [p.venue, p.year].filter((x) => x && x !== TBC).join(' · '),
+          href: only ? undefined : `/work/${p.slug}`,
+        })),
+    )
+}
+
 export function WorkIndex() {
   return (
     <>
       <PageHead label="Selected work" title="A selection of what we do.">
         Productions we have shaped. Each case study covers the system, the light and the decisions behind them.
       </PageHead>
+      <section className="work-flow" aria-label="Photographs from our shows">
+        <Coverflow slides={showSlides()} label="Photographs from our shows" />
+      </section>
       <section className="section section--tight">
-        <div className="wrap work-list">
-          {projects.map((p, i) => (
-            <ProjectCard key={p.slug} project={p} variant={i % 3 === 0 ? 'lead' : 'offset'} />
-          ))}
+        <div className="wrap">
+          <Label>All projects</Label>
+          <div className="work-list">
+            {projects.map((p) => (
+              <ProjectCard key={p.slug} project={p} variant="small" />
+            ))}
+          </div>
         </div>
       </section>
     </>
@@ -82,14 +106,11 @@ export function CaseStudy({ slug }: { slug: string }) {
         </section>
       )}
 
-      <section className="wrap case__gallery" aria-label="Photographs">
-        <Label>Behind the scenes</Label>
-        <div className="case__grid">
-          {p.gallery.slice(1).map((m) => (
-            <MediaFrame key={m.src} media={m} showGear sizes="(max-width: 900px) 100vw, 50vw" />
-          ))}
-          <Placeholder ratio="4 / 3" sample={sample}>Load-in, rigging and system-tuning photographs.</Placeholder>
+      <section className="case__gallery" aria-label="Photographs">
+        <div className="wrap">
+          <Label>Photographs</Label>
         </div>
+        <Coverflow slides={showSlides(p)} label={`Photographs from ${p.title}`} />
       </section>
 
       <section className="wrap case__film" aria-label="Production film">

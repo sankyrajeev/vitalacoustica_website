@@ -13,8 +13,9 @@ export function CapabilitiesIndex() {
   return (
     <>
       <PageHead label="Services" title="Sound, light and production, for hire.">
-        Hire the equipment on its own, or with the crew to design, set up and run it. Everything is planned together so the
-        sound, the light and the stage serve the same night.
+        Hire the equipment on its own, or with the crew to design, set up and run it, and for venues that want a system of their
+        own, consulting on permanent installations. Everything is planned together so the sound, the light and the stage
+        serve the same night.
       </PageHead>
       <section className="section section--tight">
         <ol className="wrap cap-index">

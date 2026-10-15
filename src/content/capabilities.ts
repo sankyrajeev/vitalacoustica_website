@@ -1,8 +1,8 @@
 import type { GearId } from './gear'
 
-// The four disciplines. `scene` drives how the Resonance Form behaves beside each module.
+// The services, each with its own page under /capabilities/<id>.
 
-export type CapabilityId = 'sound' | 'light' | 'visuals' | 'production'
+export type CapabilityId = 'sound' | 'light' | 'visuals' | 'production' | 'installations'
 
 export type Capability = {
   id: CapabilityId
@@ -79,6 +79,21 @@ export const capabilities: Capability[] = [
     ],
     gear: ['truss'],
     image: { src: 'park-blue', alt: 'Open-air stage at blue hour with its lighting wings and truss posts' },
+  },
+  {
+    id: 'installations',
+    index: '05',
+    name: 'Installations',
+    statement: 'Permanent sound and light for venues that want every night to feel like a show.',
+    summary:
+      'For clubs, bars, restaurants, lounges and event spaces that want a system of their own. We advise on what to install and where, drawing on what we learn every weekend running live shows: the right loudspeakers for the room, lighting that suits the space and the music, and control your own staff can run with confidence.',
+    covers: ['Venue assessment', 'System design and specification', 'Equipment selection', 'Installation and commissioning', 'Staff handover and ongoing support'],
+    approach: [
+      { title: 'Understand the venue', body: 'How the space is used, who plays there, how loud it needs to get, and what the neighbours and the building allow.' },
+      { title: 'Design and specify', body: 'Loudspeaker placement and coverage, lighting layout and control, drawn and costed before anything is ordered.' },
+      { title: 'Install and hand over', body: 'The system is installed, tuned to the room and handed over with simple presets and training for your team, and we stay on call afterwards.' },
+    ],
+    gear: ['v10p', 'b22', 'd40', 'dm3', 'matrix', 'pixelbar', 'rope'],
   },
 ]
 
