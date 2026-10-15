@@ -3352,6 +3352,8 @@ html.menu-open .chat {
 
 .qr {
   display: inline-flex;
+  font-family: inherit;
+  text-decoration: none;
   align-items: center;
   gap: 6px;
   padding: 7px 11px;

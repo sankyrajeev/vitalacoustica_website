@@ -8,6 +8,12 @@ export const INTENTS: Record<string, string[]> = {
     'hi', 'hello', 'hey', 'hii', 'hey there', 'hello there', 'good morning', 'good evening', 'good afternoon',
     'namaste', 'yo', 'hi team', 'hello vital acoustica', 'hey guys', 'hiya', 'helo', 'hai', 'sup',
   ],
+  smalltalk: [
+    'how are you', 'how r u', 'how are you doing', 'hows it going', 'how is your day', 'whats up', 'wassup',
+    'are you a bot', 'are you a robot', 'are you human', 'are you real', 'is this a real person', 'am i talking to a bot',
+    'what can you do', 'can you help me', 'help', 'what can i ask you', 'are you ai',
+    'how have you been', 'all good?', 'kaise ho', 'kya haal hai', 'how is everything',
+  ],
   thanks: [
     'thanks', 'thank you', 'thanks a lot', 'thank u', 'thx', 'ty', 'cheers', 'great thanks', 'awesome thank you',
     'cool thanks', 'ok thanks', 'perfect', 'got it', 'that helps', 'bye', 'see you', 'ok bye', 'alright thanks',
@@ -23,7 +29,7 @@ export const INTENTS: Record<string, string[]> = {
     'kitne ka hai', 'kitna hoga', 'kya rate hai', 'how much is the total', 'cost for a full setup',
   ],
   quote: [
-    'i want a quote', 'get a quote', 'can i book', 'i want to book you', 'book for my event', 'are you available on saturday',
+    'i want a quote', 'help me plan an event', 'can you help plan our party', 'need help with sound for my event', 'get a quote', 'can i book', 'i want to book you', 'book for my event', 'are you available on saturday',
     'are you free on 25th', 'availability for next month', 'can we hire you', 'i need sound for my event',
     'need lights for a party', 'reserve the system', 'enquiry', 'i have an event', 'need equipment for a wedding',
     'we are planning a club night', 'can you do our event', 'r u available', 'is the date free', 'want to rent',
@@ -131,7 +137,7 @@ export const INTENTS: Record<string, string[]> = {
   unknown: [
     'what is the weather today', 'tell me a joke', 'who won the match', 'write me a poem', 'what is 2 plus 2',
     'best biryani near me', 'can you do my homework', 'what is the capital of france', 'how old are you',
-    'are you a robot', 'recommend a movie', 'what time is it', 'sing a song', 'who is the prime minister',
+    'recommend a movie', 'what time is it', 'sing a song', 'who is the prime minister',
     'translate this to hindi', 'i am bored', 'what is love', 'can you code', 'book a cab', 'order food',
     'asdfgh', 'lol', 'hmm', 'random', 'do you sell phones', 'fix my laptop', 'where can i buy shoes',
     'whats the score', 'who will win the election', 'tell me a fun fact', 'how do i cook pasta', 'what is bitcoin price', 'stock market today', 'play some music', 'give me a riddle', 'are you chatgpt', 'how is the traffic', 'what day is it', 'meaning of life', 'do you sell cars', 'need a plumber', 'i love you', 'gibberish xyz', 'nothing',
@@ -142,6 +148,8 @@ export const INTENTS: Record<string, string[]> = {
 export const TEST: [string, string][] = [
   ['heyy', 'greeting'],
   ['good morning team', 'greeting'],
+  ['how are u doing today', 'smalltalk'],
+  ['are you an ai', 'smalltalk'],
   ['thank you so much', 'thanks'],
   ['ok cool', 'thanks'],
   ['how much would 2 speakers cost', 'price'],

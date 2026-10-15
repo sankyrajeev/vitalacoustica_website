@@ -163,6 +163,11 @@ type Handler = (items: Gear[], input: string) => Reply
 const HANDLERS: Record<string, Handler> = {
   greeting: () => GREETING,
 
+  smalltalk: () => ({
+    text: 'Doing well, thanks for asking! I’m Vital Acoustica’s assistant, a small model trained on the questions people ask us. I can help with our equipment, prices, bookings and how hiring works, and the team is a tap away on WhatsApp.',
+    actions: SUGGESTIONS,
+  }),
+
   thanks: () => ({ text: 'Anytime! Anything else I can help with?', actions: SUGGESTIONS }),
 
   price: (items) => ({

@@ -12,6 +12,8 @@ type Message = { from: 'bot'; reply: Reply } | { from: 'you'; text: string }
 
 const STORE = 'va-chat'
 
+const waLink = (text: string) => `https://wa.me/${site.contact.whatsapp}?text=${encodeURIComponent(text)}`
+
 function load(): Message[] {
   try {
     const raw = sessionStorage.getItem(STORE)
@@ -77,7 +79,7 @@ export function Chat() {
       setOpen(false)
       return openExplore(a.gear)
     }
-    window.open(`https://wa.me/${site.contact.whatsapp}?text=${encodeURIComponent(a.text)}`, '_blank', 'noopener')
+    window.open(waLink(a.text), '_blank', 'noopener')
   }
 
   return (
@@ -120,12 +122,20 @@ export function Chat() {
                   )}
                   {m.reply.actions && i === messages.length - 1 && (
                     <div className="msg__actions">
-                      {m.reply.actions.map((a) => (
-                        <button key={a.label} className={`qr ${a.kind === 'whatsapp' ? 'qr--wa' : ''}`} onClick={() => act(a)}>
-                          {a.label}
-                          {a.kind !== 'ask' && <Arrow />}
-                        </button>
-                      ))}
+                      {m.reply.actions.map((a) =>
+                        // a real link, not window.open: in-app browsers and previews block scripted pop-ups
+                        a.kind === 'whatsapp' ? (
+                          <a key={a.label} className="qr qr--wa" href={waLink(a.text)} target="_blank" rel="noopener noreferrer">
+                            {a.label}
+                            <Arrow />
+                          </a>
+                        ) : (
+                          <button key={a.label} className="qr" onClick={() => act(a)}>
+                            {a.label}
+                            {a.kind !== 'ask' && <Arrow />}
+                          </button>
+                        ),
+                      )}
                     </div>
                   )}
                 </div>
