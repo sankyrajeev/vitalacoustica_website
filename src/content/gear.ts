@@ -242,19 +242,20 @@ export const gear: Gear[] = [
     id: 'trefoil',
     stock: '4 units', // DUMMY
     group: 'Lighting',
-    name: 'Retro 3-blade fan light',
+    name: 'Retro 3\u2011blade fan light', // non-breaking hyphen keeps "3-blade" together
+    maker: 'ATI Pro',
     role: 'Effect light',
-    about: 'Three LED petals around a bright centre lens, with a rotating head.',
+    about: 'Three honeycomb blades with warm LED strips around a centre lens, on a rotating head.',
     description:
-      'A three-petal fixture with pixel-edged LED blades around a warm centre lens. The head rotates, so the petals sweep as the set builds. We usually pair two either side of the booth.',
+      'Three wide blades behind hammered honeycomb lenses, each with a warm LED strip down its centre, set around a hexagonal hub with its own lens. The lenses take colour while the strips glow like filament, and the head turns so the blades sweep as the set builds. We usually pair two either side of the booth.',
     specs: [
-      ['Head', 'Three LED petals and a centre lens'],
+      ['Head', 'Three honeycomb-lens blades with warm LED strips · centre lens'],
       ['Motion', 'Rotating head'],
-      ['Control', 'DMX'],
-      ['Model', '3-blade rotating LED fan light'], // DUMMY
+      ['Control', 'DMX, pixel mapping'],
+      ['Model', 'ATISP511 Retro'],
     ],
-    spec: 'Three LED petals around a centre lens · rotating head',
-    photo: { file: 'trefoil.webp', width: 280, height: 280, alt: 'Retro 3-blade fan light glowing red beside a matrix panel, from a Vital Acoustica show', source: 'show' },
+    spec: 'Three honeycomb blades · warm strips · centre lens · rotating head',
+    photo: { file: 'trefoil.webp', width: 800, height: 800, alt: 'ATI Pro retro 3-blade fan light: three honeycomb blades with amber strips around a hexagonal hub and lens', source: 'product' },
   },
   {
     id: 'hex',

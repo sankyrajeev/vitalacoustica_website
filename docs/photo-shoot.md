@@ -22,7 +22,7 @@ Search the code for `DUMMY` to find every placeholder value.
 | `djm.webp` | Pioneer DJ DJM-V10-LF | manufacturer photo |
 | `di.webp` | BSS AR-133 DI box | product photo |
 | `sharpy.webp` | Beam moving head | product photo |
-| `trefoil.webp` | Retro 3-blade fan light | crop from a show photo |
+| `trefoil.webp` | Retro 3-blade fan light (ATI Pro) | product photo |
 | `hex.webp` | Retro hex light | product photo |
 | `warcraft.webp` | Warcraft retro light | product photo |
 | `matrix.webp` | LED matrix panel, face-on | supplier photo |

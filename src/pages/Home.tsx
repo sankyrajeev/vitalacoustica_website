@@ -10,11 +10,16 @@ import { projects } from '../content/projects'
 import { site } from '../content/site'
 import { openDrone, openExplore } from '../events'
 import { mediaUrl } from '../media'
+import { useSectionSnap } from '../hooks/useSectionSnap'
 import { scrollToId } from '../router'
+
+const SNAP_SECTIONS = '.intro, .entrance, .statement, .capabilities__intro, .cap, .renders, .sound-feature, .work, .final'
 
 // The homepage: the Resonance Form (a fixed 3D layer) carries the page, changing
 // with each section. The full equipment list lives on /equipment.
 export function Home() {
+  // each section settles centred on screen instead of stopping wherever the scroll ends
+  useSectionSnap(SNAP_SECTIONS)
   return (
     <>
       <ResonanceBackdrop />

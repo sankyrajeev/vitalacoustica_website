@@ -11,6 +11,7 @@ import {
   MeshBasicMaterial,
   MeshStandardMaterial,
   Object3D,
+  RepeatWrapping,
   ShaderMaterial,
   Shape,
   Vector3,
@@ -151,30 +152,49 @@ export function MatrixPanel({ phase = 0, ...props }: { phase?: number } & ThreeE
 
 /* ─────────────── Trefoil "3-blade fan" ─────────────── */
 
-const petalGeometry = (() => {
-  const s = new Shape()
-  s.moveTo(0, 0.07)
-  s.lineTo(0.1, 0.21)
-  s.lineTo(0, 0.38)
-  s.lineTo(-0.1, 0.21)
-  s.closePath()
-  return new ExtrudeGeometry(s, { depth: 0.04, bevelEnabled: false })
-})()
-const petalCoreGeometry = (() => {
-  const s = new Shape()
-  s.moveTo(0, 0.11)
-  s.lineTo(0.065, 0.21)
-  s.lineTo(0, 0.33)
-  s.lineTo(-0.065, 0.21)
-  s.closePath()
-  return new ExtrudeGeometry(s, { depth: 0.005, bevelEnabled: false })
-})()
+// As in the product photo (ATI Pro ATISP511 Retro): three wide blades behind honeycomb
+// lenses, each with a warm LED strip down its centre, around a hexagonal hub with a lens.
 
-/** Three kite-shaped LED petals around a white-hot centre lens; the head spins. */
+/** Blade outline: narrow at the hub, widening outwards, with clipped outer corners. */
+function bladeShape(scale: number) {
+  const pts: [number, number][] = [
+    [-0.05, 0.085],
+    [0.05, 0.085],
+    [0.115, 0.28],
+    [0.075, 0.35],
+    [-0.075, 0.35],
+    [-0.115, 0.28],
+  ]
+  const cy = 0.22
+  const s = new Shape()
+  pts.forEach(([x, y], k) => {
+    const px = x * scale
+    const py = cy + (y - cy) * scale
+    if (k) s.lineTo(px, py)
+    else s.moveTo(px, py)
+  })
+  s.closePath()
+  return s
+}
+const bladeGeometry = new ExtrudeGeometry(bladeShape(1), { depth: 0.04, bevelEnabled: false })
+const bladeLensGeometry = new ExtrudeGeometry(bladeShape(0.86), { depth: 0.004, bevelEnabled: false })
+
+let bladeLensTex: CanvasTexture | null = null
+/** The honeycomb lens, tiled across the blade (extruded shapes use metre UVs). */
+function bladeLensTexture() {
+  if (bladeLensTex) return bladeLensTex
+  bladeLensTex = honeycombTexture().clone()
+  bladeLensTex.wrapS = bladeLensTex.wrapT = RepeatWrapping
+  bladeLensTex.repeat.set(9, 9)
+  bladeLensTex.needsUpdate = true
+  return bladeLensTex
+}
+
+/** Three honeycomb blades with warm strips around a hexagonal hub and lens; the head spins. */
 export function TrefoilFan({ direction = 1, phase = 0, ...props }: { direction?: number; phase?: number } & ThreeElements['group']) {
   const rotor = useRef<Group>(null)
-  const petal = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
-  const core = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+  const lensFace = useMemo(() => new MeshBasicMaterial({ toneMapped: false, map: bladeLensTexture() }), [])
+  const strip = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
   const lens = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
   const last = useRef(show.time)
   useFrame(() => {
@@ -184,29 +204,40 @@ export function TrefoilFan({ direction = 1, phase = 0, ...props }: { direction?:
     const kick = kickAt(t, 5)
     if (rotor.current) rotor.current.rotation.z += dt * direction * (0.4 + (lookAt(show.time) % 2) * 1.6)
     const m = show.master
-    petal.color.copy(red).multiplyScalar((0.5 + 1.4 * kick) * m)
-    core.color.copy(red).lerp(WARM, 0.35).multiplyScalar((1 + 2.4 * kick) * m)
+    // the honeycomb lens takes the wash colour; the strips stay warm and punch on the kick
+    lensFace.color.copy(red).multiplyScalar((0.45 + 1.2 * kick) * m)
+    strip.color.copy(AMBER_STRIP).multiplyScalar((1.2 + 2.6 * kick) * m)
     lens.color.copy(WARM).multiplyScalar((1.6 + 2 * kick) * m)
   })
   return (
     <group {...props}>
-      <mesh material={housing} rotation-x={Math.PI / 2} position={[0, 0, -0.06]}>
-        <cylinderGeometry args={[0.09, 0.1, 0.12, 20]} />
+      {/* body behind the head */}
+      <mesh material={housing} rotation-x={Math.PI / 2} position={[0, 0, -0.07]}>
+        <cylinderGeometry args={[0.1, 0.11, 0.12, 20]} />
       </mesh>
       <group ref={rotor}>
         {[0, 1, 2].map((i) => (
           <group key={i} rotation-z={(i * Math.PI * 2) / 3}>
-            <mesh geometry={petalGeometry} material={housing} position={[0, 0, -0.03]} />
-            <mesh geometry={petalCoreGeometry} material={i === 0 ? core : petal} position={[0, 0, 0.012]} />
+            <mesh geometry={bladeGeometry} material={housing} position={[0, 0, -0.03]} />
+            <mesh geometry={bladeLensGeometry} material={lensFace} position={[0, 0, 0.011]} />
+            <mesh material={strip} position={[0, 0.215, 0.017]}>
+              <planeGeometry args={[0.014, 0.21]} />
+            </mesh>
           </group>
         ))}
-        <mesh material={lens} position={[0, 0, 0.015]}>
-          <circleGeometry args={[0.055, 24]} />
+        {/* hexagonal hub and centre lens */}
+        <mesh material={housing} rotation-x={Math.PI / 2} position={[0, 0, -0.005]}>
+          <cylinderGeometry args={[0.085, 0.085, 0.05, 6]} />
+        </mesh>
+        <mesh material={lens} position={[0, 0, 0.022]}>
+          <circleGeometry args={[0.035, 24]} />
         </mesh>
       </group>
     </group>
   )
 }
+
+const AMBER_STRIP = new Color('#ffab3d')
 
 /* ─────────────── 7-cell hex retro light ─────────────── */
 
