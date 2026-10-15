@@ -14,6 +14,7 @@ import { LegalPage, PrivacyPage } from './pages/Legal'
 import { ContactPage, DeckPage, JournalPage, NotFoundPage, StudioPage } from './pages/Other'
 import { TestimonialsPage } from './pages/Testimonials'
 import { CareersPage } from './pages/Careers'
+import { StoryPage } from './pages/Story'
 import { CaseStudy, WorkIndex } from './pages/Work'
 import { EquipmentDetail, EquipmentIndex } from './pages/Equipment'
 import { match, useRoute } from './router'
@@ -38,6 +39,7 @@ function resolve(path: string): Resolved {
   if (path === '/journal') return { title: 'Journal', page: <JournalPage /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
   if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }
+  if (path === '/story') return { title: 'Our Story', page: <StoryPage /> }
   if (path === '/careers') return { title: 'Careers', page: <CareersPage /> }
   if (path === '/testimonials') return { title: 'Testimonials', page: <TestimonialsPage /> }
   if (path === '/privacy') return { title: 'Privacy notice', page: <PrivacyPage /> }

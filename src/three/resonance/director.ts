@@ -29,7 +29,32 @@ export const SCENES: Record<string, Partial<SceneParams>> = {
   // testimonials: the light sweep, the form turning slowly behind the quotes
   voices: { dist: 11, x: 1.6, y: 0.9, turn: 3.2, sweep: 1, mesh: 0.4, opacity: 0.22, calm: 0.5 },
   enquiry: { dist: 13, x: 0, y: 0.1, turn: 5.4, scale: 0.85, calm: 1, opacity: 0.55 },
+
+  // Our Story: one state per chapter, turning a little further each time
+  'story-open': { dist: 8.2, x: 1.9, turn: 0.4, tilt: 0.1 },
+  'story-friends': { dist: 9, x: -1.9, turn: 1.0, opacity: 0.7 },
+  'story-missing': { dist: 12.5, x: 1.9, turn: 1.6, tilt: 0.35, calm: 1, opacity: 0.32, sweep: 0 },
+  'story-question': { dist: 10.5, x: 0, y: 0.15, turn: 2.4, scale: 0.92, opacity: 0.5 },
+  'story-feeling': { dist: 7.6, x: 1.9, turn: 3.0, wave: 0.5 },
+  'story-sound': { dist: 9.5, x: 0, y: 0.9, turn: 3.6, wave: 1, opacity: 0.55 },
+  'story-curious': { dist: 8.8, x: -1.9, turn: 4.2, mesh: 1, tilt: 0.1 },
+  'story-purpose': { dist: 8, x: 1.9, turn: 4.8, sweep: 1, tilt: -0.15 },
+  'story-night': { dist: 13.5, x: 0, turn: 5.4, tilt: 0.55, grid: 0.8, calm: 1, opacity: 0.38 },
+  'story-end': { dist: 12, x: 0, y: 0.1, turn: 6.2, scale: 0.9, calm: 0.6, opacity: 0.6 },
+
+  // pointed at by the "depth, clarity, warmth, impact" tiles
+  'feel-depth': { grid: 1, tilt: 0.5, sweep: 0.2 },
+  'feel-clarity': { mesh: 1, wave: 0.2, tilt: 0.1 },
+  'feel-warmth': { sweep: 1, calm: 0.4 },
+  'feel-impact': { wave: 1, scale: 1.12 },
 }
+
+/** A scene the visitor is pointing at (hover/tap), blended over the scroll position. */
+const pointed: { scene: string | null } = { scene: null }
+export function pointAt(scene: string | null) {
+  pointed.scene = scene
+}
+const POINTED_KEYS: (keyof SceneParams)[] = ['wave', 'sweep', 'mesh', 'grid', 'calm', 'tilt', 'scale']
 
 const KEYS = Object.keys(base) as (keyof SceneParams)[]
 
@@ -55,6 +80,11 @@ export function targetParams(sections: HTMLElement[], vh: number, mobile: boolea
     return out
   }
   for (const k of KEYS) out[k] /= total
+  if (pointed.scene && SCENES[pointed.scene]) {
+    const set = { ...base, ...SCENES[pointed.scene] }
+    for (const k of POINTED_KEYS) out[k] = out[k] * 0.15 + set[k] * 0.85
+    out.opacity = Math.max(out.opacity, 0.7)
+  }
   if (mobile) {
     // on phones the sculpture sits behind the text, quieter
     out.x = 0

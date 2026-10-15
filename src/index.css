@@ -530,7 +530,7 @@ main {
 .nav__menu ul {
   display: flex;
   align-items: center;
-  gap: clamp(20px, 3vw, 44px);
+  gap: clamp(16px, 2.1vw, 40px);
 }
 
 .nav__menu a {
@@ -542,8 +542,19 @@ main {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--muted);
   transition: color var(--t-fast);
+}
+
+/* seven links: tighten before switching to the menu button */
+@media (max-width: 1360px) and (min-width: 1181px) {
+  .nav__menu a {
+    letter-spacing: 0.14em;
+  }
+  .nav__num {
+    display: none;
+  }
 }
 
 .nav__menu a:hover,
@@ -597,7 +608,7 @@ main {
   display: none;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
   .nav__burger {
     display: grid;
     gap: 6px;
@@ -3084,6 +3095,404 @@ main {
 .prose .h3 {
   margin-top: var(--s5);
   color: var(--text);
+}
+
+/* ─────────────── Our Story ─────────────── */
+
+.story > section {
+  position: relative;
+  z-index: 1;
+}
+
+.story-hero {
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+}
+
+.story-hero__inner {
+  display: grid;
+  gap: var(--s6);
+}
+
+.story-hero__inner .label {
+  margin: 0;
+  animation: rise 1.6s var(--ease) both 0.1s;
+}
+
+.story-hero__title {
+  display: grid;
+  gap: 0.12em;
+  max-width: 10.5em;
+}
+
+.story-hero__title span {
+  animation: rise 1.6s var(--ease) both 0.25s;
+}
+
+.story-hero__title em {
+  animation: rise 1.6s var(--ease) both 0.6s;
+}
+
+.chapter {
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: var(--section);
+}
+
+.chapter__inner {
+  display: grid;
+  gap: var(--s6);
+  align-content: center;
+}
+
+.chapter--left .chapter__inner > * {
+  max-width: 34rem;
+}
+
+.chapter--right .chapter__inner {
+  justify-items: end;
+}
+
+.chapter--right .chapter__inner > * {
+  max-width: 34rem;
+  width: 100%;
+}
+
+.chapter--centre .chapter__inner {
+  justify-items: center;
+  text-align: center;
+}
+
+.chapter__n {
+  display: flex;
+  gap: var(--s4);
+  align-items: baseline;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chapter__n span:first-child {
+  color: var(--accent-text);
+}
+
+.chapter__lede {
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.6vw, 54px);
+  line-height: 1.12;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.chapter__lede strong {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--accent-text);
+}
+
+.chapter__body {
+  font-size: clamp(16px, 1.25vw, 18.5px);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+.chapter__body--narrow {
+  max-width: 36rem;
+}
+
+/* words light up one after another as the line scrolls into place */
+.lighting span {
+  opacity: clamp(0.14, calc(var(--p, 0) * (var(--n) + 3) - var(--i)), 1);
+  transition: opacity 0.2s linear;
+}
+
+.missing {
+  display: grid;
+  gap: var(--s4);
+  padding-left: var(--s5);
+  border-left: var(--hair) solid var(--accent);
+}
+
+.missing li {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.question {
+  max-width: 16em;
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(36px, 5.4vw, 88px);
+  line-height: 1.05;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.question__answer {
+  display: grid;
+  justify-items: center;
+  gap: var(--s4);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.question__logo {
+  height: clamp(44px, 5vw, 68px);
+}
+
+/* the four qualities: point at one and the sculpture shows it */
+.qualities {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.6vw, 20px);
+  width: min(100%, 1040px);
+}
+
+.quality {
+  display: grid;
+  gap: var(--s2);
+  justify-items: start;
+  padding: var(--s5);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(var(--shade), 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color var(--t-fast),
+    transform var(--t-med) var(--ease),
+    background var(--t-med) var(--ease);
+}
+
+.quality:hover,
+.quality.is-on {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  background: rgba(var(--shade), 0.75);
+}
+
+.quality__n {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--accent-text);
+}
+
+.quality__word {
+  font-family: var(--serif);
+  font-size: clamp(28px, 2.6vw, 40px);
+  line-height: 1;
+}
+
+.quality.is-on .quality__word {
+  font-style: italic;
+  color: var(--accent-text);
+}
+
+.quality__line {
+  font-size: 13.5px;
+  color: var(--text-soft);
+}
+
+.verbs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--s3) var(--s5);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(22px, 2vw, 30px);
+  color: var(--accent-text);
+}
+
+.verbs span + span::before {
+  content: '·';
+  margin-right: var(--s5);
+  color: var(--muted);
+}
+
+/* "Every frequency, every beam…": each line arrives as the block scrolls up */
+.every {
+  display: grid;
+  gap: 0.1em;
+  font-family: var(--serif);
+  font-size: clamp(40px, 6vw, 96px);
+  line-height: 1;
+  color: var(--text);
+}
+
+.every span {
+  opacity: clamp(0.08, calc(var(--p, 0) * 5.5 - var(--i)), 1);
+  transform: translateX(calc((1 - clamp(0, calc(var(--p, 0) * 5.5 - var(--i)), 1)) * -40px));
+}
+
+.every em {
+  color: var(--accent-text);
+}
+
+.every small {
+  margin-top: var(--s4);
+  font-family: var(--sans);
+  font-size: clamp(15px, 1.2vw, 18px);
+  color: var(--text-soft);
+  opacity: clamp(0, calc(var(--p, 0) * 5.5 - 4), 1);
+}
+
+.after__lede {
+  max-width: 20em;
+}
+
+.why__title {
+  max-width: 12em;
+}
+
+.why__job {
+  max-width: 18em;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(26px, 2.8vw, 42px);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.signature {
+  display: grid;
+  justify-items: center;
+  gap: var(--s4);
+  margin-top: var(--s5);
+  padding-top: var(--s6);
+  border-top: var(--hair) solid var(--line);
+}
+
+.signature__logo {
+  height: clamp(56px, 6vw, 84px);
+}
+
+.signature p {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.signature em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.why__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s3);
+}
+
+/* chapter rail */
+.rail {
+  position: fixed;
+  left: max(18px, env(safe-area-inset-left, 0px));
+  top: 50%;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  translate: 0 -50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-med) var(--ease);
+}
+
+.rail.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rail a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rail__n {
+  display: inline-block;
+  width: 18px;
+  height: var(--hair);
+  overflow: hidden;
+  background: var(--line-strong);
+  color: transparent;
+  transition:
+    width var(--t-med) var(--ease),
+    background var(--t-fast);
+}
+
+.rail__t {
+  opacity: 0;
+  translate: -6px 0;
+  transition:
+    opacity var(--t-fast),
+    translate var(--t-med) var(--ease);
+}
+
+.rail a.is-active .rail__n {
+  width: 34px;
+  background: var(--accent);
+}
+
+.rail:hover .rail__t {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.rail:hover {
+  padding-right: var(--s5);
+  background: linear-gradient(90deg, var(--bg) 60%, transparent);
+}
+
+.rail a.is-active {
+  color: var(--accent-text);
+}
+
+@media (max-width: 1100px) {
+  .rail {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .qualities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .chapter--right .chapter__inner {
+    justify-items: start;
+  }
+  .verbs {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .every span {
+    transform: none;
+  }
 }
 
 /* careers */

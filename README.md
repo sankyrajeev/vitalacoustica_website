@@ -36,6 +36,7 @@ Old `/#/page` links redirect to `/page`. A build with `VITE_HASH_ROUTER=1` uses 
 | `/deck` | One-page capability deck |
 | `/contact` | Quote request (`/contact?item=<id>` pre-fills the item) |
 | `/testimonials` | Client testimonials (from `src/content/testimonials.ts`) and a form to send one |
+| `/story` | Our Story: chapters over the 3D Resonance Form, words lighting up as you read, interactive qualities of sound — `src/pages/Story.tsx` |
 | `/careers` | Careers: open positions from `src/content/careers.ts`, or a "crew is full" message while it's empty |
 | `/privacy`, `/legal` | Privacy notice (DPDP Act 2023) and legal information / terms of use — `src/pages/Legal.tsx` |
 

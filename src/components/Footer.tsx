@@ -29,6 +29,9 @@ export function Footer() {
             <p className="label">Explore</p>
             <ul>
               <li>
+                <Link to="/story">Our Story</Link>
+              </li>
+              <li>
                 <Link to="/equipment">Equipment</Link>
               </li>
               <li>

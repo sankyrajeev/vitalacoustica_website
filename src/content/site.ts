@@ -33,6 +33,7 @@ export const site = {
 
   nav: [
     { label: 'Home', to: '/' },
+    { label: 'Our Story', to: '/story' },
     { label: 'Equipment', to: '/equipment' },
     { label: 'Services', to: '/capabilities' },
     { label: 'Work', to: '/work' },
