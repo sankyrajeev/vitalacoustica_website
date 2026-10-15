@@ -169,7 +169,7 @@ export function ContactPage() {
   const { whatsapp } = site.contact
   // arriving from an equipment page: "/contact?item=b22"
   const item = gearById[queryParam('item') as GearId]
-  const waText = item ? `Hi Vital Acoustica, I'd like a quote for the ${fullName(item)}.` : 'Hi Vital Acoustica, I’d like a quote for an event.'
+  const waText = item ? `Hi Vital Acoustica, I'd like a quote for the ${fullName(item)}.` : "Hi Vital Acoustica, I'd like a quote for an event."
 
   return (
     <>

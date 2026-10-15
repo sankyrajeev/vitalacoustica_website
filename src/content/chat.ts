@@ -171,7 +171,7 @@ const HANDLERS: Record<string, Handler> = {
     } us a little about your event and we’ll send a clear, itemised quote, usually within a day.`,
     actions: [
       items.length === 1 ? { kind: 'link', label: 'Get a quote for this', to: `/contact?item=${items[0].id}` } : quote,
-      wa(`Hi Vital Acoustica, I’d like a price for ${items.length === 1 ? `the ${fullName(items[0])}` : 'an event'}.`),
+      wa(`Hi Vital Acoustica, I'd like a price for ${items.length === 1 ? `the ${fullName(items[0])}` : 'an event'}.`),
     ],
   }),
 
@@ -179,7 +179,7 @@ const HANDLERS: Record<string, Handler> = {
     text: 'Happy to help! Send us the date, the venue and roughly how many people through the quote form, or message us on WhatsApp if that’s quicker.',
     actions: [
       items.length === 1 ? { kind: 'link', label: 'Get a quote for this', to: `/contact?item=${items[0].id}` } : quote,
-      wa('Hi Vital Acoustica, I’d like to check availability for an event.'),
+      wa("Hi Vital Acoustica, I'd like to check availability for an event."),
     ],
   }),
 
@@ -207,7 +207,7 @@ const HANDLERS: Record<string, Handler> = {
     text: 'We design and set up permanent sound and lighting for venues: assessment, system design, installation, tuning and training for your team.',
     actions: [
       { kind: 'link', label: 'Audio & Lighting Integration', to: '/capabilities/installations' },
-      wa('Hi Vital Acoustica, I’d like to talk about a permanent installation.'),
+      wa("Hi Vital Acoustica, I'd like to talk about a permanent installation."),
     ],
   }),
 
