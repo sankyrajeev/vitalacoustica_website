@@ -1581,142 +1581,6 @@ main {
   }
 }
 
-/* ─────────────── 04 Renders of the stage model ─────────────── */
-
-.renders {
-  background: var(--obsidian);
-  color: var(--ivory);
-  --text: var(--ivory);
-  --text-soft: rgba(240, 237, 229, 0.8);
-  --muted: var(--grey);
-  --accent-text: var(--brass);
-  --line: rgba(240, 237, 229, 0.1);
-  --line-strong: rgba(240, 237, 229, 0.22);
-}
-
-.renders__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-  grid-template-rows: auto auto;
-  gap: clamp(12px, 1.6vw, 24px);
-}
-
-.render {
-  position: relative;
-  display: block;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  background: #0b0b0b;
-  text-align: left;
-  cursor: pointer;
-  color: var(--ivory);
-}
-
-.render img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition:
-    transform 1.6s var(--ease),
-    filter var(--t-med) var(--ease);
-}
-
-.render:hover img {
-  transform: scale(1.035);
-  filter: brightness(1.12);
-}
-
-.render::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0) 45%);
-  pointer-events: none;
-}
-
-.render--0 {
-  grid-row: span 2;
-}
-
-.render--0 img {
-  position: absolute;
-  inset: 0;
-}
-
-.render--1,
-.render--2 {
-  aspect-ratio: 4 / 3;
-}
-
-.render__badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 1;
-  padding: 4px 8px;
-  border: var(--hair) solid rgba(240, 237, 229, 0.3);
-  border-radius: var(--radius);
-  background: rgba(10, 10, 10, 0.5);
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.render__caption {
-  position: absolute;
-  left: clamp(16px, 2vw, 28px);
-  right: clamp(16px, 2vw, 28px);
-  bottom: clamp(16px, 2vw, 26px);
-  z-index: 1;
-  display: grid;
-  gap: 4px;
-  font-size: 13.5px;
-  color: rgba(240, 237, 229, 0.78);
-}
-
-.render__caption strong {
-  font-family: var(--serif);
-  font-size: clamp(24px, 2.2vw, 36px);
-  font-weight: 400;
-  line-height: 1.05;
-  color: var(--ivory);
-}
-
-.render--1 .render__caption strong,
-.render--2 .render__caption strong {
-  font-size: clamp(22px, 1.7vw, 28px);
-}
-
-.render__open {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s2);
-  margin-top: var(--s2);
-  font-size: 10.5px;
-  font-weight: 650;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--brass);
-}
-
-@media (max-width: 900px) {
-  .renders__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .render--0 {
-    grid-row: auto;
-    aspect-ratio: 4 / 3;
-  }
-  .render--0 img {
-    position: static;
-  }
-  .render__caption > span:not(.render__open) {
-    display: none;
-  }
-}
-
 /* ─────────────── Media frames & placeholders ─────────────── */
 
 .frame {
@@ -3071,29 +2935,175 @@ main {
   color: var(--muted);
 }
 
-/* homepage testimonials: three quotes over the sculpture */
+/* testimonials: one at a time, swipe for the next */
 .voices {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   min-height: 100svh;
 }
 
-.voices__grid {
+/* min-width 0: the track's slides must never widen the page */
+.tslider {
+  position: relative;
+  min-width: 0;
+}
+
+.tslider__track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+  outline: none;
+  touch-action: pan-x pan-y;
+}
+
+.tslider__track::-webkit-scrollbar {
+  display: none;
+}
+
+.tslider__track.is-dragging {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
+}
+
+.tslider__track:focus-visible {
+  outline: var(--hair) solid var(--accent);
+  outline-offset: 6px;
+}
+
+.tslide {
+  position: relative;
+  flex: 0 0 100%;
+  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 32px);
-  align-items: start;
-}
-
-.voices .quote-card {
+  gap: var(--s6);
+  align-content: center;
   margin: 0;
-  background: rgba(var(--shade), 0.86);
-  backdrop-filter: blur(8px);
+  padding: clamp(8px, 2vw, 24px) clamp(0px, 6vw, 96px);
+  scroll-snap-align: start;
 }
 
-@media (max-width: 900px) {
-  .voices__grid {
-    grid-template-columns: minmax(0, 1fr);
+.tslide__quote {
+  position: relative;
+  margin: 0;
+  max-width: min(24em, 100%);
+  overflow-wrap: break-word;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  /* Instrument Serif has one weight: a fine stroke gives it a true bold feel without faux-bold smearing */
+  -webkit-text-stroke: 0.035em currentColor;
+  font-size: clamp(30px, 4.2vw, 64px);
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.tslide__quote p::before {
+  content: '“';
+}
+
+.tslide__quote p::after {
+  content: '”';
+}
+
+.tslide__by {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.tslide__by strong {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.tslide .quote-card__sample {
+  top: 0;
+  right: clamp(0px, 6vw, 96px);
+}
+
+.tslider__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  margin-top: var(--s7);
+  padding-inline: clamp(0px, 6vw, 96px);
+}
+
+.tslider__arrow {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: var(--hair) solid var(--line-strong);
+  border-radius: 50%;
+  background: none;
+  color: var(--text);
+  transition:
+    border-color var(--t-fast),
+    opacity var(--t-fast);
+}
+
+.tslider__arrow:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.tslider__arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.tslider__arrow--prev .arrow {
+  transform: scaleX(-1);
+}
+
+.tslider__dots {
+  display: flex;
+  gap: 8px;
+}
+
+.tslider__dots button {
+  width: 22px;
+  height: 2px;
+  padding: 0;
+  border: 0;
+  background: var(--line-strong);
+  transition:
+    background var(--t-fast),
+    width var(--t-med) var(--ease);
+}
+
+.tslider__dots button.is-active {
+  width: 44px;
+  background: var(--accent);
+}
+
+.tslider__count {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .tslider__arrow {
+    display: none;
+  }
+  .tslide .quote-card__sample {
+    position: static;
+    justify-self: start;
   }
 }
 

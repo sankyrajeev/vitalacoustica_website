@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
-import { QuoteCard } from '../components/QuoteCard'
+import { TestimonialSlider } from '../components/TestimonialSlider'
 import { Cta, Label } from '../components/ui'
 import { site } from '../content/site'
 import { testimonials } from '../content/testimonials'
@@ -17,11 +17,7 @@ export function TestimonialsPage() {
       <section className="section section--tight">
         <div className="wrap">
           {testimonials.length > 0 ? (
-            <div className="quotes">
-              {testimonials.map((t) => (
-                <QuoteCard key={t.name + t.quote.slice(0, 20)} t={t} />
-              ))}
-            </div>
+            <TestimonialSlider items={testimonials} />
           ) : (
             <div className="coming-soon">
               <span className="label">Being collected</span>

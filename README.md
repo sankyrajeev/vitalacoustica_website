@@ -27,7 +27,7 @@ Old `/#/page` links redirect to `/page`. A build with `VITE_HASH_ROUTER=1` uses 
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: logo opening frame, Entrance, Statement, renders of the 3D rig, Testimonials, Get a quote; the 3D Resonance Form changes with each section |
+| `/` | Home: logo opening frame, Entrance, Statement, Testimonials (one at a time, swipeable), Get a quote; the 3D Resonance Form changes with each section |
 | `/equipment`, `/equipment/<id>` | Hire catalogue: photo, description and specs for each item, then "View in the 3D rig"; how hiring works |
 | `/work`, `/work/<slug>` | Selected work index and case studies |
 | `/capabilities`, `/capabilities/<sound\|light\|visuals\|production>` | Services |
@@ -71,8 +71,6 @@ Until one is set, the form validates normally but tells visitors it can’t send
 Gaps are filled with stand-ins until the photo shoot: equipment models and stock counts, contact details, company details, project years and some case-study text, plus sample photos (tagged "Sample photo") in empty photo slots. Every stand-in value is marked `DUMMY` in the code (`grep -rn DUMMY src`). The shot list and everything to replace is in [`docs/photo-shoot.md`](docs/photo-shoot.md).
 
 Until an enquiry endpoint is set, the form opens the visitor's email app with the enquiry written out and addressed to `site.contact.email`.
-
-Homepage renders of the stage model live in `public/media/render-*.webp`.
 
 To add an equipment photo: put a square-ish `.webp` in `public/gear/` and set `photo` on the item in `src/content/gear.ts` (`source: 'product'` for white-background shots, which sit on the studio surface; add `fit: 'cover'` for photos with their own background).
 

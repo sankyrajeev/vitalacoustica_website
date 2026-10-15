@@ -27,9 +27,7 @@ export const SCENES: Record<string, Partial<SceneParams>> = {
   // the sound wave runs along the ribbon beside the statement
   manifesto: { dist: 7.2, x: 2.4, turn: 1.1, tilt: 0.2, opacity: 0.6, wave: 1 },
   // testimonials: the light sweep, the form turning slowly behind the quotes
-  voices: { dist: 10, x: 0, y: 0.2, turn: 3.2, sweep: 1, mesh: 0.4, opacity: 0.35, calm: 0.5 },
-  // the renders carry their own imagery: the sculpture steps back
-  renders: { opacity: 0 },
+  voices: { dist: 11, x: 1.6, y: 0.9, turn: 3.2, sweep: 1, mesh: 0.4, opacity: 0.22, calm: 0.5 },
   enquiry: { dist: 13, x: 0, y: 0.1, turn: 5.4, scale: 0.85, calm: 1, opacity: 0.55 },
 }
 
