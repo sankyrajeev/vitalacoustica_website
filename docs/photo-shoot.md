@@ -17,7 +17,7 @@ Search the code for `DUMMY` to find every placeholder value.
 | `v10p.webp` | d&b V10P top | manufacturer photo |
 | `b22.webp` | d&b B22-SUB | manufacturer photo |
 | `art915.webp` | RCF ART 915-A | manufacturer photo |
-| `d40.webp` | d&b D40 amplifier (front panel) | "Photo to come" tile |
+| `d40.webp` | d&b D40 amplifier | manufacturer photo |
 | `dm3.webp` | Yamaha DM3 mixer | manufacturer photo |
 | `cdj.webp` | Pioneer DJ CDJ-3000X | manufacturer photo |
 | `djm.webp` | Pioneer DJ DJM-V10-LF | manufacturer photo |
@@ -30,7 +30,8 @@ Search the code for `DUMMY` to find every placeholder value.
 | `pixelbar.webp` | LED pixel bar, lit and unlit | supplier photo |
 | `dotbar.webp` | LED wall washer bar, with brackets | supplier photo |
 | `rope.webp` | LED neon flex, a few lengths lit red/amber | supplier photo |
-| `truss.webp` | Box truss section or a built goal post | crop from a show photo |
+| `truss.webp` | Box truss | product photo |
+| `table.webp` | Quickie table, set up | "Photo to come" tile |
 
 Also note for each: exact model name and how many you hold (they are dummy values in `src/content/gear.ts`).
 

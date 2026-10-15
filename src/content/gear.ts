@@ -27,6 +27,7 @@ export type RigId =
   | 'pixelbar'
   | 'rope'
   | 'truss'
+  | 'table'
 
 /** Every hire item; DI boxes and amplifiers are listed but not modelled. */
 export type GearId = RigId | 'di' | 'd40'
@@ -148,7 +149,7 @@ export const gear: Gear[] = [
     ],
     specSource: 'd&b audiotechnik',
     spec: '4 channels · 4 × 2400 W into 4 Ω · d&b presets',
-    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo to come
+    photo: { file: 'd40.webp', width: 1000, height: 750, alt: 'd&b audiotechnik D40 amplifier front panel with touchscreen and knobs', source: 'product' },
   },
   {
     id: 'dm3',
@@ -393,16 +394,34 @@ export const gear: Gear[] = [
     group: 'Structure',
     name: 'Box truss',
     role: 'Rigging',
-    about: 'Square aluminium truss for goal posts, towers and lighting wings.',
+    about: 'Black square aluminium truss for goal posts, towers and lighting wings.',
     description:
-      'Square aluminium box truss built as goal posts and towers, carrying beams, retro lights and panels. Every fixture is rigged with clamps and safeties.',
+      'Four-chord square aluminium box truss in a black finish, so it disappears behind the light. We build it as goal posts and towers carrying beams, retro lights and panels, with every fixture rigged on clamps and safeties.',
     specs: [
-      ['Type', 'Square aluminium box truss'],
+      ['Type', 'Four-chord square box truss, aluminium'],
+      ['Finish', 'Black'],
       ['Configurations', 'Goal posts, towers, wings'],
       ['Section size', '290 mm square'], // DUMMY
     ],
-    spec: 'Square aluminium box truss · goal posts & towers',
-    photo: { file: 'truss.webp', width: 320, height: 540, alt: 'Truss tower with a hex light, from a Vital Acoustica show', source: 'show' },
+    spec: 'Black square aluminium box truss · goal posts & towers',
+    photo: { file: 'truss.webp', width: 645, height: 483, alt: 'Section of black four-chord square aluminium box truss', source: 'product' },
+  },
+  {
+    id: 'table',
+    stock: '4 units', // DUMMY
+    group: 'Structure',
+    name: 'Quickie table',
+    role: 'Folding table',
+    about: 'Sturdy folding table for the DJ setup, the mixing position or a control desk.',
+    description:
+      'A sturdy folding table that sets up in seconds: a level, solid top for the DJ players and mixer, the front-of-house desk or a lighting controller, and it folds flat for transport.',
+    specs: [
+      ['Use', 'DJ setup, front of house, control desk'],
+      ['Build', 'Folding legs, solid top'], // DUMMY
+      ['Size', 'To be confirmed'], // DUMMY
+    ],
+    spec: 'Folding table for DJ gear, FOH or control',
+    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo to come
   },
 ]
 

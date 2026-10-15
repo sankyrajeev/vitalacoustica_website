@@ -19,6 +19,7 @@ export const HOTSPOTS: Record<RigId, { at: V3; camera: V3 }> = {
   dotbar: { at: [-2.75, 2.4, -1.45], camera: [-2.1, 2.3, 1.4] },
   pixelbar: { at: [3.0, 1.45, -1.45], camera: [2.4, 1.6, 1.6] },
   rope: { at: [-2.3, 3.55, -2.25], camera: [-1.0, 3.0, 2.6] },
+  table: { at: [0.72, 0.98, 19.7], camera: [2.0, 1.9, 22.2] },
   truss: { at: [-5, 3.6, -0.6], camera: [-2.8, 3.1, 4.2] },
 }
 

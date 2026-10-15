@@ -204,13 +204,20 @@ function FOH() {
       <mesh material={deckMat} position={[0, 0.15, 0]}>
         <boxGeometry args={[3.2, 0.3, 2.2]} />
       </mesh>
-      {/* table */}
+      {/* quickie (folding) table: top, folding legs and a cross brace */}
       <mesh material={gearMat} position={[0, 1.0, -0.3]}>
         <boxGeometry args={[1.6, 0.04, 0.7]} />
       </mesh>
-      {[-0.75, 0.75].map((x) => (
-        <mesh key={x} material={gearMat} position={[x, 0.65, -0.3]}>
-          <boxGeometry args={[0.04, 0.68, 0.62]} />
+      {[-0.72, 0.72].flatMap((x) =>
+        [-0.58, -0.02].map((z) => (
+          <mesh key={`${x}${z}`} material={gearMat} position={[x, 0.65, z]}>
+            <boxGeometry args={[0.03, 0.68, 0.03]} />
+          </mesh>
+        )),
+      )}
+      {[-0.72, 0.72].map((x) => (
+        <mesh key={x} material={gearMat} position={[x, 0.45, -0.3]}>
+          <boxGeometry args={[0.02, 0.02, 0.56]} />
         </mesh>
       ))}
       <group position={[0, 1.02, -0.25]}>
