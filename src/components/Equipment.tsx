@@ -17,7 +17,7 @@ export function GearPhoto({ g, large }: { g: Gear; large?: boolean }) {
   return (
     <div className={`gear-photo gear-photo--${g.photo.fit ?? g.photo.source} ${large ? 'gear-photo--large' : ''}`}>
       <img
-        src={gearImg(g.photo.file)}
+        src={gearImg(g.photo.file, large ? 'full' : 'sm')}
         alt={g.photo.alt}
         width={g.photo.width}
         height={g.photo.height}

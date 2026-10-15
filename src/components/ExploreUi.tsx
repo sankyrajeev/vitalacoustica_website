@@ -99,7 +99,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze, small }: Props
           </header>
           {item.photo.source !== 'none' && (
             <div className={`spec-card__photo spec-card__photo--${item.photo.fit ?? item.photo.source}`}>
-              <img src={gearImg(item.photo.file)} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} />
+              <img src={gearImg(item.photo.file, 'sm')} alt={item.photo.alt} width={item.photo.width} height={item.photo.height} />
             </div>
           )}
           <h3>

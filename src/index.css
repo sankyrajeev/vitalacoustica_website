@@ -354,16 +354,16 @@ main {
   height: 34px;
   aspect-ratio: 1100 / 189;
   background: currentColor;
-  -webkit-mask: url('./brand/logo-lockup.png') center / contain no-repeat;
-  mask: url('./brand/logo-lockup.png') center / contain no-repeat;
+  -webkit-mask: url('./brand/logo-lockup.webp') center / contain no-repeat;
+  mask: url('./brand/logo-lockup.webp') center / contain no-repeat;
   color: var(--text);
   vertical-align: middle;
 }
 
 .logo--full {
   aspect-ratio: 1100 / 251;
-  -webkit-mask-image: url('./brand/logo-full.png');
-  mask-image: url('./brand/logo-full.png');
+  -webkit-mask-image: url('./brand/logo-full.webp');
+  mask-image: url('./brand/logo-full.webp');
 }
 
 .logo--lg {

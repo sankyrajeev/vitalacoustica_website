@@ -2,7 +2,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react'
 import { fullName, gearById, type RigId } from '../content/gear'
 import type { Hotspot, Media } from '../content/projects'
 import { openExplore } from '../events'
-import { img } from '../media'
+import { img, imgSet, preview } from '../media'
 import { Link } from './Link'
 
 /**
@@ -67,7 +67,7 @@ export function Placeholder({ children, ratio = '16 / 10', sample }: { children:
   const src = sample ?? SAMPLES[[...note].reduce((n, c) => n + c.charCodeAt(0), 0) % SAMPLES.length]
   return (
     <div className="placeholder" style={{ aspectRatio: ratio }} title={note || undefined}>
-      <img src={img(src, 800)} alt="" loading="lazy" decoding="async" />
+      <img src={img(src, 480)} srcSet={imgSet(src)} sizes="(max-width: 900px) 100vw, 50vw" alt="" loading="lazy" decoding="async" />
       <span className="placeholder__tag">Sample photo</span>
     </div>
   )
@@ -90,10 +90,10 @@ export function MediaFrame({ media, sizes = '100vw', priority, showGear, caption
   const markers = showGear && media.hotspots?.length
   return (
     <figure className={`frame ${className}`} style={style}>
-      <div className="frame__media" style={{ aspectRatio: `${media.width} / ${media.height}` }}>
+      <div className="frame__media" style={{ aspectRatio: `${media.width} / ${media.height}`, ...preview(media.src) }}>
         <img
-          src={img(media.src, 1600)}
-          srcSet={`${img(media.src, 800)} 800w, ${img(media.src, 1600)} 1600w`}
+          src={img(media.src, 800)}
+          srcSet={imgSet(media.src)}
           sizes={sizes}
           alt={media.alt}
           width={media.width}

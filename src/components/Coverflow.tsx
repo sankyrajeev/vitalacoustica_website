@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
 import { useMediaQuery } from '../hooks/useMedia'
-import { img } from '../media'
+import { img, imgSet, preview } from '../media'
 import { navigate } from '../router'
 import { Arrow, TextLink } from './ui'
 
@@ -87,7 +87,10 @@ export function Coverflow({ slides, label = 'Photographs' }: { slides: Slide[]; 
       {/* ambient light from the current photo */}
       <div className="flow__ambient" aria-hidden>
         {slides.map((s, i) => (
-          <img key={s.src} src={img(s.src, 800)} alt="" className={i === index ? 'is-on' : ''} />
+          // the glow is heavily blurred, so the tiniest copy is enough; only the current and next are kept
+          Math.abs(i - index) <= 1 || (index === n - 1 && i === 0) ? (
+            <img key={s.src} src={img(s.src, 160)} alt="" className={i === index ? 'is-on' : ''} />
+          ) : null
         ))}
       </div>
 
@@ -129,20 +132,22 @@ export function Coverflow({ slides, label = 'Photographs' }: { slides: Slide[]; 
                 if (s.href) navigate(s.href)
               }}
             >
-              <div className="flow__frame">
+              <div className="flow__frame" style={preview(s.src)}>
                 <img
-                  src={img(s.src, 1600)}
-                  srcSet={`${img(s.src, 800)} 800w, ${img(s.src, 1600)} 1600w`}
-                  sizes="(max-width: 760px) 80vw, 54vw"
+                  src={img(s.src, 800)}
+                  srcSet={imgSet(s.src)}
+                  sizes="(max-width: 760px) 260px, 54vw"
                   alt={s.alt}
                   draggable={false}
-                  loading={Math.abs(d) <= 1 ? 'eager' : 'lazy'}
+                  loading={d === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={d === 0 ? 'high' : 'low'}
+                  decoding="async"
                 />
                 <span className="flow__shine" aria-hidden />
               </div>
               {/* the floor reflection */}
               <div className="flow__reflection" aria-hidden>
-                <img src={img(s.src, 800)} alt="" draggable={false} />
+                <img src={img(s.src, 480)} alt="" draggable={false} loading="lazy" decoding="async" />
               </div>
             </div>
           )
@@ -174,7 +179,7 @@ export function Coverflow({ slides, label = 'Photographs' }: { slides: Slide[]; 
                 aria-label={`Photo ${i + 1}: ${s.title}`}
                 aria-current={i === index}
               >
-                <img src={img(s.src, 800)} alt="" loading="lazy" />
+                <img src={img(s.src, 160)} alt="" loading="lazy" decoding="async" />
               </button>
             ))}
           </div>

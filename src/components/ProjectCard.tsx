@@ -1,5 +1,5 @@
 import { TBC, type Project } from '../content/projects'
-import { img } from '../media'
+import { img, imgSet, preview } from '../media'
 import { Link } from './Link'
 import { Arrow, Placeholder } from './ui'
 
@@ -25,11 +25,11 @@ export function ProjectCard({ project: p, variant = 'small' }: { project: Projec
   return (
     <article className={`project project--${variant}`}>
       <Link to={`/work/${p.slug}`} className="project__link" aria-label={`${p.title}: case study`}>
-        <div className="project__media" style={{ aspectRatio: `${p.hero.width} / ${p.hero.height}` }}>
+        <div className="project__media" style={{ aspectRatio: `${p.hero.width} / ${p.hero.height}`, ...preview(p.hero.src) }}>
           <img
-            src={img(p.hero.src, 1600)}
-            srcSet={`${img(p.hero.src, 800)} 800w, ${img(p.hero.src, 1600)} 1600w`}
-            sizes={variant === 'lead' ? '(max-width: 900px) 100vw, 58vw' : '(max-width: 900px) 100vw, 40vw'}
+            src={img(p.hero.src, 800)}
+            srcSet={imgSet(p.hero.src)}
+            sizes={variant === 'lead' ? '(max-width: 760px) 260px, (max-width: 900px) 100vw, 58vw' : '(max-width: 760px) 260px, (max-width: 900px) 100vw, 40vw'}
             alt={p.hero.alt}
             width={p.hero.width}
             height={p.hero.height}

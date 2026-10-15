@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { clubDown, clubFull } from '../content/projects'
 import { useInView, useMediaQuery } from '../hooks/useMedia'
-import { img } from '../media'
+import { img, imgSet } from '../media'
 import { PhotoHotspots } from './ui'
 
 /**
@@ -43,8 +43,8 @@ export function FaderReveal() {
   return (
     <div ref={ref} className="fader">
       <div className="fader__stage" style={{ aspectRatio: `${clubFull.width} / ${clubFull.height}` }}>
-        <img src={img(clubDown.src, 1600)} alt={clubDown.alt} loading="lazy" />
-        <img className="fader__full" src={img(clubFull.src, 1600)} alt={clubFull.alt} loading="lazy" style={{ opacity: v }} />
+        <img src={img(clubDown.src, 800)} srcSet={imgSet(clubDown.src)} sizes="(max-width: 900px) 100vw, 70vw" alt={clubDown.alt} loading="lazy" decoding="async" />
+        <img className="fader__full" src={img(clubFull.src, 800)} srcSet={imgSet(clubFull.src)} sizes="(max-width: 900px) 100vw, 70vw" alt={clubFull.alt} loading="lazy" decoding="async" style={{ opacity: v }} />
         <PhotoHotspots hotspots={clubFull.hotspots ?? []} visible={showGear} />
       </div>
 
