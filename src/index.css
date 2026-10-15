@@ -616,14 +616,28 @@ main {
   .nav--open .nav__burger span:nth-child(2) {
     transform: translateY(-3.5px) rotate(-45deg);
   }
+  /* the blur on the scrolled bar would make it the menu's containing block (iOS Safari),
+     shrinking the full-screen menu to the bar's height, so it's switched off while open */
+  .nav--open {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+  }
   .nav__menu {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: calc(120px + env(safe-area-inset-top, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px))
-      calc(40px + env(safe-area-inset-bottom, 0px)) max(var(--gutter), env(safe-area-inset-left, 0px));
+    gap: var(--s6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(108px + env(safe-area-inset-top, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px))
+      calc(32px + env(safe-area-inset-bottom, 0px)) max(var(--gutter), env(safe-area-inset-left, 0px));
     background: var(--surface);
     opacity: 0;
     visibility: hidden;
@@ -638,11 +652,12 @@ main {
   .nav__menu ul {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--s5);
+    gap: clamp(10px, 2.2vh, 22px);
   }
   .nav__menu a {
     font-family: var(--serif);
-    font-size: clamp(38px, 10vw, 56px);
+    font-size: clamp(32px, min(9vw, 5.6vh), 52px);
+    line-height: 1.05;
     font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
@@ -662,6 +677,7 @@ main {
   }
   .nav__line {
     display: block;
+    margin-top: auto;
     font-family: var(--serif);
     font-style: italic;
     font-size: 20px;
