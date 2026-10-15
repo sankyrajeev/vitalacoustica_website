@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { Chat } from './components/Chat'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
 import { StageModelOverlay } from './components/StageModel'
@@ -76,6 +77,7 @@ export default function App() {
       <Page path={path} />
       <Footer />
       <StageModelOverlay />
+      <Chat />
     </ThemeProvider>
   )
 }

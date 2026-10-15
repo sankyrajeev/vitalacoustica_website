@@ -43,13 +43,13 @@ export const site = {
 
   /*
    * Contact details. Anything left empty is simply not shown.
-   * Email, phone and WhatsApp are real; the Instagram handle is still a stand-in.
+   * Contact details used across the site (footer, contact page, legal pages, assistant).
    */
   contact: {
     email: 'lakshmiranganatha@thevitalvines.com' as string,
     phone: '+91 89048 58422' as string,
     whatsapp: '918904858422' as string, // digits only with country code
-    instagram: 'vitalacoustica' as string, // DUMMY — handle without @
+    instagram: 'vitalacoustica' as string, // handle without @
     location: '' as string, // e.g. 'Bangalore, India' — only once approved for publication
   },
 

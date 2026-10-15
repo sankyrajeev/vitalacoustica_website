@@ -45,6 +45,7 @@ Old `/#/page` links redirect to `/page`. A build with `VITE_HASH_ROUTER=1` uses 
 | What | Where |
 | --- | --- |
 | Brand copy, taglines, contact details, enquiry endpoint | `src/content/site.ts` |
+| Site assistant (chat): answers and keywords | `src/content/chat.ts` (UI in `src/components/Chat.tsx`) |
 | Projects and case studies | `src/content/projects.ts` + photos in `public/shows/` |
 | Disciplines and process | `src/content/capabilities.ts` |
 | Equipment: names, descriptions, specs, photos | `src/content/gear.ts` + photos in `public/gear/` |
