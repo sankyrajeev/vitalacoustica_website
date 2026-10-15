@@ -2238,62 +2238,67 @@ main {
   align-items: start;
 }
 
-/* technical drawings sit on an ivory sheet in both editions */
+/* technical drawings: fine lines in the text colour on the page background */
 .tech-drawing {
+  max-width: 520px;
   margin: 0;
 }
 
 .drawing {
+  display: block;
   width: 100%;
   height: auto;
-  padding: var(--s5);
-  background: var(--ivory);
+  max-height: 62vh;
+  padding: var(--s4);
+  border: var(--hair) solid var(--line);
+  background: transparent;
 }
 
 .drawing__room {
   fill: none;
-  stroke: var(--obsidian);
+  stroke: var(--text);
   stroke-width: 0.8;
 }
 
 .drawing__grid {
-  stroke: rgba(16, 16, 16, 0.08);
+  stroke: var(--line);
   stroke-width: 0.4;
 }
 
 .drawing__wedge {
-  fill: rgba(184, 164, 123, 0.18);
-  stroke: #7c6a44;
+  fill: rgba(184, 164, 123, 0.14);
+  stroke: var(--brass);
   stroke-width: 0.6;
 }
 
 .drawing__stage {
-  stroke: var(--obsidian);
+  stroke: var(--text);
   stroke-width: 0.6;
 }
 
 .drawing__hatch {
-  stroke: rgba(16, 16, 16, 0.3);
+  stroke: var(--line-strong);
   stroke-width: 0.6;
 }
 
 .drawing__box {
-  fill: var(--obsidian);
+  fill: var(--text);
 }
 
 .drawing__axis {
-  stroke: var(--obsidian);
+  stroke: var(--text);
   stroke-width: 0.4;
   stroke-dasharray: 4 3;
+  opacity: 0.6;
 }
 
 .drawing__dim {
-  stroke: var(--obsidian);
+  stroke: var(--text);
   stroke-width: 0.4;
 }
 
 .drawing__text {
-  fill: var(--obsidian);
+  fill: var(--text);
   font-family: var(--sans);
   font-size: 6.5px;
   letter-spacing: 0.12em;

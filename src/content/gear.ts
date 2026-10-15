@@ -16,7 +16,8 @@ export type RigId =
   | 'b22'
   | 'art915'
   | 'dm3'
-  | 'pioneer'
+  | 'cdj'
+  | 'djm'
   | 'sharpy'
   | 'matrix'
   | 'trefoil'
@@ -146,25 +147,53 @@ export const gear: Gear[] = [
     ],
     specSource: 'Yamaha',
     spec: '22 channels · 16 mic/line in · 9" touchscreen',
-    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo from the shoot
+    photo: { file: 'dm3.webp', width: 800, height: 800, alt: 'Yamaha DM3 digital mixing console with its touchscreen and faders', source: 'product' },
   },
   {
-    id: 'pioneer',
-    stock: '1 setup', // DUMMY
+    id: 'cdj',
+    stock: '2 units', // DUMMY
     group: 'Control & DJ',
-    name: 'DJ setup',
+    name: 'CDJ-3000X',
     maker: 'Pioneer DJ',
-    role: 'DJ console',
-    about: 'Club-standard players and mixer, set up and linked for the booth.',
+    role: 'DJ player',
+    about: 'The club-standard player, with a 10.1" touchscreen and Wi-Fi rekordbox.',
     description:
-      'Club-standard Pioneer DJ players and a four-channel mixer, the setup most DJs expect to find in the booth. We cable it to the system, link the players and check every channel before the first set.',
+      'The player most DJs expect to find in the booth. A 10.1" touchscreen shows up to 16 tracks at a glance, it plays from USB sticks, SSDs or straight from a laptop or phone, and it links to the other players over Pro DJ Link. We set the pair up, link them to the mixer and check every source before the first set.',
     specs: [
-      ['Setup', '2 × CDJ-3000 players · DJM-900NXS2 mixer'], // DUMMY
-      ['Inputs', 'USB and SD, rekordbox, Pro DJ Link'], // DUMMY
-      ['Use', 'DJ booth, festival and club stages'],
+      ['Screen', '10.1" touchscreen'],
+      ['Media', 'USB flash / SSD / HDD · PC and Mac · iOS and Android'],
+      ['Formats', 'MP3 · AAC · WAV · AIFF · FLAC · ALAC'],
+      ['Connectivity', 'USB-A · 2 × USB-C · LAN (Pro DJ Link) · Wi-Fi'],
+      ['Outputs', 'Analogue (RCA) and digital (coaxial)'],
+      ['Dimensions', '344.6 × 130.1 × 490.4 mm (W × H × D)'],
+      ['Weight', '6.0 kg'],
     ],
-    spec: 'Club-standard players and mixer',
-    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo from the shoot
+    specSource: 'Pioneer DJ / AlphaTheta',
+    spec: '10.1" touchscreen · USB, SSD, PC/Mac · Pro DJ Link',
+    photo: { file: 'cdj.webp', width: 800, height: 800, alt: 'Pioneer DJ CDJ-3000X player from above, touchscreen and jog wheel', source: 'product' },
+  },
+  {
+    id: 'djm',
+    stock: '1 unit', // DUMMY
+    group: 'Control & DJ',
+    name: 'DJM-V10-LF',
+    maker: 'Pioneer DJ',
+    role: 'DJ mixer',
+    about: 'Six-channel club mixer with long-throw faders, four-band EQ and built-in effects.',
+    description:
+      'A six-channel mixer built for long, blended sets: 60 mm long-throw channel faders in place of a crossfader, four-band EQ and a compressor on every channel, a three-band master isolator, and Beat FX and send effects built in. Two headphone outputs and a booth output with its own EQ make back-to-back sets easy.',
+    specs: [
+      ['Channels', '6, with 60 mm long-throw faders (no crossfader)'],
+      ['EQ', '4-band per channel · 3-band master isolator'],
+      ['Effects', 'Beat FX · send FX · per-channel compressor and filter'],
+      ['Monitoring', 'Two headphone outputs · booth out with EQ'],
+      ['Audio', '96 kHz · 32-bit A/D and D/A'],
+      ['Dimensions', '437.6 × 107.9 × 467 mm (W × H × D)'],
+      ['Weight', '11.9 kg'],
+    ],
+    specSource: 'Pioneer DJ',
+    spec: '6 channels · 60 mm faders · 4-band EQ · built-in FX',
+    photo: { file: 'djm.webp', width: 800, height: 800, alt: 'Pioneer DJ DJM-V10-LF six-channel mixer from above', source: 'product' },
   },
   {
     id: 'di',

@@ -6,6 +6,7 @@ import { usePalette } from './palette'
 // A warehouse room for the show: concrete shell, steel roof trusses, columns,
 // a raised stage deck, DJ booth and FOH position.
 
+import { DJSet } from './gear/DJ'
 import { DECK, VENUE } from './layout'
 
 function concreteTexture(base: string) {
@@ -131,7 +132,7 @@ const deckMat = new MeshStandardMaterial({ color: '#111', roughness: 0.8 })
 const skirtMat = new MeshStandardMaterial({ color: '#070707', roughness: 1 })
 const gearMat = new MeshStandardMaterial({ color: '#1c1c1c', metalness: 0.4, roughness: 0.5 })
 
-/** Stage deck with skirting, steps, and the DJ booth with two players and a mixer. */
+/** Stage deck with skirting, steps, and the DJ booth with the Pioneer DJ set. */
 function StageDeck() {
   const { halfWidth: hw, front, back, height } = DECK
   const depth = front - back
@@ -157,24 +158,10 @@ function StageDeck() {
         <mesh material={deckMat} position={[0, 1.01, 0]}>
           <boxGeometry args={[2.3, 0.03, 0.8]} />
         </mesh>
-        {[-0.62, 0.62].map((x) => (
-          <group key={x} position={[x, 1.06, 0]}>
-            <mesh material={gearMat}>
-              <boxGeometry args={[0.33, 0.07, 0.45]} />
-            </mesh>
-            <mesh position={[0, 0.04, 0.02]} rotation-x={-Math.PI / 2}>
-              <circleGeometry args={[0.1, 24]} />
-              <meshStandardMaterial color="#0a0a0a" metalness={0.8} roughness={0.3} />
-            </mesh>
-            <mesh position={[0, 0.045, -0.15]} rotation-x={-1.1}>
-              <planeGeometry args={[0.16, 0.08]} />
-              <meshBasicMaterial color="#5a7fa0" toneMapped={false} />
-            </mesh>
-          </group>
-        ))}
-        <mesh material={gearMat} position={[0, 1.06, 0]}>
-          <boxGeometry args={[0.32, 0.08, 0.4]} />
-        </mesh>
+        {/* two CDJ-3000X and a DJM-V10-LF */}
+        <group position={[0, 1.025, 0]}>
+          <DJSet />
+        </group>
       </group>
     </group>
   )

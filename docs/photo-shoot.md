@@ -17,8 +17,9 @@ Search the code for `DUMMY` to find every placeholder value.
 | `v10p.webp` | d&b V10P top | manufacturer photo |
 | `b22.webp` | d&b B22-SUB | manufacturer photo |
 | `art915.webp` | RCF ART 915-A | manufacturer photo |
-| `dm3.webp` | Yamaha DM3 mixer, from above at an angle, screen on | "Photo to come" tile |
-| `pioneer.webp` | Pioneer DJ players + mixer set up together | "Photo to come" tile |
+| `dm3.webp` | Yamaha DM3 mixer | manufacturer photo |
+| `cdj.webp` | Pioneer DJ CDJ-3000X | manufacturer photo |
+| `djm.webp` | Pioneer DJ DJM-V10-LF | manufacturer photo |
 | `di.webp` | DI boxes, a few together | "Photo to come" tile |
 | `sharpy.webp` | Beam moving head (head tilted, lens visible) | 3D render |
 | `trefoil.webp` | Retro 3-blade fan light | crop from a show photo |
@@ -29,9 +30,9 @@ Search the code for `DUMMY` to find every placeholder value.
 | `rope.webp` | LED neon flex, a few lengths lit red/amber | supplier photo |
 | `truss.webp` | Box truss section or a built goal post | crop from a show photo |
 
-Also note for each: exact model name and how many you hold (they are dummy values in `src/content/gear.ts`). For the Pioneer setup, the exact players and mixer; for DI boxes, the make and whether passive or active.
+Also note for each: exact model name and how many you hold (they are dummy values in `src/content/gear.ts`). For DI boxes, the make and whether passive or active.
 
-For the three "Photo to come" items, set `photo` in `src/content/gear.ts` to the new file (copy the shape of the RCF entry).
+For the "Photo to come" item (DI boxes), set `photo` in `src/content/gear.ts` to the new file (copy the shape of the RCF entry).
 
 ## Shows and studio
 

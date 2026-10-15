@@ -129,13 +129,43 @@ export function ART915() {
   )
 }
 
-/** DJ booth monitors: a pair of ART 915-A on the deck either side of the booth, angled at the DJ. */
+const STAND_HEIGHT = 1.05
+const LEG_SPREAD = 0.42
+const LEG_TOP = 0.42
+
+/** Tripod speaker stand: three splayed legs, a collar and a pole. */
+function SpeakerStand() {
+  const leg = Math.hypot(LEG_SPREAD, LEG_TOP)
+  const tilt = Math.atan2(LEG_SPREAD, LEG_TOP)
+  return (
+    <group>
+      <mesh material={hardware} position={[0, STAND_HEIGHT / 2, 0]}>
+        <cylinderGeometry args={[0.017, 0.017, STAND_HEIGHT, 12]} />
+      </mesh>
+      <mesh material={hardware} position={[0, LEG_TOP, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 0.06, 12]} />
+      </mesh>
+      {[0, 1, 2].map((i) => (
+        <group key={i} rotation-y={(i * Math.PI * 2) / 3}>
+          <mesh material={hardware} position={[LEG_SPREAD / 2, LEG_TOP / 2, 0]} rotation-z={tilt}>
+            <cylinderGeometry args={[0.011, 0.011, leg, 8]} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+/** DJ booth monitors: a pair of ART 915-A on tripod stands either side of the booth, angled at the DJ. */
 export function BoothMonitors({ deckTop }: { deckTop: number }) {
   return (
     <group>
       {[-1, 1].map((s) => (
-        <group key={s} position={[s * 1.55, deckTop, -0.35]} rotation-y={-s * 1.9}>
-          <ART915 />
+        <group key={s} position={[s * 1.55, deckTop, -0.35]}>
+          <SpeakerStand />
+          <group position={[0, STAND_HEIGHT, 0]} rotation-y={-s * 1.9}>
+            <ART915 />
+          </group>
         </group>
       ))}
     </group>

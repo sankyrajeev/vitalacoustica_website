@@ -1,6 +1,6 @@
 // Plan view, to scale: a stereo pair of V10P tops either side of a 10 m stage,
 // each toed in towards the centre line with its 110° nominal horizontal dispersion.
-// 1 unit = 10 cm. Drawn as a technical sheet, so it uses the light editorial surface.
+// 1 unit = 10 cm. Lines take the text colour, so it reads in both editions.
 
 const SPREAD = 110 // degrees, V10P nominal horizontal
 const TOE = 14 // toe-in towards centre, degrees
