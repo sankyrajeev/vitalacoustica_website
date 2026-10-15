@@ -1,13 +1,16 @@
 import { MeshReflectorMaterial } from '@react-three/drei'
+import { useFrame, useLoader } from '@react-three/fiber'
 import { useMemo } from 'react'
-import { CanvasTexture, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three'
-import { usePalette } from './palette'
-
-// A warehouse room for the show: concrete shell, steel roof trusses, columns,
-// a raised stage deck, DJ booth and FOH position.
-
+import { CanvasTexture, MeshBasicMaterial, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, TextureLoader } from 'three'
+import logoUrl from '../brand/logo-full.png'
+import { kickAt } from './beat'
 import { DJSet } from './gear/DJ'
 import { DECK, VENUE } from './layout'
+import { usePalette } from './palette'
+import { show } from './show'
+
+// A warehouse room for the show: concrete shell with our logo on the back wall,
+// steel roof trusses, columns, a raised stage deck, DJ booth and FOH position.
 
 function concreteTexture(base: string) {
   const c = document.createElement('canvas')
@@ -221,26 +224,20 @@ function FOH() {
   )
 }
 
-/** Front-of-stage crowd barrier with a pit between it and the stage/PA. */
-function Barrier() {
-  const steel = useMemo(() => new MeshStandardMaterial({ color: '#8a8c8f', metalness: 0.9, roughness: 0.35 }), [])
-  const sections = Array.from({ length: 16 }, (_, i) => -7.5 + i)
+/** The Vital Acoustica logo on the back wall, above the truss: lit warm in the dark edition. */
+function WallLogo() {
+  const p = usePalette()
+  const tex = useLoader(TextureLoader, logoUrl)
+  const mat = useMemo(() => new MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false, depthWrite: false }), [tex])
+  useFrame(() => {
+    if (p.theme === 'dark') mat.color.set('#ffb066').multiplyScalar((0.55 + 0.3 * kickAt(show.time, 4)) * show.master + 0.15)
+    else mat.color.set('#1a1a1a')
+  })
+  const W = 6.4
   return (
-    <group position={[0, 0, 3.6]}>
-      {sections.map((x) => (
-        <group key={x} position={[x, 0, 0]}>
-          <mesh material={steel} position={[0, 1.1, 0]}>
-            <boxGeometry args={[0.98, 0.05, 0.05]} />
-          </mesh>
-          <mesh material={steel} position={[0, 0.55, 0.01]}>
-            <boxGeometry args={[0.98, 1.0, 0.012]} />
-          </mesh>
-          <mesh material={steel} position={[0, 0.02, -0.45]}>
-            <boxGeometry args={[0.98, 0.03, 0.9]} />
-          </mesh>
-        </group>
-      ))}
-    </group>
+    <mesh material={mat} position={[0, 6.9, VENUE.front + 0.03]}>
+      <planeGeometry args={[W, W * (251 / 1100)]} />
+    </mesh>
   )
 }
 
@@ -248,7 +245,7 @@ export function Venue({ small }: { small: boolean }) {
   return (
     <group>
       <Shell />
-      <Barrier />
+      <WallLogo />
       <Floor small={small} />
       <StageDeck />
       <FOH />

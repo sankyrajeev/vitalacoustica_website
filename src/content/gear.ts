@@ -28,10 +28,10 @@ export type RigId =
   | 'rope'
   | 'truss'
 
-/** Every hire item; DI boxes are listed but not modelled. */
-export type GearId = RigId | 'di'
+/** Every hire item; DI boxes and amplifiers are listed but not modelled. */
+export type GearId = RigId | 'di' | 'd40'
 
-export type GearGroup = 'Sound' | 'Control & DJ' | 'Lighting' | 'LED & visuals' | 'Structure'
+export type GearGroup = 'Sound' | 'Audio Infrastructure' | 'Stage Lighting' | 'Visual Experiences' | 'Structure'
 
 export type Gear = {
   id: GearId
@@ -128,9 +128,32 @@ export const gear: Gear[] = [
     photo: { file: 'art915.webp', width: 800, height: 800, alt: 'RCF ART 915-A active loudspeaker, black cabinet with steel grille', source: 'product' },
   },
   {
+    id: 'd40',
+    stock: '2 units', // DUMMY
+    group: 'Sound',
+    name: 'D40',
+    maker: 'd&b audiotechnik',
+    role: 'Amplifier',
+    about: 'Four-channel d&b amplifier with the loudspeaker presets and protection built in.',
+    description:
+      'The amplifier that drives our d&b system. Four channels of Class-D power with DSP that holds the factory setup for each d&b loudspeaker, so the V10P tops and B22 subwoofers sound and behave exactly as designed. LoadMatch compensates for long speaker cables, and the inputs take analogue, digital and network audio.',
+    specs: [
+      ['Channels', '4, Class D'],
+      ['Output power', '4 × 2400 W into 4 Ω · 4 × 2000 W into 8 Ω'],
+      ['Inputs', '4 analogue · 4 AES3 · Milan network audio'],
+      ['Processing', 'd&b loudspeaker setups, protection, LoadMatch (up to 70 m cable)'],
+      ['Dynamic range', '116 dB'],
+      ['Size', '2 RU, 19" rack, 465 mm deep'],
+      ['Weight', '13.8 kg'],
+    ],
+    specSource: 'd&b audiotechnik',
+    spec: '4 channels · 4 × 2400 W into 4 Ω · d&b presets',
+    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo to come
+  },
+  {
     id: 'dm3',
     stock: '2 units', // DUMMY
-    group: 'Control & DJ',
+    group: 'Audio Infrastructure',
     name: 'DM3',
     maker: 'Yamaha',
     role: 'Digital mixer',
@@ -153,7 +176,7 @@ export const gear: Gear[] = [
   {
     id: 'cdj',
     stock: '2 units', // DUMMY
-    group: 'Control & DJ',
+    group: 'Audio Infrastructure',
     name: 'CDJ-3000X',
     maker: 'Pioneer DJ',
     role: 'DJ player',
@@ -176,7 +199,7 @@ export const gear: Gear[] = [
   {
     id: 'djm',
     stock: '1 unit', // DUMMY
-    group: 'Control & DJ',
+    group: 'Audio Infrastructure',
     name: 'DJM-V10-LF',
     maker: 'Pioneer DJ',
     role: 'DJ mixer',
@@ -199,7 +222,7 @@ export const gear: Gear[] = [
   {
     id: 'di',
     stock: '8 units', // DUMMY
-    group: 'Control & DJ',
+    group: 'Audio Infrastructure',
     name: 'AR-133 DI box',
     maker: 'BSS Audio',
     role: 'Active DI',
@@ -222,7 +245,7 @@ export const gear: Gear[] = [
   {
     id: 'sharpy',
     stock: '8 units', // DUMMY
-    group: 'Lighting',
+    group: 'Stage Lighting',
     name: 'Beam moving heads',
     role: 'Sharpy-style beams',
     about: 'Pencil-thin beams that cut through haze, moving in time with the music.',
@@ -241,7 +264,7 @@ export const gear: Gear[] = [
   {
     id: 'trefoil',
     stock: '4 units', // DUMMY
-    group: 'Lighting',
+    group: 'Stage Lighting',
     name: 'Retro 3\u2011blade fan light', // non-breaking hyphen keeps "3-blade" together
     maker: 'ATI Pro',
     role: 'Effect light',
@@ -260,7 +283,7 @@ export const gear: Gear[] = [
   {
     id: 'hex',
     stock: '4 units', // DUMMY
-    group: 'Lighting',
+    group: 'Stage Lighting',
     name: 'Retro hex light',
     role: 'Retro effect',
     about: 'Seven hexagonal cells behind honeycomb lenses, in a round frame.',
@@ -278,7 +301,7 @@ export const gear: Gear[] = [
   {
     id: 'warcraft',
     stock: '4 units', // DUMMY
-    group: 'Lighting',
+    group: 'Stage Lighting',
     name: 'Warcraft retro light',
     role: 'Retro effect',
     about: 'A big searchlight-style can: a warm centre in a gold reflector, ringed by LEDs.',
@@ -296,7 +319,7 @@ export const gear: Gear[] = [
   {
     id: 'matrix',
     stock: '4 panels', // DUMMY
-    group: 'LED & visuals',
+    group: 'Stage Lighting',
     name: 'LED matrix panel',
     role: "2' × 2' panel",
     about: 'Big warm dots over a fine RGB pixel field, for logos, looks and punches.',
@@ -314,7 +337,7 @@ export const gear: Gear[] = [
   {
     id: 'pixelbar',
     stock: '8 bars', // DUMMY
-    group: 'LED & visuals',
+    group: 'Stage Lighting',
     name: 'LED pixel bar',
     role: 'Pixel bar',
     about: 'A single line of individually controlled RGB pixels for chases and lines.',
@@ -332,7 +355,7 @@ export const gear: Gear[] = [
   {
     id: 'dotbar',
     stock: '8 bars', // DUMMY
-    group: 'LED & visuals',
+    group: 'Stage Lighting',
     name: 'LED wall washer bar',
     role: 'Wash bar',
     about: 'Eighteen high-output LEDs in an outdoor-rated aluminium bar.',
@@ -350,7 +373,7 @@ export const gear: Gear[] = [
   {
     id: 'rope',
     stock: '50 m', // DUMMY
-    group: 'LED & visuals',
+    group: 'Stage Lighting',
     name: 'LED neon flex',
     role: 'Outlines',
     about: 'Flexible black-jacket neon that bends to any outline.',
@@ -385,10 +408,15 @@ export const gear: Gear[] = [
 
 export const gearById = Object.fromEntries(gear.map((g) => [g.id, g])) as Record<GearId, Gear>
 
-export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Control & DJ', 'Lighting', 'LED & visuals', 'Structure']
-export const RIG_GROUPS = ['Sound', 'Control & DJ', 'Lighting', 'LED & visuals'] as const
+export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Audio Infrastructure', 'Stage Lighting', 'Visual Experiences', 'Structure']
+export const RIG_GROUPS = ['Sound', 'Audio Infrastructure', 'Stage Lighting'] as const
 
-const NOT_MODELLED: GearId[] = ['di']
+/** Groups shown as "coming soon" while they have no items yet. */
+export const COMING_SOON: Partial<Record<GearGroup, string>> = {
+  'Visual Experiences': 'Projection mapping, generative visuals and immersive installations.',
+}
+
+const NOT_MODELLED: GearId[] = ['di', 'd40']
 /** True when the item has a place in the 3D stage model. */
 export const inRig = (g: Gear): g is Gear & { id: RigId } => !NOT_MODELLED.includes(g.id)
 export const rigGear = gear.filter(inRig)

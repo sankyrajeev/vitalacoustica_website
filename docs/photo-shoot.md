@@ -17,6 +17,7 @@ Search the code for `DUMMY` to find every placeholder value.
 | `v10p.webp` | d&b V10P top | manufacturer photo |
 | `b22.webp` | d&b B22-SUB | manufacturer photo |
 | `art915.webp` | RCF ART 915-A | manufacturer photo |
+| `d40.webp` | d&b D40 amplifier (front panel) | "Photo to come" tile |
 | `dm3.webp` | Yamaha DM3 mixer | manufacturer photo |
 | `cdj.webp` | Pioneer DJ CDJ-3000X | manufacturer photo |
 | `djm.webp` | Pioneer DJ DJM-V10-LF | manufacturer photo |

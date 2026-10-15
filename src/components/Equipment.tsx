@@ -55,7 +55,7 @@ export function GearCard({ g }: { g: Gear }) {
           </Link>
           {inRig(g) && (
             <button className="text-link text-link--quiet" onClick={() => openExplore(g.id)}>
-              View in the 3D rig <Arrow />
+              View in 3D <Arrow />
             </button>
           )}
         </div>

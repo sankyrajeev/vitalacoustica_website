@@ -5,7 +5,7 @@ type V3 = [number, number, number]
 // Where each piece of gear sits in the 3D stage, and where the camera goes to look at it.
 // Positions are in metres (see layout.ts); the stage faces +Z.
 export const HOTSPOTS: Record<RigId, { at: V3; camera: V3 }> = {
-  v10p: { at: [-6.3, 1.65, 1.1], camera: [-4.4, 2.1, 4.4] },
+  v10p: { at: [-6.53, 2.12, -0.23], camera: [-4.3, 2.4, 3.6] },
   b22: { at: [6.3, 0.75, 1.4], camera: [4.4, 1.5, 4.9] },
   art915: { at: [-1.55, 1.96, -0.35], camera: [-0.3, 2.4, -2.1] },
   cdj: { at: [-0.41, 1.75, -0.2], camera: [-0.75, 2.55, -1.45] },
@@ -18,7 +18,7 @@ export const HOTSPOTS: Record<RigId, { at: V3; camera: V3 }> = {
   warcraft: { at: [-3.9, 0.92, 0.55], camera: [-3.1, 1.55, 3.0] },
   dotbar: { at: [-2.75, 2.4, -1.45], camera: [-2.1, 2.3, 1.4] },
   pixelbar: { at: [3.0, 1.45, -1.45], camera: [2.4, 1.6, 1.6] },
-  rope: { at: [-1.5, 2.1, -2.0], camera: [-0.6, 2.2, 1.8] },
+  rope: { at: [-2.3, 3.55, -2.25], camera: [-1.0, 3.0, 2.6] },
   truss: { at: [-5, 3.6, -0.6], camera: [-2.8, 3.1, 4.2] },
 }
 

@@ -930,9 +930,29 @@ main {
 
 .gear-card__actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--s4) var(--s5);
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: var(--s5);
   margin-top: var(--s3);
+}
+
+.gear-card__actions .text-link {
+  white-space: nowrap;
+}
+
+/* a category with nothing in it yet */
+.coming-soon {
+  display: grid;
+  gap: var(--s3);
+  max-width: 40em;
+  padding: var(--s6);
+  border: var(--hair) dashed var(--line-strong);
+  color: var(--text-soft);
+}
+
+.coming-soon .label {
+  margin: 0;
+  color: var(--accent-text);
 }
 
 .text-link--quiet {

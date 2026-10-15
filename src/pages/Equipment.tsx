@@ -2,7 +2,7 @@ import { GearCard, GearPhoto } from '../components/Equipment'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { Arrow, Cta, Label, MediaFrame } from '../components/ui'
-import { fullName, gear, GEAR_GROUPS, inRig, PHOTO_SOURCE } from '../content/gear'
+import { COMING_SOON, fullName, gear, GEAR_GROUPS, inRig, PHOTO_SOURCE } from '../content/gear'
 import { projects } from '../content/projects'
 import { openDrone, openExplore } from '../events'
 import { NotFound } from './NotFound'
@@ -31,13 +31,20 @@ export function EquipmentIndex() {
               <h2 id={`group-${group}`} className="gear-group__title">
                 {group}
               </h2>
-              <div className="gear-grid">
-                {gear
-                  .filter((g) => g.group === group)
-                  .map((g) => (
-                    <GearCard key={g.id} g={g} />
-                  ))}
-              </div>
+              {COMING_SOON[group] ? (
+                <div className="coming-soon">
+                  <span className="label">Coming soon</span>
+                  <p>{COMING_SOON[group]}</p>
+                </div>
+              ) : (
+                <div className="gear-grid">
+                  {gear
+                    .filter((g) => g.group === group)
+                    .map((g) => (
+                      <GearCard key={g.id} g={g} />
+                    ))}
+                </div>
+              )}
             </section>
           ))}
         </div>

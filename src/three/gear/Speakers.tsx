@@ -134,13 +134,13 @@ const LEG_SPREAD = 0.42
 const LEG_TOP = 0.42
 
 /** Tripod speaker stand: three splayed legs, a collar and a pole. */
-function SpeakerStand() {
+function SpeakerStand({ height = STAND_HEIGHT }: { height?: number }) {
   const leg = Math.hypot(LEG_SPREAD, LEG_TOP)
   const tilt = Math.atan2(LEG_SPREAD, LEG_TOP)
   return (
     <group>
-      <mesh material={hardware} position={[0, STAND_HEIGHT / 2, 0]}>
-        <cylinderGeometry args={[0.017, 0.017, STAND_HEIGHT, 12]} />
+      <mesh material={hardware} position={[0, height / 2, 0]}>
+        <cylinderGeometry args={[0.017, 0.017, height, 12]} />
       </mesh>
       <mesh material={hardware} position={[0, LEG_TOP, 0]}>
         <cylinderGeometry args={[0.03, 0.03, 0.06, 12]} />
@@ -172,7 +172,9 @@ export function BoothMonitors({ deckTop }: { deckTop: number }) {
   )
 }
 
-/** One side of the PA: two stacked B22-SUBs with a V10P on top, toed in. */
+export const TOP_STAND_HEIGHT = 1.75
+
+/** One side of the PA: two stacked B22-SUBs, with a V10P on a tall tripod stand just behind, toed in. */
 export function PAStack({ x = 0, z = 0, toe = 0 }) {
   return (
     <group position={[x, 0.02, z]} rotation-y={toe}>
@@ -180,8 +182,11 @@ export function PAStack({ x = 0, z = 0, toe = 0 }) {
       <group position={[0, 0.605, 0]}>
         <B22Sub />
       </group>
-      <group position={[0, 1.21, 0.15]}>
-        <V10P />
+      <group position={[0, 0, -1.15]}>
+        <SpeakerStand height={TOP_STAND_HEIGHT} />
+        <group position={[0, TOP_STAND_HEIGHT, 0]}>
+          <V10P />
+        </group>
       </group>
     </group>
   )

@@ -7,7 +7,8 @@ const SIZE = 0.29
 const CHORD_R = 0.024
 const BRACE_R = 0.008
 
-const aluminium = new MeshStandardMaterial({ color: '#c9cbcd', metalness: 1, roughness: 0.32 })
+// black-finish aluminium truss
+const aluminium = new MeshStandardMaterial({ color: '#161616', metalness: 0.7, roughness: 0.42 })
 const steel = new MeshStandardMaterial({ color: '#2b2b2b', metalness: 0.8, roughness: 0.5 })
 
 type Tube = { a: Vector3; b: Vector3; r: number }

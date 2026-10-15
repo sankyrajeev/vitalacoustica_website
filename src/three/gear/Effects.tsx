@@ -500,6 +500,53 @@ export function LedRope({ points, warm = false }: { points: V3[]; warm?: boolean
   )
 }
 
+/* ─────────────── Neon swags ─────────────── */
+
+// Hung like the reference: strands draped between hang points in loose swags of
+// different depths, with vertical drops falling from the hang points.
+const HANG_X = [-3.4, -1.15, 1.15, 3.4]
+const HANG_Y = 4.5
+const HANG_Z = -2.25
+const SAGS = [0.55, 0.95, 1.4]
+
+/** A draped strand between two hang points (a parabola is close enough to a catenary here). */
+function swag(x1: number, x2: number, sag: number, z: number): V3[] {
+  return Array.from({ length: 13 }, (_, k) => {
+    const t = k / 12
+    return [x1 + (x2 - x1) * t, HANG_Y - sag * 4 * t * (1 - t), z] as V3
+  })
+}
+
+const rigging = new MeshStandardMaterial({ color: '#0d0d0d', metalness: 0.4, roughness: 0.6 })
+
+export function NeonSwags({ deckTop }: { deckTop: number }) {
+  const strands = useMemo(() => {
+    const out: { points: V3[]; warm: boolean }[] = []
+    for (let i = 0; i < HANG_X.length - 1; i++)
+      SAGS.forEach((sag, k) => out.push({ points: swag(HANG_X[i], HANG_X[i + 1], sag, HANG_Z + k * 0.03), warm: (i + k) % 2 === 1 }))
+    // vertical drops: to the deck at the outer hang points, part-way at the inner ones
+    HANG_X.forEach((x, i) => {
+      const outer = i === 0 || i === HANG_X.length - 1
+      const bottom = outer ? deckTop + 0.05 : HANG_Y - 1.9
+      out.push({ points: [[x, HANG_Y, HANG_Z], [x, (HANG_Y + bottom) / 2, HANG_Z], [x, bottom, HANG_Z]], warm: !outer })
+    })
+    return out
+  }, [deckTop])
+  return (
+    <group>
+      {strands.map((s, i) => (
+        <LedRope key={i} points={s.points} warm={s.warm} />
+      ))}
+      {/* fine rigging wires up to the roof */}
+      {HANG_X.map((x) => (
+        <mesh key={x} material={rigging} position={[x, (HANG_Y + 8.9) / 2, HANG_Z]}>
+          <cylinderGeometry args={[0.004, 0.004, 8.9 - HANG_Y, 4]} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
 /* ─────────────── Wing: one side of the booth, as rigged at The Park ─────────────── */
 
 /** A ground-support post carrying a matrix panel, trefoil, hex retro, dot bar and pixel bars. */

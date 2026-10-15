@@ -8,7 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { rigGear, type RigId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
-import { HexRetro, LedRope, WarcraftRetro, Wing } from './gear/Effects'
+import { HexRetro, NeonSwags, WarcraftRetro, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
 import { BoothMonitors, PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
@@ -161,24 +161,8 @@ function Stage({ small }: { small: boolean }) {
       <HexRetro index={1} position={[-5, 3.3, -0.36]} />
       <HexRetro index={2} position={[5, 1.8, -0.36]} />
       <HexRetro index={3} position={[5, 3.3, -0.36]} />
-      {/* LED rope: neon columns behind the booth, the deck edge and the booth front */}
-      <LedRope points={[[-1.5, deckTop, -2.0], [-1.5, deckTop + 1.2, -2.0], [-1.5, deckTop + 2.5, -2.0]]} />
-      <LedRope points={[[1.5, deckTop, -2.0], [1.5, deckTop + 1.2, -2.0], [1.5, deckTop + 2.5, -2.0]]} />
-      <LedRope
-        warm
-        points={[
-          [-DECK.halfWidth, deckTop + 0.01, DECK.front + 0.01],
-          [0, deckTop + 0.01, DECK.front + 0.01],
-          [DECK.halfWidth, deckTop + 0.01, DECK.front + 0.01],
-        ]}
-      />
-      <LedRope
-        points={[
-          [-1.1, deckTop + 0.98, 0.18],
-          [0, deckTop + 0.98, 0.18],
-          [1.1, deckTop + 0.98, 0.18],
-        ]}
-      />
+      {/* LED neon flex hung in swags behind the booth, as it's rigged at shows */}
+      <NeonSwags deckTop={deckTop} />
       {/* Warcraft retro lights on the deck's front corners, tilted up at the crowd */}
       <WarcraftRetro index={0} position={[-3.9, deckTop + 0.3, 0.55]} />
       <WarcraftRetro index={2} position={[3.9, deckTop + 0.3, 0.55]} />
