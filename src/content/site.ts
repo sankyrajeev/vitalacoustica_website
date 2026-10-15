@@ -36,6 +36,7 @@ export const site = {
     { label: 'Equipment', to: '/equipment' },
     { label: 'Services', to: '/capabilities' },
     { label: 'Work', to: '/work' },
+    { label: 'Testimonials', to: '/testimonials' },
     { label: 'Studio', to: '/studio' },
   ],
 

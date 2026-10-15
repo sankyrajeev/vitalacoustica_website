@@ -35,7 +35,8 @@ Old `/#/page` links redirect to `/page`. A build with `VITE_HASH_ROUTER=1` uses 
 | `/journal` | Studies and experiments (always labelled as such) |
 | `/deck` | One-page capability deck |
 | `/contact` | Quote request (`/contact?item=<id>` pre-fills the item) |
-| `/privacy`, `/legal` | Draft legal pages |
+| `/testimonials` | Client testimonials (from `src/content/testimonials.ts`) and a form to send one |
+| `/privacy`, `/legal` | Privacy notice (DPDP Act 2023) and legal information / terms of use — `src/pages/Legal.tsx` |
 
 ## Where things live
 

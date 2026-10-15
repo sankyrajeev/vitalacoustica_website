@@ -217,58 +217,6 @@ export function ContactPage() {
   )
 }
 
-/* ─────────────── Privacy / Legal ─────────────── */
-
-export function LegalPage({ kind }: { kind: 'privacy' | 'legal' }) {
-  const privacy = kind === 'privacy'
-  return (
-    <>
-      <PageHead label={privacy ? 'Privacy' : 'Legal'} title={privacy ? 'Privacy notice' : 'Legal information'} />
-      <section className="section section--tight">
-        <div className="wrap prose">
-          <p className="draft">Draft for review. Please have this checked before the site goes live.</p>
-          {privacy ? (
-            <>
-              <h2 className="h3">What we collect</h2>
-              <p>
-                When you send an enquiry we receive the details you enter in the form: your name, email address, optional
-                phone number and organisation, and the information about your event.
-              </p>
-              <h2 className="h3">How we use it</h2>
-              <p>
-                We use these details only to respond to your enquiry and to plan a production with you. We do not sell or
-                share them for marketing.
-              </p>
-              <h2 className="h3">Where it is processed</h2>
-              <p>
-                Enquiries are delivered to us through a form-handling service, named here once configured. Your choice of
-                light or dark edition is stored only in your own browser.
-              </p>
-              <h2 className="h3">Your rights</h2>
-              <p>You can ask us to show, correct or delete the information we hold about you by contacting us.</p>
-            </>
-          ) : (
-            <>
-              <h2 className="h3">Company details</h2>
-              {/* DUMMY: the address line is a stand-in; the GSTIN is real */}
-              <p>
-                Vital Acoustica, Bangalore, Karnataka, India.
-                <br />
-                GSTIN: 29ABCFV2853P1ZF
-              </p>
-              <h2 className="h3">Content</h2>
-              <p>
-                Photographs show productions by {site.name}. Visual studies and renders are labelled as such. Equipment
-                specifications are as published by their manufacturers. Brand names belong to their respective owners.
-              </p>
-            </>
-          )}
-        </div>
-      </section>
-    </>
-  )
-}
-
 /* ─────────────── 404 ─────────────── */
 
 export function NotFoundPage() {

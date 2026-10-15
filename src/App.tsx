@@ -10,7 +10,9 @@ import { useRevealOnScroll } from './hooks/useMedia'
 import { ThemeProvider } from './hooks/useTheme'
 import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
-import { ContactPage, DeckPage, JournalPage, LegalPage, NotFoundPage, StudioPage } from './pages/Other'
+import { LegalPage, PrivacyPage } from './pages/Legal'
+import { ContactPage, DeckPage, JournalPage, NotFoundPage, StudioPage } from './pages/Other'
+import { TestimonialsPage } from './pages/Testimonials'
 import { CaseStudy, WorkIndex } from './pages/Work'
 import { EquipmentDetail, EquipmentIndex } from './pages/Equipment'
 import { match, useRoute } from './router'
@@ -35,8 +37,9 @@ function resolve(path: string): Resolved {
   if (path === '/journal') return { title: 'Journal', page: <JournalPage /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
   if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }
-  if (path === '/privacy') return { title: 'Privacy', page: <LegalPage kind="privacy" /> }
-  if (path === '/legal') return { title: 'Legal', page: <LegalPage kind="legal" /> }
+  if (path === '/testimonials') return { title: 'Testimonials', page: <TestimonialsPage /> }
+  if (path === '/privacy') return { title: 'Privacy notice', page: <PrivacyPage /> }
+  if (path === '/legal') return { title: 'Legal information', page: <LegalPage /> }
   return { title: 'Not found', page: <NotFoundPage /> }
 }
 
