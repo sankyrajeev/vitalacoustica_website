@@ -86,10 +86,12 @@ export function targetParams(sections: HTMLElement[], vh: number, mobile: boolea
     out.opacity = Math.max(out.opacity, 0.7)
   }
   if (mobile) {
-    // on phones the sculpture sits behind the text, quieter
-    out.x = 0
-    out.y += 0.7
+    // on phones the sculpture sits behind the text, smaller and quieter
+    // (a narrow screen crops the wide ribbon, so it's scaled down to fit the width)
+    out.x = -0.35
+    out.y += 0.95
     out.dist *= 1.45
+    out.scale *= 0.58
     out.opacity *= 0.55
   }
   return out
