@@ -412,16 +412,17 @@ export const gear: Gear[] = [
     group: 'Structure',
     name: 'Quickie table',
     role: 'Folding table',
-    about: 'Sturdy folding table for the DJ setup, the mixing position or a control desk.',
+    about: 'Pop-up DJ table: a black top on a silver scissor frame that folds flat.',
     description:
-      'A sturdy folding table that sets up in seconds: a level, solid top for the DJ players and mixer, the front-of-house desk or a lighting controller, and it folds flat for transport.',
+      'A pop-up table on a silver aluminium scissor frame with a black top. It opens in seconds into a level, solid surface for the DJ players and mixer, the front-of-house desk or a lighting controller, and folds flat for transport.',
     specs: [
+      ['Frame', 'Aluminium scissor frame, silver'],
+      ['Top', 'Black'],
       ['Use', 'DJ setup, front of house, control desk'],
-      ['Build', 'Folding legs, solid top'], // DUMMY
       ['Size', 'To be confirmed'], // DUMMY
     ],
-    spec: 'Folding table for DJ gear, FOH or control',
-    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo to come
+    spec: 'Pop-up scissor-frame table · black top',
+    photo: { file: 'table.webp', width: 800, height: 800, alt: 'Quickie table: black top on a folding silver aluminium scissor frame', source: 'product' },
   },
 ]
 

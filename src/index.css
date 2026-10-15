@@ -942,6 +942,22 @@ main {
   white-space: nowrap;
 }
 
+/* a short note that a page or section is still being built */
+.notice {
+  display: grid;
+  gap: var(--s2);
+  max-width: 44em;
+  padding: var(--s4) var(--s5);
+  border-left: 2px solid var(--accent);
+  background: var(--surface);
+  color: var(--text-soft);
+}
+
+.notice .label {
+  margin: 0;
+  color: var(--accent-text);
+}
+
 /* a category with nothing in it yet */
 .coming-soon {
   display: grid;

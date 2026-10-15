@@ -1,7 +1,7 @@
 import { MeshReflectorMaterial } from '@react-three/drei'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { useMemo } from 'react'
-import { CanvasTexture, MeshBasicMaterial, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, TextureLoader } from 'three'
+import { CanvasTexture, MeshBasicMaterial, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, TextureLoader, Vector3 } from 'three'
 import logoUrl from '../brand/logo-full.png'
 import { kickAt } from './beat'
 import { DJSet } from './gear/DJ'
@@ -197,6 +197,63 @@ function DM3() {
 
 const fader = new MeshStandardMaterial({ color: '#d9d9d9', roughness: 0.4 })
 
+const frameMat = new MeshStandardMaterial({ color: '#c4c7ca', metalness: 0.9, roughness: 0.35 })
+const topMat = new MeshStandardMaterial({ color: '#0e0e0e', roughness: 0.7 })
+const UP = new Vector3(0, 1, 0)
+
+/** A thin tube between two points. */
+function Strut({ a, b, r = 0.008 }: { a: [number, number, number]; b: [number, number, number]; r?: number }) {
+  const { mid, len, quat } = useMemo(() => {
+    const va = new Vector3(...a)
+    const vb = new Vector3(...b)
+    const dir = vb.clone().sub(va)
+    return { mid: va.clone().add(vb).multiplyScalar(0.5), len: dir.length(), quat: new Quaternion().setFromUnitVectors(UP, dir.normalize()) }
+  }, [a, b])
+  return (
+    <mesh material={frameMat} position={mid} quaternion={quat}>
+      <cylinderGeometry args={[r, r, len, 6]} />
+    </mesh>
+  )
+}
+
+/** Pop-up quickie table as in the product photo: posts at the corners and mid-points, X-braced in two tiers. */
+function QuickieTable() {
+  const W = 0.8
+  const D = 0.35
+  const H = 0.98
+  const xs = [-W, 0, W]
+  const zs = [-D, D]
+  const tiers = [0.3, 0.64, H]
+  const posts = xs.flatMap((x) => zs.map((z) => [x, z] as const))
+  const struts: [[number, number, number], [number, number, number]][] = []
+  // front and back faces: X between neighbouring posts, per tier
+  for (const z of zs)
+    for (let k = 0; k < xs.length - 1; k++)
+      for (let t = 0; t < tiers.length - 1; t++) {
+        struts.push([[xs[k], tiers[t], z], [xs[k + 1], tiers[t + 1], z]])
+        struts.push([[xs[k + 1], tiers[t], z], [xs[k], tiers[t + 1], z]])
+      }
+  // the ends
+  for (const x of [xs[0], xs[2]])
+    for (let t = 0; t < tiers.length - 1; t++) {
+      struts.push([[x, tiers[t], zs[0]], [x, tiers[t + 1], zs[1]]])
+      struts.push([[x, tiers[t], zs[1]], [x, tiers[t + 1], zs[0]]])
+    }
+  return (
+    <group position={[0, 0.3, -0.3]}>
+      <mesh material={topMat} position={[0, H - 0.27, 0]}>
+        <boxGeometry args={[W * 2 + 0.06, 0.03, D * 2 + 0.06]} />
+      </mesh>
+      {posts.map(([x, z]) => (
+        <Strut key={`${x}${z}`} a={[x, 0, z]} b={[x, H - 0.285, z]} r={0.01} />
+      ))}
+      {struts.map(([a, b2], k) => (
+        <Strut key={k} a={[a[0], a[1] - 0.3, a[2]]} b={[b2[0], b2[1] - 0.3, b2[2]]} />
+      ))}
+    </group>
+  )
+}
+
 /** Front-of-house: a table on a riser in the middle of the room with the DM3. */
 function FOH() {
   return (
@@ -204,22 +261,8 @@ function FOH() {
       <mesh material={deckMat} position={[0, 0.15, 0]}>
         <boxGeometry args={[3.2, 0.3, 2.2]} />
       </mesh>
-      {/* quickie (folding) table: top, folding legs and a cross brace */}
-      <mesh material={gearMat} position={[0, 1.0, -0.3]}>
-        <boxGeometry args={[1.6, 0.04, 0.7]} />
-      </mesh>
-      {[-0.72, 0.72].flatMap((x) =>
-        [-0.58, -0.02].map((z) => (
-          <mesh key={`${x}${z}`} material={gearMat} position={[x, 0.65, z]}>
-            <boxGeometry args={[0.03, 0.68, 0.03]} />
-          </mesh>
-        )),
-      )}
-      {[-0.72, 0.72].map((x) => (
-        <mesh key={x} material={gearMat} position={[x, 0.45, -0.3]}>
-          <boxGeometry args={[0.02, 0.02, 0.56]} />
-        </mesh>
-      ))}
+      {/* quickie table: black top on a silver scissor frame */}
+      <QuickieTable />
       <group position={[0, 1.02, -0.25]}>
         <DM3 />
       </group>

@@ -31,7 +31,7 @@ Search the code for `DUMMY` to find every placeholder value.
 | `dotbar.webp` | LED wall washer bar, with brackets | supplier photo |
 | `rope.webp` | LED neon flex, a few lengths lit red/amber | supplier photo |
 | `truss.webp` | Box truss | product photo |
-| `table.webp` | Quickie table, set up | "Photo to come" tile |
+| `table.webp` | Quickie table | product photo |
 
 Also note for each: exact model name and how many you hold (they are dummy values in `src/content/gear.ts`).
 
