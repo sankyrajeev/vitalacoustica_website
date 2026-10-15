@@ -4,6 +4,7 @@ import {
   CanvasTexture,
   CatmullRomCurve3,
   Color,
+  DoubleSide,
   ExtrudeGeometry,
   Group,
   InstancedMesh,
@@ -20,7 +21,7 @@ import { show } from '../show'
 
 // Lighting effects modelled on the house rig as it appears in show photos:
 // tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex
-// retro lights, LED wall washer bars, red pixel bars and LED neon flex.
+// retro lights, Warcraft retro lights, LED wall washer bars, red pixel bars and LED neon flex.
 
 const housing = new MeshStandardMaterial({ color: '#141414', metalness: 0.6, roughness: 0.45 })
 // brushed aluminium, as on the wall washer bars
@@ -209,11 +210,45 @@ export function TrefoilFan({ direction = 1, phase = 0, ...props }: { direction?:
 
 /* ─────────────── 7-cell hex retro light ─────────────── */
 
-const HEX_CELLS: [number, number][] = [[0, 0], ...Array.from({ length: 6 }, (_, i): [number, number] => [Math.cos((i * Math.PI) / 3) * 0.105, Math.sin((i * Math.PI) / 3) * 0.105])]
+// As in the product photo: seven separate hexagonal cells behind honeycomb lenses,
+// clustered inside a round tubular frame.
+const HEX_R = 0.072
+const HEX_CELLS: [number, number][] = [[0, 0], ...Array.from({ length: 6 }, (_, i): [number, number] => [Math.cos((i * Math.PI) / 3 + Math.PI / 6) * 0.158, Math.sin((i * Math.PI) / 3 + Math.PI / 6) * 0.158])]
 
-/** Round housing with seven hexagonal warm-white cells; one punches per beat. */
+let honeycombTex: CanvasTexture | null = null
+/** White honeycomb lens pattern; the cell colour multiplies it. */
+function honeycombTexture() {
+  if (honeycombTex) return honeycombTex
+  const c = document.createElement('canvas')
+  c.width = c.height = 128
+  const g = c.getContext('2d')!
+  g.fillStyle = '#fff'
+  g.fillRect(0, 0, 128, 128)
+  g.strokeStyle = '#1a1a1a'
+  g.lineWidth = 3
+  const r = 11
+  for (let row = -1; row < 8; row++)
+    for (let col = -1; col < 8; col++) {
+      const cx = col * r * 1.75 + (row % 2) * r * 0.875
+      const cy = row * r * 1.5
+      g.beginPath()
+      for (let k = 0; k < 6; k++) {
+        const a = (k * Math.PI) / 3 + Math.PI / 6
+        const x = cx + Math.cos(a) * r
+        const y = cy + Math.sin(a) * r
+        if (k) g.lineTo(x, y)
+        else g.moveTo(x, y)
+      }
+      g.closePath()
+      g.stroke()
+    }
+  honeycombTex = new CanvasTexture(c)
+  return honeycombTex
+}
+
+/** Seven honeycomb hex cells in a round frame; one punches per beat, the ring chases. */
 export function HexRetro({ index = 0, ...props }: { index?: number } & ThreeElements['group']) {
-  const cells = useMemo(() => HEX_CELLS.map(() => new MeshBasicMaterial({ toneMapped: false })), [])
+  const cells = useMemo(() => HEX_CELLS.map(() => new MeshBasicMaterial({ toneMapped: false, map: honeycombTexture() })), [])
   useFrame(() => {
     const t = show.time
     const beat = Math.floor(beatsAt(t))
@@ -228,18 +263,100 @@ export function HexRetro({ index = 0, ...props }: { index?: number } & ThreeElem
   })
   return (
     <group {...props}>
-      <mesh material={housing} rotation-x={Math.PI / 2}>
-        <cylinderGeometry args={[0.2, 0.18, 0.14, 32]} />
+      {/* round tubular frame with side mounts */}
+      <mesh material={stand}>
+        <torusGeometry args={[0.27, 0.011, 8, 48]} />
       </mesh>
-      {HEX_CELLS.map(([x, y], i) => (
-        <mesh key={i} material={cells[i]} position={[x, y, 0.072]} rotation-z={Math.PI / 6}>
-          <circleGeometry args={[0.05, 6]} />
+      {[-1, 1].map((s) => (
+        <mesh key={s} material={stand} position={[s * 0.29, 0, -0.02]} rotation-z={Math.PI / 2}>
+          <cylinderGeometry args={[0.012, 0.012, 0.05, 8]} />
         </mesh>
       ))}
-      {/* yoke bracket */}
-      <mesh material={stand} position={[0, -0.22, -0.02]}>
-        <boxGeometry args={[0.04, 0.08, 0.04]} />
+      {/* central hub the cells hang from */}
+      <mesh material={housing} position={[0, 0, -0.05]} rotation-x={Math.PI / 2}>
+        <cylinderGeometry args={[0.12, 0.12, 0.05, 6]} />
       </mesh>
+      {HEX_CELLS.map(([x, y], i) => (
+        <group key={i} position={[x, y, 0]}>
+          <mesh material={housing} rotation-x={Math.PI / 2}>
+            <cylinderGeometry args={[HEX_R, HEX_R, 0.07, 6]} />
+          </mesh>
+          <mesh material={cells[i]} position={[0, 0, 0.036]} rotation-z={Math.PI / 2}>
+            <circleGeometry args={[HEX_R * 0.84, 6]} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+/* ─────────────── Warcraft retro light ─────────────── */
+
+const GOLD = new Color('#d08a1c')
+const gold = new MeshStandardMaterial({ color: '#c79a3a', metalness: 0.9, roughness: 0.35, side: DoubleSide })
+const can = new MeshStandardMaterial({ color: '#1a1a1a', metalness: 0.5, roughness: 0.5, side: DoubleSide })
+
+/**
+ * As in the product photo: a deep round can with a gold reflector, a warm centre source,
+ * a three-spoke front frame and a ring of LEDs around the rim, on a yoke.
+ */
+export function WarcraftRetro({ index = 0, ...props }: { index?: number } & ThreeElements['group']) {
+  const glow = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+  const ring = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+  const inner = useMemo(() => new MeshStandardMaterial({ color: '#b07a1e', metalness: 0.6, roughness: 0.45, side: DoubleSide }), [])
+  const R = 0.22
+  const DEPTH = 0.26
+  useFrame(() => {
+    const t = show.time
+    const kick = kickAt(t, 3)
+    const breathe = 0.5 + 0.5 * Math.sin(t * 1.4 + index)
+    glow.color.copy(WARM).multiplyScalar((1.2 + 2.6 * kick) * show.master)
+    // the reflector picks up the centre source
+    inner.emissive.copy(GOLD).multiplyScalar((0.25 + 0.6 * kick) * show.master)
+    ring.color.copy(amber).lerp(WARM, breathe).multiplyScalar((0.6 + breathe) * show.master)
+  })
+  return (
+    <group {...props}>
+      {/* yoke: a U bracket round the can, pivoting on its sides */}
+      <mesh material={stand} position={[0, -R - 0.06, -DEPTH / 2]}>
+        <boxGeometry args={[R * 2 + 0.1, 0.025, 0.05]} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} material={stand} position={[s * (R + 0.05), -0.04, -DEPTH / 2]}>
+          <boxGeometry args={[0.025, R * 2 * 0.9, 0.05]} />
+        </mesh>
+      ))}
+      <group rotation-x={-0.35}>
+        {/* the can and its gold reflector */}
+        <mesh material={can} position={[0, 0, -DEPTH / 2]} rotation-x={Math.PI / 2}>
+          <cylinderGeometry args={[R, R * 0.92, DEPTH, 40, 1, true]} />
+        </mesh>
+        <mesh material={inner} position={[0, 0, -DEPTH / 2]} rotation-x={Math.PI / 2}>
+          <cylinderGeometry args={[R * 0.97, R * 0.5, DEPTH * 0.96, 40, 1, true]} />
+        </mesh>
+        <mesh material={gold} position={[0, 0, -DEPTH + 0.01]}>
+          <circleGeometry args={[R * 0.5, 32]} />
+        </mesh>
+        {/* warm centre source */}
+        <mesh material={glow} position={[0, 0, -DEPTH + 0.04]}>
+          <sphereGeometry args={[0.05, 20, 12]} />
+        </mesh>
+        {/* three-spoke front frame */}
+        {[0, 1, 2].map((i) => (
+          <group key={i} rotation-z={(i * Math.PI * 2) / 3 + Math.PI / 2}>
+            <mesh material={can} position={[R / 2, 0, 0]}>
+              <boxGeometry args={[R, 0.016, 0.01]} />
+            </mesh>
+          </group>
+        ))}
+        {/* rim and LED ring */}
+        <mesh material={can}>
+          <torusGeometry args={[R, 0.016, 8, 48]} />
+        </mesh>
+        <mesh material={ring} position={[0, 0, 0.012]}>
+          <ringGeometry args={[R - 0.012, R + 0.004, 48]} />
+        </mesh>
+      </group>
     </group>
   )
 }
@@ -374,7 +491,7 @@ export function Wing({ side, deckTop, z = -1.7 }: { side: 1 | -1; deckTop: numbe
       </mesh>
       <MatrixPanel phase={phase} position={[s * 3.4, y(2.5), f]} rotation-y={-s * 0.3} />
       <TrefoilFan phase={phase} direction={s} position={[s * 2.4, y(2.3), f]} />
-      <HexRetro index={s > 0 ? 2 : 0} position={[s * 3.5, y(1.55), f]} />
+      <HexRetro index={s > 0 ? 2 : 0} position={[s * 3.6, y(1.45), f]} />
       <LedBar kind="dots" phase={phase} from={[s * 3.25, y(1.6), f]} to={[s * 2.2, y(2.0), f]} />
       <LedBar kind="pixels" phase={phase} from={[s * 2.45, y(1.35), f]} to={[s * 3.55, y(0.35), f]} />
       <LedBar kind="pixels" phase={phase} from={[s * 3.55, y(0.3), f]} to={[s * 2.4, y(0.3), f]} />

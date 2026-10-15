@@ -8,7 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { rigGear, type RigId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
-import { HexRetro, LedRope, Wing } from './gear/Effects'
+import { HexRetro, LedRope, WarcraftRetro, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
 import { BoothMonitors, PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
@@ -179,6 +179,9 @@ function Stage({ small }: { small: boolean }) {
           [1.1, deckTop + 0.98, 0.18],
         ]}
       />
+      {/* Warcraft retro lights on the deck's front corners, tilted up at the crowd */}
+      <WarcraftRetro index={0} position={[-3.9, deckTop + 0.3, 0.55]} />
+      <WarcraftRetro index={2} position={[3.9, deckTop + 0.3, 0.55]} />
       <BoothMonitors deckTop={deckTop} />
       <PAStack x={-6.3} z={0.9} toe={0.2} />
       <PAStack x={6.3} z={0.9} toe={-0.2} />

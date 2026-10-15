@@ -46,7 +46,7 @@ export const capabilities: Capability[] = [
       { title: 'Select', body: 'Beams, retros, matrix panels and LED lines, each placed for a reason rather than to fill truss.' },
       { title: 'Programme', body: 'Looks are built to the music, with movement and intensity following the shape of a set.' },
     ],
-    gear: ['sharpy', 'trefoil', 'hex', 'matrix', 'dotbar', 'pixelbar', 'rope'],
+    gear: ['sharpy', 'trefoil', 'hex', 'warcraft', 'matrix', 'dotbar', 'pixelbar', 'rope'],
     image: { src: 'club-full', alt: 'Brick-arched room lit in red from behind the booth' },
   },
   {

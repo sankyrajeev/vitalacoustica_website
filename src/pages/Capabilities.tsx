@@ -93,13 +93,41 @@ export function CapabilityPage({ id }: { id: string }) {
         {c.id === 'sound' && (
           <section className="cap-page__section">
             <Label>Coverage planning</Label>
-            <figure className="tech-drawing">
-              <CoverageDrawing />
-              <figcaption>
-                Plan view of a stereo pair of V10P tops with their nominal 110° horizontal dispersion, aimed to overlap at the
-                audience centre line.
-              </figcaption>
-            </figure>
+            <div className="coverage">
+              <figure className="tech-drawing">
+                <CoverageDrawing />
+                <figcaption>
+                  Plan view of a stereo pair of V10P tops with their nominal 110° horizontal dispersion, aimed to overlap at
+                  the audience centre line.
+                </figcaption>
+              </figure>
+              <div className="coverage__text">
+                <h2 className="h3">Drawn before anything is loaded.</h2>
+                <p>
+                  Every system starts as a plan of the room, to scale. We place the tops so their coverage overlaps on the
+                  centre line and reaches the back of the crowd, so the dancefloor sounds the same at the front, the middle
+                  and the bar.
+                </p>
+                <ul className="coverage__points">
+                  <li>
+                    <strong>Even coverage.</strong> Tops angled in so their patterns meet over the audience, not the
+                    stage.
+                  </li>
+                  <li>
+                    <strong>Control.</strong> The stage, the booth and hard walls kept out of the pattern, so there’s less
+                    feedback and less echo.
+                  </li>
+                  <li>
+                    <strong>Low end where it belongs.</strong> Subwoofers set as an array, cardioid when needed, to keep
+                    bass off the stage and away from the neighbours.
+                  </li>
+                  <li>
+                    <strong>Tuned in the room.</strong> Time-aligned and checked on site, then listened to again with the
+                    crowd in.
+                  </li>
+                </ul>
+              </div>
+            </div>
           </section>
         )}
 

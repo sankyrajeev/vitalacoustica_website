@@ -22,6 +22,7 @@ export type RigId =
   | 'matrix'
   | 'trefoil'
   | 'hex'
+  | 'warcraft'
   | 'dotbar'
   | 'pixelbar'
   | 'rope'
@@ -199,18 +200,24 @@ export const gear: Gear[] = [
     id: 'di',
     stock: '8 units', // DUMMY
     group: 'Control & DJ',
-    name: 'DI boxes',
-    role: 'Direct injection',
-    about: 'Clean, balanced connections for laptops, synths, instruments and playback.',
+    name: 'AR-133 DI box',
+    maker: 'BSS Audio',
+    role: 'Active DI',
+    about: 'Active DI for laptops, synths, instruments and playback, with a pad for hot sources.',
     description:
-      'Direct-injection boxes that turn unbalanced sources into balanced mic-level lines for the mixer, with ground lift to keep hum out. For live acts, laptops, synths and playback.',
+      'The touring-standard active DI. It turns an unbalanced source into a clean, transformer-balanced line for the mixer, with a 0/20/40 dB pad for anything from a bass guitar to a laptop or keyboard output, a link jack to feed an amp, and a ground lift to keep hum out. It runs on phantom power and switches to its 9 V battery if phantom drops.',
     specs: [
-      ['Types', 'Mono and stereo, passive'], // DUMMY
-      ['Connections', '1/4" jack in · XLR out · ground lift'], // DUMMY
-      ['Use', 'Laptops, synths, instruments, playback'],
+      ['Type', 'Active, single channel'],
+      ['Power', '48 V phantom, with automatic 9 V battery backup'],
+      ['Inputs', '1/4" jack and parallel link jack · XLR input'],
+      ['Output', 'Transformer-balanced XLR · ground lift'],
+      ['Pad', '0 / −20 / −40 dB'],
+      ['Input impedance', '1 MΩ (0 dB pad) · 47 kΩ (−20 / −40 dB)'],
+      ['Frequency response', '30 Hz – 20 kHz (+0 / −1 dB)'],
     ],
-    spec: 'Balanced lines for laptops, synths and instruments',
-    photo: { file: '', width: 4, height: 3, alt: '', source: 'none' }, // DUMMY: photo from the shoot
+    specSource: 'BSS Audio',
+    spec: 'Active · phantom or 9 V · 0/20/40 dB pad · ground lift',
+    photo: { file: 'di.webp', width: 800, height: 800, alt: 'BSS Audio AR-133 active DI box in teal with rubber end caps', source: 'product' },
   },
   {
     id: 'sharpy',
@@ -222,13 +229,14 @@ export const gear: Gear[] = [
     description:
       'Tight aerial beams on fast pan and tilt, hung from the front truss or set on the stage. We programme them to the set: fans, waves, crosses and single points over the crowd, run in red or amber.',
     specs: [
-      ['Type', 'Beam moving head'],
+      ['Type', 'Beam + spot moving head'],
+      ['Source', '150 W LED'],
+      ['Display', 'LCD menu on the base'],
       ['Mounting', 'Truss clamp or floor'],
       ['Control', 'DMX, programmed to the music'],
-      ['Model', '230 W 7R beam moving head'], // DUMMY
     ],
-    spec: 'Pencil-thin aerial beams · pan/tilt · run in red or amber',
-    photo: { file: 'sharpy.webp', width: 900, height: 900, alt: 'Render from our stage model: beam moving heads under the truss, one red and two amber', source: 'model' },
+    spec: '150 W beam + spot · pan/tilt · run in red or amber',
+    photo: { file: 'sharpy.webp', width: 800, height: 800, alt: 'Beam and spot moving head with a red lens, yoke and display base', source: 'product' },
   },
   {
     id: 'trefoil',
@@ -253,18 +261,36 @@ export const gear: Gear[] = [
     stock: '4 units', // DUMMY
     group: 'Lighting',
     name: 'Retro hex light',
-    role: 'Warm retro',
-    about: 'Seven hexagonal cells with a warm, tungsten-style glow.',
+    role: 'Retro effect',
+    about: 'Seven hexagonal cells behind honeycomb lenses, in a round frame.',
     description:
-      'Seven hexagonal cells that read like old filament lamps. Used for warm punches, slow chases and as eye candy on the truss towers and lighting wings.',
+      'Seven hexagonal cells behind honeycomb lenses, clustered inside a round tubular frame. Each cell has a warm centre and a full-colour surround, so it can glow like an old filament lamp or wash in colour. Used for warm punches, slow chases and as eye candy on the truss towers and lighting wings.',
     specs: [
-      ['Cells', '7 hexagonal'],
-      ['Look', 'Warm, tungsten-style'],
-      ['Control', 'DMX'],
-      ['Model', '7-cell retro LED panel'], // DUMMY
+      ['Cells', '7 hexagonal, honeycomb lens'],
+      ['Colour', 'Warm centre with RGB surround per cell'],
+      ['Frame', 'Round tubular yoke, floor or truss'],
+      ['Control', 'DMX, cells individually'],
     ],
-    spec: '7 hexagonal cells · tungsten-style warm glow',
-    photo: { file: 'hex.webp', width: 230, height: 230, alt: 'Retro hex light with seven glowing amber cells in haze, from a Vital Acoustica show', source: 'show' },
+    spec: '7 hexagonal cells · warm centre + RGB · round frame',
+    photo: { file: 'hex.webp', width: 800, height: 800, alt: 'Retro hex light: seven hexagonal honeycomb cells lit in colour inside a round frame', source: 'product' },
+  },
+  {
+    id: 'warcraft',
+    stock: '4 units', // DUMMY
+    group: 'Lighting',
+    name: 'Warcraft retro light',
+    role: 'Retro effect',
+    about: 'A big searchlight-style can: a warm centre in a gold reflector, ringed by LEDs.',
+    description:
+      'A large retro fixture built like an old searchlight: a warm centre source deep in a gold reflector behind a three-spoke frame, with a ring of LEDs around the rim that can chase or glow on its own. On its yoke it stands on the floor or hangs from truss, and it reads as a warm, golden glow from across the room.',
+    specs: [
+      ['Source', 'Warm centre LED in a gold reflector'],
+      ['Ring', 'LED ring around the rim, separately controlled'],
+      ['Mounting', 'Yoke: floor or truss'],
+      ['Control', 'DMX'],
+    ],
+    spec: 'Warm centre in a gold reflector · LED rim ring',
+    photo: { file: 'warcraft.webp', width: 800, height: 800, alt: 'Warcraft retro light: round black can with a gold reflector, three-spoke front and LED ring, on a yoke', source: 'product' },
   },
   {
     id: 'matrix',

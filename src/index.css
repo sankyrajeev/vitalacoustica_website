@@ -2238,6 +2238,48 @@ main {
   align-items: start;
 }
 
+/* coverage planning: the drawing on the left, the write-up on the right */
+.coverage {
+  display: grid;
+  grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+
+.coverage__text {
+  display: grid;
+  gap: var(--s4);
+  max-width: 34em;
+  color: var(--text-soft);
+}
+
+.coverage__text .h3 {
+  color: var(--text);
+}
+
+.coverage__points {
+  display: grid;
+  margin-top: var(--s3);
+  border-top: var(--hair) solid var(--line);
+}
+
+.coverage__points li {
+  padding: var(--s3) 0;
+  border-bottom: var(--hair) solid var(--line);
+  font-size: 15px;
+}
+
+.coverage__points strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .coverage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* technical drawings: fine lines in the text colour on the page background */
 .tech-drawing {
   max-width: 520px;
