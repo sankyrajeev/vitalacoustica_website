@@ -39,7 +39,7 @@ export function GearCard({ g }: { g: Gear }) {
       <div className="gear-card__body">
         <p className="gear-card__meta">
           <span>{g.group}</span>
-          <span>{g.role}</span>
+          {g.role && <span>{g.role}</span>}
         </p>
         <h3 className="gear-card__name">
           <Link to={`/equipment/${g.id}`}>

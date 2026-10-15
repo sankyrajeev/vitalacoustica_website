@@ -874,9 +874,9 @@ main {
 }
 
 .gear-card__body {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--s3);
-  align-content: start;
   padding: var(--s5);
 }
 
@@ -928,12 +928,14 @@ main {
   color: var(--accent-text);
 }
 
+/* the actions sit on the card's bottom edge, so they line up across a row */
 .gear-card__actions {
   display: flex;
   flex-wrap: nowrap;
   align-items: baseline;
   gap: var(--s5);
-  margin-top: var(--s3);
+  margin-top: auto;
+  padding-top: var(--s3);
 }
 
 .gear-card__actions .text-link {

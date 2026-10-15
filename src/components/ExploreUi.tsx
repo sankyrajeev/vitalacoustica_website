@@ -99,7 +99,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze }: Props) {
             {item.maker && <span className="spec-card__maker">{item.maker}</span>}
             {item.name}
           </h3>
-          <p className="spec-card__role">{item.role}</p>
+          {item.role && <p className="spec-card__role">{item.role}</p>}
           <p className="spec-card__spec">{item.spec}</p>
           <p className="spec-card__about">{item.about}</p>
           <button

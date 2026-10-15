@@ -116,7 +116,7 @@ export function EquipmentDetail({ id }: { id: string }) {
         <div className="gear-detail__info">
           <p className="gear-card__meta">
             <span>{g.group}</span>
-            <span>{g.role}</span>
+            {g.role && <span>{g.role}</span>}
           </p>
           <h1 className="display display--sm gear-detail__name">
             {g.maker && <span className="gear-detail__maker">{g.maker}</span>}

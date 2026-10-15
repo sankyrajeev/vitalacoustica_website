@@ -39,6 +39,7 @@ export type Gear = {
   group: GearGroup
   name: string
   maker?: string
+  /** short type label on cards; empty to show only the group */
   role: string
   /** one line for cards */
   about: string
@@ -92,7 +93,7 @@ export const gear: Gear[] = [
     name: 'B22-SUB',
     maker: 'd&b audiotechnik',
     role: 'Subwoofer',
-    about: 'Dual 18" bandpass subwoofer for the low end a kick drum needs.',
+    about: 'Dual 18" bandpass subwoofer for the deep, controlled low end a kick drum needs, cardioid-capable.',
     description:
       'Dual 18" drivers in a bandpass cabinet: deep, controlled bass for techno and house. Ground-stacked in front of or beside the stage, and with three or more they can be set up as a cardioid array that keeps bass off the stage and away from the neighbours.',
     specs: [
@@ -248,7 +249,7 @@ export const gear: Gear[] = [
     stock: '8 units', // DUMMY
     group: 'Stage Lighting',
     name: 'Beam moving heads',
-    role: 'Sharpy-style beams',
+    role: '',
     about: 'Pencil-thin beams that cut through haze, moving in time with the music.',
     description:
       'Tight aerial beams on fast pan and tilt, hung from the front truss or set on the stage. We programme them to the set: fans, waves, crosses and single points over the crowd, run in red or amber.',
@@ -267,8 +268,7 @@ export const gear: Gear[] = [
     stock: '4 units', // DUMMY
     group: 'Stage Lighting',
     name: 'Retro 3\u2011blade fan light', // non-breaking hyphen keeps "3-blade" together
-    maker: 'ATI Pro',
-    role: 'Effect light',
+    role: '',
     about: 'Three honeycomb blades with warm LED strips around a centre lens, on a rotating head.',
     description:
       'Three wide blades behind hammered honeycomb lenses, each with a warm LED strip down its centre, set around a hexagonal hub with its own lens. The lenses take colour while the strips glow like filament, and the head turns so the blades sweep as the set builds. We usually pair two either side of the booth.',
@@ -279,7 +279,7 @@ export const gear: Gear[] = [
       ['Model', 'ATISP511 Retro'],
     ],
     spec: 'Three honeycomb blades · warm strips · centre lens · rotating head',
-    photo: { file: 'trefoil.webp', width: 800, height: 800, alt: 'ATI Pro retro 3-blade fan light: three honeycomb blades with amber strips around a hexagonal hub and lens', source: 'product' },
+    photo: { file: 'trefoil.webp', width: 800, height: 800, alt: 'Retro 3-blade fan light: three honeycomb blades with amber strips around a hexagonal hub and lens', source: 'product' },
   },
   {
     id: 'hex',

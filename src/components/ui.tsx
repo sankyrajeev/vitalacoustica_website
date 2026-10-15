@@ -148,7 +148,7 @@ export function PhotoHotspots({ hotspots, visible }: { hotspots: Hotspot[]; visi
           className={`spot-note ${spot.x > 50 ? 'spot-note--left' : ''} ${spot.y > 62 ? 'spot-note--up' : ''}`}
           style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
         >
-          <span className="spot-note__role">{g.role}</span>
+          <span className="spot-note__role">{g.role || g.group}</span>
           <strong>{fullName(g)}</strong>
           <p>{g.about}</p>
           <span className="spot-note__links">
