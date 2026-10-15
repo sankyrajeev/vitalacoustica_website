@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { loadModel } from '../assistant/model'
 import { answer, GREETING, type Action, type Reply } from '../content/chat'
 import { fullName } from '../content/gear'
 import { site } from '../content/site'
@@ -41,21 +42,22 @@ export function Chat() {
 
   useEffect(() => {
     if (!open) return
+    // fetch the assistant's model while the visitor reads the greeting
+    loadModel().catch(() => {})
     input.current?.focus({ preventScroll: true })
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
-  const ask = (q: string, shown = q) => {
+  const ask = async (q: string, shown = q, intent?: string) => {
     if (!q.trim()) return
     setMessages((m) => [...m, { from: 'you', text: shown }])
     setTyping(true)
-    // a short pause so the reply reads as a reply
-    window.setTimeout(() => {
-      setTyping(false)
-      setMessages((m) => [...m, { from: 'bot', reply: answer(q) }])
-    }, 550)
+    // at least a short pause, so the reply reads as a reply
+    const [reply] = await Promise.all([answer(q, intent), new Promise((r) => window.setTimeout(r, 550))])
+    setTyping(false)
+    setMessages((m) => [...m, { from: 'bot', reply }])
   }
 
   const submit = (e: FormEvent) => {
@@ -65,7 +67,7 @@ export function Chat() {
   }
 
   const act = (a: Action) => {
-    if (a.kind === 'ask') return ask(a.query, a.label)
+    if (a.kind === 'ask') return ask(a.query, a.label, a.intent)
     if (a.kind === 'link') {
       navigate(a.to)
       if (window.matchMedia('(max-width: 640px)').matches) setOpen(false)

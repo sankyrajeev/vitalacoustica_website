@@ -10,7 +10,7 @@ import { site } from '../content/site'
 const LEGAL = {
   company: 'Vital Acoustica',
   address: 'Bangalore, Karnataka, India', // DUMMY: full registered address
-  gstin: '29ABCFV2853P1ZF',
+  gstin: site.gst,
   updated: '15 October 2026',
   jurisdiction: 'Bengaluru, Karnataka',
 }

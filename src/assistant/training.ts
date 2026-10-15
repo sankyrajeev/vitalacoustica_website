@@ -1,0 +1,177 @@
+// Training data for the site assistant's intent model.
+// Each intent lists ways people actually ask. More (and more varied) examples make the model
+// better; after editing, run `npm run train:assistant` to rebuild src/assistant/model.json.
+// TEST holds phrasings the model never sees in training, used only to measure accuracy.
+
+export const INTENTS: Record<string, string[]> = {
+  greeting: [
+    'hi', 'hello', 'hey', 'hii', 'hey there', 'hello there', 'good morning', 'good evening', 'good afternoon',
+    'namaste', 'yo', 'hi team', 'hello vital acoustica', 'hey guys', 'hiya', 'helo', 'hai', 'sup',
+  ],
+  thanks: [
+    'thanks', 'thank you', 'thanks a lot', 'thank u', 'thx', 'ty', 'cheers', 'great thanks', 'awesome thank you',
+    'cool thanks', 'ok thanks', 'perfect', 'got it', 'that helps', 'bye', 'see you', 'ok bye', 'alright thanks',
+  ],
+  price: [
+    'how much does it cost', 'what are your rates', 'price list', 'pricing', 'how much for a sound system',
+    'what is the rental cost', 'rate card please', 'pls share price', 'how much will it cost for my event',
+    'cost of hiring speakers', 'what do you charge', 'how expensive is it', 'budget for a party',
+    'price for lights', 'what is the rate per day', 'kitna lagega', 'price kya hai', 'how much per night',
+    'rental charges', 'cost estimate', 'do you have packages', 'cheapest option', 'how much for v10p',
+    'tariff', 'rent for dj setup how much', 'whats the price', 'can you share rates',
+    'quotation amount', 'how much for 2 days', 'whats the cost for 500 people', 'approx cost', 'ballpark figure', 'cost per hour', 'how much for lights and sound',
+    'kitne ka hai', 'kitna hoga', 'kya rate hai', 'how much is the total', 'cost for a full setup',
+  ],
+  quote: [
+    'i want a quote', 'get a quote', 'can i book', 'i want to book you', 'book for my event', 'are you available on saturday',
+    'are you free on 25th', 'availability for next month', 'can we hire you', 'i need sound for my event',
+    'need lights for a party', 'reserve the system', 'enquiry', 'i have an event', 'need equipment for a wedding',
+    'we are planning a club night', 'can you do our event', 'r u available', 'is the date free', 'want to rent',
+    'need a pa for 300 people on friday', 'booking', 'how do i book', 'please contact me for an event',
+    'available on 20th', 'is saturday free', 'free next sunday', 'need speakers this weekend', 'need lights on friday night', 'is the 31st open', 'can you do new years eve', 'book for december', 'available in march', 'need a setup for a birthday', 'hire for a sangeet', 'need dj setup for a house party', 'we need sound tomorrow', 'are you booked on diwali',
+    'need sound for my brothers wedding', 'sound and lights for a reception in january', 'we have a corporate event next month', 'need lights for a college fest',
+  ],
+  process: [
+    'how does hiring work', 'what is the process', 'how does it work', 'what are the steps', 'what happens after i enquire',
+    'how do you work', 'walk me through the process', 'what do i need to do', 'how long does setup take',
+    'when do you arrive', 'do i need to do anything', 'how does renting from you work', 'what is included in the hire',
+  ],
+  location: [
+    'where are you located', 'where are you based', 'which cities do you cover', 'do you travel', 'can you come to hyderabad',
+    'do you work outside bangalore', 'are you in bengaluru', 'do you do events in mysore', 'can you come to goa',
+    'outstation events', 'where is your office', 'service area', 'do you cover mangalore', 'karnataka only',
+    'chennai event possible', 'where do you operate', 'location', 'address',
+    'do you come to whitefield', 'event in koramangala', 'can you do hsr layout', 'jp nagar venue', 'is electronic city ok', 'near mg road', 'event in north bangalore', 'can you come to coorg', 'event in ooty', 'do you go to pune', 'how far do you travel', 'event at a farmhouse outside the city', 'do you do kerala',
+    'are you close to jayanagar', 'near marathahalli', 'is banashankari too far', 'which area are you in',
+  ],
+  capacity: [
+    'how many people can it handle', 'what crowd size', 'is it enough for 500 people', 'capacity', 'how big a crowd',
+    'can you do 1000 people', 'for 200 guests', 'how loud is it', 'big enough for an open air', 'max audience',
+    'how many pax', 'small house party enough', 'can it cover a big hall', 'crowd of 800',
+    'will it be loud enough for 400', 'is it good for a small venue', 'how many people does the v10p cover', 'enough for a rooftop party',
+  ],
+  crew: [
+    'do you provide crew', 'do you set it up', 'who operates it', 'do you give a sound engineer', 'is delivery included',
+    'do you transport the gear', 'do you have a lighting operator', 'will someone stay for the show', 'setup and dismantle',
+    'do you do load out', 'do i need my own technician', 'can you run the show', 'is installation included for the event',
+    'who will handle the console', 'do you bring cables',
+    'do you send people to operate', 'will you set everything up', 'do you handle setup and teardown', 'is a technician included',
+  ],
+  installations: [
+    'permanent installation', 'install a system in my club', 'sound system for my bar', 'audio and lighting integration',
+    'fit out for a restaurant', 'we are opening a lounge', 'consulting for a venue', 'design a sound system for our venue',
+    'permanent lights for a pub', 'can you install speakers in my cafe', 'venue installation', 'long term setup for a club',
+    'audio integration', 'lighting design for a new venue',
+  ],
+  visuals: [
+    'do you do projection mapping', 'visuals', 'video wall', 'led screen', 'vj', 'projection', 'do you have screens',
+    'generative visuals', 'visual experiences', 'mapping on a building', 'do you have a projector', 'led wall',
+  ],
+  explore3d: [
+    'show me the 3d model', '3d', 'can i see the rig in 3d', 'stage model', 'drone view', 'virtual tour', 'open 3d',
+    'how does the stage look', 'show me the setup', 'view the rig', 'interactive stage',
+  ],
+  gear: [
+    'do you have v10p', 'tell me about the b22', 'specs of the rcf', 'what is the d40', 'do you have cdj 3000x',
+    'details of djm v10', 'do you have beam lights', 'is the dm3 available', 'what mixer do you have', 'do you have sharpies',
+    'tell me about the hex light', 'warcraft light details', 'do you have monitors', 'do you have subs', 'what amplifier',
+    'neon flex details', 'do you rent truss', 'do you have a dj table', 'what speakers do you use', 'which players do you have',
+    'do you have di boxes', 'what is the pixel bar', 'how many v10p do you have', 'specs please', 'which subwoofer',
+  ],
+  equipment: [
+    'what equipment do you have', 'what do you hire out', 'equipment list', 'show me your gear', 'inventory',
+    'what can i rent', 'catalogue', 'what kit do you have', 'list of equipment', 'what all do you have', 'show equipment',
+    'what gear', 'what do you rent',
+  ],
+  sound: [
+    'what sound equipment', 'sound system', 'speakers', 'what speakers do you have', 'audio gear', 'pa system',
+    'sound gear list', 'what audio do you have', 'speaker options', 'loudspeakers', 'audio equipment',
+  ],
+  infra: [
+    'dj setup', 'dj equipment', 'what dj gear', 'mixers', 'do you have a dj console', 'cdjs and mixer', 'dj booth gear',
+    'what mixer and players', 'audio infrastructure', 'console for live band', 'dj gear list',
+  ],
+  lighting: [
+    'what lights do you have', 'lighting', 'stage lighting', 'lights', 'party lights', 'led lights', 'lighting options',
+    'retro lights', 'what lighting equipment', 'light list', 'show me lights', 'disco lights',
+  ],
+  structure: [
+    'staging', 'truss and stage', 'structure', 'do you have a stage', 'tables and truss', 'rigging structure', 'goal post truss',
+  ],
+  payment: [
+    'is gst included', 'do you give a gst invoice', 'do you take advance', 'advance payment', 'payment terms',
+    'do you need a deposit', 'how do i pay', 'can i pay by upi', 'do you accept card', 'payment method',
+    'is there a token amount', 'full payment before event', 'invoice please', 'gst number', 'cancellation policy',
+    'refund if cancelled', 'bank transfer ok',
+  ],
+  services: [
+    'what services do you offer', 'what do you do', 'services', 'what do you offer', 'are you a rental company',
+    'what kind of events do you do', 'do you only rent', 'full production', 'what do you guys do',
+    'do you do weddings', 'do you do corporate events', 'do you do concerts', 'do you do college fests', 'what types of events', 'do you do private parties',
+  ],
+  story: [
+    'who are you', 'about you', 'who started vital acoustica', 'who are the founders', 'your story', 'tell me about the company',
+    'who owns this', 'who is sankarsh', 'who is harsh', 'how did you start', 'about the team',
+    'who started this', 'founded by whom', 'who runs vital acoustica', 'what is your background', 'the people behind this',
+  ],
+  careers: [
+    'are you hiring', 'jobs', 'careers', 'can i work with you', 'internship', 'i want to join', 'vacancy',
+    'do you need crew members', 'job opening', 'apply for a job', 'freelance work',
+  ],
+  contact: [
+    'contact', 'phone number', 'how can i reach you', 'whatsapp number', 'email', 'call you', 'talk to a human',
+    'speak to someone', 'can i call', 'your number', 'email address', 'connect me to the team', 'customer care',
+    'instagram', 'whats your insta', 'social media', 'are you on instagram', 'can i visit your office', 'can i come see the gear', 'can i visit the warehouse',
+  ],
+  work: [
+    'show me your work', 'past events', 'portfolio', 'previous shows', 'photos of events', 'what events have you done',
+    'clients', 'testimonials', 'reviews', 'gigs you did', 'case studies',
+  ],
+  // things we can't help with, so the model learns to say so instead of guessing
+  unknown: [
+    'what is the weather today', 'tell me a joke', 'who won the match', 'write me a poem', 'what is 2 plus 2',
+    'best biryani near me', 'can you do my homework', 'what is the capital of france', 'how old are you',
+    'are you a robot', 'recommend a movie', 'what time is it', 'sing a song', 'who is the prime minister',
+    'translate this to hindi', 'i am bored', 'what is love', 'can you code', 'book a cab', 'order food',
+    'asdfgh', 'lol', 'hmm', 'random', 'do you sell phones', 'fix my laptop', 'where can i buy shoes',
+    'whats the score', 'who will win the election', 'tell me a fun fact', 'how do i cook pasta', 'what is bitcoin price', 'stock market today', 'play some music', 'give me a riddle', 'are you chatgpt', 'how is the traffic', 'what day is it', 'meaning of life', 'do you sell cars', 'need a plumber', 'i love you', 'gibberish xyz', 'nothing',
+    'weather in mumbai', 'is it raining in bangalore', 'bangalore traffic', 'news today', 'football scores', 'whats trending',
+  ],
+}
+
+export const TEST: [string, string][] = [
+  ['heyy', 'greeting'],
+  ['good morning team', 'greeting'],
+  ['thank you so much', 'thanks'],
+  ['ok cool', 'thanks'],
+  ['how much would 2 speakers cost', 'price'],
+  ['pls send the rate', 'price'],
+  ['what would it cost for a wedding', 'price'],
+  ['is 14 feb available', 'quote'],
+  ['i want to hire for a birthday', 'quote'],
+  ['need sound on sunday', 'quote'],
+  ['whats the procedure', 'process'],
+  ['do you come to belgaum', 'location'],
+  ['are you near indiranagar', 'location'],
+  ['enough for 300 ppl?', 'capacity'],
+  ['will you send an engineer', 'crew'],
+  ['do you deliver and setup', 'crew'],
+  ['want speakers fixed in my bar permanently', 'installations'],
+  ['led screen for stage', 'visuals'],
+  ['3d view', 'explore3d'],
+  ['do u have rcf', 'gear'],
+  ['specs for the subwoofer', 'gear'],
+  ['what all equipment', 'equipment'],
+  ['which speakers', 'sound'],
+  ['dj console options', 'infra'],
+  ['light options', 'lighting'],
+  ['what do you guys offer', 'services'],
+  ['who founded this', 'story'],
+  ['any openings', 'careers'],
+  ['give me your number', 'contact'],
+  ['events you have done', 'work'],
+  ['do you need advance', 'payment'],
+  ['your instagram handle', 'contact'],
+  ['whats the cricket score', 'unknown'],
+  ['tell me something funny', 'unknown'],
+]

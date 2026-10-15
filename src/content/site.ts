@@ -4,6 +4,7 @@
 export const site = {
   name: 'Vital Acoustica',
   domain: 'vitalacoustica.com',
+  gst: '29ABCFV2853P1ZF',
   eyebrow: 'Sound & lighting rental · Production',
   headline: 'We shape the way an experience feels.',
   supporting: 'Sound, light and production. Conceived as one.',
