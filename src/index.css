@@ -3067,11 +3067,33 @@ main {
   margin: var(--s4) 0 0;
 }
 
-.contact__direct li {
-  display: grid;
-  padding: var(--s3) 0;
-  border-bottom: var(--hair) solid var(--line);
-  font-size: 15px;
+.whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s3);
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #0b2b17;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  justify-self: start;
+  transition:
+    background var(--t-fast),
+    transform var(--t-med) var(--ease);
+}
+
+.whatsapp:hover {
+  background: #2ee874;
+  transform: translateY(-2px);
+}
+
+.whatsapp__note {
+  font-size: 13px;
 }
 
 @media (max-width: 900px) {

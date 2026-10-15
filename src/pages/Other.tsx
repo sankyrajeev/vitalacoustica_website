@@ -166,15 +166,10 @@ const SERVICE_FOR_GROUP: Record<GearGroup, string> = {
 }
 
 export function ContactPage() {
-  const { email, phone, whatsapp, instagram } = site.contact
-  // arriving from an equipment page: "#/contact?item=b22"
+  const { whatsapp } = site.contact
+  // arriving from an equipment page: "/contact?item=b22"
   const item = gearById[queryParam('item') as GearId]
-  const direct = [
-    email && { label: 'Email', value: email, href: `mailto:${email}` },
-    phone && { label: 'Phone', value: phone, href: `tel:${phone.replace(/\s/g, '')}` },
-    whatsapp && { label: 'WhatsApp', value: 'Message us', href: `https://wa.me/${whatsapp}` },
-    instagram && { label: 'Instagram', value: `@${instagram}`, href: `https://instagram.com/${instagram}` },
-  ].filter(Boolean) as { label: string; value: string; href: string }[]
+  const waText = item ? `Hi Vital Acoustica, I'd like a quote for the ${fullName(item)}.` : 'Hi Vital Acoustica, I’d like a quote for an event.'
 
   return (
     <>
@@ -190,19 +185,24 @@ export function ContactPage() {
             initialDescription={item ? `Interested in: ${fullName(item)}\n\n` : ''}
           />
           <aside className="contact__aside">
-            {direct.length > 0 && (
+            {whatsapp && (
               <>
-                <Label>Direct</Label>
-                <ul className="contact__direct">
-                  {direct.map((d) => (
-                    <li key={d.label}>
-                      <span className="muted">{d.label}</span>
-                      <a href={d.href} target={d.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
-                        {d.value}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                <Label>Quicker on WhatsApp?</Label>
+                <a
+                  className="whatsapp"
+                  href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(waText)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden>
+                    <path
+                      fill="currentColor"
+                      d="M16 3C8.8 3 3 8.7 3 15.8c0 2.3.6 4.5 1.8 6.5L3 29l6.9-1.8c1.9 1 4 1.6 6.1 1.6 7.2 0 13-5.7 13-12.8S23.2 3 16 3Zm0 23.5c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.1 1.1-4-.3-.4a10.6 10.6 0 0 1-1.6-5.7C5.3 10 10.1 5.3 16 5.3s10.7 4.7 10.7 10.5S21.9 26.5 16 26.5Zm5.9-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.7s1.2 3.1 1.4 3.4c.2.2 2.3 3.5 5.6 4.9.8.3 1.4.5 1.9.7.8.2 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.1-.3-.2-.6-.3Z"
+                    />
+                  </svg>
+                  <span>Chat on WhatsApp</span>
+                </a>
+                <p className="muted whatsapp__note">Opens WhatsApp with a message ready to send.</p>
               </>
             )}
             <Label>What helps</Label>

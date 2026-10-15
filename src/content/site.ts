@@ -43,12 +43,12 @@ export const site = {
 
   /*
    * Contact details. Anything left empty is simply not shown.
-   * DUMMY: the values below are stand-ins — replace with the real ones.
+   * Email, phone and WhatsApp are real; the Instagram handle is still a stand-in.
    */
   contact: {
-    email: 'hello@vitalacoustica.com' as string, // DUMMY
-    phone: '+91 98765 43210' as string, // DUMMY
-    whatsapp: '919876543210' as string, // DUMMY — digits only with country code
+    email: 'lakshmiranganatha@thevitalvines.com' as string,
+    phone: '+91 89048 58422' as string,
+    whatsapp: '918904858422' as string, // digits only with country code
     instagram: 'vitalacoustica' as string, // DUMMY — handle without @
     location: '' as string, // e.g. 'Bangalore, India' — only once approved for publication
   },

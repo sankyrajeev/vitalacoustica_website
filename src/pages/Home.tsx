@@ -82,7 +82,7 @@ function Statement() {
     ['d&b audiotechnik', 'Sound systems'],
     ['Beam · Retro · LED', 'Lighting'],
     ['Crew on every show', 'Setup & operation'],
-    ['Permanent installs', 'Consulting'],
+    ['Audio & Lighting Integration', 'Consulting'],
   ]
   return (
     <section id="statement" className="statement" data-scene="manifesto" aria-labelledby="statement-title">
