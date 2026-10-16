@@ -39,7 +39,7 @@ export const site = {
     { label: 'Services', to: '/capabilities' },
     { label: 'Work', to: '/work' },
     { label: 'Shop', to: '/shop' },
-    { label: 'Studio', to: '/studio' },
+    { label: 'Testimonials', to: '/testimonials' },
   ],
 
   /*

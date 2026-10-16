@@ -2,6 +2,7 @@ import { useEffect, useRef, type CSSProperties } from 'react'
 import lockup from '../../brand/logo-lockup.webp'
 import { useInView, useMediaQuery } from '../../hooks/useMedia'
 import type { AudioPack, Loop, Merch } from '../../content/shop'
+import { VA_MARK_PATH } from '../../brand/vaMarkPath'
 
 // Artwork for shop products that don't have photos yet: generated covers for audio packs,
 // live previews for VJ loops and garment mock-ups for merch. Real images replace them later.
@@ -9,8 +10,6 @@ import type { AudioPack, Loop, Merch } from '../../content/shop'
 const BRASS = '#b8a47b'
 const IVORY = '#f0ede5'
 
-export const VA_MARK_PATH =
-  'M1358,573 L1257,758 L1282,804 L1483,804 Z M1303,473 L1203,657 L1244,735 L1345,552 Z M1254,383 L1154,566 L1190,635 L1291,451 Z M1211,303 L1110,486 L1141,545 L1242,360 Z M1175,237 L1074,422 L1097,464 L1198,280 Z M1144,180 L1043,365 L1062,400 L1163,215 Z M1,6 L439,804 L519,804 L958,5 L769,5 L479,532 L190,6 Z M1046,2 L1037,1 L1033,4 L607,786 L604,799 L609,804 L778,804 L814,742 L1130,161 L1129,152 Z'
 
 /** Repeatable random numbers from a product id, so each cover always looks the same. */
 function seeded(id: string) {

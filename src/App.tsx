@@ -13,7 +13,7 @@ import { ThemeProvider } from './hooks/useTheme'
 import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
 import { LegalPage, PrivacyPage } from './pages/Legal'
-import { ContactPage, DeckPage, JournalPage, NotFoundPage, StudioPage } from './pages/Other'
+import { ContactPage, DeckPage, JournalPage, NotFoundPage } from './pages/Other'
 import { TestimonialsPage } from './pages/Testimonials'
 import { CareersPage } from './pages/Careers'
 import { StoryPage } from './pages/Story'
@@ -42,7 +42,7 @@ function resolve(path: string): Resolved {
   if (path === '/capabilities') return { title: 'Services', page: <CapabilitiesIndex /> }
   const cap = match('/capabilities/:id', path)
   if (cap) return { title: capabilityById(cap.id)?.name ?? 'Not found', page: <CapabilityPage id={cap.id} /> }
-  if (path === '/studio') return { title: 'Studio', page: <StudioPage /> }
+  // Studio is retired for now (the name is kept for the real studio); its page stays in Other.tsx
   if (path === '/journal') return { title: 'Journal', page: <JournalPage /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
   if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }

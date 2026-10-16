@@ -3571,28 +3571,156 @@ html.menu-open .chat {
   padding-block: var(--section);
 }
 
+.chapter {
+  position: relative;
+  overflow: hidden;
+}
+
+/* the chapter number, huge and faint behind everything */
+.chapter::before {
+  content: attr(data-n);
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  font-family: var(--serif);
+  font-size: clamp(220px, 34vw, 520px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(184, 164, 123, 0.16);
+  text-shadow: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.chapter--left::before {
+  right: 2vw;
+}
+
+.chapter--right::before {
+  left: 2vw;
+}
+
+.chapter--centre::before {
+  left: 50%;
+  translate: -50% -50%;
+  -webkit-text-stroke-color: rgba(184, 164, 123, 0.08);
+}
+
 .chapter__inner {
+  position: relative;
+  display: grid;
+  gap: clamp(32px, 5vw, 88px);
+  align-items: center;
+}
+
+.chapter__inner.has-visual {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.chapter__visual {
+  justify-self: stretch;
+}
+
+.chapter--right .chapter__visual {
+  order: -1;
+}
+
+.chapter__text {
   display: grid;
   gap: var(--s6);
   align-content: center;
 }
 
-.chapter--left .chapter__inner > * {
+.chapter--left .chapter__text > * {
   max-width: 34rem;
 }
 
-.chapter--right .chapter__inner {
+.chapter--right .chapter__text {
   justify-items: end;
 }
 
-.chapter--right .chapter__inner > * {
+.chapter--right .chapter__text > * {
   max-width: 34rem;
   width: 100%;
 }
 
-.chapter--centre .chapter__inner {
+.chapter--centre .chapter__text {
   justify-items: center;
   text-align: center;
+}
+
+/* a scene that fills the chapter behind centred text */
+.chapter__back {
+  position: absolute;
+  inset: 0;
+  opacity: 0.75;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 100%);
+}
+
+/* interactive scenes */
+.story-scene {
+  position: relative;
+  touch-action: pan-y;
+}
+
+.story-scene canvas {
+  /* out of the flow, so the canvas's own pixel size never feeds back into the layout */
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.story-scene--side {
+  aspect-ratio: 1.15;
+  cursor: crosshair;
+}
+
+.story-scene--wide {
+  aspect-ratio: 1.6;
+}
+
+.story-scene--back {
+  position: absolute;
+  inset: 0;
+}
+
+.story-scene__hint {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  translate: -50% 100%;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+@media (max-width: 900px) {
+  .chapter__inner.has-visual {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chapter--right .chapter__visual {
+    order: 0;
+  }
+  .story-scene--side {
+    aspect-ratio: 1.3;
+    max-height: 46vh;
+    margin-inline: auto;
+    width: 100%;
+  }
+  .story-scene__hint {
+    font-size: 9.5px;
+  }
+  .chapter::before {
+    font-size: 60vw;
+  }
 }
 
 .chapter__n {
@@ -3911,7 +4039,7 @@ html.menu-open .chat {
   .qualities {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .chapter--right .chapter__inner {
+  .chapter--right .chapter__text {
     justify-items: start;
   }
   .verbs {

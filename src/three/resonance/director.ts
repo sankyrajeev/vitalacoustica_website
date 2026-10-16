@@ -32,13 +32,13 @@ export const SCENES: Record<string, Partial<SceneParams>> = {
 
   // Our Story: one state per chapter, turning a little further each time
   'story-open': { dist: 8.2, x: 1.9, turn: 0.4, tilt: 0.1 },
-  'story-friends': { dist: 9, x: -1.9, turn: 1.0, opacity: 0.7 },
-  'story-missing': { dist: 12.5, x: 1.9, turn: 1.6, tilt: 0.35, calm: 1, opacity: 0.32, sweep: 0 },
+  'story-friends': { dist: 13, x: 0, turn: 1.0, opacity: 0.3 },
+  'story-missing': { dist: 14, x: 0, turn: 1.6, tilt: 0.35, calm: 1, opacity: 0.24, sweep: 0 },
   'story-question': { dist: 10.5, x: 0, y: 0.15, turn: 2.4, scale: 0.92, opacity: 0.5 },
-  'story-feeling': { dist: 7.6, x: 1.9, turn: 3.0, wave: 0.5 },
+  'story-feeling': { dist: 12, x: 0, turn: 3.0, wave: 0.5, opacity: 0.3 },
   'story-sound': { dist: 9.5, x: 0, y: 0.9, turn: 3.6, wave: 1, opacity: 0.55 },
-  'story-curious': { dist: 8.8, x: -1.9, turn: 4.2, mesh: 1, tilt: 0.1 },
-  'story-purpose': { dist: 8, x: 1.9, turn: 4.8, sweep: 1, tilt: -0.15 },
+  'story-curious': { dist: 13, x: 0, turn: 4.2, mesh: 1, tilt: 0.1, opacity: 0.28 },
+  'story-purpose': { dist: 12, x: 0, turn: 4.8, sweep: 1, tilt: -0.15, opacity: 0.3 },
   'story-night': { dist: 13.5, x: 0, turn: 5.4, tilt: 0.55, grid: 0.8, calm: 1, opacity: 0.38 },
   'story-end': { dist: 12, x: 0, y: 0.1, turn: 6.2, scale: 0.9, calm: 0.6, opacity: 0.6 },
 
