@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Label } from '../ui'
+import { img, imgSet } from '../../media'
 
 // Building blocks shared by the service pages: a text-and-scene section, a stepped process,
-// and expandable detail tiles.
+// expandable detail tiles, and full-width statement banners.
 
 export function Feature({
   n,
@@ -99,5 +100,29 @@ export function Details({ items }: { items: string[][] }) {
         </li>
       ))}
     </ul>
+  )
+}
+
+/** A full-width statement between sections, over one of our show photos. */
+export function Banner({ title, lines, photo, alt = '' }: { title: string; lines: string[]; photo: string; alt?: string }) {
+  return (
+    <section className="banner" aria-label={title}>
+      <img className="banner__photo" src={img(photo, 1600)} srcSet={imgSet(photo)} sizes="100vw" alt={alt} loading="lazy" decoding="async" />
+      <div className="wrap banner__inner">
+        <p className="banner__title">{title}</p>
+      </div>
+      <div className="banner__ticker" aria-hidden>
+        <div>
+          {[...lines, ...lines].map((l, i) => (
+            <span key={i}>{l}</span>
+          ))}
+        </div>
+      </div>
+      <ul className="sr-only">
+        {lines.map((l) => (
+          <li key={l}>{l}</li>
+        ))}
+      </ul>
+    </section>
   )
 }

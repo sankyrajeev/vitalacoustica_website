@@ -8,15 +8,16 @@ import { NotFound } from './NotFound'
 import { SoundPage } from './Sound'
 import { LightPage } from './Light'
 import { VisualsPage } from './Visuals'
+import { ProductionPage } from './Production'
 import { ServiceFader } from '../components/service/ServiceFader'
 
 export function CapabilitiesIndex() {
   return (
     <>
-      <PageHead label="Services" title="Sound, light and production, for hire.">
-        Hire the equipment on its own, or with the crew to design, set up and run it, and for venues that want a system of their
-        own, consulting on permanent installations. Everything is planned together so the sound, the light and the stage serve the
-        same night.
+      <PageHead label="Services" title="Sound, light, visuals, and the systems that connect them.">
+        How a sound system behaves in a room, how lighting responds to the music, how visuals can occupy unconventional
+        surfaces, and how it all runs together. Each discipline has its own page; Production brings them into one experience, and
+        for venues that want a system of their own, we consult on permanent installations.
       </PageHead>
       <section className="section section--tight">
         <ol className="wrap cap-index">
@@ -48,6 +49,8 @@ export function CapabilityPage({ id }: { id: string }) {
         <LightPage />
       ) : c.id === 'visuals' ? (
         <VisualsPage />
+      ) : c.id === 'production' ? (
+        <ProductionPage />
       ) : (
         <ServicePage c={c} />
       )}

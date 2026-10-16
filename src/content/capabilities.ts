@@ -68,9 +68,9 @@ export const capabilities: Capability[] = [
     id: 'production',
     index: '04',
     name: 'Production',
-    statement: 'The planning, integration and execution that bring the creative direction into reality.',
+    statement: 'Sound, light, visuals and systems, designed and run as one cohesive experience.',
     summary:
-      'Technical coordination from first site visit to load-out: structure, power, rigging, system deployment and the running of the show.',
+      'One brief, several disciplines, one production: audio, programmed lighting, DJ infrastructure, real-time visuals and the systems that connect them, from the first technical drawing to the final pack-down.',
     covers: ['Technical coordination', 'Stage and truss integration', 'System deployment', 'Production execution'],
     approach: [
       { title: 'Plan', body: 'Drawings, schedules and a clear brief for every crew member before arrival.' },
