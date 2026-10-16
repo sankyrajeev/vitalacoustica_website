@@ -7,6 +7,7 @@ import { Link } from '../components/Link'
 import { NotFound } from './NotFound'
 import { SoundPage } from './Sound'
 import { LightPage } from './Light'
+import { VisualsPage } from './Visuals'
 import { ServiceFader } from '../components/service/ServiceFader'
 
 export function CapabilitiesIndex() {
@@ -41,7 +42,15 @@ export function CapabilityPage({ id }: { id: string }) {
   return (
     <>
       <ServiceFader current={c.id} />
-      {c.id === 'sound' ? <SoundPage /> : c.id === 'light' ? <LightPage /> : <ServicePage c={c} />}
+      {c.id === 'sound' ? (
+        <SoundPage />
+      ) : c.id === 'light' ? (
+        <LightPage />
+      ) : c.id === 'visuals' ? (
+        <VisualsPage />
+      ) : (
+        <ServicePage c={c} />
+      )}
     </>
   )
 }
@@ -65,15 +74,6 @@ function ServicePage({ c }: { c: Capability }) {
       )}
 
       <div className="wrap cap-page__body">
-        {c.id === 'visuals' && (
-          <aside className="notice" role="note">
-            <span className="label">Still in the works</span>
-            <p>
-              We’re still working on our visual experiences. Projection mapping and generative visuals are in development, and
-              what you see here are studies, not finished client productions. We’ll show completed work as it happens.
-            </p>
-          </aside>
-        )}
 
         <section className="cap-page__intro">
           <p className="lede">{c.summary}</p>

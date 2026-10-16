@@ -55,7 +55,7 @@ export const capabilities: Capability[] = [
     name: 'Visuals',
     statement: 'Moving images, generative forms and immersive environments developed with intention.',
     summary:
-      'Projection mapping and generative visuals are a growing part of our practice. We are developing this work through studies and experiments, and will show completed productions here as they happen.',
+      'Real-time, audio-reactive and generative visuals for walls, suspended mesh and translucent screens, built in TouchDesigner. This work is in development, and we will show completed productions as they happen.',
     covers: ['Projection mapping', 'Generative visuals', 'Visual content', 'Experimental installations'],
     approach: [
       { title: 'Surface', body: 'Start from the architecture or object being mapped: its geometry decides the content, not the other way round.' },

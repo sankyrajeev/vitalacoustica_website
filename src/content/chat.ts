@@ -219,7 +219,7 @@ const HANDLERS: Record<string, Handler> = {
   }),
 
   visuals: () => ({
-    text: 'Projection mapping and generative visuals are something we’re still building. Our visual experiences are coming soon. For now we do LED matrix panels and pixel mapping as part of the lighting.',
+    text: 'Our visual work is in development: real-time, audio-reactive and generative visuals built in TouchDesigner, for projection onto walls, suspended mesh and translucent screens, and projection mapping. For now we do LED matrix panels and pixel mapping as part of the lighting.',
     actions: [{ kind: 'link', label: 'Visuals', to: '/capabilities/visuals' }],
   }),
 
