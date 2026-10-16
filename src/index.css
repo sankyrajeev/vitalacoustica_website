@@ -68,6 +68,9 @@
   --overlay: rgba(16, 16, 16, 0.86);
   --shade: 16, 16, 16;
   --grain-opacity: 0.06;
+  /* soft light on the type, so it glows on black rather than cutting into it */
+  --glow-head: 0 0 0.6px rgba(240, 237, 229, 0.35), 0 2px 3px rgba(0, 0, 0, 0.55), 0 0 32px rgba(184, 164, 123, 0.18);
+  --glow-text: 0 0 0.5px rgba(240, 237, 229, 0.22), 0 1px 2px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
 }
 
@@ -88,6 +91,8 @@
   --overlay: rgba(240, 237, 229, 0.9);
   --shade: 240, 237, 229;
   --grain-opacity: 0.045;
+  --glow-head: 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 28px rgba(124, 106, 68, 0.16);
+  --glow-text: 0 1px 0 rgba(255, 255, 255, 0.45);
   color-scheme: light;
 }
 
@@ -239,6 +244,47 @@ main {
 }
 
 /* ─────────────── Type ─────────────── */
+
+/* a soft glow on all text, a deeper one on the serif headlines */
+main,
+.footer,
+.nav,
+.chat__panel {
+  text-shadow: var(--glow-text);
+}
+
+.display,
+.h1,
+.h2,
+.h3,
+.quote,
+.cap__name,
+.project__title,
+.gear-card__name,
+.shop-card__name,
+.pager__name,
+.chapter__lede,
+.question,
+.why__title,
+.tslide__quote,
+.statement__body,
+.case__summary,
+.cap-index__name,
+.quality__word,
+.every,
+.cover__name {
+  text-shadow: var(--glow-head);
+}
+
+/* no glow on filled buttons and form fields */
+.cta--primary,
+.qr--wa,
+.size.is-on,
+input,
+textarea,
+select {
+  text-shadow: none;
+}
 
 .display,
 .h1,
@@ -1471,9 +1517,9 @@ main {
 .entrance {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   min-height: 100svh;
-  padding-bottom: clamp(72px, 12vh, 140px);
+  padding-block: clamp(88px, 12vh, 128px);
 }
 
 .entrance::before {

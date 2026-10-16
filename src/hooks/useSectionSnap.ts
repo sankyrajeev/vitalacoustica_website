@@ -7,6 +7,10 @@ import { useEffect } from 'react'
 
 const SETTLE_MS = 140 // quiet time that counts as "stopped scrolling"
 const NUDGE = 24 // px of movement that counts as an intent to move on
+const MIN_HEIGHT = 240 // smaller blocks (breadcrumbs, notes) aren't worth stopping on
+
+/** The blocks to settle on for inner pages: top-level sections, and the parts of an article or story. */
+export const PAGE_SECTIONS = 'main > header, main > section, main > article > :is(header, section, div, nav), .story > section'
 
 type Stop = { y: number } | { from: number; to: number }
 
@@ -16,6 +20,7 @@ function stops(selectors: string): Stop[] {
   const list: Stop[] = [{ y: 0 }, { y: max }]
   document.querySelectorAll<HTMLElement>(selectors).forEach((el) => {
     const r = el.getBoundingClientRect()
+    if (r.height < MIN_HEIGHT) return
     const top = r.top + window.scrollY
     if (r.height <= vh + 1) list.push({ y: Math.min(max, Math.max(0, top - (vh - r.height) / 2)) })
     else list.push({ from: top, to: Math.min(max, top + r.height - vh) })
@@ -23,8 +28,10 @@ function stops(selectors: string): Stop[] {
   return list
 }
 
+/** Pass an empty string to switch it off. */
 export function useSectionSnap(selectors: string) {
   useEffect(() => {
+    if (!selectors) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let timer = 0
     let settled = window.scrollY

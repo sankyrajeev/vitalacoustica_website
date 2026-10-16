@@ -8,6 +8,7 @@ import { fullName, gearById, type GearId } from './content/gear'
 import { projectBySlug } from './content/projects'
 import { site } from './content/site'
 import { useRevealOnScroll } from './hooks/useMedia'
+import { PAGE_SECTIONS, useSectionSnap } from './hooks/useSectionSnap'
 import { ThemeProvider } from './hooks/useTheme'
 import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
@@ -56,6 +57,8 @@ function resolve(path: string): Resolved {
 function Page({ path }: { path: string }) {
   const { title, page } = resolve(path)
   useRevealOnScroll(path)
+  // the homepage sets its own stops
+  useSectionSnap(path === '/' ? '' : PAGE_SECTIONS)
 
   useEffect(() => {
     document.title = path === '/' ? title : `${title} — ${site.name}`
