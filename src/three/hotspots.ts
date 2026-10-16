@@ -20,6 +20,8 @@ export const HOTSPOTS: Record<RigId, { at: V3; camera: V3 }> = {
   dotbar: { at: [-2.75, 2.4, -1.45], camera: [-2.1, 2.3, 1.4] },
   pixelbar: { at: [3.0, 1.45, -1.45], camera: [2.4, 1.6, 1.6] },
   rope: { at: [-5, 4.3, -0.4], camera: [-3.4, 3.9, 2.6] },
+  hazer: { at: [-4.9, 0.75, 2.1], camera: [-3.3, 1.7, 5.0] },
+  smoke: { at: [-1.25, 0.95, 0.62], camera: [-0.5, 1.7, 3.4] },
   table: { at: [0.72, 0.98, 19.7], camera: [2.0, 1.9, 22.2] },
   truss: { at: [-5, 3.6, -0.6], camera: [-2.8, 3.1, 4.2] },
 }
@@ -54,6 +56,7 @@ const EXTRA: Partial<Record<RigId, V3[]>> = {
     [5, 4.3, -0.4],
   ],
   truss: [[5, 3.6, -0.6]],
+  smoke: [[1.25, 0.95, 0.62]],
   table: [[0.92, 1.3, -0.2]],
 }
 

@@ -59,6 +59,13 @@ export const SECTIONS: {
   note: string
 }[] = [
   {
+    kind: 'merch',
+    title: 'Merch',
+    line: 'Oversized tees, hoodies and caps to wear to the next show. Printed when you order, so nothing goes to waste.',
+    currency: 'INR',
+    note: 'Printed to order and shipped across India in about a week.',
+  },
+  {
     kind: 'audio',
     title: 'Audio packs',
     line: 'Samples and loops from the way we hear a room: low end you feel, tops that stay sweet at volume.',
@@ -71,13 +78,6 @@ export const SECTIONS: {
     line: 'Seamless visuals made to run under a set. Drop them into Resolume, TouchDesigner or any media server.',
     currency: 'USD',
     note: 'Instant download, worldwide. Licensed for live shows and streams.',
-  },
-  {
-    kind: 'merch',
-    title: 'Merch',
-    line: 'Oversized tees, hoodies and caps to wear to the next show. Printed when you order, so nothing goes to waste.',
-    currency: 'INR',
-    note: 'Printed to order and shipped across India in about a week.',
   },
 ]
 
@@ -243,6 +243,7 @@ export const products: Product[] = [
   // ─── Merch ───
   {
     id: 'oversized-tee',
+    photo: 'shop/tee.webp', // mock-up: design to be announced
     kind: 'merch',
     name: 'Oversized tee',
     tagline: 'Design to be announced.',
@@ -254,7 +255,6 @@ export const products: Product[] = [
     print: 'mark',
     colours: [
       { name: 'Black', hex: '#141414', ink: '#b8a47b' },
-      { name: 'Ivory', hex: '#ece8de', ink: '#141414' },
     ],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specs: [
@@ -265,6 +265,7 @@ export const products: Product[] = [
   },
   {
     id: 'hoodie',
+    photo: 'shop/hoodie.webp', // mock-up: design to be announced
     kind: 'merch',
     name: 'Hoodie',
     tagline: 'Design to be announced.',
@@ -276,7 +277,6 @@ export const products: Product[] = [
     print: 'wordmark',
     colours: [
       { name: 'Black', hex: '#141414', ink: '#f0ede5' },
-      { name: 'Charcoal', hex: '#3a3936', ink: '#b8a47b' },
     ],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specs: [
@@ -287,6 +287,7 @@ export const products: Product[] = [
   },
   {
     id: 'cap',
+    photo: 'shop/cap.webp', // mock-up: design to be announced
     kind: 'merch',
     name: 'Cap',
     tagline: 'Design to be announced.',
@@ -298,7 +299,6 @@ export const products: Product[] = [
     print: 'mark',
     colours: [
       { name: 'Black', hex: '#141414', ink: '#b8a47b' },
-      { name: 'Sand', hex: '#cdbf9f', ink: '#141414' },
     ],
     sizes: ['One size'],
     specs: [

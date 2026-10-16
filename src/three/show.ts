@@ -15,8 +15,12 @@ export const show = {
   colour: 'auto' as ColourMode,
   /** 0..1 grand master for every light */
   master: 1,
-  /** 0..1 how much haze is in the room (beam visibility) */
+  /** 0..1 how much haze is in the room (beam visibility); the haze machine's output follows it */
   haze: 0.6,
+  /** the smoke machines: held from the desk, a short burst (until, in performance seconds), or on each new look */
+  smokeHold: false,
+  smokeUntil: 0,
+  smokeAuto: true,
 }
 
 export const REFERENCE_BPM = site.bpm as number
@@ -29,6 +33,9 @@ export function resetShow() {
   show.colour = 'auto'
   show.master = 1
   show.haze = 0.6
+  show.smokeHold = false
+  show.smokeUntil = 0
+  show.smokeAuto = true
 }
 
 /** Advance the show clock; call once per frame before any fixture reads it. */

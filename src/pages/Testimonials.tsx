@@ -3,7 +3,7 @@ import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { TestimonialSlider } from '../components/TestimonialSlider'
 import { Cta, Label } from '../components/ui'
-import { site } from '../content/site'
+import { published, site } from '../content/site'
 import { testimonials } from '../content/testimonials'
 
 export function TestimonialsPage() {
@@ -16,14 +16,14 @@ export function TestimonialsPage() {
 
       <section className="section section--tight">
         <div className="wrap">
-          {testimonials.length > 0 ? (
+          {published.testimonials && testimonials.length > 0 ? (
             <TestimonialSlider items={testimonials} />
           ) : (
             <div className="coming-soon">
-              <span className="label">Being collected</span>
+              <span className="label">Updated soon</span>
               <p>
-                We're gathering words from the people we've worked with. Their testimonials will appear here, with their
-                permission.
+                We’re gathering words from the people we’ve worked with. This page will be updated soon with their testimonials,
+                published with their permission.
               </p>
             </div>
           )}

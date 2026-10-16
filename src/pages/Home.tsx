@@ -3,7 +3,7 @@ import { EnquiryForm } from '../components/EnquiryForm'
 import { TestimonialSlider } from '../components/TestimonialSlider'
 import { ResonanceBackdrop } from '../components/ResonanceBackdrop'
 import { Arrow, Cta, Label, Logo, TextLink } from '../components/ui'
-import { site } from '../content/site'
+import { published, site } from '../content/site'
 import { testimonials } from '../content/testimonials'
 import { useSectionSnap } from '../hooks/useSectionSnap'
 import { scrollToId } from '../router'
@@ -110,7 +110,7 @@ function Statement() {
 
 /* 02 — Testimonials: a few voices over the sculpture's light sweep */
 function Voices() {
-  if (testimonials.length === 0) return null
+  if (!published.testimonials || testimonials.length === 0) return null
   return (
     <section className="section voices" data-scene="voices" aria-labelledby="voices-title">
       <div className="wrap">

@@ -1,7 +1,7 @@
 import { predict } from '../assistant/model'
 import { capabilities } from './capabilities'
 import { fullName, gear, GEAR_GROUPS, inRig, type Gear, type GearGroup, type RigId } from './gear'
-import { site } from './site'
+import { published, site } from './site'
 
 // The site assistant's knowledge. A small model we trained ourselves (src/assistant) works out
 // what the visitor is asking about; the answers are always ones we wrote, from the site's own
@@ -56,6 +56,8 @@ const ALIASES: Partial<Record<Gear['id'], string[]>> = {
   cob: ['cob', 'cob light', 'cob lights', 'blinder', 'blinders', 'cluster'],
   dotbar: ['matrix bar', 'matrix bars', 'cold white', 'warm white', 'washer', 'wall washer', 'wash bar', 'led bar', 'led bars'],
   rope: ['neon', 'neon flex', 'rope', 'rope light', 'flex'],
+  hazer: ['haze', 'hazer', 'hazers', 'haze machine', 'haze machines', 'sfx', 'effects'],
+  smoke: ['smoke', 'smoke machine', 'smoke machines', 'fog', 'fog machine', 'fogger', 'sfx', 'effects'],
   truss: ['truss', 'goal post', 'goalpost', 'tower', 'rigging'],
   table: ['table', 'quickie', 'dj table', 'stand'],
 }
@@ -270,13 +272,19 @@ const HANDLERS: Record<string, Handler> = {
     actions: [wa('Hi Vital Acoustica, '), quote],
   }),
 
-  work: () => ({
-    text: 'Have a look at some of the shows we’ve put on.',
-    actions: [
-      { kind: 'link', label: 'Our work', to: '/work' },
-      { kind: 'link', label: 'Testimonials', to: '/testimonials' },
-    ],
-  }),
+  work: () =>
+    published.work
+      ? {
+          text: 'Have a look at some of the shows we’ve put on.',
+          actions: [
+            { kind: 'link', label: 'Our work', to: '/work' },
+            { kind: 'link', label: 'Testimonials', to: '/testimonials' },
+          ],
+        }
+      : {
+          text: 'We’re getting our shows ready to post on the site, so the work page is coming soon. The team is happy to share examples of the kind of event you’re planning.',
+          actions: [wa('Hi Vital Acoustica, could you share some examples of your work? '), quote],
+        },
 
   unknown: (_, input) => ({
     text: 'That one’s outside what I know. I can help with our equipment, services and bookings, and the team is happy to chat on WhatsApp.',

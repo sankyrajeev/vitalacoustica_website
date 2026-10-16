@@ -165,6 +165,7 @@ const SERVICE_FOR_GROUP: Record<GearGroup, string> = {
   Sound: 'Sound system',
   'Audio Infrastructure': 'Sound system',
   'Stage Lighting': 'Lighting',
+  SFX: 'Lighting',
   'Visual Experiences': 'LED & visuals',
   Structure: 'Full production',
 }

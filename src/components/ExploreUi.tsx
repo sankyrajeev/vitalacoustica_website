@@ -35,6 +35,8 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze, small }: Props
   const [colour, setColour] = useState<ColourMode>(show.colour)
   const [bpm, setBpm] = useState(show.bpm)
   const [master, setMaster] = useState(show.master)
+  const [smokeAuto, setSmokeAuto] = useState(show.smokeAuto)
+  const [firing, setFiring] = useState(false)
   // on phones the desk starts folded so the stage stays visible
   const [deskOpen, setDeskOpen] = useState(() => !window.matchMedia('(max-width: 760px)').matches)
   const item = focus ? gearById[focus] : null
@@ -51,6 +53,7 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze, small }: Props
     setColour('auto')
     setBpm(REFERENCE_BPM)
     setMaster(1)
+    setSmokeAuto(true)
     onHaze(show.haze)
   }
 
@@ -157,6 +160,28 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze, small }: Props
                     {c.label}
                   </button>
                 ))}
+              </div>
+            </div>
+            <div className="desk__group">
+              <span className="desk__label">SFX · smoke</span>
+              <div className="desk__buttons">
+                <button
+                  className={`desk__fire ${firing ? 'is-on' : ''}`}
+                  onPointerDown={() => ((show.smokeHold = true), setFiring(true))}
+                  onPointerUp={() => ((show.smokeHold = false), setFiring(false))}
+                  onPointerLeave={() => ((show.smokeHold = false), setFiring(false))}
+                  onPointerCancel={() => ((show.smokeHold = false), setFiring(false))}
+                  onClick={() => (show.smokeUntil = performance.now() / 1000 + 1.2)}
+                >
+                  Hold for smoke
+                </button>
+                <button
+                  className={smokeAuto ? 'is-on' : ''}
+                  aria-pressed={smokeAuto}
+                  onClick={() => ((show.smokeAuto = !show.smokeAuto), setSmokeAuto(show.smokeAuto))}
+                >
+                  Auto on each look
+                </button>
               </div>
             </div>
             <div className="desk__faders">

@@ -27,13 +27,15 @@ export type RigId =
   | 'dotbar'
   | 'pixelbar'
   | 'rope'
+  | 'hazer'
+  | 'smoke'
   | 'truss'
   | 'table'
 
 /** Every hire item; DI boxes and amplifiers are listed but not modelled. */
 export type GearId = RigId | 'di' | 'd40'
 
-export type GearGroup = 'Sound' | 'Audio Infrastructure' | 'Stage Lighting' | 'Visual Experiences' | 'Structure'
+export type GearGroup = 'Sound' | 'Audio Infrastructure' | 'Stage Lighting' | 'SFX' | 'Visual Experiences' | 'Structure'
 
 export type Gear = {
   id: GearId
@@ -422,6 +424,54 @@ export const gear: Gear[] = [
     photo: { file: 'rope.webp', width: 1000, height: 1000, alt: 'Lengths of black LED neon flex lit in green, blue and white', source: 'product', fit: 'cover' },
   },
   {
+    id: 'hazer',
+    stock: '2 units', // DUMMY
+    group: 'SFX',
+    name: 'Haze machine',
+    role: 'Fine haze',
+    about: 'A fine, even haze that makes every beam visible without clouding the room.',
+    description:
+      'A hazer built into its own wheeled flight case, with fans in the lid that spread a fine, long-lasting haze evenly through the room. Haze is what lets the audience see the light: beams, fans and sweeps become shapes in the air instead of dots on a wall. Output and fan speed are set on its panel or run from the lighting desk, so the haze can build with the night.',
+    specs: [
+      ['Output', 'Fine, even haze, fan-assisted'],
+      ['Housing', 'Integrated flight case on wheels'],
+      ['Control', 'Onboard panel, DMX from the desk'], // DUMMY: confirm DMX
+      ['Fluid', 'Haze fluid'], // DUMMY: confirm water- or oil-based
+    ],
+    spec: 'Fine haze · fan-assisted · flight-cased',
+    photo: {
+      file: 'hazer.webp',
+      width: 800,
+      height: 800,
+      alt: 'Haze machine in a silver-edged flight case, its lid open to show three fans, with a control panel and display',
+      source: 'product',
+    },
+  },
+  {
+    id: 'smoke',
+    stock: '2 units', // DUMMY
+    group: 'SFX',
+    name: 'Smoke machine',
+    role: 'Bursts on cue',
+    about: 'Dense bursts of smoke on cue, for drops, entrances and reveals.',
+    description:
+      'A smoke machine for dense, dramatic bursts: a wall of smoke on the drop, an entrance through cloud, a reveal as it clears. It fires from its wired remote or from the lighting desk, so every burst lands on the music, and it works alongside the haze machine, which keeps the beams visible between bursts.',
+    specs: [
+      ['Output', 'Dense smoke, in bursts'],
+      ['Control', 'Wired remote, DMX from the desk'], // DUMMY: confirm DMX
+      ['Fluid', 'Refillable tank'],
+      ['Power', 'To be confirmed'], // DUMMY
+    ],
+    spec: 'Dense bursts · remote or desk control',
+    photo: {
+      file: 'smoke.webp',
+      width: 800,
+      height: 800,
+      alt: 'Smoke machine: a silver and black body with a fluid tank, nozzle and a wired remote',
+      source: 'product',
+    },
+  },
+  {
     id: 'truss',
     stock: '2 goal posts, 4 towers', // DUMMY
     group: 'Structure',
@@ -461,8 +511,8 @@ export const gear: Gear[] = [
 
 export const gearById = Object.fromEntries(gear.map((g) => [g.id, g])) as Record<GearId, Gear>
 
-export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Audio Infrastructure', 'Stage Lighting', 'Visual Experiences', 'Structure']
-export const RIG_GROUPS = ['Sound', 'Audio Infrastructure', 'Stage Lighting'] as const
+export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Audio Infrastructure', 'Stage Lighting', 'SFX', 'Visual Experiences', 'Structure']
+export const RIG_GROUPS = ['Sound', 'Audio Infrastructure', 'Stage Lighting', 'SFX'] as const
 
 /** Groups shown as "coming soon" while they have no items yet. */
 export const COMING_SOON: Partial<Record<GearGroup, string>> = {

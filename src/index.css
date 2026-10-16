@@ -7076,41 +7076,50 @@ img.cover {
 
 /* ─────────────── The services fader ─────────────── */
 
+/* a mixing-desk channel strip: one stop per service, the cap on the page you're on */
 .svc-fader {
   position: fixed;
   z-index: 40;
-  right: max(14px, env(safe-area-inset-right, 0px));
+  right: clamp(18px, 2.4vw, 44px);
   top: 50%;
   translate: 0 -50%;
   display: grid;
-  justify-items: end;
+  justify-items: center;
   gap: 10px;
   pointer-events: none;
 }
 
 .svc-fader__title {
   margin: 0;
-  padding-right: 4px;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--muted);
-  opacity: 0;
-  transition: opacity var(--t-fast) var(--ease);
 }
 
 .svc-fader__body {
   position: relative;
   display: flex;
   align-items: stretch;
-  height: min(300px, 44vh);
+  gap: 10px;
+  height: min(420px, 56vh);
+  padding: 16px 10px 16px 14px;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 30%),
+    color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px var(--line);
   pointer-events: auto;
 }
 
 .svc-fader__stops {
   position: relative;
-  width: 0;
+  width: 22px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -7118,7 +7127,7 @@ img.cover {
 
 .svc-fader__stops li {
   position: absolute;
-  right: 6px;
+  right: 0;
   translate: 0 -50%;
 }
 
@@ -7126,7 +7135,7 @@ img.cover {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 6px;
+  padding: 4px 0;
   border: 0;
   background: none;
   color: var(--muted);
@@ -7135,10 +7144,18 @@ img.cover {
   cursor: pointer;
 }
 
+/* the names, shown beside the strip when you reach for it */
 .svc-fader__name {
-  font-size: 12.5px;
+  position: absolute;
+  right: calc(100% + 26px);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 13px;
   opacity: 0;
-  translate: 6px 0;
+  translate: 8px 0;
+  pointer-events: none;
   transition:
     opacity var(--t-fast) var(--ease),
     translate var(--t-fast) var(--ease),
@@ -7146,23 +7163,20 @@ img.cover {
 }
 
 .svc-fader__n {
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--accent-text);
-  opacity: 0.6;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--t-fast) var(--ease);
 }
 
-.svc-fader__stops button::after {
-  content: '';
-  width: 10px;
-  height: 1px;
-  background: var(--line-strong);
+.svc-fader__stops .is-near .svc-fader__n,
+.svc-fader__stops button:hover .svc-fader__n {
+  color: var(--accent-text);
 }
 
 .svc-fader__stops .is-on .svc-fader__name {
-  opacity: 0.9;
-  translate: 0 0;
   color: var(--text);
 }
 
@@ -7170,24 +7184,21 @@ img.cover {
   color: var(--accent-text);
 }
 
-.svc-fader:hover .svc-fader__title,
-.svc-fader.is-drag .svc-fader__title,
 .svc-fader:hover .svc-fader__name,
 .svc-fader.is-drag .svc-fader__name,
 .svc-fader:focus-within .svc-fader__name {
   opacity: 1;
   translate: 0 0;
+  pointer-events: auto;
 }
 
 .svc-fader__track {
   position: relative;
-  width: 34px;
-  border-radius: 17px;
+  width: 46px;
+  border-radius: 10px;
   background:
-    repeating-linear-gradient(180deg, transparent 0 9px, var(--line) 9px 10px) center / 14px 100% no-repeat,
-    color-mix(in srgb, var(--surface) 80%, transparent);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+    repeating-linear-gradient(180deg, transparent 0 11px, var(--line) 11px 12px) center / 22px 100% no-repeat,
+    rgba(var(--shade), 0.35);
   box-shadow: inset 0 0 0 1px var(--line);
   cursor: ns-resize;
   touch-action: none;
@@ -7196,38 +7207,42 @@ img.cover {
 .svc-fader__slot {
   position: absolute;
   left: 50%;
-  top: 10px;
-  bottom: 10px;
-  width: 3px;
+  top: 12px;
+  bottom: 12px;
+  width: 5px;
   translate: -50% 0;
-  border-radius: 2px;
-  background: rgba(var(--shade), 0.9);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  background: rgba(var(--shade), 0.95);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .svc-fader__fill {
   /* from the cap down, like a channel's level */
   position: absolute;
   left: 50%;
-  bottom: 10px;
-  width: 3px;
+  bottom: 12px;
+  width: 5px;
   translate: -50% 0;
-  border-radius: 2px;
+  border-radius: 3px;
   background: var(--accent);
-  box-shadow: 0 0 10px rgba(184, 164, 123, 0.7);
+  box-shadow: 0 0 14px rgba(184, 164, 123, 0.75);
 }
 
 .svc-fader__cap {
   position: absolute;
   left: 50%;
-  width: 30px;
-  height: 18px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  width: 44px;
+  height: 30px;
+  padding: 0 7px;
   translate: -50% -50%;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #ece7db 0%, #c9c2b3 48%, #a49d8f 52%, #d9d3c6 100%);
+  border-radius: 5px;
+  background: linear-gradient(180deg, #f1ece1 0%, #cfc8b9 46%, #a39c8e 54%, #ddd7ca 100%);
   box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    0 6px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
   cursor: grab;
   transition: top var(--t-med) var(--ease);
 }
@@ -7238,19 +7253,51 @@ img.cover {
 }
 
 .svc-fader__cap i {
-  position: absolute;
-  left: 4px;
-  right: 4px;
-  top: 50%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.svc-fader__cap i:nth-child(2) {
   height: 2px;
-  translate: 0 -50%;
   background: var(--brass);
-  box-shadow: 0 0 6px rgba(184, 164, 123, 0.9);
+  box-shadow: 0 0 8px rgba(184, 164, 123, 0.95);
 }
 
 .svc-fader__cap:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* the channel's name, as on a desk's scribble strip */
+.svc-fader__lcd {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-width: 92px;
+  margin: 0;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: #0d0d0c;
+  box-shadow: inset 0 0 0 1px rgba(240, 237, 229, 0.12);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #f0ede5;
+  text-shadow: 0 0 8px rgba(184, 164, 123, 0.5);
+  pointer-events: none;
+}
+
+.svc-fader__lcd span {
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  color: var(--brass);
+}
+
+/* on the service pages, keep the content clear of the strip */
+@media (min-width: 761px) {
+  .sound .wrap {
+    padding-right: max(var(--gutter), calc(156px - max(0px, (100vw - var(--max)) / 2)));
+  }
 }
 
 @media (max-width: 760px) {
@@ -7263,38 +7310,44 @@ img.cover {
     translate: 16px -50%;
   }
   .svc-fader:not(.is-open) .svc-fader__stops,
-  .svc-fader:not(.is-open) .svc-fader__title {
+  .svc-fader:not(.is-open) .svc-fader__lcd,
+  .svc-fader__title {
     display: none;
+  }
+  .svc-fader:not(.is-open) .svc-fader__body {
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
   .svc-fader.is-open {
     right: 6px;
   }
   .svc-fader.is-open .svc-fader__body {
-    padding: 8px 6px 8px 14px;
-    border-radius: 14px;
+    padding: 10px 8px 10px 14px;
     background: color-mix(in srgb, var(--bg) 97%, transparent);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    box-shadow:
-      0 10px 30px rgba(0, 0, 0, 0.35),
-      inset 0 0 0 1px var(--line);
   }
   .svc-fader.is-open .svc-fader__stops {
-    width: 104px;
+    width: 112px;
   }
   .svc-fader.is-open .svc-fader__name {
+    position: static;
+    padding: 0;
+    background: none;
+    box-shadow: none;
     opacity: 1;
     translate: 0 0;
   }
   .svc-fader__body {
-    height: min(240px, 38vh);
+    height: min(260px, 40vh);
   }
   .svc-fader__track {
-    width: 28px;
+    width: 30px;
   }
   .svc-fader__cap {
-    width: 24px;
-    height: 15px;
+    width: 28px;
+    height: 18px;
+    padding: 0 5px;
+    gap: 2px;
   }
   .svc-fader__n {
     display: none;
@@ -7981,4 +8034,17 @@ img.cover {
   .keypad {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+.coming-soon__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s5);
+}
+
+/* a real product photo in place of the generated mock-up */
+.cover--photo {
+  height: auto;
+  object-fit: cover;
+  background: #d4d4d4;
 }

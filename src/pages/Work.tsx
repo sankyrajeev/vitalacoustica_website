@@ -5,6 +5,7 @@ import { ProjectCard } from '../components/ProjectCard'
 import { Label, MediaFrame, Placeholder, TextLink } from '../components/ui'
 import { projects, TBC, type Project } from '../content/projects'
 import { NotFound } from './NotFound'
+import { published, site } from '../content/site'
 
 /** Every photograph from every real project, each linking to its case study. */
 function showSlides(only?: Project): Slide[] {
@@ -23,7 +24,36 @@ function showSlides(only?: Project): Slide[] {
     )
 }
 
+/** Shown while the work is being prepared for posting. */
+function WorkSoon() {
+  return (
+    <>
+      <PageHead label="Selected work" title="Our work, coming soon.">
+        We’re preparing our productions to post here: the systems, the light and the decisions behind each one.
+      </PageHead>
+      <section className="section section--tight">
+        <div className="wrap">
+          <div className="coming-soon">
+            <span className="label">Posting soon</span>
+            <p>
+              Case studies and photographs from our shows are on their way. In the meantime, follow along on Instagram, or ask us
+              and we’ll share examples of the kind of event you’re planning.
+            </p>
+            <div className="coming-soon__links">
+              <a className="text-link" href={`https://instagram.com/${site.contact.instagram}`} target="_blank" rel="noreferrer">
+                @{site.contact.instagram}
+              </a>
+              <TextLink to="/contact">Ask us for examples</TextLink>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
+
 export function WorkIndex() {
+  if (!published.work) return <WorkSoon />
   return (
     <>
       <PageHead label="Selected work" title="A selection of what we do.">
@@ -55,6 +85,7 @@ const STUDY_SECTIONS: { key: keyof Project['study']; title: string; missing: str
 ]
 
 export function CaseStudy({ slug }: { slug: string }) {
+  if (!published.work) return <WorkSoon />
   const real = projects.filter((x) => !x.placeholder)
   const p = real.find((x) => x.slug === slug)
   if (!p) return <NotFound />

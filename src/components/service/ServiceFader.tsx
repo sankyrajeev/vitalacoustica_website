@@ -106,9 +106,15 @@ export function ServiceFader({ current }: { current: string }) {
             onKeyDown={key}
           >
             <i />
+            <i />
+            <i />
           </span>
         </div>
       </div>
+      <p className="svc-fader__lcd" aria-hidden>
+        <span>{items[near].index}</span>
+        {items[near].name}
+      </p>
     </nav>
   )
 }

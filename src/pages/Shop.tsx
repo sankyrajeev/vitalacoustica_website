@@ -53,15 +53,15 @@ function ProductCard({ p }: { p: Product }) {
 export function ShopIndex() {
   return (
     <>
-      <PageHead label="Shop" title="Sounds, visuals and things to wear.">
-        Sample packs and VJ loops made the way we run our shows, ready to download anywhere in the world. And merch, printed when
-        you order it.
+      <PageHead label="Shop" title="Things to wear, sounds and visuals.">
+        Merch to wear to the next show, printed when you order it. And sample packs and VJ loops made the way we run our shows,
+        ready to download anywhere in the world.
       </PageHead>
       <div className="wrap">
         <div className="notice shop-notice">
           <p className="label">Opening soon</p>
           <p>
-            These are sample products, to show how the shop will look. The real packs, loops and merch are on their way. Tap “Tell
+            These are sample products, to show how the shop will look. The real merch, packs and loops are on their way. Tap “Tell
             me when it’s out” on anything you like and we’ll message you.
           </p>
         </div>

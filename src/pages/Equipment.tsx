@@ -4,6 +4,7 @@ import { PageHead } from '../components/PageHead'
 import { Arrow, Cta, Label, MediaFrame } from '../components/ui'
 import { COMING_SOON, fullName, gear, GEAR_GROUPS, inRig, PHOTO_SOURCE } from '../content/gear'
 import { projects } from '../content/projects'
+import { published } from '../content/site'
 import { openDrone, openExplore } from '../events'
 import { NotFound } from './NotFound'
 
@@ -148,7 +149,7 @@ export function EquipmentDetail({ id }: { id: string }) {
         </div>
       </div>
 
-      {seenIn.length > 0 && (
+      {published.work && seenIn.length > 0 && (
         <section className="wrap gear-detail__seen" aria-label="In our shows">
           <Label>In our shows</Label>
           <div className="case__grid">
