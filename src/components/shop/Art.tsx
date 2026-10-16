@@ -245,10 +245,12 @@ export function LoopPreview({ p }: { p: Loop }) {
 /* ─────────────── Merch mock-ups ─────────────── */
 
 const SHAPES: Record<Merch['garment'], string> = {
-  tee: 'M150 70 L118 80 L52 120 L72 186 L112 170 L112 400 L288 400 L288 170 L328 186 L348 120 L282 80 L250 70 C240 92 222 102 200 102 C178 102 160 92 150 70 Z',
+  // oversized: dropped shoulders, wide body, long sleeves
+  tee: 'M148 66 L96 80 L24 160 L64 222 L102 200 L98 414 L302 414 L298 200 L336 222 L376 160 L304 80 L252 66 C242 90 224 100 200 100 C176 100 158 90 148 66 Z',
   hoodie:
     'M146 76 L114 88 L56 140 L60 330 L96 334 L104 200 L108 404 L292 404 L296 200 L304 334 L340 330 L344 140 L286 88 L254 76 C262 50 240 34 200 34 C160 34 138 50 146 76 Z',
-  tote: 'M96 150 L304 150 L314 404 L86 404 Z',
+  // three-quarter view: the crown; the peak is drawn separately so it can sit in front
+  cap: 'M70 300 C66 196 130 136 206 134 C276 132 330 180 334 300 C260 312 140 312 70 300 Z',
 }
 
 /** Where the print goes on each garment: [x, y, width] in the 400 × 440 drawing. */
@@ -263,10 +265,10 @@ const PRINT_AT: Record<Merch['garment'], Record<Merch['print'], [number, number,
     wordmark: [138, 160, 124],
     rings: [150, 150, 100],
   },
-  tote: {
-    mark: [150, 250, 100],
-    wordmark: [120, 260, 160],
-    rings: [140, 220, 120],
+  cap: {
+    mark: [116, 206, 76],
+    wordmark: [130, 220, 140],
+    rings: [160, 190, 80],
   },
 }
 
@@ -284,9 +286,30 @@ export function GarmentMock({ p, colour = p.colours[0] }: { p: Merch; colour?: M
               <stop offset="1" stopColor="#000" stopOpacity="0.3" />
             </linearGradient>
           </defs>
-          {p.garment === 'tote' && <path d="M140 150 C140 60 260 60 260 150" fill="none" stroke={colour.hex} strokeWidth="12" />}
           <path d={SHAPES[p.garment]} fill={colour.hex} stroke="rgba(0,0,0,0.25)" strokeWidth="1" />
           <path d={SHAPES[p.garment]} fill={`url(#shade-${p.id})`} />
+          {p.garment === 'cap' && (
+            <>
+              <path
+                d="M206 136 C190 190 186 250 190 306 M206 136 C246 180 270 240 276 304 M206 136 C150 170 112 230 104 302"
+                fill="none"
+                stroke="rgba(0,0,0,0.28)"
+                strokeWidth="1.6"
+              />
+              <path d="M70 300 C140 312 260 312 334 300" fill="none" stroke="rgba(0,0,0,0.45)" strokeWidth="3" />
+              <path
+                d="M208 298 C270 288 342 290 386 310 C396 318 390 330 372 334 C322 342 262 334 204 322 Z"
+                fill={colour.hex}
+                stroke="rgba(0,0,0,0.35)"
+                strokeWidth="1"
+              />
+              <path
+                d="M208 298 C270 288 342 290 386 310 C396 318 390 330 372 334 C322 342 262 334 204 322 Z"
+                fill="rgba(0,0,0,0.18)"
+              />
+              <circle cx="206" cy="134" r="6" fill={colour.hex} stroke="rgba(0,0,0,0.3)" />
+            </>
+          )}
           {p.garment === 'hoodie' && (
             <>
               <path d="M160 82 C170 112 230 112 240 82" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="2" />

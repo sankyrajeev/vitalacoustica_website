@@ -26,7 +26,7 @@ export function Buy({ p, option }: { p: Product; option?: string }) {
     return (
       <div className="buy">
         <span className="cta cta--disabled" aria-disabled="true">
-          <span>Coming soon · {price(p)}</span>
+          <span>Coming soon</span>
         </span>
         <a
           className="text-link"

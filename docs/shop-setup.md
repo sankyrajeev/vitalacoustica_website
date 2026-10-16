@@ -40,7 +40,7 @@ Qikink prints and ships each order, so there's no stock to hold. There are two w
 **When orders pick up: a Shopify store with the Qikink app.** Orders flow to Qikink automatically.
 Shopify costs a monthly fee (check Shopify India's pricing page). Paste each Shopify product link into `checkout`.
 
-Real product photos: put them in `public/shop/` and set `photo: 'shop/mark-tee.webp'`. Until then the site
+Real product photos: put them in `public/shop/` and set `photo: 'shop/oversized-tee.webp'`. Until then the site
 shows a drawn mock-up in the product's colours.
 
 ## Before going live

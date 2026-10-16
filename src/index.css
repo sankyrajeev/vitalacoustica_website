@@ -5317,6 +5317,10 @@ kbd {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.shop-grid--merch {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 @media (max-width: 760px) {
   .shop-grid--loops {
     grid-template-columns: minmax(0, 1fr);
@@ -5395,6 +5399,14 @@ kbd {
   gap: var(--s4);
   margin-top: auto;
   padding-top: var(--s3);
+}
+
+.shop-card__soon {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
 }
 
 .shop-card__price {

@@ -41,7 +41,7 @@ export type Loop = Base & {
 
 export type Merch = Base & {
   kind: 'merch'
-  garment: 'tee' | 'hoodie' | 'tote'
+  garment: 'tee' | 'hoodie' | 'cap'
   print: 'mark' | 'wordmark' | 'rings'
   colours: { name: string; hex: string; ink: string }[]
   sizes: string[]
@@ -75,7 +75,7 @@ export const SECTIONS: {
   {
     kind: 'merch',
     title: 'Merch',
-    line: 'Things to wear to the next show. Printed when you order, so nothing goes to waste.',
+    line: 'Oversized tees, hoodies and caps to wear to the next show. Printed when you order, so nothing goes to waste.',
     currency: 'INR',
     note: 'Printed to order and shipped across India in about a week.',
   },
@@ -242,12 +242,12 @@ export const products: Product[] = [
 
   // ─── Merch ───
   {
-    id: 'mark-tee',
+    id: 'oversized-tee',
     kind: 'merch',
-    name: 'Mark tee',
-    tagline: 'The VA mark, small on the chest.',
-    description: 'A heavyweight cotton tee with the Vital Acoustica mark printed on the chest. Quiet enough to wear anywhere.',
-    price: 1299,
+    name: 'Oversized tee',
+    tagline: 'Design to be announced.',
+    description: 'Our oversized tee. The design, fabric and colours are to be announced.',
+    price: 1499,
     checkout: '',
     sample: true,
     garment: 'tee',
@@ -258,39 +258,17 @@ export const products: Product[] = [
     ],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specs: [
-      ['Fabric', '100% cotton, 220 GSM'],
-      ['Fit', 'Relaxed'],
-      ['Print', 'Direct-to-garment'],
-    ],
-  },
-  {
-    id: 'resonance-tee',
-    kind: 'merch',
-    name: 'Resonance tee',
-    tagline: 'The rings, big on the back.',
-    description: 'An oversized tee with the Resonance rings printed large, and the wordmark on the front.',
-    price: 1499,
-    checkout: '',
-    sample: true,
-    garment: 'tee',
-    print: 'rings',
-    colours: [
-      { name: 'Black', hex: '#141414', ink: '#f0ede5' },
-      { name: 'Sand', hex: '#cdbf9f', ink: '#141414' },
-    ],
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    specs: [
-      ['Fabric', '100% cotton, 240 GSM'],
       ['Fit', 'Oversized'],
-      ['Print', 'Direct-to-garment'],
+      ['Fabric', 'To be announced'],
+      ['Design', 'To be announced'],
     ],
   },
   {
-    id: 'crew-hoodie',
+    id: 'hoodie',
     kind: 'merch',
-    name: 'Crew hoodie',
-    tagline: 'For load-outs at 4 am.',
-    description: 'A warm brushed-fleece hoodie with the wordmark across the chest. The one we wear on site.',
+    name: 'Hoodie',
+    tagline: 'Design to be announced.',
+    description: 'Our hoodie. The design, fabric and colours are to be announced.',
     price: 2499,
     checkout: '',
     sample: true,
@@ -302,31 +280,31 @@ export const products: Product[] = [
     ],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specs: [
-      ['Fabric', 'Cotton-rich fleece, 320 GSM'],
-      ['Fit', 'Regular'],
-      ['Print', 'Direct-to-garment'],
+      ['Fit', 'Oversized'],
+      ['Fabric', 'To be announced'],
+      ['Design', 'To be announced'],
     ],
   },
   {
-    id: 'record-tote',
+    id: 'cap',
     kind: 'merch',
-    name: 'Record tote',
-    tagline: 'Fits a stack of records, or a laptop and cables.',
-    description: 'A sturdy canvas tote with the VA mark. Wide enough for 12-inch records.',
-    price: 699,
+    name: 'Cap',
+    tagline: 'Design to be announced.',
+    description: 'Our cap. The design, style and colours are to be announced.',
+    price: 799,
     checkout: '',
     sample: true,
-    garment: 'tote',
+    garment: 'cap',
     print: 'mark',
     colours: [
-      { name: 'Natural', hex: '#e6dfcf', ink: '#141414' },
       { name: 'Black', hex: '#141414', ink: '#b8a47b' },
+      { name: 'Sand', hex: '#cdbf9f', ink: '#141414' },
     ],
     sizes: ['One size'],
     specs: [
-      ['Fabric', 'Cotton canvas, 280 GSM'],
-      ['Size', '38 × 42 cm'],
-      ['Print', 'Screen print'],
+      ['Style', 'To be announced'],
+      ['Fit', 'Adjustable'],
+      ['Design', 'To be announced'],
     ],
   },
 ]

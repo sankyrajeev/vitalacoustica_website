@@ -119,7 +119,7 @@ export const INTENTS: Record<string, string[]> = {
     'do you sell merch', 'merch', 'tshirts', 'do you have t shirts', 'hoodie', 'where can i buy your tee', 'shop', 'store',
     'online store', 'sample packs', 'do you sell samples', 'drum samples', 'sound packs', 'audio packs', 'vj loops',
     'buy vj loops', 'visual loops for resolume', 'loops for my set', 'can i buy your sounds', 'download packs',
-    'tote bag', 'hoodies', 'is the tee in stock', 'are the t shirts available', 'merch sizes', 'price of the hoodie', 'how much is the tshirt', 'cost of a sample pack', 'how much are the vj loops', 'do you sell stuff', 'buy something', 'kick samples', 'merchandise',
+    'caps', 'do you sell caps', 'when will merch be available', 'when does the shop open', 'is the shop live', 'oversized tshirt', 'hoodies', 'is the tee in stock', 'are the t shirts available', 'merch sizes', 'price of the hoodie', 'how much is the tshirt', 'cost of a sample pack', 'how much are the vj loops', 'do you sell stuff', 'buy something', 'kick samples', 'merchandise',
   ],
   story: [
     'who are you', 'about you', 'who started vital acoustica', 'who are the founders', 'your story', 'tell me about the company',
@@ -141,7 +141,7 @@ export const INTENTS: Record<string, string[]> = {
   ],
   // things we can't help with, so the model learns to say so instead of guessing
   unknown: [
-    'what is the weather today', 'tell me a joke', 'who won the match', 'write me a poem', 'what is 2 plus 2',
+    'what is the weather today', 'tell me a joke', 'make me laugh', 'say something funny', 'tell me a story', 'who won the match', 'write me a poem', 'what is 2 plus 2',
     'best biryani near me', 'can you do my homework', 'what is the capital of france', 'how old are you',
     'recommend a movie', 'what time is it', 'sing a song', 'who is the prime minister',
     'translate this to hindi', 'i am bored', 'what is love', 'can you code', 'book a cab', 'order food',

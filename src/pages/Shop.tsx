@@ -36,7 +36,11 @@ function ProductCard({ p }: { p: Product }) {
         </h3>
         <p className="shop-card__tagline">{p.tagline}</p>
         <p className="shop-card__foot">
-          <span className="shop-card__price">{price(p)}</span>
+          {p.checkout ? (
+            <span className="shop-card__price">{price(p)}</span>
+          ) : (
+            <span className="shop-card__soon">Coming soon</span>
+          )}
           <Link to={`/shop/${p.id}`} className="text-link">
             {p.checkout ? 'Buy' : 'Details'} <Arrow />
           </Link>
@@ -183,7 +187,7 @@ export function ShopItem({ id }: { id: string }) {
           </p>
           <h1 className="display display--sm gear-detail__name">{p.name}</h1>
           <p className="lede">{p.description}</p>
-          <p className="shop-item__price">{price(p)}</p>
+          {p.checkout && <p className="shop-item__price">{price(p)}</p>}
 
           {p.kind === 'merch' && (
             <div className="options">
