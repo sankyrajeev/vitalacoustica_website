@@ -31,13 +31,54 @@ export const barInLook = (t: number) => (beatsAt(t) / 4) % BARS_PER_LOOK
 
 export const LOOK_BARS = BARS_PER_LOOK
 
+export const DESK_HEX = {
+  red: RED,
+  amber: AMBER,
+  warm: '#ffb066',
+  cold: '#dbe6ff',
+  blue: '#2f62ff',
+  violet: '#9a4dff',
+} as const
+
+/** The desk's colour for fixture i of n; `auto` is what the fixture does on its own. */
+export function deskHex(i: number, n: number, auto: string): string {
+  switch (show.colour) {
+    case 'auto':
+      return auto
+    case 'split':
+      return i < n / 2 ? RED : AMBER
+    case 'alternate':
+      return i % 2 ? AMBER : RED
+    default:
+      return DESK_HEX[show.colour]
+  }
+}
+
+/** For white-only fixtures (COB light, matrix bar): 0 is warm white, 1 cold white. */
+export function deskWhite(i: number, n: number, auto: number): number {
+  switch (show.colour) {
+    case 'auto':
+      return auto
+    case 'cold':
+    case 'blue':
+    case 'violet':
+      return 1
+    case 'split':
+      return i < n / 2 ? 0 : 1
+    case 'alternate':
+      return i % 2
+    default:
+      return 0
+  }
+}
+
 /**
- * Sharpies only ever run red or amber. In auto, each look picks how they're split:
- * alternating, all red, halves, all amber. The desk can lock one of those.
+ * In auto, each look picks how the beams are split between red and amber:
+ * alternating, all red, halves, all amber. Any desk colour overrides it.
  */
 export function sharpyColor(t: number, i: number, n: number) {
-  const mode = show.colour === 'auto' ? (['alternate', 'red', 'split', 'amber'] as const)[lookAt(t) % 4] : show.colour
-  switch (mode) {
+  if (show.colour !== 'auto') return deskHex(i, n, RED)
+  switch ((['alternate', 'red', 'split', 'amber'] as const)[lookAt(t) % 4]) {
     case 'alternate':
       return i % 2 ? AMBER : RED
     case 'red':

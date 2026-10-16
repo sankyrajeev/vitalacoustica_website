@@ -5105,6 +5105,21 @@ kbd {
   color: var(--bg);
 }
 
+.desk__colour {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.desk__colour::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
 .desk__fader {
   display: flex;
   align-items: center;

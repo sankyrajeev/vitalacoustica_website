@@ -23,6 +23,7 @@ export type RigId =
   | 'trefoil'
   | 'hex'
   | 'warcraft'
+  | 'cob'
   | 'dotbar'
   | 'pixelbar'
   | 'rope'
@@ -318,6 +319,31 @@ export const gear: Gear[] = [
     photo: { file: 'warcraft.webp', width: 800, height: 800, alt: 'Warcraft retro light: round black can with a gold reflector, three-spoke front and LED ring, on a yoke', source: 'product' },
   },
   {
+    id: 'cob',
+    stock: '4 units', // DUMMY
+    group: 'Stage Lighting',
+    name: 'COB light',
+    role: 'Seven-head cluster',
+    about: 'Seven COB heads on a round frame: a warm wash, a chase or a blinder hit on the drop.',
+    description:
+      'Seven chip-on-board (COB) heads, each behind its own textured lens, mounted on a round tubular frame. Every head angles on its own, so the cluster can throw one wide, soft wash or fan out into seven points of light. Run together, it is a warm glow on the band or a blinder that hits the crowd on the drop; run cell by cell, it chases, pulses and spins. It stands on its bracket on the floor or the stage edge, or hangs from truss.',
+    specs: [
+      ['Sources', '7 COB heads, individually angled'],
+      ['Optics', 'Textured lens on each head'],
+      ['Colour', 'Warm white'], // DUMMY: confirm warm-only or tunable white
+      ['Mounting', 'Floor bracket or truss clamp'],
+      ['Control', 'DMX, per head'],
+    ],
+    spec: 'Seven COB heads · individually angled · per-head control',
+    photo: {
+      file: 'cob.webp',
+      width: 800,
+      height: 800,
+      alt: 'COB light: seven black round heads with warm textured lenses on a round tubular frame',
+      source: 'product',
+    },
+  },
+  {
     id: 'matrix',
     stock: '4 panels', // DUMMY
     group: 'Stage Lighting',
@@ -357,19 +383,26 @@ export const gear: Gear[] = [
     id: 'dotbar',
     stock: '8 bars', // DUMMY
     group: 'Stage Lighting',
-    name: 'LED wall washer bar',
-    role: 'Wash bar',
-    about: 'Eighteen high-output LEDs in an outdoor-rated aluminium bar.',
+    name: 'Matrix bar',
+    role: 'Cold & warm white',
+    about: 'Ten big COB cells in one bar, each mixing cold and warm white.',
     description:
-      'An aluminium bar of eighteen high-output LEDs with sealed connectors, so it works indoors and out. We use them to wash walls, truss and architecture, or as a row of bright dots in the lighting wings.',
+      'A long black bar of ten large COB cells behind deep reflectors. Each cell mixes cold and warm white, so the bar runs anywhere from crisp daylight to a candle-warm glow. Cell by cell it chases, fills and builds with the music; all together it washes a wall, outlines a truss or punches the crowd like a blinder.',
     specs: [
-      ['LEDs', '18 high-output cells'],
-      ['Housing', 'Aluminium, sealed connectors for outdoor use'],
-      ['Uses', 'Wall and truss washes, dot lines'],
-      ['Control', 'DMX'],
+      ['Cells', '10 COB cells with deep reflectors'],
+      ['Colour', 'Cold white and warm white, mixable per cell'],
+      ['Uses', 'Chases, washes, blinder hits, truss lines'],
+      ['Mounting', 'Bracket: floor, wall or truss'],
+      ['Control', 'DMX, per cell'],
     ],
-    spec: '18 high-output LEDs · outdoor-rated',
-    photo: { file: 'dotbar.webp', width: 1000, height: 673, alt: 'LED wall washer bar in a grey aluminium housing with mounting brackets and cables', source: 'product' },
+    spec: '10 cold & warm white COB cells · per-cell control',
+    photo: {
+      file: 'dotbar.webp',
+      width: 1000,
+      height: 408,
+      alt: 'Matrix bar: a long black bar of ten round white COB cells on a mounting bracket',
+      source: 'product',
+    },
   },
   {
     id: 'rope',

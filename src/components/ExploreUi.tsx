@@ -6,12 +6,16 @@ import { rigSpots } from '../three/hotspots'
 import { registerMarker } from '../three/markers'
 import { LOOK_NAMES, REFERENCE_BPM, resetShow, show, type ColourMode } from '../three/show'
 
-const COLOURS: { id: ColourMode; label: string }[] = [
-  { id: 'auto', label: 'Auto' },
-  { id: 'red', label: 'Red' },
-  { id: 'amber', label: 'Amber' },
-  { id: 'split', label: 'Split' },
-  { id: 'alternate', label: 'Alt' },
+const COLOURS: { id: ColourMode; label: string; dot: string }[] = [
+  { id: 'auto', label: 'Auto', dot: 'conic-gradient(#ff2414, #ff9a1f, #dbe6ff, #2f62ff, #9a4dff, #ff2414)' },
+  { id: 'red', label: 'Red', dot: '#ff2414' },
+  { id: 'amber', label: 'Amber', dot: '#ff9a1f' },
+  { id: 'warm', label: 'Warm', dot: '#ffb066' },
+  { id: 'cold', label: 'Cold', dot: '#dbe6ff' },
+  { id: 'blue', label: 'Blue', dot: '#2f62ff' },
+  { id: 'violet', label: 'Violet', dot: '#9a4dff' },
+  { id: 'split', label: 'Split', dot: 'linear-gradient(90deg, #ff2414 50%, #ff9a1f 50%)' },
+  { id: 'alternate', label: 'Alt', dot: 'repeating-linear-gradient(90deg, #ff2414 0 3px, #ff9a1f 3px 6px)' },
 ]
 
 type Props = {
@@ -141,12 +145,13 @@ export function ExploreUi({ focus, onFocus, onExit, haze, onHaze, small }: Props
               </div>
             </div>
             <div className="desk__group">
-              <span className="desk__label">Sharpy colour</span>
+              <span className="desk__label">Colour · all lights</span>
               <div className="desk__buttons">
                 {COLOURS.map((c) => (
                   <button
                     key={c.id}
-                    className={`${colour === c.id ? 'is-on' : ''} swatch swatch--${c.id}`}
+                    className={`desk__colour ${colour === c.id ? 'is-on' : ''}`}
+                    style={{ ['--dot' as string]: c.dot }}
                     onClick={() => ((show.colour = c.id), setColour(c.id))}
                   >
                     {c.label}

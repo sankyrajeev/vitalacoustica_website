@@ -17,20 +17,22 @@ import {
   Vector3,
 } from 'three'
 import { VA_MARK_POLYGONS, VA_MARK_SIZE } from '../../brand/vaMark'
-import { AMBER, BEAT_SECONDS, beatsAt, kickAt, lookAt, RED } from '../beat'
+import { AMBER, BEAT_SECONDS, beatsAt, deskHex, deskWhite, kickAt, lookAt, RED } from '../beat'
 import { show } from '../show'
 
 // Lighting effects modelled on the house rig as it appears in show photos:
-// tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex
-// retro lights, Warcraft retro lights, LED wall washer bars, red pixel bars and LED neon flex.
+// tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex retro lights,
+// Warcraft retro lights, COB lights, matrix bars, pixel bars and LED neon flex wrapped on the truss.
+// Every fixture follows the desk's colour (see deskHex / deskWhite in beat.ts).
 
 const housing = new MeshStandardMaterial({ color: '#141414', metalness: 0.6, roughness: 0.45 })
-// brushed aluminium, as on the wall washer bars
-const aluminium = new MeshStandardMaterial({ color: '#8d8f91', metalness: 0.85, roughness: 0.38 })
 const stand = new MeshStandardMaterial({ color: '#222', metalness: 0.9, roughness: 0.35 })
-const red = new Color(RED)
 const amber = new Color(AMBER)
 const WARM = new Color('#ffb066')
+// white-only fixtures mix these two
+const WARM_WHITE = new Color('#ffb46b')
+const COLD_WHITE = new Color('#dfe9ff')
+const scratch = new Color()
 
 type V3 = [number, number, number]
 
@@ -74,8 +76,8 @@ export function MatrixPanel({ phase = 0, ...props }: { phase?: number } & ThreeE
           uLook: { value: 0 },
           uMaster: { value: 1 },
           uLogo: { value: logoTexture() },
-          uRed: { value: red },
-          uAmber: { value: amber },
+          uRed: { value: new Color(RED) },
+          uAmber: { value: new Color(AMBER) },
         },
         vertexShader: /* glsl */ `
           varying vec2 vUv;
@@ -135,6 +137,9 @@ export function MatrixPanel({ phase = 0, ...props }: { phase?: number } & ThreeE
     material.uniforms.uKick.value = kickAt(t, 4)
     material.uniforms.uLook.value = lookAt(show.time)
     material.uniforms.uMaster.value = show.master
+    // the panel's two colours: red and amber by default, or the desk's
+    material.uniforms.uRed.value.set(deskHex(0, 2, RED))
+    material.uniforms.uAmber.value.set(deskHex(1, 2, AMBER))
   })
   return (
     <group {...props}>
@@ -205,7 +210,7 @@ export function TrefoilFan({ direction = 1, phase = 0, ...props }: { direction?:
     if (rotor.current) rotor.current.rotation.z += dt * direction * (0.4 + (lookAt(show.time) % 2) * 1.6)
     const m = show.master
     // the honeycomb lens takes the wash colour; the strips stay warm and punch on the kick
-    lensFace.color.copy(red).multiplyScalar((0.45 + 1.2 * kick) * m)
+    lensFace.color.set(deskHex(direction > 0 ? 1 : 0, 2, RED)).multiplyScalar((0.45 + 1.2 * kick) * m)
     strip.color.copy(AMBER_STRIP).multiplyScalar((1.2 + 2.6 * kick) * m)
     lens.color.copy(WARM).multiplyScalar((1.6 + 2 * kick) * m)
   })
@@ -285,7 +290,7 @@ export function HexRetro({ index = 0, ...props }: { index?: number } & ThreeElem
     const beat = Math.floor(beatsAt(t))
     const decay = Math.exp(-((t % BEAT_SECONDS) / BEAT_SECONDS) * 3)
     const lit = (beat + index) % 4 === 0 ? decay : 0
-    const tint = lookAt(t) % 2 ? WARM : red
+    const tint = scratch.set(deskHex(index, 4, lookAt(t) % 2 ? '#ffb066' : RED))
     cells.forEach((m, i) => {
       // centre cell glows like a filament; ring chases round on the off-beats
       const chase = i > 0 && (Math.floor(beatsAt(t) * 2) % 6) + 1 === i ? 0.8 : 0
@@ -341,10 +346,15 @@ export function WarcraftRetro({ index = 0, ...props }: { index?: number } & Thre
     const t = show.time
     const kick = kickAt(t, 3)
     const breathe = 0.5 + 0.5 * Math.sin(t * 1.4 + index)
-    glow.color.copy(WARM).multiplyScalar((1.2 + 2.6 * kick) * show.master)
+    const desk = show.colour === 'auto' ? null : scratch.set(deskHex(index, 4, AMBER))
+    glow.color.copy(WARM)
+    if (desk) glow.color.lerp(desk, 0.6)
+    glow.color.multiplyScalar((1.2 + 2.6 * kick) * show.master)
     // the reflector picks up the centre source
     inner.emissive.copy(GOLD).multiplyScalar((0.25 + 0.6 * kick) * show.master)
-    ring.color.copy(amber).lerp(WARM, breathe).multiplyScalar((0.6 + breathe) * show.master)
+    if (desk) ring.color.copy(desk)
+    else ring.color.copy(amber).lerp(WARM, breathe)
+    ring.color.multiplyScalar((0.6 + breathe) * show.master)
   })
   return (
     <group {...props}>
@@ -392,18 +402,84 @@ export function WarcraftRetro({ index = 0, ...props }: { index?: number } & Thre
   )
 }
 
-/* ─────────────── LED bars (wall washers & pixel bars) ─────────────── */
+/* ─────────────── COB light ─────────────── */
 
-type BarProps = { from: V3; to: V3; kind: 'dots' | 'pixels'; phase?: number }
+// As in the product photo: seven round COB heads behind textured lenses on a round tubular frame,
+// on a floor bracket. White only: it runs warm or cold with the desk.
+const COB_HEADS: [number, number][] = [
+  [0, 0],
+  ...Array.from({ length: 6 }, (_, i): [number, number] => [
+    Math.cos((i * Math.PI) / 3 + Math.PI / 2) * 0.19,
+    Math.sin((i * Math.PI) / 3 + Math.PI / 2) * 0.19,
+  ]),
+]
+
+export function CobLight({ index = 0, ...props }: { index?: number } & ThreeElements['group']) {
+  const faces = useMemo(() => COB_HEADS.map(() => new MeshBasicMaterial({ toneMapped: false, map: honeycombTexture() })), [])
+  useFrame(() => {
+    const t = show.time
+    const beats = beatsAt(t)
+    const beat = Math.floor(beats)
+    const decay = Math.exp(-(beats % 1) * 3.5)
+    const blinder = beat % 4 === 0 ? decay : 0 // every bar, the whole cluster hits the crowd
+    faces.forEach((m, i) => {
+      const chase = (beat + index) % 7 === i ? decay : 0
+      const lvl = 0.25 + chase * 1.8 + blinder * 2.4
+      const mix = deskWhite(i, 7, lookAt(t) % 2 ? 0.75 : 0)
+      m.color
+        .copy(WARM_WHITE)
+        .lerp(COLD_WHITE, mix)
+        .multiplyScalar(lvl * show.master)
+    })
+  })
+  return (
+    <group {...props}>
+      {/* floor bracket */}
+      <mesh material={stand} position={[0, -0.33, -0.05]}>
+        <boxGeometry args={[0.3, 0.025, 0.12]} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} material={stand} position={[s * 0.15, -0.2, -0.05]}>
+          <boxGeometry args={[0.025, 0.26, 0.05]} />
+        </mesh>
+      ))}
+      {/* round tubular frame and back plate */}
+      <mesh material={stand}>
+        <torusGeometry args={[0.34, 0.014, 8, 48]} />
+      </mesh>
+      <mesh material={housing} position={[0, 0, -0.06]} rotation-x={Math.PI / 2}>
+        <cylinderGeometry args={[0.26, 0.26, 0.02, 6]} />
+      </mesh>
+      {COB_HEADS.map(([x, y], i) => (
+        // each head angled slightly outwards, as they're set in the photo
+        <group key={i} position={[x, y, 0]} rotation={[-y * 0.9, x * 0.9, 0]}>
+          <mesh material={housing} rotation-x={Math.PI / 2} position={[0, 0, -0.01]}>
+            <cylinderGeometry args={[0.078, 0.07, 0.12, 24, 1, true]} />
+          </mesh>
+          <mesh material={housing} position={[0, 0, -0.07]}>
+            <circleGeometry args={[0.07, 24]} />
+          </mesh>
+          <mesh material={faces[i]} position={[0, 0, 0.045]}>
+            <circleGeometry args={[0.064, 28]} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+/* ─────────────── LED bars: matrix bars & pixel bars ─────────────── */
+
+type BarProps = { from: V3; to: V3; kind: 'matrix' | 'pixels'; phase?: number }
 
 /**
  * A straight LED bar between two points (in the XY plane), chasing on the beat.
- * 'dots' is the wall washer: 18 round LEDs in a grey aluminium body on brackets.
+ * 'matrix' is the matrix bar: ten big cold/warm-white COB cells in a black bar on a bracket.
  * 'pixels' is the pixel bar: a slim black bar of small square RGB cells.
  */
 export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
   const cellsRef = useRef<InstancedMesh>(null)
-  const count = kind === 'dots' ? 18 : 40
+  const count = kind === 'matrix' ? 10 : 40
   const color = useMemo(() => new Color(), [])
   const { mid, length, angle } = useMemo(() => {
     const dx = to[0] - from[0]
@@ -418,13 +494,13 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
   useLayoutEffect(() => {
     const o = new Object3D()
     for (let i = 0; i < count; i++) {
-      o.position.set(-length / 2 + ((i + 0.5) * length) / count, 0, 0.034)
+      o.position.set(-length / 2 + ((i + 0.5) * length) / count, 0, kind === 'matrix' ? 0.046 : 0.034)
       o.updateMatrix()
       cellsRef.current!.setMatrixAt(i, o.matrix)
       cellsRef.current!.setColorAt(i, color.setRGB(0, 0, 0))
     }
     cellsRef.current!.instanceMatrix.needsUpdate = true
-  }, [count, length, color])
+  }, [count, length, color, kind])
 
   useFrame(() => {
     const t = show.time + phase
@@ -432,16 +508,16 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
     const kick = kickAt(t, 4)
     for (let i = 0; i < count; i++) {
       let lvl: number
-      if (kind === 'dots') {
-        // warm dots fill outward on the bar, reset each bar
+      if (kind === 'matrix') {
+        // cells fill along the bar through each bar of music, warm by default, cold on alternate looks
         const fill = (beats % 4) / 4
         lvl = 0.25 + (i / count < fill ? 1.6 : 0) + kick * 0.4
-        color.copy(WARM).lerp(amber, 0.5)
+        color.copy(WARM_WHITE).lerp(COLD_WHITE, deskWhite(i, count, lookAt(t) % 2 ? 0.8 : 0))
       } else {
         const p = (i / count - beats * 0.5) % 1
         const head = Math.pow(Math.max(0, 1 - Math.abs(((p + 1) % 1) - 0.5) * 3), 2)
         lvl = 0.5 + head * 2.2 + kick * 0.5
-        color.copy(red)
+        color.set(deskHex(i, count, RED))
       }
       color.multiplyScalar(lvl * show.master)
       cellsRef.current!.setColorAt(i, color)
@@ -449,17 +525,21 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
     cellsRef.current!.instanceColor!.needsUpdate = true
   })
 
+  const pitch = length / count
   return (
     <group position={mid} rotation-z={angle}>
-      {kind === 'dots' ? (
+      {kind === 'matrix' ? (
         <>
-          <mesh material={aluminium}>
-            <boxGeometry args={[length + 0.04, 0.07, 0.06]} />
+          <mesh material={housing}>
+            <boxGeometry args={[length + 0.04, 0.1, 0.08]} />
           </mesh>
-          {/* mounting brackets at each end */}
+          {/* U bracket underneath */}
+          <mesh material={stand} position={[0, -0.075, -0.01]}>
+            <boxGeometry args={[length * 0.45, 0.02, 0.04]} />
+          </mesh>
           {[-1, 1].map((e) => (
-            <mesh key={e} material={aluminium} position={[(e * length) / 2.6, -0.05, -0.02]}>
-              <boxGeometry args={[0.03, 0.05, 0.05]} />
+            <mesh key={e} material={stand} position={[(e * length * 0.45) / 2, -0.06, -0.01]}>
+              <boxGeometry args={[0.02, 0.04, 0.04]} />
             </mesh>
           ))}
         </>
@@ -469,10 +549,10 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
         </mesh>
       )}
       <instancedMesh ref={cellsRef} args={[undefined, undefined, count]}>
-        {kind === 'dots' ? (
-          <circleGeometry args={[Math.min(0.022, (length / count) * 0.36), 16]} />
+        {kind === 'matrix' ? (
+          <circleGeometry args={[Math.min(0.04, pitch * 0.4), 20]} />
         ) : (
-          <planeGeometry args={[Math.min(0.02, (length / count) * 0.7), Math.min(0.02, (length / count) * 0.7)]} />
+          <planeGeometry args={[Math.min(0.02, pitch * 0.7), Math.min(0.02, pitch * 0.7)]} />
         )}
         <meshBasicMaterial toneMapped={false} />
       </instancedMesh>
@@ -480,76 +560,95 @@ export function LedBar({ from, to, kind, phase = 0 }: BarProps) {
   )
 }
 
-/* ─────────────── LED rope ─────────────── */
+/* ─────────────── LED neon flex, wrapped round the goal-post truss ─────────────── */
 
-/** Flexible LED rope / neon run along a path; pulses between red and amber. */
-export function LedRope({ points, warm = false }: { points: V3[]; warm?: boolean }) {
-  const curve = useMemo(() => new CatmullRomCurve3(points.map((p) => new Vector3(...p)), false, 'catmullrom', 0.05), [points])
-  const material = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), [])
+// The neon spirals up one tower, along the header and down the other. A bright pulse travels
+// slowly from one end to the other, like a bullet, over a dim glow: pixel by pixel, as a
+// PWM-driven chase does.
+const WRAP_RADIUS = 0.205 // just outside the truss chords
+const WRAP_PITCH = 0.62 // metres per turn
+
+function helix(path: Vector3[]): Vector3[] {
+  const out: Vector3[] = []
+  let travelled = 0
+  for (let k = 0; k < path.length - 1; k++) {
+    const a = path[k]
+    const b = path[k + 1]
+    const dir = b.clone().sub(a)
+    const len = dir.length()
+    dir.normalize()
+    const ref = Math.abs(dir.y) > 0.9 ? new Vector3(1, 0, 0) : new Vector3(0, 1, 0)
+    const u = new Vector3().crossVectors(dir, ref).normalize()
+    const v = new Vector3().crossVectors(dir, u).normalize()
+    const steps = Math.ceil(len / 0.04)
+    for (let i = 0; i < steps; i++) {
+      const d = (len * i) / steps
+      const ang = ((travelled + d) / WRAP_PITCH) * Math.PI * 2
+      out.push(
+        a
+          .clone()
+          .addScaledVector(dir, d)
+          .addScaledVector(u, Math.cos(ang) * WRAP_RADIUS)
+          .addScaledVector(v, Math.sin(ang) * WRAP_RADIUS),
+      )
+    }
+    travelled += len
+  }
+  return out
+}
+
+export function TrussWrap({ span = 10, height = 5.2, z = -0.6 }: { span?: number; height?: number; z?: number }) {
+  const curve = useMemo(() => {
+    const h = span / 2
+    const top = height - 0.145
+    const path = [new Vector3(-h, 0.25, z), new Vector3(-h, top, z), new Vector3(h, top, z), new Vector3(h, 0.25, z)]
+    return new CatmullRomCurve3(helix(path), false, 'catmullrom', 0.1)
+  }, [span, height, z])
+  const material = useMemo(
+    () =>
+      new ShaderMaterial({
+        toneMapped: false,
+        uniforms: { uHead: { value: 0 }, uColor: { value: new Color(RED) }, uMaster: { value: 1 } },
+        vertexShader: /* glsl */ `
+          varying float vAlong;
+          void main() { vAlong = uv.x; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+        `,
+        fragmentShader: /* glsl */ `
+          uniform float uHead, uMaster;
+          uniform vec3 uColor;
+          varying float vAlong;
+          void main() {
+            // stepped into pixels along the run, like an addressable neon
+            float x = (floor(vAlong * 900.0) + 0.5) / 900.0;
+            float behind = uHead - x;
+            // a hard front edge, a bright head and a long fading tail
+            float b = clamp(behind, -0.05, 0.5);
+            float tail = b >= 0.0 ? exp(-b * 22.0) + 2.0 * exp(-b * 240.0) : exp(b * 900.0);
+            float level = 0.07 + tail * 2.4;
+            gl_FragColor = vec4(uColor * level * uMaster, 1.0);
+          }
+        `,
+      }),
+    [],
+  )
   useFrame(() => {
     const t = show.time
-    material.color
-      .copy(red)
-      .lerp(amber, warm ? 0.5 + 0.5 * Math.sin(t * 0.8) : 0.1)
-      .multiplyScalar((1.4 + 1.4 * kickAt(t, 6)) * show.master)
+    // one slow pass from end to end every 16 beats, with a short pause off the end
+    const cycle = (beatsAt(t) / 16) % 1
+    material.uniforms.uHead.value = cycle * 1.12
+    material.uniforms.uColor.value.set(deskHex(0, 1, lookAt(t) % 2 ? AMBER : RED))
+    material.uniforms.uMaster.value = show.master
   })
   return (
     <mesh material={material}>
-      <tubeGeometry args={[curve, 64, 0.014, 6, false]} />
+      <tubeGeometry args={[curve, 2400, 0.013, 6, false]} />
     </mesh>
-  )
-}
-
-/* ─────────────── Neon swags ─────────────── */
-
-// Hung like the reference: strands draped between hang points in loose swags of
-// different depths, with vertical drops falling from the hang points.
-const HANG_X = [-3.4, -1.15, 1.15, 3.4]
-const HANG_Y = 4.5
-const HANG_Z = -2.25
-const SAGS = [0.55, 0.95, 1.4]
-
-/** A draped strand between two hang points (a parabola is close enough to a catenary here). */
-function swag(x1: number, x2: number, sag: number, z: number): V3[] {
-  return Array.from({ length: 13 }, (_, k) => {
-    const t = k / 12
-    return [x1 + (x2 - x1) * t, HANG_Y - sag * 4 * t * (1 - t), z] as V3
-  })
-}
-
-const rigging = new MeshStandardMaterial({ color: '#0d0d0d', metalness: 0.4, roughness: 0.6 })
-
-export function NeonSwags({ deckTop }: { deckTop: number }) {
-  const strands = useMemo(() => {
-    const out: { points: V3[]; warm: boolean }[] = []
-    for (let i = 0; i < HANG_X.length - 1; i++)
-      SAGS.forEach((sag, k) => out.push({ points: swag(HANG_X[i], HANG_X[i + 1], sag, HANG_Z + k * 0.03), warm: (i + k) % 2 === 1 }))
-    // vertical drops: to the deck at the outer hang points, part-way at the inner ones
-    HANG_X.forEach((x, i) => {
-      const outer = i === 0 || i === HANG_X.length - 1
-      const bottom = outer ? deckTop + 0.05 : HANG_Y - 1.9
-      out.push({ points: [[x, HANG_Y, HANG_Z], [x, (HANG_Y + bottom) / 2, HANG_Z], [x, bottom, HANG_Z]], warm: !outer })
-    })
-    return out
-  }, [deckTop])
-  return (
-    <group>
-      {strands.map((s, i) => (
-        <LedRope key={i} points={s.points} warm={s.warm} />
-      ))}
-      {/* fine rigging wires up to the roof */}
-      {HANG_X.map((x) => (
-        <mesh key={x} material={rigging} position={[x, (HANG_Y + 8.9) / 2, HANG_Z]}>
-          <cylinderGeometry args={[0.004, 0.004, 8.9 - HANG_Y, 4]} />
-        </mesh>
-      ))}
-    </group>
   )
 }
 
 /* ─────────────── Wing: one side of the booth, as rigged at The Park ─────────────── */
 
-/** A ground-support post carrying a matrix panel, trefoil, hex retro, dot bar and pixel bars. */
+/** A ground-support post carrying a matrix panel, trefoil, hex retro, matrix bar and pixel bars. */
 export function Wing({ side, deckTop, z = -1.7 }: { side: 1 | -1; deckTop: number; z?: number }) {
   const s = side
   const f = z + 0.22 // front face of the post
@@ -570,7 +669,7 @@ export function Wing({ side, deckTop, z = -1.7 }: { side: 1 | -1; deckTop: numbe
       <MatrixPanel phase={phase} position={[s * 3.4, y(2.5), f]} rotation-y={-s * 0.3} />
       <TrefoilFan phase={phase} direction={s} position={[s * 2.4, y(2.3), f]} />
       <HexRetro index={s > 0 ? 2 : 0} position={[s * 3.6, y(1.45), f]} />
-      <LedBar kind="dots" phase={phase} from={[s * 3.25, y(1.6), f]} to={[s * 2.2, y(2.0), f]} />
+      <LedBar kind="matrix" phase={phase} from={[s * 3.25, y(1.6), f]} to={[s * 2.2, y(2.0), f]} />
       <LedBar kind="pixels" phase={phase} from={[s * 2.45, y(1.35), f]} to={[s * 3.55, y(0.35), f]} />
       <LedBar kind="pixels" phase={phase} from={[s * 3.55, y(0.3), f]} to={[s * 2.4, y(0.3), f]} />
     </group>

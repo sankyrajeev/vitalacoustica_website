@@ -888,7 +888,18 @@ const UNIVERSES: { name: string; patch: Patch[] }[] = [
         count: 8,
         chans: ['Dimmer', 'Strobe', 'Pan', 'Tilt', 'Warm', 'Amber', 'Effect', 'Speed'],
       })),
-      ...[0, 1, 2, 3].map((k) => ({ name: `LED wall washer ${k + 1}`, start: 129 + k * 12, count: 12, chans: RGBW(12) })),
+      ...[0, 1, 2, 3].map((k) => ({
+        name: `Matrix bar ${k + 1}`,
+        start: 129 + k * 20,
+        count: 20,
+        chans: Array.from({ length: 20 }, (_, i) => `${i % 2 ? 'Warm' : 'Cold'} ${Math.floor(i / 2) + 1}`),
+      })),
+      ...[0, 1, 2, 3].map((k) => ({
+        name: `COB light ${k + 1}`,
+        start: 209 + k * 9,
+        count: 9,
+        chans: ['Dimmer', 'Strobe', ...Array.from({ length: 7 }, (_, i) => `Head ${i + 1}`)],
+      })),
     ],
   },
   {

@@ -8,7 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { type RigId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
-import { HexRetro, NeonSwags, WarcraftRetro, Wing } from './gear/Effects'
+import { CobLight, HexRetro, TrussWrap, WarcraftRetro, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
 import { BoothMonitors, PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
@@ -166,11 +166,14 @@ function Stage({ small }: { small: boolean }) {
       <HexRetro index={1} position={[-5, 3.3, -0.36]} />
       <HexRetro index={2} position={[5, 1.8, -0.36]} />
       <HexRetro index={3} position={[5, 3.3, -0.36]} />
-      {/* LED neon flex hung in swags behind the booth, as it's rigged at shows */}
-      <NeonSwags deckTop={deckTop} />
+      {/* LED neon flex wrapped round the goal-post truss, a pulse running end to end */}
+      <TrussWrap span={10} height={5.2} z={-0.6} />
       {/* Warcraft retro lights on the deck's front corners, tilted up at the crowd */}
       <WarcraftRetro index={0} position={[-3.9, deckTop + 0.3, 0.55]} />
       <WarcraftRetro index={2} position={[3.9, deckTop + 0.3, 0.55]} />
+      {/* COB lights on the deck's front edge, angled up at the crowd */}
+      <CobLight index={0} position={[-2.25, deckTop + 0.36, 0.6]} rotation-x={-0.25} />
+      <CobLight index={3} position={[2.25, deckTop + 0.36, 0.6]} rotation-x={-0.25} />
       <BoothMonitors deckTop={deckTop} />
       <PAStack x={-6.3} z={0.9} toe={0.2} />
       <PAStack x={6.3} z={0.9} toe={-0.2} />
