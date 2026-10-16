@@ -23,7 +23,7 @@ import { show } from '../show'
 // Lighting effects modelled on the house rig as it appears in show photos:
 // tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex retro lights,
 // Warcraft retro lights, COB lights, matrix bars, pixel bars and LED neon flex wrapped on the truss.
-// Every fixture follows the desk's colour (see deskHex / deskWhite in beat.ts).
+// Every fixture follows the desk's colour (see deskHex / deskWhite in beat.ts), except the warm-only COB light.
 
 const housing = new MeshStandardMaterial({ color: '#141414', metalness: 0.6, roughness: 0.45 })
 const stand = new MeshStandardMaterial({ color: '#222', metalness: 0.9, roughness: 0.35 })
@@ -425,11 +425,8 @@ export function CobLight({ index = 0, ...props }: { index?: number } & ThreeElem
     faces.forEach((m, i) => {
       const chase = (beat + index) % 7 === i ? decay : 0
       const lvl = 0.25 + chase * 1.8 + blinder * 2.4
-      const mix = deskWhite(i, 7, lookAt(t) % 2 ? 0.75 : 0)
-      m.color
-        .copy(WARM_WHITE)
-        .lerp(COLD_WHITE, mix)
-        .multiplyScalar(lvl * show.master)
+      // warm white only, so it ignores the desk's colour
+      m.color.copy(WARM_WHITE).multiplyScalar(lvl * show.master)
     })
   })
   return (

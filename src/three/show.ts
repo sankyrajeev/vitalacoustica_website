@@ -3,7 +3,7 @@ import { site } from '../content/site'
 // Live show state — the "lighting desk". Every fixture reads this each frame.
 // The desk UI writes to it; plain mutable object so faders never trigger React renders.
 
-/** The desk's colour, for every light. White-only fixtures (COB, matrix bar) follow it as warm or cold white. */
+/** The desk's colour, for every light. The matrix bar follows it as warm or cold white; the COB light is warm white only. */
 export type ColourMode = 'auto' | 'red' | 'amber' | 'warm' | 'cold' | 'blue' | 'violet' | 'split' | 'alternate'
 
 export const show = {

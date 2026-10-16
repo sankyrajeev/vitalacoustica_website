@@ -330,7 +330,7 @@ export const gear: Gear[] = [
     specs: [
       ['Sources', '7 COB heads, individually angled'],
       ['Optics', 'Textured lens on each head'],
-      ['Colour', 'Warm white'], // DUMMY: confirm warm-only or tunable white
+      ['Colour', 'Warm white only'],
       ['Mounting', 'Floor bracket or truss clamp'],
       ['Control', 'DMX, per head'],
     ],
