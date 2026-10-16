@@ -10,6 +10,7 @@ import {
   VenuePlans,
 } from '../components/scenes/ProductionScenes'
 import { Banner, Details, Feature } from '../components/service/Blocks'
+import { StageModelLauncher } from '../components/StageModel'
 import { Arrow, Cta, Label, TextLink } from '../components/ui'
 import { capabilities } from '../content/capabilities'
 import { openExplore } from '../events'
@@ -271,6 +272,9 @@ export function ProductionPage() {
           <p className="sound-note">
             The scope is tailored to each event, from a single technical service to an integrated multi-system production.
           </p>
+          <div className="prod-model">
+            <StageModelLauncher caption="Our typical stage as an interactive model: every system on this page, in one place." />
+          </div>
         </div>
       </section>
 

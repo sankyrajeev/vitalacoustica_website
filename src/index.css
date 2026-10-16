@@ -7907,3 +7907,78 @@ img.cover {
     grid-column: 2 / 4;
   }
 }
+
+/* ─────────────── Service page: Installations ─────────────── */
+
+.inst-scene {
+  aspect-ratio: 1.3;
+}
+
+.inst-spaces {
+  grid-column: 1 / -1;
+}
+
+.prod-model {
+  margin-top: var(--s7);
+}
+
+/* a wall keypad: one button per scene, and automatic */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #151513;
+  box-shadow:
+    inset 0 0 0 1px rgba(240, 237, 229, 0.1),
+    0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.keypad button {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: #1f1e1b;
+  color: rgba(240, 237, 229, 0.7);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-shadow: none;
+  transition: background var(--t-fast) var(--ease);
+}
+
+.keypad button:hover {
+  background: #292825;
+}
+
+.keypad button i {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(240, 237, 229, 0.18);
+}
+
+.keypad button.is-on {
+  color: #f6f3ec;
+}
+
+.keypad button.is-on i {
+  background: var(--brass);
+  box-shadow: 0 0 8px rgba(184, 164, 123, 0.9);
+}
+
+.keypad__auto {
+  border-left: 1px solid rgba(240, 237, 229, 0.12) !important;
+}
+
+@media (max-width: 520px) {
+  .keypad {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

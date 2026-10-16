@@ -84,10 +84,10 @@ export const capabilities: Capability[] = [
     id: 'installations',
     index: '05',
     name: 'Installations',
-    statement: 'Permanent sound and light for venues that want every night to feel like a show.',
+    statement: 'Engineered for the space. Designed to last.',
     summary:
-      'For clubs, bars, restaurants, lounges and event spaces that want a system of their own. We advise on what to install and where, drawing on what we learn every weekend running live shows: the right loudspeakers for the room, lighting that suits the space and the music, and control your own staff can run with confidence.',
-    covers: ['Venue assessment', 'System design and specification', 'Equipment selection', 'Installation and commissioning', 'Staff handover and ongoing support'],
+      'Permanent audio, lighting and visual systems for venues, residences, clubs, hospitality spaces and commercial environments: professional sound, architectural lighting, networked controls, automation and immersive visual installations, tailored to the space and its long-term requirements.',
+    covers: ['Professional sound systems', 'Architectural lighting', 'Networked controls & automation', 'Immersive visual installations', 'Handover and ongoing support'],
     approach: [
       { title: 'Understand the venue', body: 'How the space is used, who plays there, how loud it needs to get, and what the neighbours and the building allow.' },
       { title: 'Design and specify', body: 'Loudspeaker placement and coverage, lighting layout and control, drawn and costed before anything is ordered.' },
