@@ -8069,3 +8069,8 @@ img.cover {
   color: #0b1f12;
   filter: brightness(1.08);
 }
+
+.form-done__wa {
+  justify-self: start;
+  margin-top: var(--s3);
+}

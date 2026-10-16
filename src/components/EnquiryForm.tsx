@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { site, waLink } from '../content/site'
 
-// Hire enquiry. Posts JSON to the endpoint configured in site.enquiry
-// (Formspree, FormSubmit or Web3Forms all accept this shape). With no endpoint set,
-// it hands the enquiry to WhatsApp, written out and ready to send.
+// Hire enquiry. Posts JSON to the endpoint in site.enquiry: our own /api/enquiry function, which
+// emails the team and the client (functions/api/enquiry.ts). If that can't send it (not set up
+// yet, or offline), the enquiry is written out for WhatsApp instead.
 
 const EVENT_TYPES = ['Concert or club night', 'Festival or open air', 'Corporate or brand event', 'Private event', 'Permanent installation', 'Other']
 const SERVICES = ['Sound system', 'Lighting', 'LED & visuals', 'Full production', 'Installation consulting']
@@ -44,36 +44,28 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
     if (data._gotcha) return setStatus({ state: 'sent' })
     delete data._gotcha
 
-    if (!enquiryConfigured()) {
-      if (!site.contact.whatsapp) {
-        setStatus({ state: 'error', message: 'Enquiries can’t be sent from the site right now. Please message us on Instagram.' })
-        return
-      }
-      // no form service yet: hand the enquiry to WhatsApp
-      const lines = [
-        ['Event', data.eventType],
-        ['Date', data.date],
-        ['Location', data.location],
-        ['Audience', data.audience],
-        ['Services', services.join(', ')],
-        ['Budget', data.budget],
-        ['Name', data.name],
-        ['Organisation', data.organisation],
-        ['Email', data.email],
-        ['Phone', data.phone],
-      ]
-        .filter(([, v]) => v)
-        .map(([k, v]) => `${k}: ${v}`)
-      const text = `Hire enquiry\n\n${lines.join('\n')}\n\n${data.description}`
-      const link = waLink(text)
-      window.open(link, '_blank', 'noopener')
-      setStatus({ state: 'sent', viaWhatsApp: link })
-      return
-    }
+    // written out, for WhatsApp if the site can't send it
+    const lines = [
+      ['Event', data.eventType],
+      ['Date', data.date],
+      ['Location', data.location],
+      ['Audience', data.audience],
+      ['Services', services.join(', ')],
+      ['Budget', data.budget],
+      ['Name', data.name],
+      ['Organisation', data.organisation],
+      ['Email', data.email],
+      ['Phone', data.phone],
+    ]
+      .filter(([, v]) => v)
+      .map(([k, v]) => `${k}: ${v}`)
+    const viaWhatsApp = () => setStatus({ state: 'sent', viaWhatsApp: waLink(`Hire enquiry\n\n${lines.join('\n')}\n\n${data.description}`) })
+    if (!enquiryConfigured()) return viaWhatsApp()
 
     setStatus({ state: 'sending' })
+    let res: Response
     try {
-      const res = await fetch(site.enquiry.endpoint, {
+      res = await fetch(site.enquiry.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
@@ -85,27 +77,33 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
           ...(site.enquiry.accessKey ? { access_key: site.enquiry.accessKey } : {}),
         }),
       })
-      if (!res.ok) throw new Error(String(res.status))
+    } catch {
+      return viaWhatsApp()
+    }
+    if (res.ok) {
       setStatus({ state: 'sent' })
       form.reset()
       setServices([])
-    } catch {
-      setStatus({ state: 'error', message: 'That didn’t go through. Please check your connection and try again.' })
+    } else if (res.status === 400) {
+      setStatus({ state: 'error', message: 'Please check your name and email address, then send it again.' })
+    } else {
+      // email isn't set up here yet, or couldn't be sent: WhatsApp still works
+      viaWhatsApp()
     }
   }
 
   if (status.state === 'sent') {
     return status.viaWhatsApp ? (
       <div className="form-done" role="status">
-        <p className="label">Almost there</p>
-        <h3>WhatsApp should now be open.</h3>
+        <p className="label">One more step</p>
+        <h3>Send it to us on WhatsApp.</h3>
         <p className="muted">
-          Your enquiry is written out in a chat with us: just press send. If nothing opened,{' '}
-          <a className="underline" href={status.viaWhatsApp} target="_blank" rel="noreferrer">
-            open WhatsApp
-          </a>
-          .
+          We couldn’t send your enquiry from the site just now, so it’s written out and ready in WhatsApp. Tap the button, then
+          press send.
         </p>
+        <a className="cta cta--primary form-done__wa" href={status.viaWhatsApp} target="_blank" rel="noreferrer">
+          <span>Open WhatsApp</span>
+        </a>
       </div>
     ) : (
       <div className="form-done" role="status">

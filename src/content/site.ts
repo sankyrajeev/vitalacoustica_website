@@ -57,15 +57,13 @@ export const site = {
   },
 
   /*
-   * Where the enquiry form sends submissions. Set ONE of these:
-   *  - Formspree:  endpoint 'https://formspree.io/f/<form-id>'
-   *  - FormSubmit: endpoint 'https://formsubmit.co/ajax/<your-email>' (confirm the first email it sends you)
-   *  - Web3Forms:  endpoint 'https://api.web3forms.com/submit' plus accessKey
-   * Can also be set at build time with VITE_ENQUIRY_ENDPOINT / VITE_ENQUIRY_KEY.
-   * Until one is set, the form hands the enquiry to WhatsApp, written out and ready to send.
+   * Where the enquiry and testimonial forms send submissions: our own Cloudflare function,
+   * which emails the team and the person who wrote (functions/api/enquiry.ts, setup in
+   * docs/cloudflare-setup.md). Override with VITE_ENQUIRY_ENDPOINT (plus VITE_ENQUIRY_KEY for
+   * Web3Forms) to use a form service instead. If sending fails, the forms offer WhatsApp.
    */
   enquiry: {
-    endpoint: (import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined) ?? '',
+    endpoint: (import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined) || '/api/enquiry',
     accessKey: (import.meta.env.VITE_ENQUIRY_KEY as string | undefined) ?? '',
   },
 }

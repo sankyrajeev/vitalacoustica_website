@@ -51,7 +51,7 @@ export function TestimonialsPage() {
   )
 }
 
-type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaWhatsApp?: boolean }
+type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaWhatsApp?: string }
 
 /** Sends a testimonial to the same destination as enquiries (form service, or WhatsApp). */
 function TestimonialForm() {
@@ -67,25 +67,24 @@ function TestimonialForm() {
     const publish = data.publish === 'yes' ? 'Yes, may be published' : 'No, private feedback only'
     const subject = `Testimonial from ${data.name}`
 
-    if (!site.enquiry.endpoint) {
-      if (!site.contact.whatsapp) return setStatus({ state: 'error', message: 'This can’t be sent from the site right now.' })
-      const body = [
-        `Name: ${data.name}`,
-        data.context && `Event / organisation: ${data.context}`,
-        data.email && `Email: ${data.email}`,
-        `Publish: ${publish}`,
-        '',
-        data.quote,
-      ]
-        .filter((l) => l !== undefined && l !== '')
-        .join('\n')
-      window.open(waLink(`${subject}\n\n${body}`), '_blank', 'noopener')
-      return setStatus({ state: 'sent', viaWhatsApp: true })
-    }
+    const body = [
+      `Name: ${data.name}`,
+      data.context && `Event / organisation: ${data.context}`,
+      data.email && `Email: ${data.email}`,
+      `Publish: ${publish}`,
+      '',
+      data.quote,
+    ]
+      .filter((l) => l !== undefined && l !== '')
+      .join('\n')
+    // if the site can't send it, it's written out for WhatsApp instead
+    const viaWhatsApp = () => setStatus({ state: 'sent', viaWhatsApp: waLink(`${subject}\n\n${body}`) })
+    if (!site.enquiry.endpoint) return viaWhatsApp()
 
     setStatus({ state: 'sending' })
+    let res: Response
     try {
-      const res = await fetch(site.enquiry.endpoint, {
+      res = await fetch(site.enquiry.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
@@ -98,22 +97,32 @@ function TestimonialForm() {
           ...(site.enquiry.accessKey ? { access_key: site.enquiry.accessKey } : {}),
         }),
       })
-      if (!res.ok) throw new Error(String(res.status))
+    } catch {
+      return viaWhatsApp()
+    }
+    if (res.ok) {
       setStatus({ state: 'sent' })
       form.reset()
-    } catch {
-      setStatus({ state: 'error', message: 'That didn’t go through. Please check your connection and try again.' })
-    }
+    } else if (res.status === 400) {
+      setStatus({ state: 'error', message: 'Please add your name and your words, then send it again.' })
+    } else viaWhatsApp()
   }
 
   if (status.state === 'sent') {
     return (
       <div className="form-done" role="status">
-        <p className="label">{status.viaWhatsApp ? 'Almost there' : 'Received'}</p>
-        <h3>{status.viaWhatsApp ? 'WhatsApp should now be open.' : 'Thank you.'}</h3>
+        <p className="label">{status.viaWhatsApp ? 'One more step' : 'Received'}</p>
+        <h3>{status.viaWhatsApp ? 'Send it to us on WhatsApp.' : 'Thank you.'}</h3>
         <p className="muted">
-          {status.viaWhatsApp ? 'Your words are written out in a chat with us: just press send.' : 'We read every one.'}
+          {status.viaWhatsApp
+            ? 'We couldn’t send it from the site just now, so your words are written out and ready in WhatsApp.'
+            : 'We read every one.'}
         </p>
+        {status.viaWhatsApp && (
+          <a className="cta cta--primary form-done__wa" href={status.viaWhatsApp} target="_blank" rel="noreferrer">
+            <span>Open WhatsApp</span>
+          </a>
+        )}
       </div>
     )
   }
