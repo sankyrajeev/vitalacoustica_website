@@ -50,7 +50,11 @@ export function CareersPage() {
               ))}
             </ul>
           ) : (
-            <div className="patched" role="img" aria-label="A mixing desk with every channel patched in: no open positions right now">
+            <div
+              className="patched"
+              role="img"
+              aria-label="A mixing desk with every channel patched in: no open positions right now"
+            >
               <div className="patched__display">
                 <span className="patched__count">00</span>
                 <span className="patched__caption">

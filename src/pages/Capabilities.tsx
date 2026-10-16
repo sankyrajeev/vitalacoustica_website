@@ -2,10 +2,12 @@ import { FaderReveal } from '../components/FaderReveal'
 import { PageHead } from '../components/PageHead'
 import { StageModelLauncher } from '../components/StageModel'
 import { Arrow, Label, MediaFrame, TextLink } from '../components/ui'
-import { capabilities, capabilityById } from '../content/capabilities'
+import { capabilities, capabilityById, type Capability } from '../content/capabilities'
 import { Link } from '../components/Link'
 import { NotFound } from './NotFound'
 import { SoundPage } from './Sound'
+import { LightPage } from './Light'
+import { ServiceFader } from '../components/service/ServiceFader'
 
 export function CapabilitiesIndex() {
   return (
@@ -36,7 +38,15 @@ export function CapabilitiesIndex() {
 export function CapabilityPage({ id }: { id: string }) {
   const c = capabilityById(id)
   if (!c) return <NotFound />
-  if (c.id === 'sound') return <SoundPage />
+  return (
+    <>
+      <ServiceFader current={c.id} />
+      {c.id === 'sound' ? <SoundPage /> : c.id === 'light' ? <LightPage /> : <ServicePage c={c} />}
+    </>
+  )
+}
+
+function ServicePage({ c }: { c: Capability }) {
   const i = capabilities.indexOf(c)
   const next = capabilities[(i + 1) % capabilities.length]
 

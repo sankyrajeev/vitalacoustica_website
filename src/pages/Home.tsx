@@ -92,8 +92,8 @@ function Statement() {
           Production is more than equipment.
         </h2>
         <p className="statement__body">
-          We hire out professional sound and lighting, and we bring the people who know how to make it feel right: system
-          design, rigging, tuning and an operator at the desk until the last track.
+          We hire out professional sound and lighting, and we bring the people who know how to make it feel right: system design,
+          rigging, tuning and an operator at the desk until the last track.
         </p>
         <dl className="facts-row">
           {facts.map(([big, small]) => (
@@ -138,8 +138,8 @@ function FinalEnquiry() {
           Let’s shape something exceptional.
         </h2>
         <p className="lede">
-          Tell us the date, the venue and roughly how many people. We’ll reply with the right system, a quote, and who will
-          be on site to run it.
+          Tell us the date, the venue and roughly how many people. We’ll reply with the right system, a quote, and who will be on
+          site to run it.
         </p>
         {open ? (
           <div className="final__form">

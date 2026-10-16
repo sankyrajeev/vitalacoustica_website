@@ -69,9 +69,9 @@ export function PrivacyPage() {
 
           <Section n={1} title="Who we are">
             <p>
-              {LEGAL.company} ("we", "us") provides sound and lighting rental, event production and installation consulting,
-              based in {LEGAL.address}. We are the Data Fiduciary for the personal data described in this notice, within
-              the meaning of the Digital Personal Data Protection Act, 2023 ("DPDP Act").
+              {LEGAL.company} ("we", "us") provides sound and lighting rental, event production and installation consulting, based
+              in {LEGAL.address}. We are the Data Fiduciary for the personal data described in this notice, within the meaning of
+              the Digital Personal Data Protection Act, 2023 ("DPDP Act").
             </p>
           </Section>
 
@@ -79,27 +79,25 @@ export function PrivacyPage() {
             <p>We only collect what you give us, or what is needed to run this website:</p>
             <ul>
               <li>
-                <strong>Enquiries and quote requests:</strong> your name, email address, and optionally your phone number
-                and organisation, plus the details of your event (type, date, venue, audience size, budget range, the
-                services and equipment you're interested in, and your message).
+                <strong>Enquiries and quote requests:</strong> your name, email address, and optionally your phone number and
+                organisation, plus the details of your event (type, date, venue, audience size, budget range, the services and
+                equipment you're interested in, and your message).
               </li>
               <li>
-                <strong>Testimonials:</strong> if you send us a testimonial, your name, your organisation or event, your
-                words, and whether you agree to us publishing them.
+                <strong>Testimonials:</strong> if you send us a testimonial, your name, your organisation or event, your words,
+                and whether you agree to us publishing them.
               </li>
               <li>
-                <strong>When we work together:</strong> billing and contact details needed for quotes, invoices, GST and
-                delivery.
+                <strong>When we work together:</strong> billing and contact details needed for quotes, invoices, GST and delivery.
               </li>
               <li>
-                <strong>Preferences on your device:</strong> your choice of light or dark edition is saved in your own
-                browser's storage. It is never sent to us.
+                <strong>Preferences on your device:</strong> your choice of light or dark edition is saved in your own browser's
+                storage. It is never sent to us.
               </li>
             </ul>
             <p>
-              We don't use advertising or tracking cookies, and we don't build profiles of visitors. Our hosting provider may
-              keep standard server logs (such as IP address, browser and time of request) for security and to keep the site
-              running.
+              We don't use advertising or tracking cookies, and we don't build profiles of visitors. Our hosting provider may keep
+              standard server logs (such as IP address, browser and time of request) for security and to keep the site running.
             </p>
           </Section>
 
@@ -112,9 +110,9 @@ export function PrivacyPage() {
               <li>To keep this website secure and working.</li>
             </ul>
             <p>
-              We process your data on the basis of your consent, which you give when you send us a form, or for the
-              legitimate uses allowed under the DPDP Act, such as completing a booking you asked for or complying with the
-              law. We do not sell your personal data or use it for marketing without asking you first.
+              We process your data on the basis of your consent, which you give when you send us a form, or for the legitimate
+              uses allowed under the DPDP Act, such as completing a booking you asked for or complying with the law. We do not
+              sell your personal data or use it for marketing without asking you first.
             </p>
           </Section>
 
@@ -123,21 +121,23 @@ export function PrivacyPage() {
             <ul>
               <li>the form or email service that delivers your enquiry to us;</li>
               <li>our website hosting provider;</li>
-              <li>for shop orders, the checkout provider (Gumroad) and our print-on-demand partner, to take payment and deliver;</li>
+              <li>
+                for shop orders, the checkout provider (Gumroad) and our print-on-demand partner, to take payment and deliver;
+              </li>
               <li>our accountants and tax advisers, for invoicing and statutory records;</li>
               <li>authorities, where we are legally required to.</li>
             </ul>
             <p>
-              Some of these providers may store data on servers outside India. Where that happens, the transfer is made in
-              line with the DPDP Act and any restrictions notified by the Government of India.
+              Some of these providers may store data on servers outside India. Where that happens, the transfer is made in line
+              with the DPDP Act and any restrictions notified by the Government of India.
             </p>
           </Section>
 
           <Section n={5} title="How long we keep it">
             <p>
-              Enquiries that don't lead to a booking are deleted within 24 months. Booking, invoice and GST records are kept
-              for as long as Indian tax law requires, currently up to eight years. A published testimonial stays up until you
-              ask us to remove it.
+              Enquiries that don't lead to a booking are deleted within 24 months. Booking, invoice and GST records are kept for
+              as long as Indian tax law requires, currently up to eight years. A published testimonial stays up until you ask us
+              to remove it.
             </p>
           </Section>
 
@@ -164,23 +164,23 @@ export function PrivacyPage() {
 
           <Section n={8} title="Security">
             <p>
-              The site is served over an encrypted connection (HTTPS), and access to enquiries is limited to the people who
-              need them to reply. No system is completely secure, so please don't send sensitive personal information,
-              such as ID or bank details, through the website forms.
+              The site is served over an encrypted connection (HTTPS), and access to enquiries is limited to the people who need
+              them to reply. No system is completely secure, so please don't send sensitive personal information, such as ID or
+              bank details, through the website forms.
             </p>
           </Section>
 
           <Section n={9} title="Children">
             <p>
-              This website is meant for adults organising events. We don't knowingly collect personal data from anyone
-              under 18. If you think a child has sent us their details, contact us and we'll delete them.
+              This website is meant for adults organising events. We don't knowingly collect personal data from anyone under 18.
+              If you think a child has sent us their details, contact us and we'll delete them.
             </p>
           </Section>
 
           <Section n={10} title="Changes to this notice">
             <p>
-              We may update this notice from time to time. The date at the top shows when it last changed. If a change
-              affects how we use data you have already given us, we'll ask for your consent again where the law requires.
+              We may update this notice from time to time. The date at the top shows when it last changed. If a change affects how
+              we use data you have already given us, we'll ask for your consent again where the law requires.
             </p>
           </Section>
         </div>
@@ -240,72 +240,69 @@ export function LegalPage() {
 
           <Section n={2} title="Using this website">
             <p>
-              By using {site.domain} you agree to these terms. If you don't agree, please don't use the site. You may browse
-              it, share links to it and download pages for your own reference. You may not copy, republish or sell its
-              content, try to disrupt or gain unauthorised access to it, or use it for anything unlawful.
+              By using {site.domain} you agree to these terms. If you don't agree, please don't use the site. You may browse it,
+              share links to it and download pages for your own reference. You may not copy, republish or sell its content, try to
+              disrupt or gain unauthorised access to it, or use it for anything unlawful.
             </p>
           </Section>
 
           <Section n={3} title="Information on this site">
             <p>
-              We describe our equipment and services as accurately as we can, but the website is for general information
-              only. It isn't an offer to hire: availability, quantities, specifications and prices are confirmed only in a
-              written quote from us. Manufacturer specifications are shown as published by the manufacturer and may change
-              without notice.
+              We describe our equipment and services as accurately as we can, but the website is for general information only. It
+              isn't an offer to hire: availability, quantities, specifications and prices are confirmed only in a written quote
+              from us. Manufacturer specifications are shown as published by the manufacturer and may change without notice.
             </p>
           </Section>
 
           <Section n={4} title="Quotes and bookings">
             <p>
-              A request through this website is an enquiry, not a booking. A hire or production is confirmed only when we
-              have both agreed a written quote, and it is governed by the terms set out in that quote, including deposits,
-              payment, cancellation, delivery, setup, care of equipment and liability. All prices are subject to GST as
-              applicable.
+              A request through this website is an enquiry, not a booking. A hire or production is confirmed only when we have
+              both agreed a written quote, and it is governed by the terms set out in that quote, including deposits, payment,
+              cancellation, delivery, setup, care of equipment and liability. All prices are subject to GST as applicable.
             </p>
           </Section>
 
           <Section n={5} title="Photographs, renders and studies">
             <p>
-              Photographs of productions show events delivered by {site.name}. 3D renders, the stage model and visual
-              studies are illustrations and are labelled as such; they are not photographs of a specific event. Some
-              equipment images are manufacturer or supplier product photos, used to show the exact item we hire.
+              Photographs of productions show events delivered by {site.name}. 3D renders, the stage model and visual studies are
+              illustrations and are labelled as such; they are not photographs of a specific event. Some equipment images are
+              manufacturer or supplier product photos, used to show the exact item we hire.
             </p>
           </Section>
 
           <Section n={6} title="Intellectual property">
             <p>
-              The {site.name} name, logo, website design, text, photographs, 3D models and renders belong to {site.name} or
-              are used with permission, and are protected by copyright and trademark law. d&b audiotechnik, RCF, Yamaha,
-              Pioneer DJ, AlphaTheta, BSS Audio, ATI Pro and other brand names and product images belong to their
-              respective owners. Mentioning them doesn't mean they endorse us or that we are an authorised dealer.
+              The {site.name} name, logo, website design, text, photographs, 3D models and renders belong to {site.name} or are
+              used with permission, and are protected by copyright and trademark law. d&b audiotechnik, RCF, Yamaha, Pioneer DJ,
+              AlphaTheta, BSS Audio, ATI Pro and other brand names and product images belong to their respective owners.
+              Mentioning them doesn't mean they endorse us or that we are an authorised dealer.
             </p>
           </Section>
 
           <Section n={7} title="Testimonials">
             <p>
-              Testimonials are published with the permission of the person who gave them and reflect their own experience.
-              We don't edit their meaning; we may shorten them for length.
+              Testimonials are published with the permission of the person who gave them and reflect their own experience. We
+              don't edit their meaning; we may shorten them for length.
             </p>
           </Section>
 
           <Section n={8} title="Shop">
             <p>
-              <strong>Sample packs and VJ loops</strong> are sold through Gumroad, which processes the payment, charges any
-              tax due in your country and delivers the download. Buying one gives you a non-exclusive, royalty-free licence
-              to use it in your own music, DJ sets, performances, videos and streams. You may not resell, share or
-              redistribute the files themselves, on their own or in another sample or loop pack. Because files are delivered
-              instantly, digital purchases can't be returned; if a file is faulty or missing, contact us and we'll replace it
-              or refund you.
+              <strong>Sample packs and VJ loops</strong> are sold through Gumroad, which processes the payment, charges any tax
+              due in your country and delivers the download. Buying one gives you a non-exclusive, royalty-free licence to use it
+              in your own music, DJ sets, performances, videos and streams. You may not resell, share or redistribute the files
+              themselves, on their own or in another sample or loop pack. Because files are delivered instantly, digital purchases
+              can't be returned; if a file is faulty or missing, contact us and we'll replace it or refund you.
             </p>
             <p>
-              <strong>Merch</strong> is printed to order by our printing partner and shipped within India. Prices include GST.
-              If an item arrives damaged, misprinted or wrong, tell us within 7 days of delivery with a photo and we'll replace
-              it or refund you. As each piece is made for you, we can't take returns for a change of mind or the wrong size,
-              so please check the size guide before ordering.
+              <strong>Merch</strong> is printed to order by our printing partner and shipped within India. Prices include GST. If
+              an item arrives damaged, misprinted or wrong, tell us within 7 days of delivery with a photo and we'll replace it or
+              refund you. As each piece is made for you, we can't take returns for a change of mind or the wrong size, so please
+              check the size guide before ordering.
             </p>
             <p>
-              To complete an order, the checkout provider and our printing partner receive the details needed to take payment
-              and deliver it, such as your name, email and delivery address. See our <Link to="/privacy">privacy notice</Link>.
+              To complete an order, the checkout provider and our printing partner receive the details needed to take payment and
+              deliver it, such as your name, email and delivery address. See our <Link to="/privacy">privacy notice</Link>.
             </p>
           </Section>
 
@@ -318,9 +315,9 @@ export function LegalPage() {
 
           <Section n={10} title="Liability">
             <p>
-              We work to keep the site accurate and available, but it is provided "as is". To the extent the law allows, we
-              aren't liable for any loss arising from your use of the website or reliance on its content. Nothing in these
-              terms limits liability that cannot be limited under Indian law.
+              We work to keep the site accurate and available, but it is provided "as is". To the extent the law allows, we aren't
+              liable for any loss arising from your use of the website or reliance on its content. Nothing in these terms limits
+              liability that cannot be limited under Indian law.
             </p>
           </Section>
 
@@ -332,8 +329,8 @@ export function LegalPage() {
 
           <Section n={12} title="Governing law">
             <p>
-              These terms are governed by the laws of India. The courts at {LEGAL.jurisdiction} have exclusive jurisdiction
-              over any dispute arising from them.
+              These terms are governed by the laws of India. The courts at {LEGAL.jurisdiction} have exclusive jurisdiction over
+              any dispute arising from them.
             </p>
           </Section>
 

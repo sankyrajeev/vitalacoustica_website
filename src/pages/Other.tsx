@@ -25,13 +25,12 @@ export function StudioPage() {
           </div>
           <div className="studio__copy">
             <p>
-              Those answers guide our creative decisions, system choices and execution. We take on a limited number of
-              productions so that each one gets the attention it deserves, and so that everything carrying our name meets
-              the same standard.
+              Those answers guide our creative decisions, system choices and execution. We take on a limited number of productions
+              so that each one gets the attention it deserves, and so that everything carrying our name meets the same standard.
             </p>
             <p>
-              We work with artists, promoters and venues, and with brands and private clients who want an event to feel
-              considered rather than assembled.
+              We work with artists, promoters and venues, and with brands and private clients who want an event to feel considered
+              rather than assembled.
             </p>
           </div>
         </div>
@@ -108,8 +107,8 @@ export function DeckPage() {
             <div className="sheet__row">
               <h2 className="sheet__h">Who we are</h2>
               <p>
-                An independent creative production house bringing sound, light and space together. Technically serious,
-                creatively ambitious and selective about the work we take on.
+                An independent creative production house bringing sound, light and space together. Technically serious, creatively
+                ambitious and selective about the work we take on.
               </p>
             </div>
             <div className="sheet__row">
@@ -127,7 +126,12 @@ export function DeckPage() {
               <ul className="sheet__list">
                 {RIG_GROUPS.map((group) => (
                   <li key={group}>
-                    <strong>{group}</strong> {gear.filter((g) => g.group === group).map(fullName).join(', ')}.
+                    <strong>{group}</strong>{' '}
+                    {gear
+                      .filter((g) => g.group === group)
+                      .map(fullName)
+                      .join(', ')}
+                    .
                   </li>
                 ))}
               </ul>
@@ -169,13 +173,15 @@ export function ContactPage() {
   const { whatsapp } = site.contact
   // arriving from an equipment page: "/contact?item=b22"
   const item = gearById[queryParam('item') as GearId]
-  const waText = item ? `Hi Vital Acoustica, I'd like a quote for the ${fullName(item)}.` : "Hi Vital Acoustica, I'd like a quote for an event."
+  const waText = item
+    ? `Hi Vital Acoustica, I'd like a quote for the ${fullName(item)}.`
+    : "Hi Vital Acoustica, I'd like a quote for an event."
 
   return (
     <>
       <PageHead label="Get a quote" title="Tell us about your event.">
-        The date, the venue and roughly how many people. We’ll come back with the right system, a quote, and who will be
-        on site to run it.
+        The date, the venue and roughly how many people. We’ll come back with the right system, a quote, and who will be on site
+        to run it.
       </PageHead>
       <section className="section section--tight">
         <div className="wrap contact">
@@ -207,8 +213,8 @@ export function ContactPage() {
             )}
             <Label>What helps</Label>
             <p className="muted">
-              A date, a venue, an idea of the audience and what the night should feel like. If you have drawings or a tech
-              rider, mention it and we’ll ask for it when we reply.
+              A date, a venue, an idea of the audience and what the night should feel like. If you have drawings or a tech rider,
+              mention it and we’ll ask for it when we reply.
             </p>
           </aside>
         </div>

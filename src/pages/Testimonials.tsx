@@ -10,8 +10,8 @@ export function TestimonialsPage() {
   return (
     <>
       <PageHead label="Testimonials" title="In their words.">
-        What promoters, artists and hosts say after working with us. Every testimonial here is published with the
-        person's permission, in their own words.
+        What promoters, artists and hosts say after working with us. Every testimonial here is published with the person's
+        permission, in their own words.
       </PageHead>
 
       <section className="section section--tight">
@@ -69,7 +69,14 @@ function TestimonialForm() {
 
     if (!site.enquiry.endpoint) {
       if (!site.contact.email) return setStatus({ state: 'error', message: 'This can’t be sent from the site right now.' })
-      const body = [`Name: ${data.name}`, data.context && `Event / organisation: ${data.context}`, data.email && `Email: ${data.email}`, `Publish: ${publish}`, '', data.quote]
+      const body = [
+        `Name: ${data.name}`,
+        data.context && `Event / organisation: ${data.context}`,
+        data.email && `Email: ${data.email}`,
+        `Publish: ${publish}`,
+        '',
+        data.quote,
+      ]
         .filter((l) => l !== undefined && l !== '')
         .join('\n')
       window.location.href = `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`

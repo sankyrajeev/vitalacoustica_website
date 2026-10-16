@@ -83,7 +83,13 @@ export function CaseStudy({ slug }: { slug: string }) {
       </header>
 
       <div className="case__hero">
-        <MediaFrame media={p.hero} priority showGear sizes="100vw" caption="Turn on the equipment markers to see what’s in the rig." />
+        <MediaFrame
+          media={p.hero}
+          priority
+          showGear
+          sizes="100vw"
+          caption="Turn on the equipment markers to see what’s in the rig."
+        />
       </div>
 
       <div className="wrap case__body">
@@ -118,7 +124,9 @@ export function CaseStudy({ slug }: { slug: string }) {
         {p.film ? (
           <video src={p.film} controls preload="none" playsInline />
         ) : (
-          <Placeholder ratio="16 / 9" sample={sample}>The final production film for this project.</Placeholder>
+          <Placeholder ratio="16 / 9" sample={sample}>
+            The final production film for this project.
+          </Placeholder>
         )}
       </section>
 

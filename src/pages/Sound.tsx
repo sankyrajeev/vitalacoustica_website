@@ -1,45 +1,12 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { EventScene, RoomPlanner, type EventId } from '../components/scenes/RoomScenes'
 import { SignalChain, SoundField, SubArray, TuneScene } from '../components/scenes/SoundScenes'
+import { Details, Feature, Process } from '../components/service/Blocks'
 import { Arrow, Cta, Label, TextLink } from '../components/ui'
 import { capabilities } from '../content/capabilities'
 import { openExplore } from '../events'
 
 // The Sound service page: what we mean by engineered sound, told through interactive scenes.
-
-function Feature({
-  n,
-  kicker,
-  title,
-  line,
-  scene,
-  flip,
-  children,
-}: {
-  n: string
-  kicker: string
-  title: string
-  line: string
-  scene: ReactNode
-  flip?: boolean
-  children: ReactNode
-}) {
-  return (
-    <section className={`feature ${flip ? 'feature--flip' : ''}`} aria-labelledby={`f-${n}`}>
-      <div className="wrap feature__inner">
-        <div className="feature__text">
-          <Label index={n}>{kicker}</Label>
-          <h2 id={`f-${n}`} className="h1 feature__title">
-            {title}
-          </h2>
-          <p className="feature__line">{line}</p>
-          {children}
-        </div>
-        <div className="feature__scene">{scene}</div>
-      </div>
-    </section>
-  )
-}
 
 const STEPS = [
   ['Understand', 'Event requirements, venue constraints, audience expectations, performance format and technical scope.'],
@@ -50,47 +17,6 @@ const STEPS = [
   ['Operate', 'The show supported with consistency, technical awareness and a calm, smooth-running system.'],
   ['Close out', 'Powered down, disconnected, checked and packed in an organised way.'],
 ]
-
-function Process() {
-  const [step, setStep] = useState(0)
-  const [auto, setAuto] = useState(true)
-  useEffect(() => {
-    if (!auto || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const id = window.setTimeout(() => setStep((s) => (s + 1) % STEPS.length), 3800)
-    return () => window.clearTimeout(id)
-  }, [step, auto])
-  return (
-    <div className="timeline" style={{ ['--step' as string]: step, ['--steps' as string]: STEPS.length }}>
-      <ol className="timeline__track" role="tablist" aria-label="From load-in to last track">
-        {STEPS.map(([name], i) => (
-          <li key={name}>
-            <button
-              role="tab"
-              aria-selected={i === step}
-              className={`${i === step ? 'is-on' : ''} ${i < step ? 'is-done' : ''}`}
-              onClick={() => {
-                setAuto(false)
-                setStep(i)
-              }}
-            >
-              <span className="timeline__n">0{i + 1}</span>
-              <span className="timeline__name">{name}</span>
-            </button>
-          </li>
-        ))}
-      </ol>
-      <div className="timeline__bar" aria-hidden>
-        <span />
-      </div>
-      <div className="timeline__panel" role="tabpanel" aria-live="polite">
-        <p className="timeline__big">
-          <span>0{step + 1}</span> {STEPS[step][0]}
-        </p>
-        <p>{STEPS[step][1]}</p>
-      </div>
-    </div>
-  )
-}
 
 const DETAILS = [
   ['Gain structure', 'Appropriate signal levels maintained through the whole audio chain.'],
@@ -103,29 +29,6 @@ const DETAILS = [
   ['Network configuration', 'Dependable communication between networked devices.'],
   ['Operational verification', 'Critical connections, settings and functions checked before doors.'],
 ]
-
-function Details() {
-  const [open, setOpen] = useState<number | null>(null)
-  return (
-    <ul className="details">
-      {DETAILS.map(([t, b], i) => (
-        <li key={t}>
-          <button
-            className={`detail ${open === i ? 'is-open' : ''}`}
-            aria-expanded={open === i}
-            onClick={() => setOpen(open === i ? null : i)}
-            onPointerEnter={(e) => e.pointerType === 'mouse' && setOpen(i)}
-            onPointerLeave={(e) => e.pointerType === 'mouse' && setOpen(null)}
-          >
-            <span className="detail__n">{String(i + 1).padStart(2, '0')}</span>
-            <span className="detail__title">{t}</span>
-            <span className="detail__body">{b}</span>
-          </button>
-        </li>
-      ))}
-    </ul>
-  )
-}
 
 const EVENTS: { id: EventId; name: string; examples: string; line: string; body: string; needs: string[]; system: string[] }[] = [
   {
@@ -387,9 +290,6 @@ export function SoundPage() {
                   <span>See the booth in 3D</span>
                   <Arrow />
                 </button>
-                <Cta to="/equipment" variant="quiet">
-                  Our equipment
-                </Cta>
               </div>
             </div>
           </div>
@@ -404,7 +304,7 @@ export function SoundPage() {
               Professional execution is a process.
             </h2>
           </header>
-          <Process />
+          <Process steps={STEPS} label="From load-in to last track" />
           <p className="sound-note">The audience experiences the music. We take care of the system behind it.</p>
         </div>
       </section>
@@ -421,7 +321,7 @@ export function SoundPage() {
               these.
             </p>
           </header>
-          <Details />
+          <Details items={DETAILS} />
         </div>
       </section>
 
