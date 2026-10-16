@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { RoomPlanner, SignalChain, SoundField, SubArray, TuneScene } from '../components/scenes/SoundScenes'
-import { Arrow, Cta, Label, MediaFrame, TextLink } from '../components/ui'
+import { EventScene, RoomPlanner, type EventId } from '../components/scenes/RoomScenes'
+import { SignalChain, SoundField, SubArray, TuneScene } from '../components/scenes/SoundScenes'
+import { Arrow, Cta, Label, TextLink } from '../components/ui'
 import { capabilities } from '../content/capabilities'
 import { openExplore } from '../events'
 
@@ -126,29 +127,54 @@ function Details() {
   )
 }
 
-const EVENTS = [
+const EVENTS: { id: EventId; name: string; examples: string; line: string; body: string; needs: string[]; system: string[] }[] = [
   {
+    id: 'private',
     name: 'Private celebration',
-    needs: [
-      'Elegant integration with the venue',
-      'Controlled, even coverage',
-      'Speech that carries for toasts and announcements',
-    ],
+    examples: 'Weddings · sangeets · anniversaries · private parties',
     line: 'Sound that fills the room without taking it over.',
+    body: 'A private event needs a system that looks as considered as the décor. Compact loudspeakers placed for even coverage at every table, comfortable levels through dinner so people can talk, then a system that opens up when the dance floor fills.',
+    needs: [
+      'Elegant integration with the venue and décor',
+      'Even coverage at every table',
+      'Clear speech for toasts and announcements',
+      'A dance floor that can go up a gear later',
+    ],
+    system: ['d&b V10P tops on stands', 'B22 subwoofers', 'Yamaha DM3 mixer', 'BSS AR-133 DI boxes for playback'],
   },
   {
+    id: 'dj',
     name: 'DJ-led night',
-    needs: ['Substantial, controlled low end', 'A performance-ready booth', 'Headroom for the peak of the night'],
+    examples: 'Club nights · open-airs · festival stages · brand parties',
     line: 'A dance floor that keeps its weight and its detail at full intensity.',
+    body: 'We design for headroom and low-frequency control first: subwoofers arranged to keep the booth clean, tops aimed at the crowd rather than the walls, and a booth set up for the way DJs actually play.',
+    needs: [
+      'Substantial, controlled low end',
+      'A performance-ready booth with monitoring',
+      'Headroom for the peak of the night',
+      'Even energy from the front to the back',
+    ],
+    system: [
+      'd&b V10P tops',
+      'B22 subwoofers, cardioid when needed',
+      'D40 amplification',
+      'Pioneer DJ CDJ-3000X and DJM-V10-LF',
+      'RCF booth monitors',
+    ],
   },
   {
+    id: 'corporate',
     name: 'Corporate production',
+    examples: 'Conferences · launches · award nights · brand events',
+    line: 'Every word heard, at every seat, every time.',
+    body: 'Speech intelligibility leads. Loudspeakers placed so voices sound natural and seem to come from the stage, microphones and presentation playback integrated cleanly, and a mix that never fights the presenter.',
     needs: [
       'Speech intelligibility first',
       'Predictable coverage across the audience',
-      'Seamless microphones and presentation playback',
+      'Clean microphone and playback integration',
+      'Quiet, discreet operation',
     ],
-    line: 'Every word heard, at every seat, every time.',
+    system: ['d&b V10P tops', 'Yamaha DM3 digital mixer', 'BSS AR-133 DI boxes for laptops'],
   },
 ]
 
@@ -164,13 +190,36 @@ function Events() {
           </button>
         ))}
       </div>
-      <div className="events__panel" role="tabpanel" key={e.name}>
-        <p className="events__line">{e.line}</p>
-        <ul>
-          {e.needs.map((n) => (
-            <li key={n}>{n}</li>
-          ))}
-        </ul>
+      <div className="events__panel" role="tabpanel">
+        <div className="events__scene">
+          <EventScene id={e.id} />
+        </div>
+        <div className="events__text" key={e.id}>
+          <p className="events__examples">{e.examples}</p>
+          <p className="events__line">{e.line}</p>
+          <p className="events__body">{e.body}</p>
+          <div className="events__cols">
+            <div>
+              <h3 className="feature__h">What matters</h3>
+              <ul className="events__needs">
+                {e.needs.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="feature__h">A typical system</h3>
+              <ul className="events__system">
+                {e.system.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <Cta to="/contact" variant="quiet">
+            Plan your {e.name.toLowerCase()}
+          </Cta>
+        </div>
       </div>
     </div>
   )
@@ -216,18 +265,6 @@ export function SoundPage() {
           </p>
         </div>
       </section>
-
-      <div className="wrap sound-photo">
-        <MediaFrame
-          media={{
-            src: 'park-dusk',
-            width: 1600,
-            height: 1201,
-            alt: 'Open-air stage with d&b tops on stands and subwoofers at the front',
-          }}
-          sizes="100vw"
-        />
-      </div>
 
       <Feature
         n="01"

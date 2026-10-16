@@ -59,3 +59,84 @@ export function label(
   c.fillText(text.toUpperCase(), x, y)
   c.letterSpacing = '0px'
 }
+
+/* ─────────────── a small 3D camera for canvas scenes ─────────────── */
+
+export type V3 = readonly [number, number, number]
+export type Proj = (p: V3) => readonly [number, number, number]
+
+/** Perspective projection looking towards +z, turned by `yaw` and tilted down by `pitch`. */
+export function camera(o: { cx: number; cy: number; scale: number; yaw: number; pitch: number; persp?: number }): Proj {
+  const cyw = Math.cos(o.yaw)
+  const syw = Math.sin(o.yaw)
+  const cp = Math.cos(o.pitch)
+  const sp = Math.sin(o.pitch)
+  const D = o.persp ?? 60
+  return ([x, y, z]) => {
+    const x1 = x * cyw - z * syw
+    const z1 = x * syw + z * cyw
+    const y1 = y * cp + z1 * sp
+    const z2 = -y * sp + z1 * cp
+    const f = D / (D + z2)
+    return [o.cx + x1 * o.scale * f, o.cy - y1 * o.scale * f, z2] as const
+  }
+}
+
+/** Traces a 3D polyline into the current path. */
+export function trace(c: CanvasRenderingContext2D, proj: Proj, pts: readonly V3[], close = false) {
+  pts.forEach((p, i) => {
+    const [x, y] = proj(p)
+    if (i) c.lineTo(x, y)
+    else c.moveTo(x, y)
+  })
+  if (close) c.closePath()
+}
+
+/** A box's twelve edges, from one corner to the opposite. */
+export function box(c: CanvasRenderingContext2D, proj: Proj, [x0, y0, z0]: V3, [x1, y1, z1]: V3) {
+  const v: V3[] = [
+    [x0, y0, z0],
+    [x1, y0, z0],
+    [x1, y0, z1],
+    [x0, y0, z1],
+    [x0, y1, z0],
+    [x1, y1, z0],
+    [x1, y1, z1],
+    [x0, y1, z1],
+  ]
+  const e = [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+    [3, 0],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [7, 4],
+    [0, 4],
+    [1, 5],
+    [2, 6],
+    [3, 7],
+  ]
+  c.beginPath()
+  for (const [a, b] of e) {
+    const [ax, ay] = proj(v[a])
+    const [bx, by] = proj(v[b])
+    c.moveTo(ax, ay)
+    c.lineTo(bx, by)
+  }
+  c.stroke()
+}
+
+/** A circle lying flat at height y. */
+export function ring(c: CanvasRenderingContext2D, proj: Proj, x: number, y: number, z: number, r: number, n = 28) {
+  c.beginPath()
+  trace(
+    c,
+    proj,
+    Array.from(
+      { length: n + 1 },
+      (_, i) => [x + Math.cos((i / n) * Math.PI * 2) * r, y, z + Math.sin((i / n) * Math.PI * 2) * r] as V3,
+    ),
+  )
+}
