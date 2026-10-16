@@ -1,21 +1,19 @@
-import { CoverageDrawing } from '../components/CoverageDrawing'
 import { FaderReveal } from '../components/FaderReveal'
 import { PageHead } from '../components/PageHead'
 import { StageModelLauncher } from '../components/StageModel'
 import { Arrow, Label, MediaFrame, TextLink } from '../components/ui'
-import { capabilities, capabilityById, type Capability } from '../content/capabilities'
-import { gearById } from '../content/gear'
-import { GearCard } from '../components/Equipment'
+import { capabilities, capabilityById } from '../content/capabilities'
 import { Link } from '../components/Link'
 import { NotFound } from './NotFound'
+import { SoundPage } from './Sound'
 
 export function CapabilitiesIndex() {
   return (
     <>
       <PageHead label="Services" title="Sound, light and production, for hire.">
         Hire the equipment on its own, or with the crew to design, set up and run it, and for venues that want a system of their
-        own, consulting on permanent installations. Everything is planned together so the sound, the light and the stage
-        serve the same night.
+        own, consulting on permanent installations. Everything is planned together so the sound, the light and the stage serve the
+        same night.
       </PageHead>
       <section className="section section--tight">
         <ol className="wrap cap-index">
@@ -35,22 +33,10 @@ export function CapabilitiesIndex() {
   )
 }
 
-function Equipment({ c }: { c: Capability }) {
-  return (
-    <section className="cap-page__section">
-      <Label>Equipment for hire</Label>
-      <div className="gear-grid">
-        {c.gear.map((id) => (
-          <GearCard key={id} g={gearById[id]} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
 export function CapabilityPage({ id }: { id: string }) {
   const c = capabilityById(id)
   if (!c) return <NotFound />
+  if (c.id === 'sound') return <SoundPage />
   const i = capabilities.indexOf(c)
   const next = capabilities[(i + 1) % capabilities.length]
 
@@ -73,8 +59,8 @@ export function CapabilityPage({ id }: { id: string }) {
           <aside className="notice" role="note">
             <span className="label">Still in the works</span>
             <p>
-              We’re still working on our visual experiences. Projection mapping and generative visuals are in development,
-              and what you see here are studies, not finished client productions. We’ll show completed work as it happens.
+              We’re still working on our visual experiences. Projection mapping and generative visuals are in development, and
+              what you see here are studies, not finished client productions. We’ll show completed work as it happens.
             </p>
           </aside>
         )}
@@ -101,51 +87,12 @@ export function CapabilityPage({ id }: { id: string }) {
           </ol>
         </section>
 
-        {c.id === 'sound' && (
-          <section className="cap-page__section">
-            <Label>Coverage planning</Label>
-            <div className="coverage">
-              <figure className="tech-drawing">
-                <CoverageDrawing />
-                <figcaption>
-                  Plan view of a stereo pair of V10P tops with their nominal 110° horizontal dispersion, aimed to overlap at
-                  the audience centre line.
-                </figcaption>
-              </figure>
-              <div className="coverage__text">
-                <h2 className="h3">Drawn before anything is loaded.</h2>
-                <p>
-                  Every system starts as a plan of the room, to scale. We place the tops so their coverage overlaps on the
-                  centre line and reaches the back of the crowd, so the dancefloor sounds the same at the front, the middle
-                  and the bar.
-                </p>
-                <ul className="coverage__points">
-                  <li>
-                    <strong>Even coverage.</strong> Tops angled in so their patterns meet over the audience, not the
-                    stage.
-                  </li>
-                  <li>
-                    <strong>Control.</strong> The stage, the booth and hard walls kept out of the pattern, so there’s less
-                    feedback and less echo.
-                  </li>
-                  <li>
-                    <strong>Low end where it belongs.</strong> Subwoofers set as an array, cardioid when needed, to keep
-                    bass off the stage and away from the neighbours.
-                  </li>
-                  <li>
-                    <strong>Tuned in the room.</strong> Time-aligned and checked on site, then listened to again with the
-                    crowd in.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </section>
-        )}
-
         {c.id === 'light' && (
           <section className="cap-page__section">
             <Label>Two states of the same room</Label>
-            <p className="muted cap-page__note">The same position, photographed with the effects at rest and with the full rig running.</p>
+            <p className="muted cap-page__note">
+              The same position, photographed with the effects at rest and with the full rig running.
+            </p>
             <FaderReveal />
           </section>
         )}
@@ -167,8 +114,6 @@ export function CapabilityPage({ id }: { id: string }) {
             <StageModelLauncher />
           </section>
         )}
-
-        <Equipment c={c} />
       </div>
 
       <nav className="wrap case__next" aria-label="Next service">
