@@ -148,7 +148,6 @@ export function DeckPage() {
               <h2 className="sheet__h">Contact</h2>
               <p>
                 <Link to="/contact">Start a project</Link>
-                {site.contact.email && <> · {site.contact.email}</>}
               </p>
             </div>
           </div>

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { loadModel } from '../assistant/model'
 import { answer, GREETING, type Action, type Reply } from '../content/chat'
 import { fullName } from '../content/gear'
-import { site } from '../content/site'
+import { waLink } from '../content/site'
 import { openExplore } from '../events'
 import { navigate } from '../router'
 import { gearImg } from './gearImg'
@@ -12,7 +12,6 @@ type Message = { from: 'bot'; reply: Reply } | { from: 'you'; text: string }
 
 const STORE = 'va-chat'
 
-const waLink = (text: string) => `https://wa.me/${site.contact.whatsapp}?text=${encodeURIComponent(text)}`
 
 function load(): Message[] {
   try {

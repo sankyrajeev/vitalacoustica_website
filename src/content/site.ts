@@ -44,13 +44,15 @@ export const site = {
 
   /*
    * Contact details. Anything left empty is simply not shown.
-   * Contact details used across the site (footer, contact page, legal pages, assistant).
+   * The email and phone number appear only on the Legal and Privacy pages; everywhere else
+   * people reach us through WhatsApp, the enquiry form and social media.
    */
   contact: {
     email: 'lakshmiranganatha@thevitalvines.com' as string,
     phone: '+91 89048 58422' as string,
     whatsapp: '918904858422' as string, // digits only with country code
     instagram: 'vitalacoustica' as string, // handle without @
+    x: 'vitalacoustica' as string, // DUMMY: confirm the X handle (without @)
     location: '' as string, // e.g. 'Bangalore, India' — only once approved for publication
   },
 
@@ -60,7 +62,7 @@ export const site = {
    *  - FormSubmit: endpoint 'https://formsubmit.co/ajax/<your-email>' (confirm the first email it sends you)
    *  - Web3Forms:  endpoint 'https://api.web3forms.com/submit' plus accessKey
    * Can also be set at build time with VITE_ENQUIRY_ENDPOINT / VITE_ENQUIRY_KEY.
-   * Until one is set, the form opens the visitor's email app addressed to contact.email.
+   * Until one is set, the form hands the enquiry to WhatsApp, written out and ready to send.
    */
   enquiry: {
     endpoint: (import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined) ?? '',
@@ -73,3 +75,7 @@ export const published = {
   work: false, // case studies and show photos, until the new ones are posted
   testimonials: false, // until the collected testimonials are ready to publish
 }
+
+/** A WhatsApp chat with us, with a message already typed. */
+export const waLink = (text = '') =>
+  `https://wa.me/${site.contact.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`

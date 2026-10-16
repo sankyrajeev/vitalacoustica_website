@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 import { PageHead } from '../components/PageHead'
 import { Arrow, Label } from '../components/ui'
 import { positions } from '../content/careers'
-import { site } from '../content/site'
+import { site, waLink } from '../content/site'
 
 // The crew are channels on a desk; when every channel is taken, the page says so.
 const CHANNELS = ['Sound', 'Light', 'Rigging', 'Power', 'Stage', 'Crew', 'Desk', 'Load-out']
@@ -17,8 +17,8 @@ const TRAITS = [
 
 export function CareersPage() {
   const open = positions.length
-  const email = site.contact.email
-  const mail = email ? `mailto:${email}?subject=${encodeURIComponent('Soundcheck: I’d like to join the crew')}` : undefined
+  // applications come in on WhatsApp, so no address is published here
+  const mail = site.contact.whatsapp ? waLink('Soundcheck: I’d like to join the crew. ') : undefined
 
   return (
     <>
@@ -42,7 +42,7 @@ export function CareersPage() {
                     {p.type} · {p.location}
                   </p>
                   {mail && (
-                    <a className="text-link" href={`mailto:${email}?subject=${encodeURIComponent(`Application: ${p.title}`)}`}>
+                    <a className="text-link" href={waLink(`Application: ${p.title}. `)} target="_blank" rel="noreferrer">
                       Apply <Arrow />
                     </a>
                   )}
@@ -91,15 +91,13 @@ export function CareersPage() {
                 : 'Send us a few lines and a link to your work. We read every one, keep the good ones on file, and call first when a channel opens.'}
             </p>
             {mail ? (
-              <a className="cta cta--primary" href={mail}>
+              <a className="cta cta--primary" href={mail} target="_blank" rel="noreferrer">
                 <span>Say hello anyway</span>
                 <Arrow />
               </a>
             ) : null}
-            {email && (
-              <p className="fineprint">
-                Or write to {email} with “Soundcheck” in the subject. Bonus points for good taste in techno.
-              </p>
+            {mail && (
+              <p className="fineprint">Start your message with “Soundcheck”. Bonus points for good taste in techno.</p>
             )}
           </div>
         </div>

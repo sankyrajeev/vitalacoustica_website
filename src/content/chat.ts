@@ -268,7 +268,7 @@ const HANDLERS: Record<string, Handler> = {
   }),
 
   contact: () => ({
-    text: `You can reach us on WhatsApp or phone at ${site.contact.phone}, by email at ${site.contact.email}, or on Instagram at @${site.contact.instagram}.`,
+    text: `The quickest way is WhatsApp, or send an enquiry through the site and we’ll reply. We’re on Instagram at @${site.contact.instagram} too.`,
     actions: [wa('Hi Vital Acoustica, '), quote],
   }),
 

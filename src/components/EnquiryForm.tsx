@@ -1,16 +1,16 @@
 import { useState, type FormEvent } from 'react'
-import { site } from '../content/site'
+import { site, waLink } from '../content/site'
 
 // Hire enquiry. Posts JSON to the endpoint configured in site.enquiry
 // (Formspree, FormSubmit or Web3Forms all accept this shape). With no endpoint set,
-// it falls back to the visitor's email app, addressed to site.contact.email.
+// it hands the enquiry to WhatsApp, written out and ready to send.
 
 const EVENT_TYPES = ['Concert or club night', 'Festival or open air', 'Corporate or brand event', 'Private event', 'Permanent installation', 'Other']
 const SERVICES = ['Sound system', 'Lighting', 'LED & visuals', 'Full production', 'Installation consulting']
 const AUDIENCE = ['Under 100', '100–300', '300–600', '600–1,000', 'Over 1,000']
 const BUDGET = ['Prefer not to say', 'To be discussed', 'Under ₹2 lakh', '₹2–5 lakh', '₹5–10 lakh', 'Over ₹10 lakh']
 
-type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaEmail?: boolean }
+type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaWhatsApp?: string }
 
 function enquiryConfigured() {
   return Boolean(site.enquiry.endpoint)
@@ -45,11 +45,11 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
     delete data._gotcha
 
     if (!enquiryConfigured()) {
-      if (!site.contact.email) {
-        setStatus({ state: 'error', message: 'Enquiries can’t be sent from the site right now. Please contact us directly.' })
+      if (!site.contact.whatsapp) {
+        setStatus({ state: 'error', message: 'Enquiries can’t be sent from the site right now. Please message us on Instagram.' })
         return
       }
-      // no form service yet: hand the enquiry to the visitor's email app
+      // no form service yet: hand the enquiry to WhatsApp
       const lines = [
         ['Event', data.eventType],
         ['Date', data.date],
@@ -64,10 +64,10 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
       ]
         .filter(([, v]) => v)
         .map(([k, v]) => `${k}: ${v}`)
-      const body = `${lines.join('\n')}\n\n${data.description}`
-      const subject = `Hire enquiry: ${data.eventType || 'New event'} — ${data.name}`
-      window.location.href = `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-      setStatus({ state: 'sent', viaEmail: true })
+      const text = `Hire enquiry\n\n${lines.join('\n')}\n\n${data.description}`
+      const link = waLink(text)
+      window.open(link, '_blank', 'noopener')
+      setStatus({ state: 'sent', viaWhatsApp: link })
       return
     }
 
@@ -95,14 +95,14 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
   }
 
   if (status.state === 'sent') {
-    return status.viaEmail ? (
+    return status.viaWhatsApp ? (
       <div className="form-done" role="status">
         <p className="label">Almost there</p>
-        <h3>Your email app should now be open.</h3>
+        <h3>WhatsApp should now be open.</h3>
         <p className="muted">
-          The enquiry is written and addressed to us: just press send. If nothing opened, write to{' '}
-          <a className="underline" href={`mailto:${site.contact.email}`}>
-            {site.contact.email}
+          Your enquiry is written out in a chat with us: just press send. If nothing opened,{' '}
+          <a className="underline" href={status.viaWhatsApp} target="_blank" rel="noreferrer">
+            open WhatsApp
           </a>
           .
         </p>

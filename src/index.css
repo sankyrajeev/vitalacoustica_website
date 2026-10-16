@@ -8048,3 +8048,24 @@ img.cover {
   object-fit: cover;
   background: #d4d4d4;
 }
+
+/* the footer's WhatsApp button */
+.footer__cols a.footer__wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--s3);
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #0b1f12;
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: none;
+  transition: filter var(--t-fast) var(--ease);
+}
+
+.footer__cols a.footer__wa:hover {
+  color: #0b1f12;
+  filter: brightness(1.08);
+}

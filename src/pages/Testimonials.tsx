@@ -3,7 +3,7 @@ import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { TestimonialSlider } from '../components/TestimonialSlider'
 import { Cta, Label } from '../components/ui'
-import { published, site } from '../content/site'
+import { published, site, waLink } from '../content/site'
 import { testimonials } from '../content/testimonials'
 
 export function TestimonialsPage() {
@@ -51,9 +51,9 @@ export function TestimonialsPage() {
   )
 }
 
-type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaEmail?: boolean }
+type Status = { state: 'idle' | 'sending' | 'sent' | 'error'; message?: string; viaWhatsApp?: boolean }
 
-/** Sends a testimonial to the same destination as enquiries (form service, or the visitor's email app). */
+/** Sends a testimonial to the same destination as enquiries (form service, or WhatsApp). */
 function TestimonialForm() {
   const [status, setStatus] = useState<Status>({ state: 'idle' })
 
@@ -68,7 +68,7 @@ function TestimonialForm() {
     const subject = `Testimonial from ${data.name}`
 
     if (!site.enquiry.endpoint) {
-      if (!site.contact.email) return setStatus({ state: 'error', message: 'This can’t be sent from the site right now.' })
+      if (!site.contact.whatsapp) return setStatus({ state: 'error', message: 'This can’t be sent from the site right now.' })
       const body = [
         `Name: ${data.name}`,
         data.context && `Event / organisation: ${data.context}`,
@@ -79,8 +79,8 @@ function TestimonialForm() {
       ]
         .filter((l) => l !== undefined && l !== '')
         .join('\n')
-      window.location.href = `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-      return setStatus({ state: 'sent', viaEmail: true })
+      window.open(waLink(`${subject}\n\n${body}`), '_blank', 'noopener')
+      return setStatus({ state: 'sent', viaWhatsApp: true })
     }
 
     setStatus({ state: 'sending' })
@@ -109,10 +109,10 @@ function TestimonialForm() {
   if (status.state === 'sent') {
     return (
       <div className="form-done" role="status">
-        <p className="label">{status.viaEmail ? 'Almost there' : 'Received'}</p>
-        <h3>{status.viaEmail ? 'Your email app should now be open.' : 'Thank you.'}</h3>
+        <p className="label">{status.viaWhatsApp ? 'Almost there' : 'Received'}</p>
+        <h3>{status.viaWhatsApp ? 'WhatsApp should now be open.' : 'Thank you.'}</h3>
         <p className="muted">
-          {status.viaEmail ? 'Your words are written and addressed to us: just press send.' : 'We read every one.'}
+          {status.viaWhatsApp ? 'Your words are written out in a chat with us: just press send.' : 'We read every one.'}
         </p>
       </div>
     )
