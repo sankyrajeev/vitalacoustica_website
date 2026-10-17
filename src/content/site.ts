@@ -57,8 +57,8 @@ export const site = {
   },
 
   /*
-   * Where the enquiry and testimonial forms send submissions: our own Cloudflare function,
-   * which emails the team and the person who wrote (functions/api/enquiry.ts, setup in
+   * Where the enquiry and testimonial forms send submissions: our own Cloudflare Worker,
+   * which emails the team and the person who wrote (server/enquiry.ts, setup in
    * docs/cloudflare-setup.md). Override with VITE_ENQUIRY_ENDPOINT (plus VITE_ENQUIRY_KEY for
    * Web3Forms) to use a form service instead. If sending fails, the forms offer WhatsApp.
    */

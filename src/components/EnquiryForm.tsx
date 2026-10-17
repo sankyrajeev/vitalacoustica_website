@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { site, waLink } from '../content/site'
 
 // Hire enquiry. Posts JSON to the endpoint in site.enquiry: our own /api/enquiry function, which
-// emails the team and the client (functions/api/enquiry.ts). If that can't send it (not set up
+// emails the team and the client (server/enquiry.ts). If that can't send it (not set up
 // yet, or offline), the enquiry is written out for WhatsApp instead.
 
 const EVENT_TYPES = ['Concert or club night', 'Festival or open air', 'Corporate or brand event', 'Private event', 'Permanent installation', 'Other']

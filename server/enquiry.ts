@@ -1,9 +1,10 @@
-// POST /api/enquiry — the enquiry and testimonial forms send here (a Cloudflare Pages Function).
+// POST /api/enquiry — the enquiry and testimonial forms send here (routed by worker/index.ts).
 // It checks the submission, emails our team (to, cc, with replies going to the person who wrote)
 // and sends them a thank-you, through Resend. The addresses live here and in the environment,
 // never in the website itself.
 //
-// Environment variables (Cloudflare → the Pages project → Settings → Variables and Secrets):
+// Environment variables (Cloudflare → Workers & Pages → vitalacoustica-website → Settings →
+// Variables and Secrets):
 //   RESEND_API_KEY  required, a secret: the key from resend.com
 //   ENQUIRY_FROM    required: the sender, on a domain verified in Resend,
 //                   e.g. "Vital Acoustica <hello@vitalacoustica.com>"
@@ -20,9 +21,9 @@ import {
   type Enquiry,
   type Mail,
   type Testimonial,
-} from '../../server/emails.ts'
+} from './emails.ts'
 
-type Env = {
+export type EnquiryEnv = {
   RESEND_API_KEY?: string
   ENQUIRY_FROM?: string
   ENQUIRY_TO?: string
@@ -50,7 +51,7 @@ function clean(raw: Record<string, unknown>) {
   return out
 }
 
-async function send(env: Env, mail: Mail, to: string[], extra: { cc?: string[]; replyTo?: string } = {}) {
+async function send(env: EnquiryEnv, mail: Mail, to: string[], extra: { cc?: string[]; replyTo?: string } = {}) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -67,7 +68,7 @@ async function send(env: Env, mail: Mail, to: string[], extra: { cc?: string[]; 
   if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`)
 }
 
-export async function onRequestPost({ request, env }: { request: Request; env: Env }) {
+export async function handleEnquiry(request: Request, env: EnquiryEnv) {
   if (!env.RESEND_API_KEY || !env.ENQUIRY_FROM) return json({ ok: false, error: 'not-configured' }, 503)
 
   // only from our own pages

@@ -1,9 +1,10 @@
 # Hosting on Cloudflare, and enquiry emails through Resend
 
-Everything here is on free plans. The site is hosted on Cloudflare Pages, and the enquiry and
-testimonial forms send their emails through Resend. The code is already in place:
+Everything here is on free plans. The site runs as a Cloudflare Worker (`vitalacoustica-website`),
+and the enquiry and testimonial forms send their emails through Resend. The code is in place:
 
-- `functions/api/enquiry.ts` receives each form submission and sends the emails.
+- `wrangler.jsonc` tells Cloudflare to serve the built site (`dist/`) and run `worker/index.ts`.
+- `worker/index.ts` sends `/api/enquiry` to `server/enquiry.ts`, which checks each submission and sends the emails.
 - `server/emails.ts` holds the designs of the four emails (team and client, for enquiries and testimonials).
 - Until the steps below are done, the forms still work: they offer to send the message on WhatsApp.
 
@@ -16,19 +17,14 @@ Resend sends from a domain you own. Either:
 - **Or use thevitalvines.com**, which costs nothing if you can change its DNS settings. Emails then
   come from an address such as `hello@thevitalvines.com`.
 
-## 2. Put the site on Cloudflare Pages
+## 2. The site on Cloudflare
 
-1. Sign up at [dash.cloudflare.com](https://dash.cloudflare.com) (free).
-2. Go to **Workers & Pages → Create → Pages → Connect to Git** and pick
-   `sankyrajeev/vitalacoustica_website`.
-3. Build settings:
-   - Framework preset: **None**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Environment variable: `NODE_VERSION` = `22`
-4. Deploy. The site appears at an address like `vitalacoustica.pages.dev`.
-5. Once you have the domain: **the project → Custom domains → Set up a domain** and add
-   `vitalacoustica.com`.
+The `vitalacoustica-website` Worker deploys from GitHub: Cloudflare runs `npm run build`, then
+`npx wrangler deploy`, which reads `wrangler.jsonc`. Without that file Cloudflare treats the site as
+static files only, and the Variables and Secrets section stays locked ("cannot be added to a Worker
+that only has static assets").
+
+To add your own domain: **the Worker → Settings → Domains & Routes → Add → Custom domain**.
 
 ## 3. Set up Resend
 
@@ -41,7 +37,7 @@ Resend sends from a domain you own. Either:
 
 ## 4. Connect them
 
-In Cloudflare: **the Pages project → Settings → Variables and Secrets** (Production), add:
+In Cloudflare: **Workers & Pages → vitalacoustica-website → Settings → Variables and Secrets → Add**:
 
 | Name | Value | |
 |---|---|---|
@@ -49,9 +45,9 @@ In Cloudflare: **the Pages project → Settings → Variables and Secrets** (Pro
 | `ENQUIRY_FROM` | `Vital Acoustica <hello@vitalacoustica.com>` | the address must be on the verified domain |
 | `ENQUIRY_TO` | `lakshmiranganatha@thevitalvines.com` | optional: this is already the default |
 | `ENQUIRY_CC` | `sankarsh@thevitalvines.com` | optional: already the default; comma-separate several |
-| `SITE_URL` | `https://vitalacoustica.com` | optional: for links and the logo in emails; use the pages.dev address until the domain is live |
+| `SITE_URL` | `https://vitalacoustica.com` | optional: for links and the logo in emails; use the workers.dev address until the domain is live |
 
-Then **Deployments → Retry deployment** on the latest one, so the function picks them up.
+Variables and secrets apply as soon as you save them; `keep_vars` in `wrangler.jsonc` makes sure later deploys keep them.
 
 ## 5. Test
 
@@ -61,7 +57,7 @@ Send an enquiry from the Contact page with your own email address. You should ge
 - **"We've got your enquiry, …"** at the address you entered. Replying goes to the team.
 
 If nothing arrives, check spam first, then **Resend → Emails** (it shows every send and any error)
-and **Cloudflare → the project → Functions → Logs**.
+and **Cloudflare → the Worker → Observability → Logs**.
 
 ## Changing the emails
 
