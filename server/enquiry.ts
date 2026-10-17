@@ -7,7 +7,7 @@
 // Variables and Secrets):
 //   RESEND_API_KEY  required, a secret: the key from resend.com
 //   ENQUIRY_FROM    required: the sender, on a domain verified in Resend,
-//                   e.g. "Vital Acoustica <hello@vitalacoustica.com>"
+//                   e.g. "Vital Acoustica <no-reply@vitalacoustica.com>"
 //   ENQUIRY_TO      optional: who receives enquiries (default below)
 //   ENQUIRY_CC      optional: copied on every enquiry, comma-separated (default below)
 //   SITE_URL        optional: the site's address, for links and the logo in emails

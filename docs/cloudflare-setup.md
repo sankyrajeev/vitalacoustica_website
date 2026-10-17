@@ -42,7 +42,7 @@ In Cloudflare: **Workers & Pages → vitalacoustica-website → Settings → Var
 | Name | Value | |
 |---|---|---|
 | `RESEND_API_KEY` | the key from Resend | type **Secret** |
-| `ENQUIRY_FROM` | `Vital Acoustica <hello@vitalacoustica.com>` | the address must be on the verified domain |
+| `ENQUIRY_FROM` | `Vital Acoustica <no-reply@vitalacoustica.com>` | the address must be on the verified domain |
 | `ENQUIRY_TO` | `lakshmiranganatha@thevitalvines.com` | optional: this is already the default |
 | `ENQUIRY_CC` | `sankarsh@thevitalvines.com` | optional: already the default; comma-separate several |
 | `SITE_URL` | `https://vitalacoustica.com` | optional: for links and the logo in emails; use the workers.dev address until the domain is live |

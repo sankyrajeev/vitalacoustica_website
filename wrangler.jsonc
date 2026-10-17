@@ -14,7 +14,7 @@
   },
   // the enquiry emails' sender and the site's address; the Resend key is a secret, set in the dashboard
   "vars": {
-    "ENQUIRY_FROM": "Vital Acoustica <hello@vitalacoustica.com>",
+    "ENQUIRY_FROM": "Vital Acoustica <no-reply@vitalacoustica.com>",
     "SITE_URL": "https://vitalacoustica.com"
   },
   // keep anything else set in the dashboard (e.g. ENQUIRY_TO, ENQUIRY_CC) when deploying

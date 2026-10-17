@@ -234,7 +234,7 @@ ${button(`${b.site}/equipment`, 'Explore our rig', false)}`
       b,
       'Your enquiry is with our team. Here’s what you sent us.',
       body,
-      'You’re receiving this because you sent an enquiry on vitalacoustica.com. To add anything, just reply to this email.',
+      'You’re receiving this because you sent an enquiry on vitalacoustica.com. To add anything, reply to this email and it goes straight to our team.',
       true,
     ),
     text: plain([
@@ -247,7 +247,7 @@ ${button(`${b.site}/equipment`, 'Explore our rig', false)}`
         .map(([k, v]) => `${k}: ${v}`),
       e.description?.trim() && `\nYour message:\n${e.description.trim()}`,
       '',
-      'To add anything, just reply to this email.',
+      'To add anything, reply to this email and it goes straight to our team.',
       '',
       'Vital Acoustica · Sound. Light. Space. Connected.',
       b.site,
