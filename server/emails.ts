@@ -58,8 +58,9 @@ const wa = (digits: string, text: string) => `https://wa.me/${digits}?text=${enc
  */
 const LOCK = (hex: string) => `background-image:linear-gradient(${hex},${hex});`
 
-
-function shell(b: Brand, preheader: string, body: string, footnote: string) {
+function shell(b: Brand, preheader: string, body: string, footnote: string, privacy = false) {
+  // a reference unique to this email, so Gmail never folds its ending away as a repeat of an earlier one
+  const ref = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -81,6 +82,12 @@ body, .page { background-color: ${C.page} !important; }
 <tr><td style="padding:8px 4px 28px;">
 <a href="${b.site}" style="text-decoration:none;"><img src="${b.site}/brand/logo-full-white.png" width="180" alt="VITAL ACOUSTICA" style="display:block;width:180px;max-width:60%;height:auto;border:0;color:${C.ink};font:600 18px ${SANS};letter-spacing:3px;"></a>
 </td></tr>
+<tr><td style="padding:0 0 10px;">
+<a href="${b.site}/equipment" style="text-decoration:none;"><img src="${b.site}/media/email-stage.jpg" width="600" alt="Our stage as a 3D model: beam lights on the truss, the lighting wings and the DJ booth" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:10px;color:${C.muted};font:13px ${SANS};"></a>
+</td></tr>
+<tr><td style="padding:0 4px 22px;font:600 10px ${SANS};letter-spacing:2px;text-transform:uppercase;color:${C.muted};">
+Our rig, modelled in 3D &nbsp;·&nbsp; <a href="${b.site}/equipment" style="color:${C.brass};text-decoration:none;">Explore it &rarr;</a>
+</td></tr>
 <tr><td bgcolor="${C.card}" style="background-color:${C.card};${LOCK(C.card)}border:1px solid ${C.line};border-radius:10px;padding:36px 32px;">
 ${body}
 </td></tr>
@@ -93,6 +100,12 @@ ${b.instagram ? ` &nbsp;·&nbsp; <a href="https://instagram.com/${b.instagram}" 
 ${b.x ? ` &nbsp;·&nbsp; <a href="https://x.com/${b.x}" style="color:${C.soft};text-decoration:none;">X</a>` : ''}
 </td></tr>
 <tr><td style="padding:0 4px;font:12px/1.6 ${SANS};color:${C.muted};">${footnote}</td></tr>
+${
+  privacy
+    ? `<tr><td style="padding:10px 4px 0;font:12px/1.6 ${SANS};color:${C.muted};">We use your details only to reply to you and plan your event, and never share them. <a href="${b.site}/privacy" style="color:${C.soft};text-decoration:underline;">Privacy notice</a></td></tr>`
+    : ''
+}
+<tr><td style="padding:14px 4px 0;font:11px/1.6 ${SANS};color:${C.muted};">&copy; ${new Date().getFullYear()} Vital Acoustica<span style="display:none;font-size:0;line-height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;">${ref}</span></td></tr>
 </table>
 </td></tr>
 </table>
@@ -102,8 +115,7 @@ ${b.x ? ` &nbsp;·&nbsp; <a href="https://x.com/${b.x}" style="color:${C.soft};t
 
 const label = (s: string) =>
   `<p style="margin:0 0 14px;font:600 11px ${SANS};letter-spacing:2.5px;text-transform:uppercase;color:${C.brass};">${esc(s)}</p>`
-const headline = (s: string) =>
-  `<h1 style="margin:0 0 16px;font:400 34px/1.1 ${SERIF};color:${C.ink};">${s}</h1>`
+const headline = (s: string) => `<h1 style="margin:0 0 16px;font:400 34px/1.1 ${SERIF};color:${C.ink};">${s}</h1>`
 const text = (s: string) => `<p style="margin:0 0 16px;font:15px/1.65 ${SANS};color:${C.soft};">${s}</p>`
 
 /** A two-column table of the details that were filled in. */
@@ -167,13 +179,20 @@ ${waDigits.length >= 10 ? button(wa(waDigits, `Hi ${first(e.name)}, this is Vita
 </div>`
   return {
     subject,
-    html: shell(b, `${who}${e.date ? ` · ${e.date}` : ''}`, body, `Sent from the enquiry form on vitalacoustica.com, ${esc(when)}. Replying to this email goes straight to ${esc(first(e.name))}.`),
+    html: shell(
+      b,
+      `${who}${e.date ? ` · ${e.date}` : ''}`,
+      body,
+      `Sent from the enquiry form on vitalacoustica.com, ${esc(when)}. Replying to this email goes straight to ${esc(first(e.name))}.`,
+    ),
     text: plain([
       'New enquiry',
       '',
       `Name: ${e.name}`,
       e.organisation && `Organisation: ${e.organisation}`,
-      ...enquiryFacts(e).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`),
+      ...enquiryFacts(e)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${k}: ${v}`),
       '',
       e.description?.trim() && `Message:\n${e.description.trim()}\n`,
       `Email: ${e.email}`,
@@ -216,13 +235,16 @@ ${button(`${b.site}/equipment`, 'Explore our rig', false)}`
       'Your enquiry is with our team. Here’s what you sent us.',
       body,
       'You’re receiving this because you sent an enquiry on vitalacoustica.com. To add anything, just reply to this email.',
+      true,
     ),
     text: plain([
       `Thank you, ${first(e.name)}.`,
       '',
       'Your enquiry is with our team. We read every one personally, and we’ll be in touch soon.',
       '',
-      ...enquiryFacts(e).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`),
+      ...enquiryFacts(e)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${k}: ${v}`),
       e.description?.trim() && `\nYour message:\n${e.description.trim()}`,
       '',
       'To add anything, just reply to this email.',
@@ -276,7 +298,13 @@ ${text(
 ${button(b.site, 'Visit the site', false)}`
   return {
     subject: `Thank you, ${first(t.name)}`,
-    html: shell(b, 'Your words mean a lot to the whole crew.', body, 'You’re receiving this because you sent us a testimonial on vitalacoustica.com.'),
+    html: shell(
+      b,
+      'Your words mean a lot to the whole crew.',
+      body,
+      'You’re receiving this because you sent us a testimonial on vitalacoustica.com.',
+      true,
+    ),
     text: plain([`Thank you, ${first(t.name)}.`, '', 'Your words mean a lot to the whole crew.', '', t.quote.trim(), '', b.site]),
   }
 }
