@@ -126,7 +126,7 @@ export function EquipmentDetail({ id }: { id: string }) {
           <p className="lede">{g.description}</p>
 
           <dl className="spec-table">
-            {[...g.specs, ['In stock', g.stock]].map(([k, v]) => (
+            {g.specs.map(([k, v]) => (
               <div key={k}>
                 <dt>{k}</dt>
                 <dd>{v}</dd>

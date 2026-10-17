@@ -141,7 +141,7 @@ function gearReply(items: Gear[]): Reply {
   if (items.length === 1) {
     const g = items[0]
     return {
-      text: `${fullName(g)}: ${g.about} We have ${g.stock}.`,
+      text: `${fullName(g)}: ${g.about}`,
       gear: [g],
       actions: [
         { kind: 'link', label: 'Full details', to: `/equipment/${g.id}` },

@@ -994,12 +994,6 @@ select {
   color: var(--text-soft);
 }
 
-.gear-card__stock {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--accent-text);
-}
 
 /* the actions sit on the card's bottom edge, so they line up across a row */
 .gear-card__actions {

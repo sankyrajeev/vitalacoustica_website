@@ -8,7 +8,7 @@
 // Specs marked as manufacturer data come from the maker's published sheets.
 //
 // DUMMY: every value marked `// DUMMY` below is a stand-in until the photo shoot and
-// stock check (models, quantities, truss size). Search the codebase for "DUMMY" to find them all.
+// stock check (models, truss size). Search the codebase for "DUMMY" to find them all.
 
 /** Items modelled in the 3D stage (positions in src/three/hotspots.ts). */
 export type RigId =
@@ -50,8 +50,6 @@ export type Gear = {
   description: string
   specs: [string, string][]
   specSource?: string
-  /** how many we hold, shown on cards and item pages */
-  stock: string
   photo: {
     file: string
     width: number
@@ -69,7 +67,6 @@ export type Gear = {
 export const gear: Gear[] = [
   {
     id: 'v10p',
-    stock: '4 units', // DUMMY
     group: 'Sound',
     name: 'V10P',
     maker: 'd&b audiotechnik',
@@ -91,7 +88,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'b22',
-    stock: '4 units', // DUMMY
     group: 'Sound',
     name: 'B22-SUB',
     maker: 'd&b audiotechnik',
@@ -111,7 +107,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'art915',
-    stock: '2 units',
     group: 'Sound',
     name: 'ART 915-A',
     maker: 'RCF',
@@ -134,7 +129,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'd40',
-    stock: '2 units', // DUMMY
     group: 'Sound',
     name: 'D40',
     maker: 'd&b audiotechnik',
@@ -157,7 +151,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'dm3',
-    stock: '2 units', // DUMMY
     group: 'Audio Infrastructure',
     name: 'DM3',
     maker: 'Yamaha',
@@ -180,7 +173,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'cdj',
-    stock: '2 units', // DUMMY
     group: 'Audio Infrastructure',
     name: 'CDJ-3000X',
     maker: 'Pioneer DJ',
@@ -203,7 +195,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'djm',
-    stock: '1 unit', // DUMMY
     group: 'Audio Infrastructure',
     name: 'DJM-V10-LF',
     maker: 'Pioneer DJ',
@@ -226,7 +217,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'di',
-    stock: '8 units', // DUMMY
     group: 'Audio Infrastructure',
     name: 'AR-133 DI box',
     maker: 'BSS Audio',
@@ -249,7 +239,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'sharpy',
-    stock: '8 units', // DUMMY
     group: 'Stage Lighting',
     name: 'Beam moving heads',
     role: '',
@@ -268,7 +257,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'trefoil',
-    stock: '4 units', // DUMMY
     group: 'Stage Lighting',
     name: 'Retro 3\u2011blade fan light', // non-breaking hyphen keeps "3-blade" together
     role: '',
@@ -286,7 +274,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'hex',
-    stock: '4 units', // DUMMY
     group: 'Stage Lighting',
     name: 'Retro hex light',
     role: 'Retro effect',
@@ -304,7 +291,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'warcraft',
-    stock: '4 units', // DUMMY
     group: 'Stage Lighting',
     name: 'Warcraft retro light',
     role: 'Retro effect',
@@ -322,7 +308,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'cob',
-    stock: '4 units', // DUMMY
     group: 'Stage Lighting',
     name: 'COB light',
     role: 'Seven-head cluster',
@@ -347,7 +332,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'matrix',
-    stock: '4 panels', // DUMMY
     group: 'Stage Lighting',
     name: 'LED matrix panel',
     role: "2' × 2' panel",
@@ -365,7 +349,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'pixelbar',
-    stock: '8 bars', // DUMMY
     group: 'Stage Lighting',
     name: 'LED pixel bar',
     role: 'Pixel bar',
@@ -383,7 +366,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'dotbar',
-    stock: '8 bars', // DUMMY
     group: 'Stage Lighting',
     name: 'Matrix bar',
     role: 'Cold & warm white',
@@ -408,7 +390,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'rope',
-    stock: '50 m', // DUMMY
     group: 'Stage Lighting',
     name: 'LED neon flex',
     role: 'Outlines',
@@ -425,7 +406,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'hazer',
-    stock: '2 units', // DUMMY
     group: 'SFX',
     name: 'Haze machine',
     role: 'Fine haze',
@@ -449,7 +429,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'smoke',
-    stock: '2 units', // DUMMY
     group: 'SFX',
     name: 'Smoke machine',
     role: 'Bursts on cue',
@@ -473,7 +452,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'truss',
-    stock: '2 goal posts, 4 towers', // DUMMY
     group: 'Structure',
     name: 'Box truss',
     role: 'Rigging',
@@ -491,7 +469,6 @@ export const gear: Gear[] = [
   },
   {
     id: 'table',
-    stock: '4 units', // DUMMY
     group: 'Structure',
     name: 'Quickie table',
     role: 'Folding table',
