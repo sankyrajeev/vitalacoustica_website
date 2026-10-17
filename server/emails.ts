@@ -50,25 +50,38 @@ const wa = (digits: string, text: string) => `https://wa.me/${digits}?text=${enc
 
 /* ─────────────── building blocks ─────────────── */
 
+/**
+ * The design is dark in every mode. Some apps (Gmail and Outlook in dark mode) recolour emails by
+ * inverting their background colours, which turns a dark email light; a background image, even a
+ * flat one, is left alone. So each dark surface carries its colour three ways: the bgcolor
+ * attribute, background-color, and a one-colour gradient image.
+ */
+const LOCK = (hex: string) => `background-image:linear-gradient(${hex},${hex});`
+
+
 function shell(b: Brand, preheader: string, body: string, footnote: string) {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta name="supported-color-schemes" content="dark">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 <title>Vital Acoustica</title>
+<style>
+:root { color-scheme: light dark; supported-color-schemes: light dark; }
+body, .page { background-color: ${C.page} !important; }
+</style>
 </head>
-<body style="margin:0;padding:0;background:${C.page};">
+<body class="body" bgcolor="${C.page}" style="margin:0;padding:0;background-color:${C.page};${LOCK(C.page)}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.page};">
-<tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" class="page" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.page}" style="background-color:${C.page};${LOCK(C.page)}">
+<tr><td align="center" bgcolor="${C.page}" style="padding:32px 16px;background-color:${C.page};${LOCK(C.page)}">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
 <tr><td style="padding:8px 4px 28px;">
 <a href="${b.site}" style="text-decoration:none;"><img src="${b.site}/brand/logo-full-white.png" width="180" alt="VITAL ACOUSTICA" style="display:block;width:180px;max-width:60%;height:auto;border:0;color:${C.ink};font:600 18px ${SANS};letter-spacing:3px;"></a>
 </td></tr>
-<tr><td style="background:${C.card};border:1px solid ${C.line};border-radius:10px;padding:36px 32px;">
+<tr><td bgcolor="${C.card}" style="background-color:${C.card};${LOCK(C.card)}border:1px solid ${C.line};border-radius:10px;padding:36px 32px;">
 ${body}
 </td></tr>
 <tr><td style="padding:28px 4px 8px;font:600 11px ${SANS};letter-spacing:2.5px;text-transform:uppercase;color:${C.brass};">
