@@ -16,8 +16,8 @@ export const testimonials: Testimonial[] = [
   {
     quote:
       'Until now, our audience feedback mostly revolved around the artists, with production rarely the highlight. Since we started collaborating with Vital Acoustica, the response to the sound, the production and the overall experience has been absolutely phenomenal. The comfort, professionalism, quality and trust we share with them are unmatched. We now prefer to host our shows only when Vital Acoustica is available. The best in the business.',
-    name: 'Inside Out',
-    context: 'Shows and sundowners, Mysuru',
+    name: 'Suraj',
+    context: 'Owner, Inside Out, Mysuru',
   },
   {
     quote:
