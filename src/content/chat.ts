@@ -283,7 +283,11 @@ const HANDLERS: Record<string, Handler> = {
         }
       : {
           text: 'We’re getting our shows ready to post on the site, so the work page is coming soon. The team is happy to share examples of the kind of event you’re planning.',
-          actions: [wa('Hi Vital Acoustica, could you share some examples of your work? '), quote],
+          actions: [
+            wa('Hi Vital Acoustica, could you share some examples of your work? '),
+            ...(published.testimonials ? [{ kind: 'link', label: 'Testimonials', to: '/testimonials' } as const] : []),
+            quote,
+          ],
         },
 
   unknown: (_, input) => ({

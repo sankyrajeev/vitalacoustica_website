@@ -71,7 +71,7 @@ export const site = {
 /** Sections held back until they're ready. Flip one to true to bring its page back. */
 export const published = {
   work: false, // case studies and show photos, until the new ones are posted
-  testimonials: false, // until the collected testimonials are ready to publish
+  testimonials: true,
 }
 
 /** A WhatsApp chat with us, with a message already typed. */

@@ -4465,6 +4465,14 @@ html.menu-open .chat {
   text-wrap: balance;
 }
 
+/* a longer quote: smaller, and a wider measure, so the slide stays about the same height */
+.tslide--long .tslide__quote {
+  max-width: min(34em, 100%);
+  font-size: clamp(21px, 2.3vw, 34px);
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
 .tslide__quote p::before {
   content: '“';
 }

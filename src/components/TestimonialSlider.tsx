@@ -74,7 +74,7 @@ export function TestimonialSlider({ items, label = 'Testimonials' }: { items: Te
           return (
             <figure
               key={t.name + i}
-              className="tslide"
+              className={`tslide${t.quote.length > 220 ? ' tslide--long' : ''}`}
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${items.length}`}
