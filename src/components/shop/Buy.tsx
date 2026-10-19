@@ -16,7 +16,7 @@ function useGumroad(on: boolean) {
   }, [on])
 }
 
-/** Buy button, or "coming soon" with a way to hear when it's out. `option` is e.g. "Black, M". */
+/** Buy button, or "launching soon" with a way to hear when it's out. `option` is e.g. "Black, M". */
 export function Buy({ p, option }: { p: Product; option?: string }) {
   const digital = p.kind !== 'merch'
   useGumroad(digital && !!p.checkout)
@@ -26,7 +26,7 @@ export function Buy({ p, option }: { p: Product; option?: string }) {
     return (
       <div className="buy">
         <span className="cta cta--disabled" aria-disabled="true">
-          <span>Coming soon</span>
+          <span>Launching soon</span>
         </span>
         <a
           className="text-link"

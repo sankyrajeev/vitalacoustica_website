@@ -253,7 +253,7 @@ const HANDLERS: Record<string, Handler> = {
   }),
 
   shop: () => ({
-    text: 'Our shop is opening soon: sample packs and VJ loops you can download anywhere in the world, and merch printed to order in India. You can already have a look and ask to be told when things go on sale.',
+    text: 'Our first merch collection is launching soon: two tees, a hoodie and a cap, printed to order in India. Sample packs and VJ loops are on the way too. Have a look, and ask to be told when things go on sale.',
     actions: [{ kind: 'link', label: 'Visit the shop', to: '/shop' }],
   }),
 

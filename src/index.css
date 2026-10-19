@@ -8044,6 +8044,34 @@ img.cover {
   gap: var(--s3) var(--s5);
 }
 
+/* a product's other views (e.g. the back), under its photo */
+.shop-item__views {
+  display: flex;
+  gap: var(--s3);
+  margin-top: var(--s3);
+}
+
+.shop-item__views button {
+  width: 76px;
+  padding: 0;
+  border: var(--hair) solid var(--line);
+  background: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.shop-item__views button.is-on,
+.shop-item__views button:hover {
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+.shop-item__views img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* a real product photo in place of the generated mock-up */
 .cover--photo {
   height: auto;

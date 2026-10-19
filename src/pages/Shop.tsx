@@ -9,10 +9,11 @@ import { price, products, SECTIONS, sectionOf, type Product } from '../content/s
 import { scrollToId } from '../router'
 import { NotFound } from './NotFound'
 
-function Art({ p, colour }: { p: Product; colour?: number }) {
+function Art({ p, colour, view }: { p: Product; colour?: number; view?: string }) {
   if (p.kind === 'audio') return <AudioCover p={p} />
   if (p.kind === 'loops') return <LoopPreview p={p} />
-  if (p.photo) return <img className="cover cover--photo" src={`${import.meta.env.BASE_URL}${p.photo}`} alt="" loading="lazy" />
+  const photo = view ?? p.photo
+  if (photo) return <img className="cover cover--photo" src={`${import.meta.env.BASE_URL}${photo}`} alt="" loading="lazy" />
   return <GarmentMock p={p} colour={p.colours[colour ?? 0]} />
 }
 
@@ -39,7 +40,7 @@ function ProductCard({ p }: { p: Product }) {
           {p.checkout ? (
             <span className="shop-card__price">{price(p)}</span>
           ) : (
-            <span className="shop-card__soon">Coming soon</span>
+            <span className="shop-card__soon">Launching soon</span>
           )}
           <Link to={`/shop/${p.id}`} className="text-link">
             {p.checkout ? 'Buy' : 'Details'} <Arrow />
@@ -61,8 +62,8 @@ export function ShopIndex() {
         <div className="notice shop-notice">
           <p className="label">Opening soon</p>
           <p>
-            These are sample products, to show how the shop will look. The real merch, packs and loops are on their way. Tap “Tell
-            me when it’s out” on anything you like and we’ll message you.
+            Our first merch collection is launching soon. The audio packs and VJ loops are samples, to show how the shop will look;
+            the real ones are on their way. Tap “Tell me when it’s out” on anything you like and we’ll message you.
           </p>
         </div>
         <nav className="shop-tabs" aria-label="Shop sections">
@@ -150,7 +151,11 @@ export function ShopItem({ id }: { id: string }) {
   const p = products.find((x) => x.id === id)
   const [colour, setColour] = useState(0)
   const [size, setSize] = useState<string | null>(null)
+  const [view, setView] = useState<string | undefined>(undefined)
   if (!p) return <NotFound />
+  const views = p.kind === 'merch' && p.photo && p.gallery ? [p.photo, ...p.gallery] : []
+  // a view picked on another product's page doesn't carry over
+  const shown = view && views.includes(view) ? view : views[0]
   const section = sectionOf(p.kind)
   const more = products.filter((x) => x.kind === p.kind && x.id !== p.id).slice(0, 3)
   const option = p.kind === 'merch' ? [p.colours[colour].name, size].filter(Boolean).join(', ') : undefined
@@ -167,7 +172,22 @@ export function ShopItem({ id }: { id: string }) {
 
       <div className="wrap gear-detail__grid">
         <figure className="gear-detail__figure shop-item__figure">
-          <Art p={p} colour={colour} />
+          <Art p={p} colour={colour} view={shown} />
+          {views.length > 1 && (
+            <div className="shop-item__views">
+              {views.map((v, i) => (
+                <button
+                  key={v}
+                  className={shown === v ? 'is-on' : ''}
+                  onClick={() => setView(v)}
+                  aria-label={i === 0 ? 'Main view' : `View ${i + 1}`}
+                  aria-pressed={shown === v}
+                >
+                  <img src={`${import.meta.env.BASE_URL}${v}`} alt="" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
           {p.kind === 'audio' && <AudioPreview p={p} />}
           <figcaption className="muted">
             {p.sample
@@ -176,7 +196,9 @@ export function ShopItem({ id }: { id: string }) {
                 : p.kind === 'loops'
                   ? 'Sample product. The preview is drawn live in your browser.'
                   : 'Sample product. Mock-up of the design.'
-              : section.note}
+              : p.kind === 'merch' && !p.checkout
+                ? 'Mock-up of the design. Launching soon.'
+                : section.note}
           </figcaption>
         </figure>
 

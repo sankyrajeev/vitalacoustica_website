@@ -8,7 +8,8 @@
 //   payment or store link into `checkout`.
 // Until `checkout` is filled in, the product shows as coming soon with a "Tell me when it's out" button.
 //
-// DUMMY: every product below is a sample, to show how the shop will look. Replace with the real ones.
+// DUMMY: the audio packs and VJ loops below are samples, to show how the shop will look. The merch is
+// our first collection (the designs are final; it's on sale once `checkout` is filled in).
 
 export type ShopKind = 'audio' | 'loops' | 'merch'
 
@@ -46,7 +47,8 @@ export type Merch = Base & {
   colours: { name: string; hex: string; ink: string }[]
   sizes: string[]
   specs: [string, string][]
-  photo?: string // real product photo in public/shop/
+  photo?: string // product photo or mock-up in public/shop/
+  gallery?: string[] // more views, e.g. the back
 }
 
 export type Product = AudioPack | Loop | Merch
@@ -240,71 +242,86 @@ export const products: Product[] = [
     ],
   },
 
-  // ─── Merch ───
+  // ─── Merch: collection 01, launching soon ───
   {
     id: 'oversized-tee',
-    photo: 'shop/tee.webp', // mock-up: design to be announced
+    photo: 'shop/room-tee-back.webp',
+    gallery: ['shop/room-tee-front.webp'],
     kind: 'merch',
-    name: 'Oversized tee',
-    tagline: 'Design to be announced.',
-    description: 'Our oversized tee. The design, fabric and colours are to be announced.',
+    name: 'The Room Is the Instrument',
+    tagline: 'Oversized tee. Launching soon.',
+    description:
+      'On the back, a coverage map: a pair of mains in a 24 by 23 metre room, the sound pressure drawn as contour lines, the way we plan a system before it goes in. The mark on the chest. Launching soon.',
     price: 1499,
     checkout: '',
-    sample: true,
     garment: 'tee',
     print: 'mark',
-    colours: [
-      { name: 'Black', hex: '#141414', ink: '#b8a47b' },
-    ],
+    colours: [{ name: 'Black', hex: '#141414', ink: '#b8a47b' }],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specs: [
       ['Fit', 'Oversized'],
-      ['Fabric', 'To be announced'],
-      ['Design', 'To be announced'],
+      ['Print', 'Coverage map on the back, mark on the chest'],
+      ['Inks', 'White and brass'],
+    ],
+  },
+  {
+    id: 'feel-it-tee',
+    photo: 'shop/feel-tee-front.webp',
+    gallery: ['shop/feel-tee-back.webp'],
+    kind: 'merch',
+    name: 'Feel It',
+    tagline: 'Oversized tee. Launching soon.',
+    description:
+      'A third-octave analyser across the front, 20 Hz to 20 kHz, the low end lit in brass: feel it before you hear it. A small mark below the collar. Launching soon.',
+    price: 1499,
+    checkout: '',
+    garment: 'tee',
+    print: 'mark',
+    colours: [{ name: 'Bone', hex: '#e9e3d5', ink: '#151515' }],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    specs: [
+      ['Fit', 'Oversized'],
+      ['Print', 'Spectrum on the front, mark on the back'],
+      ['Inks', 'Black and dark brass'],
     ],
   },
   {
     id: 'hoodie',
-    photo: 'shop/hoodie.webp', // mock-up: design to be announced
+    photo: 'shop/haze-hoodie.webp',
     kind: 'merch',
-    name: 'Hoodie',
-    tagline: 'Design to be announced.',
-    description: 'Our hoodie. The design, fabric and colours are to be announced.',
+    name: 'Haze',
+    tagline: 'Hoodie. Launching soon.',
+    description:
+      'A truss of moving heads throwing crossed beams through haze, drawn in halftone dots, landing on the mark. Launching soon.',
     price: 2499,
     checkout: '',
-    sample: true,
     garment: 'hoodie',
     print: 'wordmark',
-    colours: [
-      { name: 'Black', hex: '#141414', ink: '#f0ede5' },
-    ],
+    colours: [{ name: 'Black', hex: '#141414', ink: '#f0ede5' }],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     specs: [
       ['Fit', 'Oversized'],
-      ['Fabric', 'To be announced'],
-      ['Design', 'To be announced'],
+      ['Print', 'Beams and the mark on the front'],
+      ['Inks', 'White and brass'],
     ],
   },
   {
     id: 'cap',
-    photo: 'shop/cap.webp', // mock-up: design to be announced
+    photo: 'shop/cap-mark.webp',
     kind: 'merch',
-    name: 'Cap',
-    tagline: 'Design to be announced.',
-    description: 'Our cap. The design, style and colours are to be announced.',
+    name: 'The Mark',
+    tagline: 'Cap. Launching soon.',
+    description: 'The VA mark embroidered on the front in two threads, white and gold. ACOUSTICA on the side. Launching soon.',
     price: 799,
     checkout: '',
-    sample: true,
     garment: 'cap',
     print: 'mark',
-    colours: [
-      { name: 'Black', hex: '#141414', ink: '#b8a47b' },
-    ],
+    colours: [{ name: 'Black', hex: '#141414', ink: '#b8a47b' }],
     sizes: ['One size'],
     specs: [
-      ['Style', 'To be announced'],
+      ['Style', 'Curved peak'],
       ['Fit', 'Adjustable'],
-      ['Design', 'To be announced'],
+      ['Finish', 'Embroidered, two threads'],
     ],
   },
 ]
