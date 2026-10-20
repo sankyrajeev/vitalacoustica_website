@@ -13,7 +13,8 @@ import { ThemeProvider } from './hooks/useTheme'
 import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
 import { LegalPage, PrivacyPage } from './pages/Legal'
-import { ContactPage, DeckPage, JournalPage, NotFoundPage } from './pages/Other'
+import { ContactPage, DeckPage, NotFoundPage } from './pages/Other'
+import { JournalArticle, JournalIndex } from './pages/Journal'
 import { TestimonialsPage } from './pages/Testimonials'
 import { CareersPage } from './pages/Careers'
 import { StoryPage } from './pages/Story'
@@ -43,7 +44,9 @@ function resolve(path: string): Resolved {
   const cap = match('/capabilities/:id', path)
   if (cap) return { title: capabilityById(cap.id)?.name ?? 'Not found', page: <CapabilityPage id={cap.id} /> }
   // Studio is retired for now (the name is kept for the real studio); its page stays in Other.tsx
-  if (path === '/journal') return { title: 'Journal', page: <JournalPage /> }
+  if (path === '/journal') return { title: 'The Acoustica Journal', page: <JournalIndex /> }
+  const article = match('/journal/:slug', path)
+  if (article) return { title: 'The Acoustica Journal', page: <JournalArticle slug={article.slug} /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
   if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }
   if (path === '/story') return { title: 'Our Story', page: <StoryPage /> }
@@ -57,8 +60,8 @@ function resolve(path: string): Resolved {
 function Page({ path }: { path: string }) {
   const { title, page } = resolve(path)
   useRevealOnScroll(path)
-  // the homepage sets its own stops
-  useSectionSnap(path === '/' ? '' : PAGE_SECTIONS)
+  // the homepage sets its own stops; the Journal is for reading, so it scrolls freely
+  useSectionSnap(path === '/' || path === '/journal' || path.startsWith('/journal/') ? '' : PAGE_SECTIONS)
 
   useEffect(() => {
     document.title = path === '/' ? title : `${title} — ${site.name}`

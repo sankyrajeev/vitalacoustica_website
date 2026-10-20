@@ -1,5 +1,6 @@
-// Journal / Experiments. Every entry carries an honest label:
-// 'Visual study' and 'Experiment' are our own concept work, not client productions.
+// Studio notes: shown on the Journal page under "From the studio". Every entry carries an honest
+// label: 'Visual study' and 'Experiment' are our own concept work, not client productions.
+// (The Journal's articles are Markdown files in content/journal/; see docs/journal.md.)
 
 export type JournalEntry = {
   slug: string

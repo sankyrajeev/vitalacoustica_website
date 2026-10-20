@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST FIXTURE ONLY. Invented stories for the parser's tests; never shown on the site. -->
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>Example Trade Weekly</title>
+  <link>https://trade.example</link>
+  <item>
+    <title>Example Audio launches a cardioid subwoofer for touring line arrays</title>
+    <link>https://trade.example/news/cardioid-sub?utm_source=rss&amp;utm_medium=feed</link>
+    <pubDate>__RECENT_1__</pubDate>
+    <description><![CDATA[<p>Example Audio has introduced a new cardioid subwoofer designed to sit under its line array systems, reducing low-frequency energy on stage and behind the PA. The company says the cabinet weighs less than its predecessor and ships with presets for its amplifier platform.</p><p>The post Example Audio launches a cardioid subwoofer appeared first on Example Trade Weekly.</p>]]></description>
+  </item>
+  <item>
+    <title>Lighting console update adds sACN and Art-Net merging</title>
+    <link>https://trade.example/news/console-update</link>
+    <pubDate>__RECENT_2__</pubDate>
+    <description>A firmware update for the example lighting console adds merging of sACN and Art-Net universes &amp;amp; RDM discovery. [&#8230;]</description>
+  </item>
+  <item>
+    <title>Recipe of the week: lemon cake</title>
+    <link>https://trade.example/food/lemon-cake</link>
+    <pubDate>__RECENT_2__</pubDate>
+    <description>Nothing to do with sound or light.</description>
+  </item>
+  <item>
+    <title>Old news: a festival from long ago</title>
+    <link>https://trade.example/news/old-festival</link>
+    <pubDate>Mon, 01 Jan 2018 10:00:00 GMT</pubDate>
+    <description>A festival with a big sound system.</description>
+  </item>
+  <item>
+    <title>An undated story about loudspeakers</title>
+    <link>https://trade.example/news/undated</link>
+    <description>Loudspeakers, but no date.</description>
+  </item>
+</channel>
+</rss>

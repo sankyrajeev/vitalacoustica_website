@@ -11,7 +11,7 @@ const LEGAL = {
   company: 'Vital Acoustica',
   address: 'Bangalore, Karnataka, India', // DUMMY: full registered address
   gstin: site.gst,
-  updated: '15 October 2026',
+  updated: '20 October 2026',
   jurisdiction: 'Bengaluru, Karnataka',
 }
 
@@ -88,6 +88,10 @@ export function PrivacyPage() {
                 and whether you agree to us publishing them.
               </li>
               <li>
+                <strong>The Acoustica Edit (our newsletter):</strong> if you sign up, your email address, the fact that you agreed to
+                receive it and when you confirmed. You are added only after you confirm by clicking the link we email you.
+              </li>
+              <li>
                 <strong>When we work together:</strong> billing and contact details needed for quotes, invoices, GST and delivery.
               </li>
               <li>
@@ -106,6 +110,7 @@ export function PrivacyPage() {
               <li>To reply to your enquiry and prepare a proposal and quote.</li>
               <li>To plan, deliver and invoice the hire or production you book with us.</li>
               <li>To publish a testimonial, only when you have explicitly agreed to it.</li>
+              <li>To send The Acoustica Edit, only if you have signed up and confirmed. Every edition has an unsubscribe link.</li>
               <li>To meet our legal obligations, including tax and accounting records.</li>
               <li>To keep this website secure and working.</li>
             </ul>
@@ -120,6 +125,7 @@ export function PrivacyPage() {
             <p>We share personal data only with service providers who help us run the business, and only as needed:</p>
             <ul>
               <li>the form or email service that delivers your enquiry to us;</li>
+              <li>our email provider (Resend), which stores the newsletter list and delivers The Acoustica Edit;</li>
               <li>our website hosting provider;</li>
               <li>
                 for shop orders, the checkout provider (Gumroad) and our print-on-demand partner, to take payment and deliver;
@@ -137,7 +143,8 @@ export function PrivacyPage() {
             <p>
               Enquiries that don't lead to a booking are deleted within 24 months. Booking, invoice and GST records are kept for
               as long as Indian tax law requires, currently up to eight years. A published testimonial stays up until you ask us
-              to remove it.
+              to remove it. Your newsletter address stays on the list until you unsubscribe; after that it is kept only as a record
+              that you unsubscribed, so we never write to you again by mistake.
             </p>
           </Section>
 

@@ -25,3 +25,6 @@ dist-ssr
 
 # Cloudflare's local dev state
 .wrangler
+
+# written by scripts/journal.mjs from content/journal (npm run build does it)
+server/generated

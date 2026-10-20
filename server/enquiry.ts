@@ -33,7 +33,7 @@ export type EnquiryEnv = {
 
 const DEFAULT_TO = 'lakshmiranganatha@thevitalvines.com'
 const DEFAULT_CC = 'sankarsh@thevitalvines.com'
-const BRAND = { whatsapp: '918904858422', instagram: 'vitalacoustica', x: 'vitalacoustica' } // DUMMY: confirm the X handle
+export const BRAND = { whatsapp: '918904858422', instagram: 'vitalacoustica', x: 'vitalacoustica' } // DUMMY: confirm the X handle
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const LIMITS: Record<string, number> = { description: 4000, quote: 2000 } // characters; everything else 200

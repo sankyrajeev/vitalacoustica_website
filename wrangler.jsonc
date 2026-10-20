@@ -1,4 +1,5 @@
-// Cloudflare Worker for vitalacoustica.com: the built site plus the enquiry form's email sender.
+// Cloudflare Worker for vitalacoustica.com: the built site, the forms' email sender, and the Journal
+// (its pages' metadata, its articles, Industry Pulse and The Acoustica Edit sign-up).
 // Cloudflare runs `npm run build`, then `npx wrangler deploy`, which reads this file.
 {
   "name": "vitalacoustica-website",
@@ -9,15 +10,16 @@
     "binding": "ASSETS",
     // any page address serves the app, which picks the page itself
     "not_found_handling": "single-page-application",
-    // the form's address reaches the Worker, not the files
-    "run_worker_first": ["/api/*"]
+    // these addresses reach the Worker first: the forms and data under /api/, the Journal's pages
+    // (to add each page's own title, description and sharing tags), and the sitemap
+    "run_worker_first": ["/api/*", "/journal", "/journal/*", "/sitemap.xml"]
   },
   // the enquiry emails' sender and the site's address; the Resend key is a secret, set in the dashboard
   "vars": {
     "ENQUIRY_FROM": "Vital Acoustica <no-reply@vitalacoustica.com>",
     "SITE_URL": "https://vitalacoustica.com"
   },
-  // keep anything else set in the dashboard (e.g. ENQUIRY_TO, ENQUIRY_CC) when deploying
+  // keep anything else set in the dashboard (e.g. ENQUIRY_TO, ENQUIRY_CC, RESEND_AUDIENCE_ID) when deploying
   "keep_vars": true,
   "observability": { "enabled": true }
 }

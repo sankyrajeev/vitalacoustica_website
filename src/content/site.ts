@@ -40,6 +40,7 @@ export const site = {
     { label: 'Work', to: '/work' },
     { label: 'Shop', to: '/shop' },
     { label: 'Testimonials', to: '/testimonials' },
+    { label: 'Journal', to: '/journal' },
   ],
 
   /*

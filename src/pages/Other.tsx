@@ -1,9 +1,8 @@
 import { EnquiryForm } from '../components/EnquiryForm'
 import { PageHead } from '../components/PageHead'
-import { Cta, Label, Placeholder, TextLink } from '../components/ui'
+import { Cta, Label, Placeholder } from '../components/ui'
 import { capabilities, process } from '../content/capabilities'
 import { fullName, gear, gearById, RIG_GROUPS, type GearGroup, type GearId } from '../content/gear'
-import { journal } from '../content/journal'
 import { site } from '../content/site'
 import { Link } from '../components/Link'
 import { queryParam } from '../router'
@@ -61,33 +60,6 @@ export function StudioPage() {
           </div>
           <Placeholder ratio="3 / 2">Team portrait and short biographies: who leads sound, light and production.</Placeholder>
         </div>
-      </section>
-    </>
-  )
-}
-
-/* ─────────────── Journal / Experiments ─────────────── */
-
-export function JournalPage() {
-  return (
-    <>
-      <PageHead label="Journal" title="Studies, experiments and field notes.">
-        Our own explorations, each labelled for what it is. Client work lives under Selected work.
-      </PageHead>
-      <section className="section section--tight">
-        <ol className="wrap journal">
-          {journal.map((j) => (
-            <li key={j.slug} className={`journal__entry ${j.placeholder ? 'is-placeholder' : ''}`}>
-              <p className="journal__meta">
-                <span className="tag">{j.label}</span>
-                <span>{j.date === 'TBC' ? 'Upcoming' : j.date}</span>
-              </p>
-              <h2 className="h2">{j.title}</h2>
-              <p>{j.body}</p>
-              {j.link && <TextLink to={j.link.to}>{j.link.label}</TextLink>}
-            </li>
-          ))}
-        </ol>
       </section>
     </>
   )

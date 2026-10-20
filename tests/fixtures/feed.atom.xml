@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEST FIXTURE ONLY. Invented stories for the parser's tests; never shown on the site. -->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Example Lighting News</title>
+  <entry>
+    <title>Example Audio launches a cardioid subwoofer for touring line arrays!</title>
+    <link rel="alternate" href="https://lighting.example/stories/sub"/>
+    <published>__RECENT_1__</published>
+    <summary type="html">&lt;p&gt;The same story, reported by a second publication.&lt;/p&gt;</summary>
+  </entry>
+  <entry>
+    <title>Moving heads for a stadium tour</title>
+    <link rel="alternate" href="https://lighting.example/stories/stadium"/>
+    <updated>__RECENT_3__</updated>
+    <summary>The lighting designer chose a rig of beam moving heads and LED strobes for the tour.</summary>
+  </entry>
+</feed>

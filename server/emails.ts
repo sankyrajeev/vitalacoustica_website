@@ -308,3 +308,34 @@ ${button(b.site, 'Visit the site', false)}`
     text: plain([`Thank you, ${first(t.name)}.`, '', 'Your words mean a lot to the whole crew.', '', t.quote.trim(), '', b.site]),
   }
 }
+
+/* ─────────────── The Acoustica Edit ─────────────── */
+
+/** Asks a new subscriber to confirm: nobody is added to the list until they click. */
+export function newsletterConfirm(b: Brand, confirmUrl: string): Mail {
+  const body = `${label('The Acoustica Edit')}
+${headline('One click to confirm.')}
+${text('Thank you for signing up to The Acoustica Edit: a considered perspective on sound, light and live production, with selected Journal articles, verified industry news and genuine production updates.')}
+${text('Please confirm that this is your address. Until you do, you won’t receive anything from us.')}
+${button(confirmUrl, 'Confirm my subscription')}
+${text('If you didn’t sign up, ignore this email: you won’t be added, and we won’t write again. The link works for seven days.')}
+<p style="margin:8px 0 0;font:13px/1.6 ${SANS};color:${C.muted};">Every edition has an unsubscribe link. <a href="${b.site}/privacy" style="color:${C.soft};text-decoration:underline;">How we use your email</a></p>`
+  return {
+    subject: 'Confirm your subscription to The Acoustica Edit',
+    html: shell(
+      b,
+      'Confirm your subscription to The Acoustica Edit.',
+      body,
+      'You’re receiving this because this address was entered to subscribe to The Acoustica Edit on vitalacoustica.com.',
+    ),
+    text: plain([
+      'The Acoustica Edit',
+      '',
+      'Thank you for signing up. Please confirm your address by opening this link (it works for seven days):',
+      confirmUrl,
+      '',
+      'If you didn’t sign up, ignore this email: you won’t be added.',
+      `How we use your email: ${b.site}/privacy`,
+    ]),
+  }
+}

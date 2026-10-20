@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { EnquiryForm } from '../components/EnquiryForm'
+import { ArticleCard } from '../components/journal/Cards'
+import { featuredFirst, loadJournal, useLoad } from '../journal/data'
 import { TestimonialSlider } from '../components/TestimonialSlider'
 import { ResonanceBackdrop } from '../components/ResonanceBackdrop'
 import { Arrow, Cta, Label, Logo, TextLink } from '../components/ui'
@@ -8,9 +10,9 @@ import { testimonials } from '../content/testimonials'
 import { useSectionSnap } from '../hooks/useSectionSnap'
 import { scrollToId } from '../router'
 
-const SNAP_SECTIONS = '.intro, .entrance, .statement, .voices, .final'
+const SNAP_SECTIONS = '.intro, .entrance, .statement, .voices, .home-journal, .final'
 
-// The homepage: the brand, what clients say, and the enquiry. The Resonance Form
+// The homepage: the brand, what clients say, three Journal stories, and the enquiry. The Resonance Form
 // (a fixed 3D layer) changes with each section. Equipment, services and work have their own pages.
 export function Home() {
   // each section settles centred on screen instead of stopping wherever the scroll ends
@@ -22,6 +24,7 @@ export function Home() {
       <Entrance />
       <Statement />
       <Voices />
+      <JournalPicks />
       <FinalEnquiry />
     </>
   )
@@ -127,13 +130,44 @@ function Voices() {
   )
 }
 
-/* 03 — Enquiry: the sculpture returns, centred and calm */
+/* 03 — The Acoustica Journal: three stories, kept small so the enquiry stays the focus */
+function JournalPicks() {
+  const list = useLoad(loadJournal, 'journal')
+  if (list.state !== 'ready') return null
+  const picks = featuredFirst(list.data.articles).slice(0, 3)
+  if (picks.length === 0) return null
+  return (
+    <section className="section home-journal" data-scene="voices" aria-labelledby="home-journal-title">
+      <div className="wrap">
+        <header className="section-head home-journal__head">
+          <Label index="03">Journal</Label>
+          <h2 id="home-journal-title" className="h1">
+            The Acoustica Journal
+          </h2>
+          <p className="section-head__sub">Ideas, insights and perspectives on the art and engineering of live sound and light.</p>
+        </header>
+        <div className="j-grid j-grid--home">
+          {picks.map((a) => (
+            <ArticleCard key={a.slug} a={a} compact />
+          ))}
+        </div>
+        <p className="home-journal__all">
+          <TextLink to="/journal">Explore the Journal</TextLink>
+        </p>
+      </div>
+    </section>
+  )
+}
+
+/* 04 — Enquiry: the sculpture returns, centred and calm */
 function FinalEnquiry() {
   const [open, setOpen] = useState(false)
+  const list = useLoad(loadJournal, 'journal')
+  const journalShown = list.state === 'ready' && list.data.articles.length > 0
   return (
     <section className="final" data-scene="enquiry" aria-labelledby="final-title">
       <div className="wrap final__inner">
-        <Label index="03">Get a quote</Label>
+        <Label index={journalShown ? '04' : '03'}>Get a quote</Label>
         <h2 id="final-title" className="display display--sm">
           Let’s shape something exceptional.
         </h2>
