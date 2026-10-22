@@ -31,11 +31,13 @@ export type RigId =
   | 'smoke'
   | 'truss'
   | 'table'
+  | 'sm58'
+  | 'sm57'
 
 /** Every hire item; DI boxes and amplifiers are listed but not modelled. */
 export type GearId = RigId | 'di' | 'd40'
 
-export type GearGroup = 'Sound' | 'Audio Infrastructure' | 'Stage Lighting' | 'SFX' | 'Visual Experiences' | 'Structure'
+export type GearGroup = 'Sound' | 'Audio Infrastructure' | 'Microphones' | 'Stage Lighting' | 'SFX' | 'Visual Experiences' | 'Structure'
 
 export type Gear = {
   id: GearId
@@ -236,6 +238,52 @@ export const gear: Gear[] = [
     specSource: 'BSS Audio',
     spec: 'Active · phantom or 9 V · 0/20/40 dB pad · ground lift',
     photo: { file: 'di.webp', width: 800, height: 800, alt: 'BSS Audio AR-133 active DI box in teal with rubber end caps', source: 'product' },
+  },
+  {
+    id: 'sm58',
+    group: 'Microphones',
+    name: 'SM58',
+    maker: 'Shure',
+    role: 'Vocal microphone',
+    about: 'The vocal mic on almost every stage, on a tripod boom stand. For hosts, MCs, speeches and live vocals.',
+    description:
+      'The vocal microphone you will find on almost every stage. A cardioid dynamic mic tuned for the voice, with a built-in spherical wind and pop filter and a shock mount that keeps handling noise down. It picks up what is in front of it and rejects what is behind, so it stays clear of feedback near the PA. Ours comes on a tripod boom stand, ready for a host, an MC, speeches or live vocals.',
+    specs: [
+      ['Type', 'Dynamic (moving coil)'],
+      ['Polar pattern', 'Cardioid'],
+      ['Frequency response', '50 Hz – 15 kHz'],
+      ['Sensitivity', '−54.5 dBV/Pa (1.85 mV) at 1 kHz'],
+      ['Impedance', '150 Ω rated (300 Ω actual)'],
+      ['Connector', '3-pin XLR'],
+      ['Weight', '298 g'],
+      ['Stand', 'Tripod boom stand'], // DUMMY: confirm the stand's make and model
+    ],
+    specSource: 'Shure',
+    spec: 'Cardioid dynamic vocal mic · 50 Hz – 15 kHz · with boom stand',
+    photo: { file: 'sm58.webp', width: 800, height: 800, alt: 'Shure SM58 vocal microphone with its silver ball grille and black handle', source: 'product' },
+  },
+  {
+    id: 'sm57',
+    group: 'Microphones',
+    name: 'SM57',
+    maker: 'Shure',
+    role: 'Instrument microphone',
+    about: 'The instrument workhorse, on a tripod boom stand. For guitar amps, drums, brass and percussion.',
+    description:
+      'The instrument microphone that has been on guitar amps and snare drums for decades. A cardioid dynamic mic that takes very high sound levels without strain, with a tight pickup pattern that keeps the rest of the stage out of the channel. It works on amplifiers, drums, brass and percussion, and on speech when needed. Ours comes on a tripod boom stand, so it can be angled in close to the source.',
+    specs: [
+      ['Type', 'Dynamic (moving coil)'],
+      ['Polar pattern', 'Cardioid'],
+      ['Frequency response', '40 Hz – 15 kHz'],
+      ['Sensitivity', '−56.0 dBV/Pa (1.6 mV) at 1 kHz'],
+      ['Impedance', '150 Ω rated (310 Ω actual)'],
+      ['Connector', '3-pin XLR'],
+      ['Weight', '284 g'],
+      ['Stand', 'Tripod boom stand'], // DUMMY: confirm the stand's make and model
+    ],
+    specSource: 'Shure',
+    spec: 'Cardioid dynamic instrument mic · 40 Hz – 15 kHz · with boom stand',
+    photo: { file: 'sm57.webp', width: 800, height: 800, alt: 'Shure SM57 instrument microphone with its black grille and tapered black handle', source: 'product' },
   },
   {
     id: 'sharpy',
@@ -488,8 +536,8 @@ export const gear: Gear[] = [
 
 export const gearById = Object.fromEntries(gear.map((g) => [g.id, g])) as Record<GearId, Gear>
 
-export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Audio Infrastructure', 'Stage Lighting', 'SFX', 'Visual Experiences', 'Structure']
-export const RIG_GROUPS = ['Sound', 'Audio Infrastructure', 'Stage Lighting', 'SFX'] as const
+export const GEAR_GROUPS: GearGroup[] = ['Sound', 'Audio Infrastructure', 'Microphones', 'Stage Lighting', 'SFX', 'Visual Experiences', 'Structure']
+export const RIG_GROUPS = ['Sound', 'Audio Infrastructure', 'Microphones', 'Stage Lighting', 'SFX'] as const
 
 /** Groups shown as "coming soon" while they have no items yet. */
 export const COMING_SOON: Partial<Record<GearGroup, string>> = {

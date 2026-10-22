@@ -8,6 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { type RigId } from '../content/gear'
 import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
+import { MicStand } from './gear/Mics'
 import { Hazer, SmokeMachine } from './gear/Sfx'
 import { CobLight, HexRetro, TrussWrap, WarcraftRetro, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
@@ -179,6 +180,9 @@ function Stage({ small }: { small: boolean }) {
       <SmokeMachine position={[-1.25, deckTop, 0.62]} />
       <SmokeMachine position={[1.25, deckTop, 0.62]} />
       <Hazer position={[-4.9, 0, 2.1]} rotation-y={0.35} />
+      {/* microphones on boom stands at the deck's downstage corners, booms reaching in over the deck */}
+      <MicStand kind="sm58" position={[-4.4, deckTop, 0.75]} rotation-y={0.6} />
+      <MicStand kind="sm57" position={[4.4, deckTop, 0.75]} rotation-y={Math.PI - 0.6} />
       <BoothMonitors deckTop={deckTop} />
       <PAStack x={-6.3} z={0.9} toe={0.2} />
       <PAStack x={6.3} z={0.9} toe={-0.2} />

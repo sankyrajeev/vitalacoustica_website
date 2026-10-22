@@ -47,6 +47,8 @@ const ALIASES: Partial<Record<Gear['id'], string[]>> = {
   cdj: ['cdj', 'cdjs', 'cdj-3000x', 'cdj3000', 'cdj 3000', 'player', 'players', 'decks', 'pioneer', 'alphatheta'],
   djm: ['djm', 'v10-lf', 'djm-v10', 'dj mixer', 'pioneer mixer'],
   di: ['di', 'di box', 'di boxes', 'bss', 'ar-133', 'ar133', 'direct box'],
+  sm58: ['sm58', 'sm 58', 'sm58lc', 'shure', 'vocal mic', 'vocal mics', 'microphone', 'microphones', 'mic', 'mics', 'mike', 'mic stand', 'boom stand'],
+  sm57: ['sm57', 'sm 57', 'sm57lc', 'shure', 'instrument mic', 'instrument mics', 'microphone', 'microphones', 'mic', 'mics', 'mike', 'mic stand', 'boom stand'],
   sharpy: ['sharpy', 'sharpys', 'sharpie', 'sharpies', 'beam', 'beams', 'moving head', 'moving heads'],
   trefoil: ['fan', 'fan light', '3 blade', '3-blade', 'three blade', 'trefoil', 'ati'],
   hex: ['hex', 'hexagon', 'honeycomb'],

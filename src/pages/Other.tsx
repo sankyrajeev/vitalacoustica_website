@@ -135,6 +135,7 @@ export function DeckPage() {
 const SERVICE_FOR_GROUP: Record<GearGroup, string> = {
   Sound: 'Sound system',
   'Audio Infrastructure': 'Sound system',
+  Microphones: 'Sound system',
   'Stage Lighting': 'Lighting',
   SFX: 'Lighting',
   'Visual Experiences': 'LED & visuals',
