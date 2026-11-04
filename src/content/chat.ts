@@ -52,6 +52,7 @@ const ALIASES: Partial<Record<Gear['id'], string[]>> = {
   sharpy: ['sharpy', 'sharpys', 'sharpie', 'sharpies', 'beam', 'beams', 'moving head', 'moving heads'],
   trefoil: ['fan', 'fan light', '3 blade', '3-blade', 'three blade', 'trefoil', 'ati'],
   hex: ['hex', 'hexagon', 'honeycomb'],
+  blinder: ['blinder', 'blinders', 'rgbw', 'rgbw blinder', 'rgbw blinders', 'audience blinder', 'two cell', '2 cell', 'molefay'],
   warcraft: ['warcraft', 'searchlight', 'gold'],
   matrix: ['matrix', 'led panel', 'panel', 'panels', 'dot matrix'],
   pixelbar: ['pixel bar', 'pixel bars', 'pixelbar', 'pixel'],

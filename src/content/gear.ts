@@ -33,6 +33,7 @@ export type RigId =
   | 'table'
   | 'sm58'
   | 'sm57'
+  | 'blinder'
 
 /** Every hire item; DI boxes and amplifiers are listed but not modelled. */
 export type GearId = RigId | 'di' | 'd40'
@@ -353,6 +354,24 @@ export const gear: Gear[] = [
     ],
     spec: 'Warm centre in a gold reflector · LED rim ring',
     photo: { file: 'warcraft.webp', width: 800, height: 800, alt: 'Warcraft retro light: round black can with a gold reflector, three-spoke front and LED ring, on a yoke', source: 'product' },
+  },
+  {
+    id: 'blinder',
+    group: 'Stage Lighting',
+    name: 'RGBW blinder',
+    role: 'Two-cell LED blinder',
+    about: 'Two big LED cells that hit the crowd on the drop, in white or any colour.',
+    description:
+      'A two-cell audience blinder: two large LED cells behind wire guards in a compact black housing, on a bracket with side locking knobs. RGBW colour mixing gives it warm or cold white for the classic blinder hit and any colour to match the rest of the rig. We hang them on the front truss and fire them at the crowd on the drop, or use them as a soft wash between hits.',
+    specs: [
+      ['Cells', '2'],
+      ['Colour', 'RGBW (red, green, blue, white)'],
+      ['Mounting', 'Bracket with locking knobs: truss clamp or floor'],
+      ['Control', 'DMX, programmed to the music'],
+      ['Power and output', 'To confirm'], // DUMMY: confirm the make, model, LED power and DMX modes
+    ],
+    spec: 'Two-cell RGBW LED blinder · on the front truss',
+    photo: { file: 'blinder.webp', width: 800, height: 800, alt: 'Two-cell LED blinder: two round cells behind wire guards in a black housing on a bracket', source: 'product' },
   },
   {
     id: 'cob',

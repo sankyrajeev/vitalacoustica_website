@@ -24,6 +24,8 @@ export const HOTSPOTS: Record<RigId, { at: V3; camera: V3 }> = {
   smoke: { at: [-1.25, 0.95, 0.62], camera: [-0.5, 1.7, 3.4] },
   table: { at: [0.72, 0.98, 19.7], camera: [2.0, 1.9, 22.2] },
   truss: { at: [-5, 3.6, -0.6], camera: [-2.8, 3.1, 4.2] },
+  // blinders hang under the front truss, either side, outside the beam movers' run
+  blinder: { at: [-3.6, 4.55, -0.55], camera: [-2.7, 3.7, 1.9] },
   // the mic heads, at the ends of the booms (stands at x ±4.4, z 0.75; see gear/Mics.tsx)
   sm58: { at: [-3.85, 1.77, 0.38], camera: [-3.05, 2.05, 1.45] },
   sm57: { at: [3.85, 1.77, 0.38], camera: [3.05, 2.05, 1.45] },
@@ -60,6 +62,7 @@ const EXTRA: Partial<Record<RigId, V3[]>> = {
   ],
   truss: [[5, 3.6, -0.6]],
   smoke: [[1.25, 0.95, 0.62]],
+  blinder: [[3.6, 4.55, -0.55]],
   table: [[0.92, 1.3, -0.2]],
 }
 

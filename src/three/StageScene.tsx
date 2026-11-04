@@ -10,7 +10,7 @@ import { AMBER, RED } from './beat'
 import { controlAxes, droneInput, telemetry } from './drone'
 import { MicStand } from './gear/Mics'
 import { Hazer, SmokeMachine } from './gear/Sfx'
-import { CobLight, HexRetro, TrussWrap, WarcraftRetro, Wing } from './gear/Effects'
+import { Blinder, CobLight, HexRetro, TrussWrap, WarcraftRetro, Wing } from './gear/Effects'
 import { Sharpies } from './gear/Sharpies'
 import { BoothMonitors, PAStack } from './gear/Speakers'
 import { GoalPostTruss } from './gear/Truss'
@@ -161,6 +161,9 @@ function Stage({ small }: { small: boolean }) {
     <group>
       <GoalPostTruss span={10} height={5.2} z={-0.6} />
       <Sharpies count={small ? 6 : 8} lights={!small && p.theme === 'dark'} />
+      {/* RGBW blinders under the front truss, either side, clear of the beam movers in both layouts */}
+      <Blinder index={0} position={[-3.6, 4.88, -0.6]} />
+      <Blinder index={1} position={[3.6, 4.88, -0.6]} />
       <Wing side={-1} deckTop={deckTop} />
       <Wing side={1} deckTop={deckTop} />
       {/* hex retros on the goal-post towers */}

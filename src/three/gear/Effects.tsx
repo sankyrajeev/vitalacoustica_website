@@ -19,10 +19,11 @@ import {
 import { VA_MARK_POLYGONS, VA_MARK_SIZE } from '../../brand/vaMark'
 import { AMBER, BEAT_SECONDS, beatsAt, deskHex, deskWhite, kickAt, lookAt, RED } from '../beat'
 import { show } from '../show'
+import { TrussClamp } from './Truss'
 
 // Lighting effects modelled on the house rig as it appears in show photos:
 // tilted 2'×2' LED matrix panels, trefoil "3-blade fan" fixtures, 7-cell hex retro lights,
-// Warcraft retro lights, COB lights, matrix bars, pixel bars and LED neon flex wrapped on the truss.
+// Warcraft retro lights, COB lights, RGBW blinders, matrix bars, pixel bars and LED neon flex wrapped on the truss.
 // Every fixture follows the desk's colour (see deskHex / deskWhite in beat.ts), except the warm-only COB light.
 
 const housing = new MeshStandardMaterial({ color: '#141414', metalness: 0.6, roughness: 0.45 })
@@ -461,6 +462,75 @@ export function CobLight({ index = 0, ...props }: { index?: number } & ThreeElem
           </mesh>
         </group>
       ))}
+    </group>
+  )
+}
+
+/* ─────────────── RGBW blinder ─────────────── */
+
+const BLINDER_W = 0.48
+const BLINDER_H = 0.24
+const BLINDER_D = 0.11
+const BLINDER_TILT = 0.4 // aimed down at the crowd from the truss
+
+/**
+ * Two-cell RGBW audience blinder, hung from the truss on its bracket. Both cells hit the crowd on
+ * the bar's third beat (between the COB lights' hits) and glow softly in between. RGBW, so it takes
+ * the desk's colour; left to itself it's a warm white.
+ */
+export function Blinder({ index = 0, ...props }: { index?: number } & ThreeElements['group']) {
+  const faces = useMemo(() => [0, 1].map(() => new MeshBasicMaterial({ toneMapped: false })), [])
+  useFrame(() => {
+    const beats = beatsAt(show.time)
+    const decay = Math.exp(-(beats % 1) * 4)
+    const hit = Math.floor(beats) % 4 === 2 ? decay : 0
+    const tint = scratch.set(deskHex(index, 2, '#ffd2a0'))
+    faces.forEach((m) => m.color.copy(tint).multiplyScalar((0.3 + hit * 3.2) * show.master))
+  })
+  const armX = BLINDER_W / 2 + 0.025
+  return (
+    <group {...props}>
+      <TrussClamp />
+      {/* the bracket: a bar under the clamp, an arm down each side to the locking knobs */}
+      <mesh material={stand} position={[0, -0.075, 0]}>
+        <boxGeometry args={[armX * 2 + 0.02, 0.02, 0.04]} />
+      </mesh>
+      {[-1, 1].map((sx) => (
+        <group key={sx}>
+          <mesh material={stand} position={[sx * armX, -0.17, 0]}>
+            <boxGeometry args={[0.02, 0.19, 0.04]} />
+          </mesh>
+          <mesh material={housing} position={[sx * (armX + 0.02), -0.26, 0]} rotation-z={Math.PI / 2}>
+            <cylinderGeometry args={[0.022, 0.022, 0.03, 10]} />
+          </mesh>
+        </group>
+      ))}
+      <group position={[0, -0.26, 0]} rotation-x={BLINDER_TILT}>
+        <mesh material={housing}>
+          <boxGeometry args={[BLINDER_W, BLINDER_H, BLINDER_D]} />
+        </mesh>
+        {[-1, 1].map((sx, i) => (
+          <group key={sx} position={[sx * BLINDER_W * 0.25, 0, BLINDER_D / 2]}>
+            {/* the cell's bezel, its lens and the wire guard across it */}
+            <mesh material={stand}>
+              <torusGeometry args={[0.088, 0.012, 8, 32]} />
+            </mesh>
+            <mesh material={faces[i]} position={[0, 0, -0.004]}>
+              <circleGeometry args={[0.08, 32]} />
+            </mesh>
+            {[-0.04, 0, 0.04].map((o) => (
+              <group key={o}>
+                <mesh material={housing} position={[o, 0, 0.004]}>
+                  <boxGeometry args={[0.004, 0.15, 0.004]} />
+                </mesh>
+                <mesh material={housing} position={[0, o, 0.004]}>
+                  <boxGeometry args={[0.15, 0.004, 0.004]} />
+                </mesh>
+              </group>
+            ))}
+          </group>
+        ))}
+      </group>
     </group>
   )
 }
