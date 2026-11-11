@@ -119,6 +119,9 @@ export const INTENTS: Record<string, string[]> = {
     'do you sell merch', 'merch', 'tshirts', 'do you have t shirts', 'hoodie', 'where can i buy your tee', 'shop', 'store',
     'online store', 'sample packs', 'do you sell samples', 'drum samples', 'sound packs', 'audio packs', 'vj loops',
     'buy vj loops', 'visual loops for resolume', 'loops for my set', 'can i buy your sounds', 'download packs',
+    'do you sell plugins', 'plugins', 'vst', 'vst plugin', 'audio plugin', 'synth plugin', 'do you make software', 'software',
+    'buy your software', 'vanta', 'vanta synth', 'when is vanta out', 'vanta dynamics', 'orbit', 'orbit mixing plugin', 'mixing plugin',
+    'lumiere', 'lumiere link', 'lumiere resident', 'lighting software', 'dj lighting sync', 'lightkey sync', 'lights that follow the dj',
     'caps', 'do you sell caps', 'when will merch be available', 'when does the shop open', 'is the shop live', 'oversized tshirt', 'hoodies', 'is the tee in stock', 'are the t shirts available', 'merch sizes', 'price of the hoodie', 'how much is the tshirt', 'cost of a sample pack', 'how much are the vj loops', 'do you sell stuff', 'buy something', 'kick samples', 'merchandise',
   ],
   story: [

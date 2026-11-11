@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { AudioPreview } from '../components/shop/AudioPreview'
-import { AudioCover, GarmentMock, LoopPreview } from '../components/shop/Art'
+import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
 import { price, products, SECTIONS, sectionOf, type Product } from '../content/shop'
@@ -10,6 +10,7 @@ import { scrollToId } from '../router'
 import { NotFound } from './NotFound'
 
 function Art({ p, colour, view }: { p: Product; colour?: number; view?: string }) {
+  if (p.kind === 'software') return <SoftwareCover p={p} />
   if (p.kind === 'audio') return <AudioCover p={p} />
   if (p.kind === 'loops') return <LoopPreview p={p} />
   const photo = view ?? p.photo
@@ -35,6 +36,7 @@ function ProductCard({ p }: { p: Product }) {
         <h3 className="shop-card__name">
           <Link to={`/shop/${p.id}`}>{p.name}</Link>
         </h3>
+        {p.kind === 'software' && <p className="shop-card__type">{p.type}</p>}
         <p className="shop-card__tagline">{p.tagline}</p>
         <p className="shop-card__foot">
           {p.checkout ? (
@@ -54,16 +56,17 @@ function ProductCard({ p }: { p: Product }) {
 export function ShopIndex() {
   return (
     <>
-      <PageHead label="Shop" title="Things to wear, sounds and visuals.">
-        Merch to wear to the next show, printed when you order it. And sample packs and VJ loops made the way we run our shows,
-        ready to download anywhere in the world.
+      <PageHead label="Shop" title="Software, things to wear, sounds and visuals.">
+        Plugins and show software we make, merch to wear to the next show, and sample packs and VJ loops made the way we run our
+        shows. Downloads work anywhere in the world.
       </PageHead>
       <div className="wrap">
         <div className="notice shop-notice">
           <p className="label">Opening soon</p>
           <p>
-            Our first merch collection is launching soon. The audio packs and VJ loops are samples, to show how the shop will look;
-            the real ones are on their way. Tap “Tell me when it’s out” on anything you like and we’ll message you.
+            Our software and our first merch collection are launching soon. The audio packs and VJ loops are samples, to show how
+            the shop will look; the real ones are on their way. Tap “Tell me when it’s out” on anything you like and we’ll message
+            you.
           </p>
         </div>
         <nav className="shop-tabs" aria-label="Shop sections">
@@ -124,11 +127,19 @@ export function ShopIndex() {
             </li>
             <li>
               <span className="steps__n">02</span>
+              <strong>Software</strong>
+              <p>
+                Download the installer and get a licence key by email. Activate it once in the plugin or app; after that it works
+                offline.
+              </p>
+            </li>
+            <li>
+              <span className="steps__n">03</span>
               <strong>Merch</strong>
               <p>Each piece is printed when you order it and shipped across India, usually within a week.</p>
             </li>
             <li>
-              <span className="steps__n">03</span>
+              <span className="steps__n">04</span>
               <strong>Licence</strong>
               <p>
                 Use the sounds in your tracks and sets, and the loops in your shows and streams, royalty-free. Just don’t resell
@@ -136,7 +147,7 @@ export function ShopIndex() {
               </p>
             </li>
             <li>
-              <span className="steps__n">04</span>
+              <span className="steps__n">05</span>
               <strong>Questions</strong>
               <p>Something not right with an order? Message us on WhatsApp and we’ll sort it out.</p>
             </li>
@@ -198,13 +209,16 @@ export function ShopItem({ id }: { id: string }) {
                   : 'Sample product. Mock-up of the design.'
               : p.kind === 'merch' && !p.checkout
                 ? 'Mock-up of the design. Launching soon.'
-                : section.note}
+                : p.kind === 'software' && !p.checkout
+                  ? 'Cover artwork. Screenshots to follow. Launching soon.'
+                  : section.note}
           </figcaption>
         </figure>
 
         <div className="gear-detail__info">
           <p className="gear-card__meta">
             <span>{section.title}</span>
+            {p.kind === 'software' && <span>{p.type}</span>}
             {p.sample && <span>Sample</span>}
           </p>
           <h1 className="display display--sm gear-detail__name">{p.name}</h1>
@@ -250,6 +264,17 @@ export function ShopItem({ id }: { id: string }) {
 
           <Buy p={p} option={option} />
 
+          {p.kind === 'software' && (
+            <div className="shop-item__contents shop-item__features">
+              <p className="label">What it does</p>
+              <ul>
+                {p.features.map((f) => (
+                  <li key={f}>{f}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {p.kind === 'audio' && (
             <div className="shop-item__contents">
               <p className="label">Inside</p>
@@ -279,6 +304,7 @@ export function ShopItem({ id }: { id: string }) {
             {section.note}
             {p.kind === 'merch' ? ' Prices include GST.' : ' Prices in US dollars; tax is added at checkout where it applies.'}
           </p>
+          {p.kind === 'software' && p.notice && <p className="fineprint">{p.notice}</p>}
         </div>
       </div>
 

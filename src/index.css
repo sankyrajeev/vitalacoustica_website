@@ -8845,3 +8845,79 @@ img.cover {
     transform: none;
   }
 }
+
+/* ─────────────── Shop: software ─────────────── */
+
+/* each product's wordmark on its cover: the plugins in wide capitals, Lumière in the serif with a brass è */
+.cover__name--software {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(22px, 2.5vw, 32px);
+  letter-spacing: 0.26em;
+  line-height: 1.05;
+}
+
+.cover--lumiere .cover__name--software,
+.cover--resident .cover__name--software {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(28px, 3.2vw, 42px);
+  letter-spacing: 0;
+}
+
+.cover__name--software em {
+  font-style: inherit;
+  color: var(--brass);
+}
+
+.cover__name--software span {
+  font-style: normal;
+}
+
+.shop-card__type {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+/* a software product's features: a list, not tags */
+.shop-item__features ul {
+  display: grid;
+  gap: var(--s2);
+  padding-left: 1.1em;
+  list-style: disc;
+}
+
+.shop-item__features li {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-soft);
+}
+
+.shop-item__features li::marker {
+  color: var(--accent-text);
+}
+
+.shop-grid--software {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1000px) {
+  .shop-grid--software {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .shop-grid--software {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

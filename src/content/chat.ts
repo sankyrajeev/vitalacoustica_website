@@ -256,7 +256,7 @@ const HANDLERS: Record<string, Handler> = {
   }),
 
   shop: () => ({
-    text: 'Our first merch collection is launching soon: two tees, a hoodie and a cap, printed to order in India. Sample packs and VJ loops are on the way too. Have a look, and ask to be told when things go on sale.',
+    text: 'Our software is launching soon: VANTA, a synth that rebuilds any sound as a playable patch, VANTA Dynamics, the ORBIT mixing system, and Lumière Link and Lumière Resident, which make lighting follow the DJ. So is our first merch collection. Have a look, and ask to be told when things go on sale.',
     actions: [{ kind: 'link', label: 'Visit the shop', to: '/shop' }],
   }),
 

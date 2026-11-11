@@ -1,11 +1,11 @@
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import lockup from '../../brand/logo-lockup.webp'
 import { useInView, useMediaQuery } from '../../hooks/useMedia'
-import type { AudioPack, Loop, Merch } from '../../content/shop'
+import type { AudioPack, Loop, Merch, Software } from '../../content/shop'
 import { VA_MARK_PATH } from '../../brand/vaMarkPath'
 
-// Artwork for shop products that don't have photos yet: generated covers for audio packs,
-// live previews for VJ loops and garment mock-ups for merch. Real images replace them later.
+// Artwork for shop products that don't have photos yet: generated covers for software and audio
+// packs, live previews for VJ loops and garment mock-ups for merch. Real images replace them later.
 
 const BRASS = '#b8a47b'
 const IVORY = '#f0ede5'
@@ -21,6 +21,141 @@ function seeded(id: string) {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
+}
+
+/* ─────────────── Software covers ─────────────── */
+
+const wave = (x0: number, y0: number, w: number, amp: number, f: number, ph: number, harm = 0.35) =>
+  Array.from({ length: 61 }, (_, k) => {
+    const x = (k / 60) * w
+    const y = Math.sin(x * f + ph) + harm * Math.sin(x * f * 2.03 + ph * 1.7) + harm * 0.5 * Math.sin(x * f * 3.1 + ph)
+    return `${k ? 'L' : 'M'}${(x0 + x).toFixed(1)},${(y0 - y * amp).toFixed(1)}`
+  }).join(' ')
+
+const SOFTWARE_ART: Record<Software['art'], () => ReactNode> = {
+  // a sound on the left, rebuilt as a stack of wavetable frames receding to the right
+  vanta: () => (
+    <>
+      <path d={wave(36, 205, 120, 26, 0.11, 0.4, 0.6)} fill="none" stroke={IVORY} strokeWidth="1.6" opacity="0.85" />
+      {Array.from({ length: 16 }, (_, i) => (
+        <path
+          key={i}
+          d={wave(150 + i * 9, 230 - i * 9, 170, 22 - i * 0.6, 0.06 + i * 0.002, i * 0.35, 0.3 + i * 0.02)}
+          fill="none"
+          stroke={i === 0 ? IVORY : BRASS}
+          strokeWidth={i === 0 ? 1.6 : 0.8}
+          opacity={1 - i * 0.05}
+        />
+      ))}
+    </>
+  ),
+  // a compressor's curve: unity, the knee, and the meters beside it
+  'vanta-dynamics': () => (
+    <>
+      {Array.from({ length: 7 }, (_, i) => (
+        <g key={i} stroke={IVORY} opacity="0.08">
+          <line x1={70 + i * 40} y1="70" x2={70 + i * 40} y2="310" />
+          <line x1="70" y1={70 + i * 40} x2="310" y2={70 + i * 40} />
+        </g>
+      ))}
+      <line x1="70" y1="310" x2="310" y2="70" stroke={IVORY} strokeDasharray="4 6" opacity="0.35" />
+      <path d="M70,310 L190,190 Q215,166 250,160 L310,148" fill="none" stroke={BRASS} strokeWidth="2.4" />
+      <path d="M70,250 Q120,235 160,215" fill="none" stroke={IVORY} strokeWidth="1.2" opacity="0.6" />
+      {Array.from({ length: 12 }, (_, i) => (
+        <rect key={i} x="334" y={300 - i * 19} width="12" height="14" fill={i < 9 ? BRASS : IVORY} opacity={i < 7 ? 0.85 : 0.3} />
+      ))}
+    </>
+  ),
+  // the Master at the centre, Nodes circling it on tilted orbits
+  orbit: () => (
+    <>
+      <defs>
+        <radialGradient id="orbit-core" cx="40%" cy="38%" r="60%">
+          <stop offset="0" stopColor={IVORY} />
+          <stop offset="0.55" stopColor={BRASS} />
+          <stop offset="1" stopColor="#4a4231" />
+        </radialGradient>
+      </defs>
+      {[
+        [130, 44, -18],
+        [150, 62, 24],
+        [112, 90, 70],
+      ].map(([rx, ry, rot], i) => (
+        <g key={i} transform={`rotate(${rot} 200 200)`}>
+          <ellipse cx="200" cy="200" rx={rx} ry={ry} fill="none" stroke={BRASS} strokeWidth="0.9" opacity="0.6" />
+          {[0.3, 2.2, 4.1].map((a, k) => (
+            <circle key={k} cx={200 + rx * Math.cos(a + i)} cy={200 + ry * Math.sin(a + i)} r={k === 0 ? 6 : 4} fill={k === 0 ? IVORY : BRASS} />
+          ))}
+        </g>
+      ))}
+      <circle cx="200" cy="200" r="34" fill="url(#orbit-core)" />
+    </>
+  ),
+  // beams fanning down over a phrase timeline: build, then the drop
+  lumiere: () => (
+    <>
+      {[-0.42, -0.21, 0, 0.21, 0.42].map((a, i) => (
+        <path
+          key={i}
+          d={`M198,60 L${200 + Math.tan(a) * 230 - 16},290 L${200 + Math.tan(a) * 230 + 16},290 Z`}
+          fill={i % 2 ? IVORY : BRASS}
+          opacity={i === 2 ? 0.4 : 0.22}
+        />
+      ))}
+      <circle cx="200" cy="58" r="5" fill={IVORY} />
+      {Array.from({ length: 32 }, (_, i) => {
+        const build = i >= 16 && i < 24
+        const drop = i >= 24
+        const h = drop ? 30 : build ? 8 + (i - 16) * 2.6 : 10
+        return <rect key={i} x={40 + i * 10} y={330 - h} width="6" height={h} fill={drop ? BRASS : IVORY} opacity={drop ? 0.95 : 0.4} />
+      })}
+      <line x1="280" y1="290" x2="280" y2="338" stroke={IVORY} strokeWidth="1.2" />
+    </>
+  ),
+  // the box: a small unit with a status light, DMX out and the beams it runs
+  resident: () => (
+    <>
+      {[-0.35, 0, 0.35].map((a, i) => (
+        <path key={i} d={`M200,40 L${200 + Math.tan(a) * 150 - 12},190 L${200 + Math.tan(a) * 150 + 12},190 Z`} fill={BRASS} opacity="0.16" />
+      ))}
+      <path d="M110,230 L200,196 L290,230 L200,264 Z" fill="#26231d" stroke={BRASS} strokeWidth="1.2" />
+      <path d="M110,230 L110,282 L200,316 L200,264 Z" fill="#191815" stroke={BRASS} strokeWidth="1.2" />
+      <path d="M290,230 L290,282 L200,316 L200,264 Z" fill="#141311" stroke={BRASS} strokeWidth="1.2" />
+      <circle cx="132" cy="258" r="3.5" fill={BRASS} />
+      <path d="M150,262 L184,275" stroke={IVORY} strokeWidth="2" opacity="0.6" />
+      {[0, 1].map((i) => (
+        <circle key={i} cx={228 + i * 28} cy={275 - i * 10.5} r="8" fill="none" stroke={IVORY} strokeWidth="1.4" opacity="0.7" />
+      ))}
+    </>
+  ),
+}
+
+export function SoftwareCover({ p }: { p: Software }) {
+  return (
+    <div className={`cover cover--software cover--${p.art}`}>
+      <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden>
+        <defs>
+          <radialGradient id={`glow-${p.id}`} cx="50%" cy="45%" r="65%">
+            <stop offset="0" stopColor="#2a261d" />
+            <stop offset="1" stopColor="#0d0d0c" />
+          </radialGradient>
+        </defs>
+        <rect width="400" height="400" fill={`url(#glow-${p.id})`} />
+        {/* the artwork keeps to the upper part, clear of the wordmark */}
+        <g transform="translate(56 18) scale(0.72)">{SOFTWARE_ART[p.art]()}</g>
+      </svg>
+      <span className="cover__kicker">Vital Acoustica · {p.type}</span>
+      <span className="cover__name cover__name--software">
+        {p.name.startsWith('Lumière') ? (
+          <>
+            Lumi<em>è</em>re <span>{p.name.slice('Lumière '.length)}</span>
+          </>
+        ) : (
+          p.name
+        )}
+      </span>
+    </div>
+  )
 }
 
 /* ─────────────── Audio pack covers ─────────────── */

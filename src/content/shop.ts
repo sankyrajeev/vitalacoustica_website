@@ -1,7 +1,7 @@
-// The shop: sample packs and VJ loops (digital, sold worldwide) and merch (printed on demand in India).
+// The shop: software, sample packs and VJ loops (digital, sold worldwide) and merch (printed on demand in India).
 //
 // How buying works (see docs/shop-setup.md):
-// - Audio packs and VJ loops are sold through Gumroad. Gumroad stores the files, takes the payment
+// - Software, audio packs and VJ loops are sold through Gumroad. Gumroad stores the files, takes the payment
 //   (cards, PayPal, UPI), handles tax for buyers abroad and emails the download. Paste each product's
 //   Gumroad link into `checkout` and its Buy button opens Gumroad's checkout over our page.
 // - Merch is printed and shipped per order by a print-on-demand partner (Qikink). Paste the product's
@@ -11,7 +11,7 @@
 // DUMMY: the audio packs and VJ loops below are samples, to show how the shop will look. The merch is
 // our first collection (the designs are final; it's on sale once `checkout` is filled in).
 
-export type ShopKind = 'audio' | 'loops' | 'merch'
+export type ShopKind = 'software' | 'audio' | 'loops' | 'merch'
 
 type Base = {
   id: string
@@ -51,7 +51,20 @@ export type Merch = Base & {
   gallery?: string[] // more views, e.g. the back
 }
 
-export type Product = AudioPack | Loop | Merch
+/** Our own plugins, apps and show hardware. */
+export type Software = Base & {
+  kind: 'software'
+  /** what sort of thing it is, on cards and the item page */
+  type: string
+  /** the generated cover, until real screenshots replace it */
+  art: 'vanta' | 'vanta-dynamics' | 'orbit' | 'lumiere' | 'resident'
+  features: string[]
+  specs: [string, string][]
+  /** fine print under the specs, e.g. other companies' trademarks the product works with */
+  notice?: string
+}
+
+export type Product = Software | AudioPack | Loop | Merch
 
 export const SECTIONS: {
   kind: ShopKind
@@ -66,6 +79,13 @@ export const SECTIONS: {
     line: 'Oversized tees, hoodies and caps to wear to the next show. Printed when you order, so nothing goes to waste.',
     currency: 'INR',
     note: 'Printed to order and shipped across India in about a week.',
+  },
+  {
+    kind: 'software',
+    title: 'Software',
+    line: 'Plugins and show software made by Vital Acoustica: instruments, mixing tools, and lighting that follows the DJ.',
+    currency: 'USD',
+    note: 'Launching soon. Instant download with a licence key by email.',
   },
   {
     kind: 'audio',
@@ -84,6 +104,141 @@ export const SECTIONS: {
 ]
 
 export const products: Product[] = [
+  // ─── Software: launching soon (no prices or checkout links yet) ───
+  // DUMMY: formats, systems and licence terms below are the plans in each project's own docs;
+  // confirm them against the release builds before the checkout links go in.
+  {
+    id: 'vanta',
+    kind: 'software',
+    name: 'VANTA',
+    type: 'Synthesizer plugin',
+    tagline: 'Sound, reconstructed. Launching soon.',
+    description:
+      'A synthesizer that listens to a sound and rebuilds it as a patch you can play. Drop a sample into the Sample Lab and VANTA analyses it, reconstructs it from wavetable, additive and noise layers, and scores every attempt against the original, so it measures itself. Then play it, shape it and modulate it like any synth. Launching soon.',
+    price: 0,
+    checkout: '',
+    art: 'vanta',
+    features: [
+      'Sample Lab: analyse a sound, rebuild it, compare and improve, then play it',
+      'Three wavetable oscillators with unison and FM, plus a sub and 11 noise types',
+      '12 filter types, including ladder, comb and formant',
+      'Four envelopes, four LFOs and four macros, with drag-and-drop modulation',
+      'Nine effects in a chain you can reorder',
+      '85 presets, each with Brightness, Space, Movement and Drive macros',
+      'Works offline: no account, no cloud, no subscription',
+    ],
+    specs: [
+      ['Type', 'Synthesizer'],
+      ['Formats', 'VST3 · AU · Standalone'],
+      ['Systems', 'macOS 11 or later (Apple Silicon and Intel) · Windows 10 and 11, 64-bit'],
+      ['Licence', 'Perpetual, for two computers'],
+    ],
+  },
+  {
+    id: 'vanta-dynamics',
+    kind: 'software',
+    name: 'VANTA Dynamics',
+    type: 'Effect plugin',
+    tagline: 'VANTA’s dynamics, on any track. Launching soon.',
+    description:
+      'The two dynamics processors from VANTA as an effect of their own: a smooth optical compressor, and a multiband compressor that pushes quiet detail up and pulls loud peaks down at the same time. Put them on any track, bus or synth. Launching soon.',
+    price: 0,
+    checkout: '',
+    art: 'vanta-dynamics',
+    features: ['Optical compressor for smooth, musical levelling', 'Multiband upward and downward compression for density and detail', 'Works offline: no account, no cloud, no subscription'],
+    specs: [
+      ['Type', 'Dynamics effect'],
+      ['Formats', 'VST3 · AU'],
+      ['Systems', 'macOS 11 or later · Windows 10 and 11, 64-bit'],
+    ],
+  },
+  {
+    id: 'orbit',
+    kind: 'software',
+    name: 'ORBIT',
+    type: 'Mixing system',
+    tagline: 'One mixing system across your whole session. Launching soon.',
+    description:
+      'An ORBIT Node on every track and ORBIT Master on the mix bus. Each Node analyses its own track; the Master hears the whole mix, finds where tracks fight (kick and bass, masking in the mids, low-end build-up, a harsh top end) and sends each Node a suggestion with its reason. Take the suggestions, let ORBIT apply them within limits you set, or mix by hand. Without the Master, every Node is still a full channel strip. Launching soon.',
+    price: 0,
+    checkout: '',
+    art: 'orbit',
+    features: [
+      'Two plugins that work together: ORBIT Master and ORBIT Node',
+      'You name each track’s role; ORBIT never guesses',
+      'Assist (suggestions only), Adaptive (applied within your limits) or Manual',
+      'Kick and bass handled together: a cut that follows the kick, and ducking',
+      'Optional reference track, analysed on your computer, with a loudness-matched A/B',
+      'Layer and polarity checks for stacked sounds',
+      'A simple view with five knobs, and an advanced view with everything',
+      'Nothing goes to the cloud',
+    ],
+    specs: [
+      ['Type', 'Mixing system: Master and Node plugins'],
+      ['Formats', 'VST3 · AU'],
+      ['Systems', 'macOS and Windows, versions to be announced'],
+      ['Latency', 'Node: none · Master: about 1.5 ms'],
+    ],
+  },
+  {
+    id: 'lumiere-link',
+    kind: 'software',
+    name: 'Lumière Link',
+    type: 'Lighting software',
+    tagline: 'Lighting that follows the DJ. Launching soon.',
+    description:
+      'Lumière Link listens to the CDJs and the mixer over Pro DJ Link, the network cable the decks already use, and drives Lightkey in time with the music. Tempo goes across as MIDI clock, so the lights follow the master deck, pitch fader and all. Cues fire on the music’s phrases: a new look every few bars, a blackout before the drop, the hit when it lands, and lights that build with the riser. Launching soon.',
+    price: 0,
+    checkout: '',
+    art: 'lumiere',
+    features: [
+      'Reads up to six players and the mixer over Pro DJ Link: no audio cable, no internet',
+      'MIDI clock to Lightkey that follows the master deck, pitch fader included',
+      'Phrase cues from rekordbox phrase data, with the waveform as a fallback',
+      'Optional live-audio backup from the front-of-house desk for tracks without rekordbox data',
+      'Pools of up to 24 sequences, mapped once in Lightkey',
+      'A new look every 4, 8, 16 or 32 bars, a blackout before the drop, and builds that follow the riser',
+      'Follow the tempo master, the on-air deck, or lock to one deck',
+      'Light delay, cue log and manual pads for the show',
+    ],
+    specs: [
+      ['Type', 'Lighting automation app'],
+      ['System', 'macOS (Apple Silicon and Intel)'],
+      ['Works with', 'Pioneer DJ players and mixers on Pro DJ Link (tested with CDJ-3000X and DJM-V10)'],
+      ['Lighting', 'Lightkey, on the same Mac'],
+      ['Network', 'The DJ network switch; no router or internet needed'],
+    ],
+    notice:
+      'Pioneer DJ, Pro DJ Link, CDJ, DJM and rekordbox are trademarks of their owners, and Lightkey is a trademark of its developer. Lumière Link works with them and is not made, endorsed or supported by them.',
+  },
+  {
+    id: 'lumiere-resident',
+    kind: 'software',
+    name: 'Lumière Resident',
+    type: 'Venue hardware',
+    tagline: 'The lighting box that stays at the venue. Launching soon.',
+    description:
+      'Lumière Link in a box of its own, with no laptop. Plug it into the DJ network and the lighting, and the lights follow every set through the night, with nobody at the desk. If the music stops, it falls back to a house look. Set it up and check on it from a phone. Launching soon.',
+    price: 0,
+    checkout: '',
+    art: 'resident',
+    features: [
+      'Runs Lumière Link on its own: no laptop at the booth',
+      'Follows every DJ on Pro DJ Link, all night',
+      'Falls back to a house look when the music stops',
+      'Controlled from a phone browser',
+      'DMX out for the venue’s lighting',
+    ],
+    specs: [
+      ['Type', 'Venue lighting controller'],
+      ['Inside', 'Lumière Link with QLC+ lighting software'],
+      ['Output', 'DMX, one universe (512 channels)'],
+      ['Control', 'Phone or tablet browser'],
+    ],
+    notice:
+      'Pioneer DJ, Pro DJ Link and rekordbox are trademarks of their owners. Lumière Resident works with them and is not made, endorsed or supported by them.',
+  },
+
   // ─── Audio packs ───
   {
     id: 'low-end-theory',
