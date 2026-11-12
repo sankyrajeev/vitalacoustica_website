@@ -132,7 +132,7 @@ export const products: Product[] = [
       '12 filter types, including ladder, comb and formant',
       'Four envelopes, four LFOs and four macros, with drag-and-drop modulation',
       'Nine effects in a chain you can reorder',
-      '85 presets, each with Brightness, Space, Movement and Drive macros',
+      'Over 200 factory presets in nine categories, with Brightness, Space, Movement and Drive macros',
       'Works offline: no account, no cloud, no subscription',
     ],
     specs: [

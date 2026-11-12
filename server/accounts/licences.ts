@@ -18,9 +18,11 @@ import { PRODUCTS, isProduct, type ProductId } from './products.ts'
 type LicenceRow = { key: string; product: string; email: string; edition: string; max_devices: number; expires: string | null; revoked: number; owner: string | null }
 
 const today = () => new Date().toISOString().slice(0, 10)
+const text = (v: unknown, max: number) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : null)
 
 export async function activate(request: Request, env: AccountsEnv, db: D1Database) {
-  const body = await readJson<{ key?: string; machine?: string; machineName?: string }>(request)
+  // fields we don't use are ignored, so newer apps can send more
+  const body = await readJson<{ key?: string; machine?: string; machineName?: string; os?: string; termsVersion?: string; termsAccepted?: string }>(request)
   if (!body) return json({ error: 'The request was not understood.' }, 400)
   if (await limited(db, `activate:${clientIp(request)}`, 30, 3600)) return json({ error: 'Too many attempts. Try again in an hour.' }, 429)
   const key = normaliseKey(String(body.key ?? ''))
@@ -57,13 +59,16 @@ export async function activate(request: Request, env: AccountsEnv, db: D1Databas
   // re-activating a computer (a reinstall) keeps its slot, and its name if none is sent
   const saved = await db
     .prepare(
-      `INSERT INTO activations (key, machine, machine_name, activated_at) VALUES (?1, ?2, ?3, ?4)
+      `INSERT INTO activations (key, machine, machine_name, activated_at, os, terms_version, terms_accepted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
        ON CONFLICT (key, machine) DO UPDATE SET
          machine_name = CASE WHEN excluded.machine_name != '' THEN excluded.machine_name ELSE machine_name END,
-         activated_at = excluded.activated_at
+         activated_at = excluded.activated_at,
+         os = COALESCE(excluded.os, os),
+         terms_version = COALESCE(excluded.terms_version, terms_version),
+         terms_accepted = COALESCE(excluded.terms_accepted, terms_accepted)
        RETURNING machine_name`,
     )
-    .bind(key, machine, machineName, now())
+    .bind(key, machine, machineName, now(), text(body.os, 80), text(body.termsVersion, 40), text(body.termsAccepted, 40))
     .first<{ machine_name: string | null }>()
   if (product.format === 'pf1') {
     const lease = product.leaseDays ? new Date(Date.now() + product.leaseDays * 86400e3).toISOString().slice(0, 10) : null

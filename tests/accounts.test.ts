@@ -222,8 +222,16 @@ test('a purchase records the order, issues a key and emails it', async () => {
 
 test('activating: signed licence, two computers, re-activation keeps its slot', async () => {
   const activate = (machine: string, machineName = '') => call('/api/licence/v1/activate', { method: 'POST', body: { key: key.toLowerCase(), machine, machineName } })
-  let res = await activate('a'.repeat(32), 'Studio Mac')
+  // VANTA also sends its system and the terms accepted at first launch; they're kept with the activation
+  let res = await call('/api/licence/v1/activate', {
+    method: 'POST',
+    body: { key, machine: 'a'.repeat(32), machineName: 'Studio Mac', os: 'macOS 14.6', termsVersion: '2026-11-beta-1', termsAccepted: '2026-11-12T10:00:00Z', future: 1 },
+  })
   assert.equal(res.status, 200)
+  assert.deepEqual(
+    { ...(await env.DB!.prepare('SELECT os, terms_version, terms_accepted FROM activations WHERE key = ?').bind(key).first()) },
+    { os: 'macOS 14.6', terms_version: '2026-11-beta-1', terms_accepted: '2026-11-12T10:00:00Z' },
+  )
   const licence = verifyLicence(((await res.json()) as { licence: string }).licence)
   assert.deepEqual(
     { product: licence.product, key: licence.key, email: licence.email, machineName: licence.machineName, edition: licence.edition, expires: licence.expires },
