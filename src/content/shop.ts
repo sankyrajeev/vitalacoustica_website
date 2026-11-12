@@ -150,7 +150,7 @@ export const products: Product[] = [
       'Three wavetable oscillators with unison and FM, plus sample, granular and spectral modes',
       'A sub, and noise in 11 textures or from your own recordings',
       '12 filter types, including ladder, comb and formant, with drive',
-      'Drag-and-drop modulation: four envelopes, four drawable LFOs, four macros, 63 destinations',
+      'Drag-and-drop modulation: four envelopes, four drawable LFOs, four macros, 107 destinations',
       'Nine effects in a chain you can reorder, including Opto and OTT',
       'The Sample Lab: rebuild any sound as a playable patch, and see how close it got',
       'An Assistant that turns “warmer and wider” into measured, undoable changes',
@@ -187,7 +187,7 @@ export const products: Product[] = [
         points: [
           'Four envelopes with draggable points and four drawable LFOs, including chaos and drift shapes',
           'Draw how velocity and the played note shape the sound',
-          'Four macros, a 16-slot matrix and 63 destinations, with a routing view of everything',
+          'Four macros, a 16-slot matrix and 107 destinations, with a routing view of everything',
           'Undo and redo for every move',
         ],
         shot: 'shop/vanta/vanta-modulation.webp',
