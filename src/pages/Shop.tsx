@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Link } from '../components/Link'
-import { PageHead } from '../components/PageHead'
 import { AudioPreview } from '../components/shop/AudioPreview'
 import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
 import { BetaRequest } from '../components/shop/BetaRequest'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
-import { price, products, SECTIONS, sectionOf, type Product } from '../content/shop'
-import { scrollToId } from '../router'
+import { price, products, SECTIONS, SOFTWARE_AREAS, sectionOf, type Product, type ShopKind } from '../content/shop'
+import { href, queryParam } from '../router'
 import { NotFound } from './NotFound'
 
 function Art({ p, colour, view }: { p: Product; colour?: number; view?: string }) {
@@ -58,60 +57,63 @@ function ProductCard({ p }: { p: Product }) {
   )
 }
 
+type Shelf = ShopKind
+type Area = (typeof SOFTWARE_AREAS)[number]['id']
+
+/** The shelf and software area in the address (/shop?section=software&area=lighting), so links and Back work. */
+function useShelf(): [Shelf, Area, (s: Shelf, a?: Area) => void] {
+  const read = (): [Shelf, Area] => {
+    const s = queryParam('section')
+    const a = queryParam('area')
+    return [SECTIONS.some((x) => x.kind === s) ? (s as Shelf) : 'software', a === 'lighting' ? 'lighting' : 'audio']
+  }
+  const [[shelf, area], set] = useState(read)
+  const choose = (s: Shelf, a: Area = 'audio') => {
+    set([s, a])
+    const q = s === 'software' ? (a === 'audio' ? '' : `?section=software&area=${a}`) : `?section=${s}`
+    window.history.replaceState(null, '', href(`/shop${q}`))
+  }
+  return [shelf, area, choose]
+}
+
 export function ShopIndex() {
+  const [shelf, area, choose] = useShelf()
+  const section = sectionOf(shelf)
+  const shown = products.filter((p) => p.kind === shelf && (p.kind !== 'software' || p.area === area))
+
   return (
     <>
-      <PageHead label="Shop" title="Software, things to wear, sounds and visuals.">
-        Plugins and show software we make, merch to wear to the next show, and sample packs and VJ loops made the way we run our
-        shows. Downloads work anywhere in the world.
-      </PageHead>
-      <div className="wrap">
-        <div className="notice shop-notice">
-          <p className="label">Opening soon</p>
-          <p>
-            Our software and our first merch collection are launching soon. The audio packs and VJ loops are samples, to show how
-            the shop will look; the real ones are on their way. Tap “Tell me when it’s out” on anything you like and we’ll message
-            you.
-          </p>
-        </div>
-        <nav className="shop-tabs" aria-label="Shop sections">
+      <header className="page-head wrap shop-head">
+        <Label>Shop</Label>
+        <nav className="shop-shelves" aria-label="Shop">
           {SECTIONS.map((s) => (
-            <a
-              key={s.kind}
-              href={`#${s.kind}`}
-              onClick={(e) => {
-                e.preventDefault()
-                scrollToId(s.kind)
-              }}
-            >
+            <button key={s.kind} type="button" className="shop-shelves__item" aria-pressed={shelf === s.kind} onClick={() => choose(s.kind)}>
               {s.title}
-              <span>{products.filter((p) => p.kind === s.kind).length}</span>
-            </a>
+            </button>
           ))}
         </nav>
-      </div>
+        {shelf === 'software' && (
+          <nav className="shop-areas" aria-label="Software">
+            {SOFTWARE_AREAS.map((a) => (
+              <button key={a.id} type="button" aria-pressed={area === a.id} onClick={() => choose('software', a.id)}>
+                {a.title}
+                <span>{products.filter((p) => p.kind === 'software' && p.area === a.id).length}</span>
+              </button>
+            ))}
+          </nav>
+        )}
+      </header>
 
-      {SECTIONS.map((s, i) => (
-        <section key={s.kind} id={s.kind} className="section section--tight shop-section" aria-labelledby={`${s.kind}-title`}>
-          <div className="wrap">
-            <header className="shop-section__head">
-              <Label index={`0${i + 1}`}>{s.kind === 'merch' ? 'Printed to order' : 'Digital download'}</Label>
-              <h2 id={`${s.kind}-title`} className="h1">
-                {s.title}
-              </h2>
-              <p>{s.line}</p>
-              <p className="shop-section__note">{s.note}</p>
-            </header>
-            <div className={`shop-grid shop-grid--${s.kind}`}>
-              {products
-                .filter((p) => p.kind === s.kind)
-                .map((p) => (
-                  <ProductCard key={p.id} p={p} />
-                ))}
-            </div>
+      <section className="section section--tight shop-section" aria-label={shelf === 'software' ? `${area === 'audio' ? 'Audio' : 'Lighting'} software` : section.title}>
+        <div className="wrap">
+          <div className={`shop-grid shop-grid--${shelf}`} key={`${shelf}-${area}`}>
+            {shown.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
           </div>
-        </section>
-      ))}
+          <p className="shop-section__note">{section.note}</p>
+        </div>
+      </section>
 
       <section className="section section--solid" aria-labelledby="shop-how">
         <div className="wrap">
@@ -184,7 +186,9 @@ export function ShopItem({ id }: { id: string }) {
         <nav className="crumbs" aria-label="Breadcrumb">
           <Link to="/shop">Shop</Link>
           <span aria-hidden>/</span>
-          <span>{section.title}</span>
+          <Link to={p.kind === 'software' ? (p.area === 'audio' ? '/shop' : '/shop?section=software&area=lighting') : `/shop?section=${p.kind}`}>
+            {p.kind === 'software' ? `${section.title} · ${p.area === 'audio' ? 'Audio' : 'Lighting'}` : section.title}
+          </Link>
         </nav>
       </div>
 

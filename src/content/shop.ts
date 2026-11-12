@@ -56,6 +56,8 @@ export type Merch = Base & {
 /** Our own plugins, apps and show hardware. */
 export type Software = Base & {
   kind: 'software'
+  /** which shelf it's on in the shop: music software, or lighting software and hardware */
+  area: 'audio' | 'lighting'
   /** what sort of thing it is, on cards and the item page */
   type: string
   /** the generated cover, until real screenshots replace it */
@@ -80,6 +82,11 @@ export type Software = Base & {
 
 export type Product = Software | AudioPack | Loop | Merch
 
+export const SOFTWARE_AREAS = [
+  { id: 'audio', title: 'Audio' },
+  { id: 'lighting', title: 'Lighting' },
+] as const
+
 export const SECTIONS: {
   kind: ShopKind
   title: string
@@ -88,18 +95,18 @@ export const SECTIONS: {
   note: string
 }[] = [
   {
-    kind: 'merch',
-    title: 'Merch',
-    line: 'Oversized tees, hoodies and caps to wear to the next show. Printed when you order, so nothing goes to waste.',
-    currency: 'INR',
-    note: 'Printed to order and shipped across India in about a week.',
-  },
-  {
     kind: 'software',
     title: 'Software',
     line: 'Plugins and show software made by Vital Acoustica: instruments, mixing tools, and lighting that follows the DJ.',
     currency: 'USD',
     note: 'Launching soon. Instant download with a licence key by email.',
+  },
+  {
+    kind: 'merch',
+    title: 'Merch',
+    line: 'Oversized tees, hoodies and caps to wear to the next show. Printed when you order, so nothing goes to waste.',
+    currency: 'INR',
+    note: 'Printed to order and shipped across India in about a week.',
   },
   {
     kind: 'audio',
@@ -124,6 +131,7 @@ export const products: Product[] = [
   {
     id: 'vanta',
     kind: 'software',
+    area: 'audio',
     name: 'VANTA',
     type: 'Synthesizer plugin',
     tagline: 'Sound, reconstructed. Launching soon.',
@@ -175,6 +183,7 @@ export const products: Product[] = [
   {
     id: 'vanta-dynamics',
     kind: 'software',
+    area: 'audio',
     name: 'VANTA Dynamics',
     type: 'Effect plugin',
     tagline: 'VANTA’s dynamics, on any track. Free with VANTA. Launching soon.',
@@ -198,6 +207,7 @@ export const products: Product[] = [
   {
     id: 'orbit',
     kind: 'software',
+    area: 'audio',
     name: 'ORBIT',
     type: 'Mixing system',
     tagline: 'One mixing system across your whole session. Launching soon.',
@@ -226,6 +236,7 @@ export const products: Product[] = [
   {
     id: 'lumiere-link',
     kind: 'software',
+    area: 'lighting',
     name: 'Lumière Link',
     type: 'Lighting software',
     tagline: 'Lighting that follows the DJ. Launching soon.',
@@ -257,6 +268,7 @@ export const products: Product[] = [
   {
     id: 'pixel-forge',
     kind: 'software',
+    area: 'lighting',
     name: 'Pixel Forge',
     type: 'LED pixel mapping',
     tagline: 'Pixel-perfect LED lighting, live. Launching soon.',
@@ -299,6 +311,7 @@ export const products: Product[] = [
   {
     id: 'lumiere-resident',
     kind: 'software',
+    area: 'lighting',
     name: 'Lumière Resident',
     type: 'Venue hardware',
     tagline: 'The lighting box that stays at the venue. Launching soon.',

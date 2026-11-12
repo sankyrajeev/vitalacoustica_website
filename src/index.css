@@ -9400,3 +9400,142 @@ img.cover--screen {
 .admin__request .label {
   color: var(--text);
 }
+
+/* ─────────────── Shop front: shelves instead of an introduction ─────────────── */
+
+.shop-head {
+  display: grid;
+  gap: var(--s5);
+  padding-bottom: 0;
+}
+
+.shop-head .label {
+  margin: 0;
+}
+
+.shop-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s2) clamp(20px, 3.4vw, 52px);
+}
+
+.shop-shelves__item {
+  position: relative;
+  padding: 0 0 10px;
+  border: 0;
+  background: none;
+  font-family: var(--serif);
+  font-size: clamp(34px, 5.2vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.shop-shelves__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: right var(--t-med, 0.35s) var(--ease);
+}
+
+.shop-shelves__item:hover {
+  color: var(--text-soft);
+}
+
+.shop-shelves__item[aria-pressed='true'] {
+  color: var(--text);
+}
+
+.shop-shelves__item[aria-pressed='true']::after {
+  right: 0;
+}
+
+.shop-areas {
+  display: flex;
+  gap: var(--s6);
+  padding-top: var(--s2);
+  border-top: var(--hair) solid var(--line);
+}
+
+.shop-areas button {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: var(--s3) 0 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.shop-areas button:hover {
+  color: var(--text-soft);
+}
+
+.shop-areas button[aria-pressed='true'] {
+  color: var(--accent-text);
+}
+
+.shop-areas span {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.shop-head + .shop-section {
+  padding-top: var(--s6);
+}
+
+.shop-section .shop-section__note {
+  margin-top: var(--s5);
+}
+
+.shop-grid--software {
+  animation: shop-in 0.45s var(--ease) both;
+}
+
+@keyframes shop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-grid--software {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .shop-shelves {
+    flex-wrap: nowrap;
+    gap: 22px;
+    margin-inline: calc(-1 * var(--gutter, 20px));
+    padding-inline: var(--gutter, 20px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .shop-shelves::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shop-shelves__item {
+    flex: none;
+    font-size: 30px;
+    white-space: nowrap;
+  }
+}
