@@ -142,6 +142,14 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
    Keys made by hand in the Licence Manager and keys from the website then check against the same public key.
 3. Never make a new key pair after this: every licence depends on the current one.
 
+**Update notices.** The app checks `GET /api/pixelforge/v1/latest?platform=…&version=…` (public, no licence needed) when it starts and once a day.
+- The website answers with the latest GitHub Release of `sankyrajeev/pixel_forge`:
+  - the tag `vX.Y.Z` is the version;
+  - the release notes' bullet points become the "what's new" list;
+  - writing `[critical]` anywhere in the notes makes the app open its update window instead of only showing a button.
+- The download link goes to the buyer's account.
+- It uses the same `GITHUB_RELEASES_TOKEN` as downloads (step 6), and the answer is cached for 10 minutes.
+
 ### Beta testing (VANTA)
 
 The website is VANTA's only licence server, betas included. Beta builds also send feedback, crash reports and a check-in to the website. You manage all of it on the **admin page**, at `vitalacoustica.com/account/admin`.

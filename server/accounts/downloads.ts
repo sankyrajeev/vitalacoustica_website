@@ -6,7 +6,7 @@ import { json, type AccountsEnv, type D1Database } from './db.ts'
 import { PRODUCTS, isProduct } from './products.ts'
 
 type Asset = { id: number; name: string; size: number; url: string }
-type Release = { tag_name: string; name: string | null; published_at: string; assets: Asset[] }
+export type Release = { tag_name: string; name: string | null; body?: string | null; published_at: string; assets: Asset[] }
 
 const gh = (env: AccountsEnv, url: string, accept = 'application/vnd.github+json') =>
   fetch(url, {
@@ -18,7 +18,7 @@ async function owns(db: D1Database, userId: string, product: string) {
   return !!(await db.prepare('SELECT key FROM licences WHERE user_id = ? AND product = ? AND revoked = 0 LIMIT 1').bind(userId, product).first())
 }
 
-async function latest(env: AccountsEnv, repo: string) {
+export async function latest(env: AccountsEnv, repo: string) {
   const res = await gh(env, `https://api.github.com/repos/${repo}/releases/latest`)
   return res.ok ? ((await res.json()) as Release) : null
 }

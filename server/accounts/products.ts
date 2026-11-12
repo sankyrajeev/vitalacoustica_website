@@ -58,7 +58,7 @@ export const PRODUCTS: Record<ProductId, LicensedProduct> = {
     licenceName: 'Pixel Forge',
     maxDevices: 1,
     signingKey: 'LICENCE_KEY_PIXELFORGE',
-    releases: '',
+    releases: 'sankyrajeev/pixel_forge',
     format: 'pf1',
     leaseDays: 90,
   },

@@ -93,6 +93,14 @@ before(() => {
       return Response.json({ id: 'email' })
     }
     if (url.startsWith('https://sandbox-api.paddle.com/customers/')) return Response.json({ data: { email: paddleEmail } })
+    if (url === 'https://api.github.com/repos/sankyrajeev/pixel_forge/releases/latest')
+      return Response.json({
+        tag_name: 'v1.0.1',
+        name: 'Pixel Forge 1.0.1',
+        published_at: '2026-11-20T10:00:00Z',
+        body: '## What changed\n- Fixed **sACN** output on Windows\n* Added a [timeline](https://x) zoom\n\nThanks!',
+        assets: [],
+      })
     if (url === 'https://oauth2.googleapis.com/token') {
       const part = (o: object) => Buffer.from(JSON.stringify(o)).toString('base64url')
       return Response.json({ id_token: `${part({ alg: 'RS256' })}.${part(googleClaims)}.sig` })
@@ -440,6 +448,22 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   // revoking stops the key
   assert.equal((await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 200)
   assert.equal((await activate('c'.repeat(32))).status, 403)
+})
+
+test('Pixel Forge update check: the latest release, public and without the database', async () => {
+  const check = (e: AccountsEnv) => handleAccounts(new Request(`${SITE}/api/pixelforge/v1/latest?platform=mac-intel&version=1.0.0`, { headers: { 'User-Agent': 'PixelForge/1.0.0' } }), e)
+  assert.equal((await check({}))!.status, 503) // no token yet: the app ignores it
+  const res = (await check({ SITE_URL: SITE, GITHUB_RELEASES_TOKEN: 'test' }))!
+  assert.equal(res.status, 200)
+  assert.deepEqual(await res.json(), {
+    version: '1.0.1',
+    url: `${SITE}/account`,
+    shop: `${SITE}/shop/pixel-forge`,
+    notes: ['Fixed sACN output on Windows', 'Added a timeline zoom'],
+    released: '2026-11-20',
+    critical: false,
+  })
+  assert.match(res.headers.get('Cache-Control')!, /max-age=600/)
 })
 
 test('without the database, account routes say so and nothing else breaks', async () => {

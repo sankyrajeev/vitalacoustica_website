@@ -7,6 +7,7 @@ import { download, listDownloads } from './downloads.ts'
 import { handleAdmin, isAdmin } from './admin.ts'
 import { activate, deactivate, feedback, licencesFor, ping, removeDevice } from './licences.ts'
 import { paddleWebhook } from './paddle.ts'
+import { latestVersion } from './updates.ts'
 
 export type { AccountsEnv } from './db.ts'
 
@@ -44,9 +45,11 @@ async function me(db: D1Database, user: User, admin: boolean) {
 export async function handleAccounts(request: Request, env: AccountsEnv): Promise<Response | null> {
   const { pathname } = new URL(request.url)
   const method = request.method
-  if (!pathname.startsWith('/api/account') && !pathname.startsWith('/api/licence') && !pathname.startsWith('/api/admin') && pathname !== '/api/paddle/webhook') return null
+  if (!pathname.startsWith('/api/account') && !pathname.startsWith('/api/licence') && !pathname.startsWith('/api/admin') && pathname !== '/api/pixelforge/v1/latest' && pathname !== '/api/paddle/webhook') return null
 
   if (pathname === '/api/licence/health') return json({ ok: true, configured: !!env.DB })
+  // update checks need no database
+  if (pathname === '/api/pixelforge/v1/latest') return method === 'GET' || method === 'HEAD' ? latestVersion(request, env, 'pixel-forge') : methodNotAllowed('GET')
   const db = env.DB
   if (!db) return notConfigured()
 
