@@ -58,7 +58,29 @@ const wa = (digits: string, text: string) => `https://wa.me/${digits}?text=${enc
  */
 const LOCK = (hex: string) => `background-image:linear-gradient(${hex},${hex});`
 
-function shell(b: Brand, preheader: string, body: string, footnote: string, privacy = false) {
+/** What sits above the card: the rental stage (enquiries), a product's own header, or nothing. */
+type Hero = 'stage' | 'none' | { src: string; alt: string; href: string }
+
+const HEROES = {
+  vanta: { src: '/email/vanta.jpg', alt: 'VANTA', href: '/shop/vanta' },
+  pixelForge: { src: '/email/pixel-forge.jpg', alt: 'Pixel Forge', href: '/shop/pixel-forge' },
+} as const
+
+function heroRows(b: Brand, hero: Hero) {
+  if (hero === 'none') return ''
+  if (hero === 'stage')
+    return `<tr><td style="padding:0 0 10px;">
+<a href="${b.site}/equipment" style="text-decoration:none;"><img src="${b.site}/media/email-stage.jpg" width="600" alt="Our stage as a 3D model: beam lights on the truss, the lighting wings and the DJ booth" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:10px;color:${C.muted};font:13px ${SANS};"></a>
+</td></tr>
+<tr><td style="padding:0 4px 22px;font:600 10px ${SANS};letter-spacing:2px;text-transform:uppercase;color:${C.muted};">
+Our rig, modelled in 3D &nbsp;·&nbsp; <a href="${b.site}/equipment" style="color:${C.brass};text-decoration:none;">Explore it &rarr;</a>
+</td></tr>`
+  return `<tr><td style="padding:0 0 22px;">
+<a href="${b.site}${hero.href}" style="text-decoration:none;"><img src="${b.site}${hero.src}" width="600" alt="${esc(hero.alt)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:10px;color:${C.muted};font:13px ${SANS};"></a>
+</td></tr>`
+}
+
+function shell(b: Brand, preheader: string, body: string, footnote: string, privacy = false, hero: Hero = 'stage') {
   // a reference unique to this email, so Gmail never folds its ending away as a repeat of an earlier one
   const ref = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
   return `<!doctype html>
@@ -82,12 +104,7 @@ body, .page { background-color: ${C.page} !important; }
 <tr><td style="padding:8px 4px 28px;">
 <a href="${b.site}" style="text-decoration:none;"><img src="${b.site}/brand/logo-full-white.png" width="180" alt="VITAL ACOUSTICA" style="display:block;width:180px;max-width:60%;height:auto;border:0;color:${C.ink};font:600 18px ${SANS};letter-spacing:3px;"></a>
 </td></tr>
-<tr><td style="padding:0 0 10px;">
-<a href="${b.site}/equipment" style="text-decoration:none;"><img src="${b.site}/media/email-stage.jpg" width="600" alt="Our stage as a 3D model: beam lights on the truss, the lighting wings and the DJ booth" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:10px;color:${C.muted};font:13px ${SANS};"></a>
-</td></tr>
-<tr><td style="padding:0 4px 22px;font:600 10px ${SANS};letter-spacing:2px;text-transform:uppercase;color:${C.muted};">
-Our rig, modelled in 3D &nbsp;·&nbsp; <a href="${b.site}/equipment" style="color:${C.brass};text-decoration:none;">Explore it &rarr;</a>
-</td></tr>
+${heroRows(b, hero)}
 <tr><td bgcolor="${C.card}" style="background-color:${C.card};${LOCK(C.card)}border:1px solid ${C.line};border-radius:10px;padding:36px 32px;">
 ${body}
 </td></tr>
@@ -353,7 +370,7 @@ ${button(link, 'Confirm my email')}
 ${text('The link works for 24 hours. If you didn’t create an account, ignore this email.')}`
   return {
     subject: 'Confirm your email for Vital Acoustica',
-    html: shell(b, 'Confirm your email to finish setting up your account.', body, ACCOUNT_NOTE),
+    html: shell(b, 'Confirm your email to finish setting up your account.', body, ACCOUNT_NOTE, false, 'none'),
     text: plain(['Confirm your email to finish setting up your Vital Acoustica account (the link works for 24 hours):', link, '', 'If you didn’t create an account, ignore this email.']),
   }
 }
@@ -367,7 +384,7 @@ ${button(signIn, 'Sign in')}${button(reset, 'Reset password', false)}
 ${text('If this wasn’t you, you can ignore this email. Your account hasn’t changed.')}`
   return {
     subject: 'You already have a Vital Acoustica account',
-    html: shell(b, 'You already have an account with this email address.', body, ACCOUNT_NOTE),
+    html: shell(b, 'You already have an account with this email address.', body, ACCOUNT_NOTE, false, 'none'),
     text: plain(['You already have a Vital Acoustica account with this email address.', `Sign in: ${signIn}`, `Reset your password: ${reset}`]),
   }
 }
@@ -381,7 +398,7 @@ ${button(link, 'Choose a new password')}
 ${text('The link works for one hour. If you didn’t ask to reset your password, ignore this email: nothing changes.')}`
   return {
     subject: 'Reset your Vital Acoustica password',
-    html: shell(b, 'Choose a new password for your account.', body, ACCOUNT_NOTE),
+    html: shell(b, 'Choose a new password for your account.', body, ACCOUNT_NOTE, false, 'none'),
     text: plain(['Choose a new password (the link works for one hour):', link, '', 'If you didn’t ask for this, ignore this email.']),
   }
 }
@@ -412,7 +429,7 @@ ${text('Your keys, downloads and order history are always in your account. Sign 
 ${button(accountLink, 'Open my account')}`
   return {
     subject: 'Your Vital Acoustica licence keys',
-    html: shell(b, 'Your licence keys and downloads are ready.', body, 'You’re receiving this because you bought software from vitalacoustica.com. Keep this email: it has your licence keys.'),
+    html: shell(b, 'Your licence keys and downloads are ready.', body, 'You’re receiving this because you bought software from vitalacoustica.com. Keep this email: it has your licence keys.', false, 'none'),
     text: plain(['Thank you for your order. Your licence keys:', ...keys.map((k) => `${k.product}: ${k.key}`), '', `Your account: ${accountLink}`]),
   }
 }
@@ -430,7 +447,7 @@ ${text('Just open it on that computer with an internet connection; nothing else 
 ${button(accountLink, 'Open my account')}`
   return {
     subject: `${r.product} on ${r.computer} needs to go online ${when}`,
-    html: shell(b, `Open ${r.product} on ${r.computer} with an internet connection by ${r.until}.`, body, 'You’re receiving this because you own a licence for software from vitalacoustica.com.'),
+    html: shell(b, `Open ${r.product} on ${r.computer} with an internet connection by ${r.until}.`, body, 'You’re receiving this because you own a licence for software from vitalacoustica.com.', false, HEROES.pixelForge),
     text: plain([
       `${r.product} on ${r.computer} hasn't been online for a while. Open it on that computer with an internet connection ${when} (by ${r.until}).`,
       `If it doesn't, ${r.product} keeps running but stops sending to your lights until it's back online.`,
@@ -466,13 +483,14 @@ ${label('Install')}
 ${list(steps)}
 ${r.guide ? text(`The full install guide and manual: <a href="${esc(r.guide)}" style="color:${C.ink};">${esc(r.guide)}</a>`) : ''}
 ${label('What we’d love you to try')}
+<img src="${b.site}/email/vanta-sample-lab.jpg" width="536" alt="VANTA's Sample Lab rebuilding a sound and measuring how close it got" style="display:block;width:100%;max-width:536px;height:auto;margin:0 0 18px;border:1px solid ${C.line};border-radius:8px;color:${C.muted};font:13px ${SANS};">
 ${list(tries)}
 ${label('Sending feedback')}
 ${text(`The quickest way is the Send feedback button at the top of ${esc(r.product)}’s window. It attaches diagnostic logs for us, never your audio or personal files. If ${esc(r.product)} ever closes unexpectedly, it offers to send a crash report next time it opens. You can also just reply to this email.`)}
 ${text('Everything here is confidential until release: please don’t post screenshots, recordings or the installer publicly yet. Your feedback shapes the 1.0 release.')}`
   return {
     subject: `Your ${r.product} beta key`,
-    html: shell(b, `Your ${r.product} beta key and download.`, body, `You’re receiving this because you signed up to test ${r.product}. This is a one-off beta invitation.`),
+    html: shell(b, `Your ${r.product} beta key and download.`, body, `You’re receiving this because you signed up to test ${r.product}. This is a one-off beta invitation.`, false, HEROES.vanta),
     text: plain([
       `Thank you for helping test ${r.product}.`,
       '',
@@ -499,7 +517,7 @@ ${text(`We’re choosing the first ${esc(r.product)} testers by hand, so it may 
 ${text('Nothing to do until then. If you have a question, just reply to this email.')}`
   return {
     subject: `Your ${r.product} beta request`,
-    html: shell(b, `We’ve got your request to test ${r.product}.`, body, `You’re receiving this because you asked to test ${r.product} on vitalacoustica.com.`),
+    html: shell(b, `We’ve got your request to test ${r.product}.`, body, `You’re receiving this because you asked to test ${r.product} on vitalacoustica.com.`, false, HEROES.vanta),
     text: plain([
       `Thanks${r.name ? `, ${first(r.name)}` : ''}. We've got your request to test ${r.product}.`,
       "We're choosing the first testers by hand, so it may take a few days. If you're in, you'll get an email with your beta key and the download. Testing is free.",
@@ -537,7 +555,7 @@ ${
 }`
   return {
     subject: `${r.product} beta request: ${r.name || r.email}`,
-    html: shell(b, `${r.name || r.email} asked to test ${r.product}.`, body, 'Sent to Vital Acoustica’s admins.'),
+    html: shell(b, `${r.name || r.email} asked to test ${r.product}.`, body, 'Sent to Vital Acoustica’s admins.', false, 'none'),
     text: plain([`${r.name || r.email} <${r.email}> asked to test ${r.product}.`, r.system && `System: ${r.system}`, r.daw && `DAW: ${r.daw}`, r.about, '', stored ? `Approve or decline: ${adminLink}` : 'Reply to this email to answer them.']),
   }
 }
@@ -550,7 +568,7 @@ ${text(`You’re on the list for ${esc(r.product)}${r.detail ? ` (${esc(r.detail
 ${button(r.link, `See ${r.product}`)}`
   return {
     subject: `You’re on the list for ${r.product}`,
-    html: shell(b, `We’ll email you once when ${r.product} is out.`, body, 'You’re receiving this because you asked to hear when this product launches on vitalacoustica.com. Reply if you’d rather not.'),
+    html: shell(b, `We’ll email you once when ${r.product} is out.`, body, 'You’re receiving this because you asked to hear when this product launches on vitalacoustica.com. Reply if you’d rather not.', false, 'none'),
     text: plain([`You're on the list for ${r.product}${r.detail ? ` (${r.detail})` : ''}. We'll send you one email when it's available, and nothing else.`, '', r.link]),
   }
 }
@@ -564,7 +582,7 @@ ${button(r.link, `Get ${r.product}`)}
 ${text('This was the one email you signed up for; we won’t write again about it.')}`
   return {
     subject: `${r.product} is out`,
-    html: shell(b, `${r.product} is available now.`, body, 'You’re receiving this because you asked to hear when this product launched on vitalacoustica.com.'),
+    html: shell(b, `${r.product} is available now.`, body, 'You’re receiving this because you asked to hear when this product launched on vitalacoustica.com.', false, 'none'),
     text: plain([`${r.product} is out. You asked us to tell you when it was available.`, '', r.link]),
   }
 }
@@ -576,7 +594,7 @@ ${headline(`${esc(r.email)} wants to hear when ${esc(r.product)} is out.`)}
 ${text(`${r.detail ? `Option: ${esc(r.detail)}. ` : ''}The website’s database isn’t set up yet, so this sign-up is only in this email. Keep it, and email them when ${esc(r.product)} launches.`)}`
   return {
     subject: `Launch list: ${r.product} · ${r.email}`,
-    html: shell(b, `${r.email} signed up for ${r.product}.`, body, 'Sent to Vital Acoustica’s team.'),
+    html: shell(b, `${r.email} signed up for ${r.product}.`, body, 'Sent to Vital Acoustica’s team.', false, 'none'),
     text: plain([`${r.email} wants to hear when ${r.product} is out.${r.detail ? ` (${r.detail})` : ''}`, "The website's database isn't set up yet, so this sign-up is only in this email."]),
   }
 }
