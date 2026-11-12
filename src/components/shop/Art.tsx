@@ -147,6 +147,16 @@ const SOFTWARE_ART: Record<Software['art'], () => ReactNode> = {
 }
 
 export function SoftwareCover({ p }: { p: Software }) {
+  if (p.logo)
+    return (
+      <div className={`cover cover--software cover--logo cover--${p.art}`}>
+        <span className="cover__kicker">Vital Acoustica · {p.type}</span>
+        <div className="cover__logo">
+          <img src={`${import.meta.env.BASE_URL}${p.logo.src}`} alt={p.name} loading="lazy" />
+          {p.logo.name && <span className="cover__logo-name">{p.logo.name}</span>}
+        </div>
+      </div>
+    )
   return (
     <div className={`cover cover--software cover--${p.art}`}>
       <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden>

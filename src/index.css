@@ -9595,3 +9595,110 @@ img.cover--screen {
   font-size: 14.5px;
   color: var(--accent-text);
 }
+
+/* ─────────────── Product status: what's ready and what's coming ─────────────── */
+
+.shop-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.shop-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.shop-status--beta {
+  background: var(--brass);
+  color: var(--obsidian);
+}
+
+.shop-status--beta::before {
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.shop-status--soon {
+  border: var(--hair) solid var(--line-strong);
+  color: var(--muted);
+}
+
+.shop-status--soon::before {
+  background: none;
+  border: 1px solid currentColor;
+}
+
+/* coming soon: quieter until hovered, so what's ready stands out */
+.shop-card.is-soon .cover {
+  filter: saturate(0.55) brightness(0.62);
+  transition: filter var(--t-med) var(--ease);
+}
+
+.shop-card.is-soon:hover .cover,
+.shop-card.is-soon:focus-within .cover {
+  filter: none;
+}
+
+.shop-card.is-soon .shop-card__name a {
+  color: var(--text-soft);
+}
+
+.shop-card.is-beta {
+  border-color: color-mix(in srgb, var(--brass) 45%, var(--line));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-status--beta::before {
+    animation: none;
+  }
+}
+
+/* a product's own logo as its cover */
+.cover--logo {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 46%, #2a261d 0, #0d0d0c 70%);
+}
+
+.cover__logo {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 64%;
+}
+
+.cover__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.cover--pixelforge .cover__logo {
+  width: 78%;
+}
+
+.cover__logo-name {
+  font-size: clamp(13px, 1.4vw, 18px);
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+  text-transform: uppercase;
+  color: #d9c79f;
+}

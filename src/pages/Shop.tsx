@@ -6,7 +6,7 @@ import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../componen
 import { BetaRequest } from '../components/shop/BetaRequest'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
-import { price, products, SECTIONS, SOFTWARE_AREAS, sectionOf, type Product, type ShopKind } from '../content/shop'
+import { price, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind } from '../content/shop'
 import { href, queryParam } from '../router'
 import { NotFound } from './NotFound'
 
@@ -23,9 +23,12 @@ function Art({ p, colour, view }: { p: Product; colour?: number; view?: string }
   return <GarmentMock p={p} colour={p.colours[colour ?? 0]} />
 }
 
+const STATUS_LABEL = { available: 'Available', beta: 'Free beta', soon: 'Coming soon' } as const
+
 function ProductCard({ p }: { p: Product }) {
+  const status = statusOf(p)
   return (
-    <article className="shop-card">
+    <article className={`shop-card is-${status}`}>
       <div className="shop-card__media">
         <Link to={`/shop/${p.id}`} aria-label={`${p.name}: details`}>
           <Art p={p} />
@@ -44,13 +47,13 @@ function ProductCard({ p }: { p: Product }) {
         {p.kind === 'software' && <p className="shop-card__type">{p.type}</p>}
         <p className="shop-card__tagline">{p.tagline}</p>
         <p className="shop-card__foot">
-          {p.checkout ? (
+          {status === 'available' ? (
             <span className="shop-card__price">{price(p)}</span>
           ) : (
-            <span className="shop-card__soon">Launching soon</span>
+            <span className={`shop-status shop-status--${status}`}>{STATUS_LABEL[status]}</span>
           )}
           <Link to={`/shop/${p.id}`} className="text-link">
-            {p.checkout ? 'Buy' : 'Details'} <Arrow />
+            {status === 'available' ? 'Buy' : status === 'beta' ? 'Join the beta' : 'Details'} <Arrow />
           </Link>
         </p>
       </div>
@@ -80,7 +83,9 @@ function useShelf(): [Shelf, Area, (s: Shelf, a?: Area) => void] {
 export function ShopIndex() {
   const [shelf, area, choose] = useShelf()
   const section = sectionOf(shelf)
-  const shown = products.filter((p) => p.kind === shelf && (p.kind !== 'software' || p.area === area))
+  const shown = products
+    .filter((p) => p.kind === shelf && (p.kind !== 'software' || p.area === area))
+    .sort((a, b) => STATUS_ORDER[statusOf(a)] - STATUS_ORDER[statusOf(b)])
 
   return (
     <>

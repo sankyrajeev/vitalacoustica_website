@@ -61,7 +61,9 @@ export type Software = Base & {
   area: 'audio' | 'lighting'
   /** what sort of thing it is, on cards and the item page */
   type: string
-  /** the generated cover, until real screenshots replace it */
+  /** the product's own logo for its cover (file in public/); `name` is a line set under it */
+  logo?: { src: string; name?: string }
+  /** the generated cover, for products without a logo yet */
   art: 'vanta' | 'vanta-dynamics' | 'orbit' | 'lumiere' | 'resident' | 'pixelforge'
   features: string[]
   specs: [string, string][]
@@ -135,12 +137,13 @@ export const products: Product[] = [
     area: 'audio',
     name: 'VANTA',
     type: 'Synthesizer plugin',
-    tagline: 'Sound, reconstructed. Launching soon.',
+    tagline: 'Sound, reconstructed.',
     description:
       'A synthesizer that listens to a sound and rebuilds it as a patch you can play. Drop a sample into the Sample Lab and VANTA analyses it, reconstructs it from wavetable, additive and noise layers, and scores every attempt against the original, so it measures itself. Then play it, shape it and modulate it like any synth. Launching soon.',
     price: 0,
     checkout: '',
     art: 'vanta',
+    logo: { src: 'shop/vanta/vanta-logo.webp' },
     features: [
       'Sample Lab: analyse a sound, rebuild it, compare and improve, then play it',
       'Three wavetable oscillators with unison and FM, plus a sub and 11 noise types',
@@ -187,12 +190,13 @@ export const products: Product[] = [
     area: 'audio',
     name: 'VANTA Dynamics',
     type: 'Effect plugin',
-    tagline: 'VANTA’s dynamics, on any track. Free with VANTA. Launching soon.',
+    tagline: 'VANTA’s dynamics, on any track. Free with VANTA.',
     description:
       'The two dynamics processors from VANTA as an effect of their own: a smooth optical compressor, and a multiband compressor that pushes quiet detail up and pulls loud peaks down at the same time. Put them on any track, bus or synth. Included free with VANTA, or on its own. Launching soon.',
     price: 0,
     checkout: '',
     art: 'vanta-dynamics',
+    logo: { src: 'shop/vanta/vanta-emblem.webp', name: 'Dynamics' },
     features: [
       'Optical compressor for smooth, musical levelling',
       'Multiband upward and downward compression for density and detail',
@@ -211,7 +215,7 @@ export const products: Product[] = [
     area: 'audio',
     name: 'ORBIT',
     type: 'Mixing system',
-    tagline: 'One mixing system across your whole session. Launching soon.',
+    tagline: 'One mixing system across your whole session.',
     description:
       'An ORBIT Node on every track and ORBIT Master on the mix bus. Each Node analyses its own track; the Master hears the whole mix, finds where tracks fight (kick and bass, masking in the mids, low-end build-up, a harsh top end) and sends each Node a suggestion with its reason. Take the suggestions, let ORBIT apply them within limits you set, or mix by hand. Without the Master, every Node is still a full channel strip. Launching soon.',
     price: 0,
@@ -240,7 +244,7 @@ export const products: Product[] = [
     area: 'lighting',
     name: 'Lumière Link',
     type: 'Lighting software',
-    tagline: 'Lighting that follows the DJ. Launching soon.',
+    tagline: 'Lighting that follows the DJ.',
     description:
       'Lumière Link listens to the CDJs and the mixer over Pro DJ Link, the network cable the decks already use, and drives Lightkey in time with the music. Tempo goes across as MIDI clock, so the lights follow the master deck, pitch fader and all. Cues fire on the music’s phrases: a new look every few bars, a blackout before the drop, the hit when it lands, and lights that build with the riser. Launching soon.',
     price: 0,
@@ -272,12 +276,13 @@ export const products: Product[] = [
     area: 'lighting',
     name: 'Pixel Forge',
     type: 'LED pixel mapping',
-    tagline: 'Pixel-perfect LED lighting, live. Launching soon.',
+    tagline: 'Pixel-perfect LED lighting, live.',
     description:
       'Pixel Forge turns your Mac or PC into a real-time LED pixel-mapping desk for strips, ropes, panels and matrices. Mix two decks of living effects, layer dimmer chases that follow the beat, build looks, sequences and cues, and send it all to your lights over Art-Net, sACN, USB DMX or a video output, with no channel limit. Try every feature free in demo mode; a licence turns on output, on one computer at a time. Launching soon.',
     price: 0,
     checkout: '',
     art: 'pixelforge',
+    logo: { src: 'shop/pixel-forge/pixel-forge-logo.webp' },
     features: [
       'Over 20 effects, from plasma, fire and rainbows to a 16-pattern RGB matrix, text, pictures and video',
       'Sound-to-light: spectrum, level, waveform, beat flashes and bursts',
@@ -315,7 +320,7 @@ export const products: Product[] = [
     area: 'lighting',
     name: 'Lumière Resident',
     type: 'Venue hardware',
-    tagline: 'The lighting box that stays at the venue. Launching soon.',
+    tagline: 'The lighting box that stays at the venue.',
     description:
       'Lumière Link in a box of its own, with no laptop. Plug it into the DJ network and the lighting, and the lights follow every set through the night, with nobody at the desk. If the music stops, it falls back to a house look. Set it up and check on it from a phone. Launching soon.',
     price: 0,
@@ -503,7 +508,7 @@ export const products: Product[] = [
     gallery: ['shop/room-tee-front.webp'],
     kind: 'merch',
     name: 'The Room Is the Instrument',
-    tagline: 'Oversized tee. Launching soon.',
+    tagline: 'Oversized tee.',
     description:
       'On the back, a coverage map: a pair of mains in a 24 by 23 metre room, the sound pressure drawn as contour lines, the way we plan a system before it goes in. The mark on the chest. Launching soon.',
     price: 1499,
@@ -524,7 +529,7 @@ export const products: Product[] = [
     gallery: ['shop/feel-tee-back.webp'],
     kind: 'merch',
     name: 'Feel It',
-    tagline: 'Oversized tee. Launching soon.',
+    tagline: 'Oversized tee.',
     description:
       'A third-octave analyser across the front, 20 Hz to 20 kHz, the low end lit in brass: feel it before you hear it. A small mark below the collar. Launching soon.',
     price: 1499,
@@ -544,7 +549,7 @@ export const products: Product[] = [
     photo: 'shop/haze-hoodie.webp',
     kind: 'merch',
     name: 'Haze',
-    tagline: 'Hoodie. Launching soon.',
+    tagline: 'Hoodie.',
     description:
       'A truss of moving heads throwing crossed beams through haze, drawn in halftone dots, landing on the mark. Launching soon.',
     price: 2499,
@@ -564,7 +569,7 @@ export const products: Product[] = [
     photo: 'shop/cap-mark.webp',
     kind: 'merch',
     name: 'The Mark',
-    tagline: 'Cap. Launching soon.',
+    tagline: 'Cap.',
     description: 'The VA mark embroidered on the front in two threads, white and gold. ACOUSTICA on the side. Launching soon.',
     price: 799,
     checkout: '',
@@ -592,3 +597,12 @@ export function price(p: Product) {
     maximumFractionDigits: 0,
   }).format(p.price)
 }
+
+/**
+ * Where a product stands, for its badge and its place on the shelf:
+ * available (on sale), beta (a free beta people can ask to join), or soon.
+ */
+export type Status = 'available' | 'beta' | 'soon'
+export const statusOf = (p: Product): Status =>
+  p.checkout || (p.kind === 'software' && p.paddlePrice && (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_PADDLE_CLIENT_TOKEN) ? 'available' : p.kind === 'software' && p.beta ? 'beta' : 'soon'
+export const STATUS_ORDER: Record<Status, number> = { available: 0, beta: 1, soon: 2 }
