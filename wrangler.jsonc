@@ -21,9 +21,9 @@
   },
   // keep anything else set in the dashboard (e.g. ENQUIRY_TO, ENQUIRY_CC, RESEND_AUDIENCE_ID) when deploying
   "keep_vars": true,
-  // customer accounts and software licences use a D1 database: add its binding here once it's created
-  // (docs/accounts.md, step 1). Until then the account pages say accounts aren't available yet.
-  //   "d1_databases": [{ "binding": "DB", "database_name": "vitalacoustica", "database_id": "…" }],
+  // customer accounts, orders, licences, beta testing and launch lists (Cloudflare D1). The Worker
+  // creates and upgrades its own tables on first use (server/accounts/migrate.ts).
+  "d1_databases": [{ "binding": "DB", "database_name": "vitalacoustica", "database_id": "9cb083b9-0fb7-4d09-984e-3f234488209e" }],
   // once a day at 03:17 UTC: licence reminder emails (server/accounts/reminders.ts); does nothing until the database is set up
   "triggers": { "crons": ["17 3 * * *"] },
   "observability": { "enabled": true }
