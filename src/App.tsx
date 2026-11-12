@@ -8,7 +8,6 @@ import { fullName, gearById, type GearId } from './content/gear'
 import { projectBySlug } from './content/projects'
 import { site } from './content/site'
 import { useRevealOnScroll } from './hooks/useMedia'
-import { PAGE_SECTIONS, useSectionSnap } from './hooks/useSectionSnap'
 import { ThemeProvider } from './hooks/useTheme'
 import { AccountPage, ForgotPage, ResetPage } from './pages/Account'
 import { AdminPage } from './pages/Admin'
@@ -66,9 +65,7 @@ function resolve(path: string): Resolved {
 function Page({ path }: { path: string }) {
   const { title, page } = resolve(path)
   useRevealOnScroll(path)
-  // the homepage sets its own stops; the Journal is for reading and accounts are forms, so they scroll freely
-  const free = path === '/' || path === '/journal' || path.startsWith('/journal/') || path === '/account' || path.startsWith('/account/')
-  useSectionSnap(free ? '' : PAGE_SECTIONS)
+  // only the homepage settles on its sections as you scroll (Home.tsx); every other page scrolls freely
 
   useEffect(() => {
     document.title = path === '/' ? title : `${title} — ${site.name}`

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
-// Settles the page on a section after the visitor stops scrolling.
+// Settles the page on a section after the visitor stops scrolling. Used on the homepage only;
+// every other page scrolls freely.
 // Sections that fit on screen come to rest centred; sections taller than the screen
 // scroll freely between their top and bottom edges. The next section is chosen in the
 // direction of travel, so even a small scroll moves on rather than springing back.
@@ -8,9 +9,6 @@ import { useEffect } from 'react'
 const SETTLE_MS = 140 // quiet time that counts as "stopped scrolling"
 const NUDGE = 24 // px of movement that counts as an intent to move on
 const MIN_HEIGHT = 240 // smaller blocks (breadcrumbs, notes) aren't worth stopping on
-
-/** The blocks to settle on for inner pages: top-level sections, and the parts of an article or story. */
-export const PAGE_SECTIONS = 'main > header, main > section, main > article > :is(header, section, div, nav), .story > section'
 
 type Stop = { y: number } | { from: number; to: number }
 
