@@ -113,6 +113,28 @@ Product names, key prefixes and device limits are in `server/accounts/products.t
 - **VANTA Dynamics** signs with VANTA's key, with `"product": "VANTA Dynamics"` in its licence files.
 - Each app must check its own product name. VANTA checks `"VANTA"`.
 
+### Pixel Forge
+
+Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed25519, from `pixel_forge/pixelforge/licensing.py`.
+
+**How the licence works.** The demo runs on any number of computers. A licence turns on output to the lights on **one computer at a time**, with no channel limit.
+
+**What the website does.** It issues `PXFG-…` keys. When the app activates a key, the server answers with a PF1 token locked to that computer, carrying a refresh date (`"r"`) 30 days ahead.
+- The app asks again (the same `/v1/activate` call) whenever it's online. This renews the 30 days.
+- If the server answers that the computer was removed, or the key is in use elsewhere, the app goes back to demo.
+- A computer freed from the account page therefore stops outputting within 30 days, even if it never comes online.
+
+**Turning it on:**
+1. On the owner's Mac, open Pixel Forge's `Licence Manager.command` and click "Create signing keys". This makes `~/Documents/Vital Acoustica Licensing/private_key.pem`.
+2. Store that same file as the website's secret:
+
+   ```sh
+   npx wrangler secret put LICENCE_KEY_PIXELFORGE < ~/Documents/Vital\ Acoustica\ Licensing/private_key.pem
+   ```
+
+   Keys made by hand in the Licence Manager and keys from the website then check against the same public key.
+3. Never make a new key pair after this: every licence depends on the current one.
+
 ## 4. Paddle
 
 1. Create a Paddle account at paddle.com.

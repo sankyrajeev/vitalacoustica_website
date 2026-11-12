@@ -80,3 +80,38 @@ export async function signLicence(k: SigningKey, fields: LicenceFields) {
   const signature = rsaSign(h, k).toString(16)
   return JSON.stringify({ format: 'vanta-licence-1', payload, signature }, null, 1)
 }
+
+/* ─────────────── Pixel Forge (PF1, Ed25519) ─────────────── */
+// pixel_forge: pixelforge/licensing.py. A token is PF1.<base64url payload>.<base64url signature>, the
+// signature being Ed25519 over "PF1" + payload. The secret is the Licence Manager's private_key.pem
+// (PKCS#8), so keys it makes by hand and keys the website issues check against the same public key.
+
+const b64url = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
+export async function parseEd25519Key(pem: string | undefined) {
+  if (!pem) return null
+  try {
+    const der = Uint8Array.from(atob(pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')), (c) => c.charCodeAt(0))
+    return await crypto.subtle.importKey('pkcs8', der, { name: 'Ed25519' }, false, ['sign'])
+  } catch {
+    return null
+  }
+}
+
+export type Pf1Fields = {
+  id: string // the licence key
+  n: string // licensed to
+  e: string // email
+  t: 'full' | 'trial'
+  i: string // issued, YYYY-MM-DD
+  x: string | null // licence end, or null
+  m: string // the computer it's locked to
+  r: string | null // check in again by (the lease), YYYY-MM-DD
+}
+
+export async function signPf1(key: CryptoKey, fields: Pf1Fields) {
+  const payload = new TextEncoder().encode(JSON.stringify(fields))
+  const message = new Uint8Array([...new TextEncoder().encode('PF1'), ...payload])
+  const signature = new Uint8Array(await crypto.subtle.sign({ name: 'Ed25519' }, key, message))
+  return `PF1.${b64url(payload)}.${b64url(signature)}`
+}

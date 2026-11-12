@@ -1,17 +1,21 @@
 // The activation server the apps talk to, under /api/licence/ (the apps are built with
 // -DVANTA_LICENCE_SERVER=https://vitalacoustica.com/api/licence and add /v1/activate themselves).
-// It answers exactly as VANTA's own reference server does (vanta_vitalacoustica, tools/licensing/admin.py):
+// It answers exactly as VANTA's own reference server does (vanta_vitalacoustica, tools/licensing/admin.py),
+// for every product; only the signed licence differs (products.ts `format`):
 //
 //   POST /v1/activate   { key, machine, machineName }  → 200 { licence } | 400 | 403 | 404 | 409 { error, devices }
 //   POST /v1/deactivate { key, machine }               → 200 { ok: true } | 404 (the app frees itself either way)
 //
+// Activating again from the same computer keeps its slot and returns a fresh licence, so it's also how
+// Pixel Forge renews its lease.
+//
 // Also here: issuing keys for an order, and the account page's view of them.
 
-import { newLicenceKey, normaliseKey, parseSigningKey, signLicence } from './licence.ts'
+import { newLicenceKey, normaliseKey, parseEd25519Key, parseSigningKey, signLicence, signPf1 } from './licence.ts'
 import { clientIp, json, limited, now, readJson, type AccountsEnv, type D1Database } from './db.ts'
 import { PRODUCTS, isProduct, type ProductId } from './products.ts'
 
-type LicenceRow = { key: string; product: string; email: string; edition: string; max_devices: number; expires: string | null; revoked: number }
+type LicenceRow = { key: string; product: string; email: string; edition: string; max_devices: number; expires: string | null; revoked: number; owner: string | null }
 
 const today = () => new Date().toISOString().slice(0, 10)
 
@@ -23,20 +27,29 @@ export async function activate(request: Request, env: AccountsEnv, db: D1Databas
   const machine = String(body.machine ?? '')
   const machineName = String(body.machineName ?? '').slice(0, 64)
 
-  const row = key ? await db.prepare('SELECT key, product, email, edition, max_devices, expires, revoked FROM licences WHERE key = ?').bind(key).first<LicenceRow>() : null
+  const row = key
+    ? await db
+        .prepare('SELECT l.key, l.product, l.email, l.edition, l.max_devices, l.expires, l.revoked, u.name AS owner FROM licences l LEFT JOIN users u ON u.id = l.user_id WHERE l.key = ?')
+        .bind(key)
+        .first<LicenceRow>()
+    : null
   if (!row) return json({ error: 'Unknown licence key.' }, 404)
   if (row.revoked) return json({ error: 'This licence key has been revoked. Contact support.' }, 403)
   if (row.expires && row.expires < today()) return json({ error: 'This licence has expired.' }, 403)
   if (!machine || machine.length > 128) return json({ error: 'Missing computer ID.' }, 400)
   const product = isProduct(row.product) ? PRODUCTS[row.product] : null
-  const signingKey = product && parseSigningKey((env as Record<string, string | undefined>)[product.signingKey])
+  const secret = product ? (env as Record<string, string | undefined>)[product.signingKey] : undefined
+  const signingKey = product?.format === 'vanta' ? parseSigningKey(secret) : product?.format === 'pf1' ? await parseEd25519Key(secret) : null
   if (!product || !signingKey) return json({ error: 'Activation is not available yet. Contact support.' }, 503)
 
   const active = (await db.prepare('SELECT machine, machine_name FROM activations WHERE key = ?').bind(key).all<{ machine: string; machine_name: string | null }>()).results
   if (!active.some((a) => a.machine === machine) && active.length >= row.max_devices)
     return json(
       {
-        error: `This key is already active on ${active.length} computers (the limit is ${row.max_devices}). Deactivate ${product.name} on one of them first, or remove one from your account at vitalacoustica.com/account.`,
+        error:
+          row.max_devices === 1
+            ? `This key is active on another computer (${active[0].machine_name || 'unnamed'}). Deactivate ${product.name} there first, or remove that computer from your account at vitalacoustica.com/account.`
+            : `This key is already active on ${active.length} computers (the limit is ${row.max_devices}). Deactivate ${product.name} on one of them first, or remove one from your account at vitalacoustica.com/account.`,
         devices: active.map((a) => a.machine_name || a.machine.slice(0, 8)),
       },
       409,
@@ -52,7 +65,21 @@ export async function activate(request: Request, env: AccountsEnv, db: D1Databas
     )
     .bind(key, machine, machineName, now())
     .first<{ machine_name: string | null }>()
-  const licence = await signLicence(signingKey, {
+  if (product.format === 'pf1') {
+    const lease = product.leaseDays ? new Date(Date.now() + product.leaseDays * 86400e3).toISOString().slice(0, 10) : null
+    const licence = await signPf1(signingKey as CryptoKey, {
+      id: key,
+      n: row.owner || row.email,
+      e: row.email,
+      t: 'full',
+      i: today(),
+      x: row.expires,
+      m: machine,
+      r: lease,
+    })
+    return json({ licence })
+  }
+  const licence = await signLicence(signingKey as Exclude<typeof signingKey, CryptoKey>, {
     product: product.licenceName,
     key,
     email: row.email,

@@ -59,7 +59,7 @@ export type Software = Base & {
   /** what sort of thing it is, on cards and the item page */
   type: string
   /** the generated cover, until real screenshots replace it */
-  art: 'vanta' | 'vanta-dynamics' | 'orbit' | 'lumiere' | 'resident'
+  art: 'vanta' | 'vanta-dynamics' | 'orbit' | 'lumiere' | 'resident' | 'pixelforge'
   features: string[]
   specs: [string, string][]
   /** fine print under the specs, e.g. other companies' trademarks the product works with */
@@ -218,6 +218,37 @@ export const products: Product[] = [
     ],
     notice:
       'Pioneer DJ, Pro DJ Link, CDJ, DJM and rekordbox are trademarks of their owners, and Lightkey is a trademark of its developer. Lumière Link works with them and is not made, endorsed or supported by them.',
+  },
+  {
+    id: 'pixel-forge',
+    kind: 'software',
+    name: 'Pixel Forge',
+    type: 'LED pixel mapping',
+    tagline: 'Pixel mapping and LED control, live. Launching soon.',
+    description:
+      'Pixel Forge drives LED strips, panels and pixel fixtures in real time. Two decks of effects with a crossfader, layers, sound-reactive looks and beat sync, a cue list and a timeline for the show, and a 2D patch and 3D view of the rig. Output goes over Art-Net, sACN or a USB DMX adapter, with no limit on channels. Try it free in demo mode on as many computers as you like; a licence turns on output on one computer at a time. Launching soon.',
+    price: 0,
+    checkout: '',
+    art: 'pixelforge',
+    features: [
+      'Two decks of effects with a crossfader and 13 blend modes, at 60 frames a second',
+      'Layers: stack effects with their own blend, opacity and area, or one per fixture',
+      'Procedural effects, RGB matrix patterns, images, video and scrolling text',
+      'Sound-reactive looks and BPM sync: tap, follow the music or a MIDI clock',
+      'Cue list with fades and auto-follow, and a timeline with SMPTE and Art-Net timecode',
+      'Visual 2D patch with snake wiring, colour-order finder and a 3D view of the rig',
+      'Art-Net, sACN and USB DMX output, with no channel limit',
+      'MIDI controllers with MIDI Learn, Ableton Push 2, and a web remote for phones',
+      'Demo mode on any number of computers; output on one licensed computer at a time',
+    ],
+    specs: [
+      ['Type', 'LED pixel mapping and lighting control'],
+      ['Output', 'Art-Net 4 · sACN (E1.31) · USB DMX (ENTTEC DMX USB Pro) · second screen'],
+      ['Channels', 'No limit'],
+      ['Systems', 'macOS (Apple Silicon and Intel) · Windows 10 and 11, 64-bit'],
+      ['Licence', 'One computer at a time, move it any time; demo mode everywhere'],
+    ],
+    notice: 'Art-Net is a trademark of Artistic Licence, ENTTEC is a trademark of its owner, and Ableton and Push are trademarks of Ableton AG. Pixel Forge works with them and is not made or endorsed by them.',
   },
   {
     id: 'lumiere-resident',

@@ -5,8 +5,8 @@
 
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
+import { createHash, generateKeyPairSync, verify as edVerify } from 'node:crypto'
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
@@ -60,6 +60,7 @@ const realFetch = globalThis.fetch
 let workDir = ''
 let env: AccountsEnv & Record<string, string | undefined>
 let publicKey: { e: bigint; n: bigint }
+const pixelForge = generateKeyPairSync('ed25519')
 
 before(() => {
   // a throwaway signing key, made and converted by the real script
@@ -76,10 +77,11 @@ before(() => {
     PADDLE_WEBHOOK_SECRET: 'pdl_ntfset_test',
     PADDLE_API_KEY: 'test',
     PADDLE_ENV: 'sandbox',
-    PADDLE_PRODUCTS: JSON.stringify({ pro_vanta: 'vanta', pro_orbit: 'orbit' }),
+    PADDLE_PRODUCTS: JSON.stringify({ pro_vanta: 'vanta', pro_orbit: 'orbit', pro_pf: 'pixel-forge' }),
     GOOGLE_CLIENT_ID: 'gid.apps.googleusercontent.com',
     GOOGLE_CLIENT_SECRET: 'test',
     LICENCE_KEY_VANTA: signing,
+    LICENCE_KEY_PIXELFORGE: pixelForge.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(),
   }
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input instanceof Request ? input.url : input)
@@ -306,6 +308,42 @@ test('Google sign-in: state is checked, then the verified email signs in', async
   googleClaims = { ...googleClaims, sub: 'g-2', email: 'other@example.com', email_verified: false }
   res = await call(`/api/account/google/callback?state=${state}&code=c`, { cookie: oauth })
   assert.match(res.headers.get('Location')!, /google_failed/)
+})
+
+test('Pixel Forge: one computer at a time, a PF1 token its app accepts, with a lease', async () => {
+  await purchase('evt_pf', 'txn_pf', [{ product: 'pro_pf', quantity: 1 }])
+  const pfKey = mail.at(-1)!.text.match(/PXFG(-[A-Z2-9]{5}){4}/)![0]
+  const activate = (machine: string, machineName = '') => call('/api/licence/v1/activate', { method: 'POST', body: { key: pfKey, machine, machineName } })
+  let res = await activate('AB12-CD34-EF56-7890', 'Lighting Mac')
+  assert.equal(res.status, 200)
+  const token = ((await res.json()) as { licence: string }).licence
+  const [prefix, payload, signature] = token.split('.')
+  assert.equal(prefix, 'PF1')
+  const body = Buffer.from(payload, 'base64url')
+  assert.ok(edVerify(null, Buffer.concat([Buffer.from('PF1'), body]), pixelForge.publicKey, Buffer.from(signature, 'base64url')), 'Ed25519 signature')
+  const fields = JSON.parse(body.toString('utf8'))
+  assert.equal(fields.id, pfKey)
+  assert.equal(fields.m, 'AB12-CD34-EF56-7890')
+  assert.equal(fields.t, 'full')
+  assert.equal(fields.e, 'buyer@example.com')
+  assert.equal(fields.x, null)
+  assert.equal(Math.round((Date.parse(fields.r) - Date.parse(fields.i)) / 86400e3), 30)
+
+  // Pixel Forge's own check (pixelforge/licensing.py), when that repository is next to this one
+  const pf = new URL('../../pixel_forge/', import.meta.url)
+  if (existsSync(new URL('pixelforge/licensing.py', pf))) {
+    const raw = pixelForge.publicKey.export({ format: 'der', type: 'spki' }).subarray(-32).toString('base64url')
+    const out = execFileSync('python3', ['-c', 'import sys; from pixelforge.licensing import verify; l = verify(sys.argv[1], sys.argv[2], this_machine=sys.argv[3]); print(l.licence_id)', token, raw, 'AB12-CD34-EF56-7890'], { cwd: pf, encoding: 'utf8' })
+    assert.equal(out.trim(), pfKey)
+  }
+
+  // a second computer is refused until the first is freed
+  res = await activate('9999-8888-7777-6666', 'Laptop')
+  assert.equal(res.status, 409)
+  assert.match(((await res.json()) as { error: string }).error, /another computer \(Lighting Mac\)/)
+  assert.equal((await activate('AB12-CD34-EF56-7890')).status, 200) // the lease renews on the same computer
+  await call('/api/licence/v1/deactivate', { method: 'POST', body: { key: pfKey, machine: 'AB12-CD34-EF56-7890' } })
+  assert.equal((await activate('9999-8888-7777-6666', 'Laptop')).status, 200)
 })
 
 test('without the database, account routes say so and nothing else breaks', async () => {

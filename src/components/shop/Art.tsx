@@ -33,6 +33,22 @@ const wave = (x0: number, y0: number, w: number, amp: number, f: number, ph: num
   }).join(' ')
 
 const SOFTWARE_ART: Record<Software['art'], () => ReactNode> = {
+  // an LED pixel matrix with a ring of light travelling across it: a pixel-mapped effect
+  pixelforge: () => (
+    <>
+      {Array.from({ length: 13 * 18 }, (_, k) => {
+        const col = k % 18
+        const row = Math.floor(k / 18)
+        const x = 48 + col * 17.5
+        const y = 66 + row * 17.5
+        const d = Math.hypot(col - 6.5, (row - 5.5) * 1.15)
+        const glow = Math.max(0, 1 - Math.abs(d - 5) / 2.2)
+        const core = Math.max(0, 1 - d / 2.4)
+        const on = Math.max(glow, core * 0.8)
+        return <circle key={k} cx={x} cy={y} r={on > 0.55 ? 4.6 : 3.4} fill={on > 0.8 && core < 0.5 ? IVORY : BRASS} opacity={0.1 + on * 0.9} />
+      })}
+    </>
+  ),
   // a sound on the left, rebuilt as a stack of wavetable frames receding to the right
   vanta: () => (
     <>
