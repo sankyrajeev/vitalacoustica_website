@@ -80,7 +80,7 @@ export type Software = Base & {
   /** a free beta people can ask to join (the admin page approves them); the server's list is server/accounts/beta.ts */
   beta?: { line: string }
   /** short demo clips made with the software (files in public/), played on the product page */
-  demos?: { src: string; title: string }[]
+  demos?: { src: string; title: string; detail?: string }[]
 }
 
 export type Product = Software | AudioPack | Loop | Merch
@@ -174,14 +174,14 @@ export const products: Product[] = [
       { src: 'shop/vanta/vanta-about.webp', caption: 'VANTA by Vital Acoustica.' },
     ],
     demos: [
-      { src: 'shop/vanta/vanta-future-bass-chords.mp3', title: 'Future bass chords' },
-      { src: 'shop/vanta/vanta-classic-wub.mp3', title: 'Classic wub' },
-      { src: 'shop/vanta/vanta-neon-lead.mp3', title: 'Neon lead' },
-      { src: 'shop/vanta/vanta-shimmer-bells.mp3', title: 'Shimmer bells' },
-      { src: 'shop/vanta/vanta-deep-space-drone.mp3', title: 'Deep space drone' },
-      { src: 'shop/vanta/vanta-outrun-pad.mp3', title: 'Outrun pad' },
-      { src: 'shop/vanta/vanta-trap-808.mp3', title: 'Trap 808' },
-      { src: 'shop/vanta/vanta-glitch-cloud.mp3', title: 'Glitch cloud' },
+      { src: 'shop/vanta/vanta-demo-boom-bap.mp3', title: 'Boom bap', detail: '90 BPM · Mellow Sine Bass · Boom Bap Keys · Kalimba Drift' },
+      { src: 'shop/vanta/vanta-demo-trap.mp3', title: 'Trap', detail: '140 BPM · Trap Glide 808 · Trap Bell Lead · Dusty Rhodes Pad' },
+      { src: 'shop/vanta/vanta-demo-techno.mp3', title: 'Techno', detail: '128 BPM · Acid Wah · House Stab' },
+      { src: 'shop/vanta/vanta-demo-house.mp3', title: 'House', detail: '124 BPM · Square Sub · Deep House Organ · Pulse Keys' },
+      { src: 'shop/vanta/vanta-demo-future-bass.mp3', title: 'Future bass', detail: '150 BPM · Future Bass Chords · Driven Sine Sub · Kawaii Pluck' },
+      { src: 'shop/vanta/vanta-demo-synthwave.mp3', title: 'Synthwave', detail: '100 BPM · Synthwave Bass · Outrun Pad · Neon Lead' },
+      { src: 'shop/vanta/vanta-demo-lo-fi.mp3', title: 'Lo-fi', detail: '80 BPM · Mellow Sine Bass · Wobbly Tape Keys · Chillhop Pluck' },
+      { src: 'shop/vanta/vanta-demo-cinematic.mp3', title: 'Cinematic', detail: '70 BPM · Blooming Reverb Pad · Cinematic Low Brass · Shimmer Bells' },
     ],
   },
   {

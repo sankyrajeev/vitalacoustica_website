@@ -272,7 +272,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).
  * waveform (src/content/audio-peaks.json, from scripts/audio-peaks.mjs), its title and its time.
  * Shares the one-at-a-time rule with the pack previews.
  */
-export function DemoTrack({ src, title, peaks, length }: { src: string; title: string; peaks: number[]; length: number }) {
+export function DemoTrack({ src, title, detail, peaks, length }: { src: string; title: string; detail?: string; peaks: number[]; length: number }) {
   const [on, setOn] = useState(false)
   const [time, setTime] = useState(0)
   const bar = useRef<HTMLDivElement>(null)
@@ -325,7 +325,10 @@ export function DemoTrack({ src, title, peaks, length }: { src: string; title: s
           </svg>
         )}
       </button>
-      <span className="player__title">{title}</span>
+      <span className="player__title">
+        {title}
+        {detail && <small>{detail}</small>}
+      </span>
       <div ref={bar} className="player__wave" aria-hidden>
         {peaks.map((v, i) => (
           <span key={i} style={{ height: `${v * 100}%`, ['--at' as string]: i / peaks.length }} />

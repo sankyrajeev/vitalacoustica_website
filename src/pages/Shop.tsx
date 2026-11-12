@@ -236,10 +236,10 @@ export function ShopItem({ id }: { id: string }) {
         </figure>
           {p.kind === 'software' && p.demos && (
             <div className="shop-demos">
-              <p className="label">Hear it</p>
+              <p className="label">Hear it · every sound is VANTA, drums included</p>
               {p.demos.map((d) => {
                 const wave = PEAKS[d.src as keyof typeof PEAKS]
-                return wave ? <DemoTrack key={d.src} src={d.src} title={d.title} peaks={wave.peaks} length={wave.length} /> : null
+                return wave ? <DemoTrack key={d.src} src={d.src} title={d.title} detail={d.detail} peaks={wave.peaks} length={wave.length} /> : null
               })}
             </div>
           )}
