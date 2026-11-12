@@ -27,7 +27,7 @@ export type LicensedProduct = {
 }
 
 export const PRODUCTS: Record<ProductId, LicensedProduct> = {
-  vanta: { id: 'vanta', name: 'VANTA', keyPrefix: 'VNTA', licenceName: 'VANTA', maxDevices: 2, signingKey: 'LICENCE_KEY_VANTA', releases: '', format: 'vanta' },
+  vanta: { id: 'vanta', name: 'VANTA', keyPrefix: 'VNTA', licenceName: 'VANTA', maxDevices: 2, signingKey: 'LICENCE_KEY_VANTA', releases: 'sankyrajeev/vanta_vitalacoustica', format: 'vanta' },
   'vanta-dynamics': {
     id: 'vanta-dynamics',
     name: 'VANTA Dynamics',
@@ -35,7 +35,8 @@ export const PRODUCTS: Record<ProductId, LicensedProduct> = {
     licenceName: 'VANTA Dynamics',
     maxDevices: 2,
     signingKey: 'LICENCE_KEY_VANTA',
-    releases: '',
+    // Dynamics is in VANTA's installer
+    releases: 'sankyrajeev/vanta_vitalacoustica',
     format: 'vanta',
   },
   orbit: { id: 'orbit', name: 'ORBIT', keyPrefix: 'ORBT', licenceName: 'ORBIT', maxDevices: 2, signingKey: 'LICENCE_KEY_ORBIT', releases: '', format: 'vanta' },

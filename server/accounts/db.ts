@@ -28,6 +28,12 @@ export type AccountsEnv = {
   LICENCE_KEY_VANTA?: string
   LICENCE_KEY_ORBIT?: string
   LICENCE_KEY_LUMIERE?: string
+  /** comma-separated emails of the people who can use the admin page (beta keys, testers, feedback) */
+  ADMIN_EMAILS?: string
+  /** where replies to beta invitations go (default beta@vitalacoustica.com) */
+  BETA_REPLY_TO?: string
+  /** a link to the beta testers' guide, put in the invitation if set */
+  BETA_GUIDE_URL?: string
   /** local development only: print email links to the log instead of sending them */
   DEV_EMAIL_LOG?: string
 }

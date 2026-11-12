@@ -18,6 +18,7 @@ All of this runs in the site's own Worker. The data is in **Cloudflare D1**, the
 | The activation server the apps call | `server/accounts/licences.ts` |
 | Signed licence files (VANTA's format) | `server/accounts/licence.ts` |
 | Paddle webhook: orders, keys, refunds | `server/accounts/paddle.ts` |
+| Beta keys, testers and feedback (admin page) | `server/accounts/admin.ts`, `src/pages/Admin.tsx` |
 | Private downloads from GitHub Releases | `server/accounts/downloads.ts` |
 | The products we license | `server/accounts/products.ts` |
 | Account pages | `src/pages/Account.tsx` and `src/account/api.ts` |
@@ -140,6 +141,33 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
 
    Keys made by hand in the Licence Manager and keys from the website then check against the same public key.
 3. Never make a new key pair after this: every licence depends on the current one.
+
+### Beta testing (VANTA)
+
+The website is VANTA's only licence server, betas included. Beta builds also send feedback, crash reports and a check-in to the website. You manage all of it on the **admin page**, at `vitalacoustica.com/account/admin`.
+
+**Setting it up:**
+1. Add the variable `ADMIN_EMAILS` to the Worker: your email address, or several separated by commas. Make an account on the site with that address and confirm it. An **Admin** link then appears in your account.
+2. Make sure replies to beta invitations reach you:
+   - Invitations are sent with "Reply-To: beta@vitalacoustica.com". Set up that address, for example with Cloudflare Email Routing (free) forwarding it to your inbox.
+   - Or set `BETA_REPLY_TO` to another address.
+3. Optionally, set `BETA_GUIDE_URL` to a link to the testers' guide. The invitation includes it if set.
+
+**On the admin page you can:**
+- issue a beta key: email, name, end date and a note. Tick "Email the invitation" to send the tester their key and download link, using the wording from VANTA's `docs/email/beta-invite.txt`;
+- see each tester: whether their computer is activated, which terms they accepted and when, when they last opened VANTA, on which version, and how many times;
+- read feedback, filter to crash reports only, and open each report's logs;
+- revoke a key, which stops it working.
+
+**How beta keys behave.** Beta keys are VANTA licences with edition "Beta":
+- one computer only;
+- the end date is written into the signed licence;
+- after the end date, activation is refused.
+
+**Downloads for testers.** A tester signs in, or creates an account, with the email address the key was sent to. The key appears in their account with a Download button.
+- That button lists the files of the latest GitHub Release of `sankyrajeev/vanta_vitalacoustica`.
+- Releases are published when CI builds a `vX.Y.Z` tag.
+- The website needs `GITHUB_RELEASES_TOKEN` (step 6) with read access to that repository.
 
 ## 4. Paddle
 

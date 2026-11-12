@@ -5820,6 +5820,10 @@ img.cover {
 }
 
 /* product page */
+.shop-item__figure {
+  margin: 0;
+}
+
 .shop-item__figure .cover {
   border: var(--hair) solid var(--line);
 }
@@ -5830,7 +5834,8 @@ img.cover {
 
 /* a real screenshot of the app, whole */
 img.cover--screen {
-  aspect-ratio: 5 / 3;
+  aspect-ratio: auto;
+  height: auto;
   object-fit: contain;
   background: #0d0d0c;
 }
@@ -9179,5 +9184,169 @@ img.cover--screen {
   }
   .account__order > :last-child {
     grid-area: 1 / 2;
+  }
+}
+
+/* ─────────────── Admin ─────────────── */
+
+.account__links {
+  display: flex;
+  gap: var(--s5);
+}
+
+.admin__issue {
+  max-width: 760px;
+}
+
+.admin__check {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: 14.5px;
+}
+
+.admin__scroll {
+  overflow-x: auto;
+  border: var(--hair) solid var(--line);
+}
+
+.admin__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.admin__table th,
+.admin__table td {
+  padding: 10px 12px;
+  border-bottom: var(--hair) solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.admin__table th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin__table code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12.5px;
+}
+
+.admin__table tr.is-revoked td {
+  opacity: 0.55;
+}
+
+.admin__table button {
+  background: none;
+  font-size: 12.5px;
+}
+
+.admin__sub {
+  display: block;
+  font-size: 12px;
+}
+
+.admin__flag {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border: var(--hair) solid #b5482f;
+  color: #d0705a;
+  font-size: 11px;
+}
+
+.admin__report {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s4) var(--s5);
+  border: var(--hair) solid var(--line);
+  border-left: 2px solid var(--line-strong);
+}
+
+.admin__report.is-crash {
+  border-left-color: #b5482f;
+}
+
+.admin__report header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  align-items: baseline;
+  font-size: 13px;
+}
+
+.admin__report header .label {
+  margin: 0;
+}
+
+.admin__msg {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.admin__sys {
+  margin: 0;
+  font-size: 12.5px;
+  white-space: pre-wrap;
+}
+
+.admin__report button {
+  justify-self: start;
+  background: none;
+  font-size: 12.5px;
+}
+
+.admin__logs {
+  max-height: 420px;
+  overflow: auto;
+  margin: 0;
+  padding: var(--s3);
+  background: var(--surface);
+  font: 12px/1.5 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* demo clips under a software product's screenshots */
+.shop-demos {
+  display: grid;
+  gap: var(--s3);
+  margin-top: var(--s6);
+}
+
+.shop-demos .label {
+  margin: 0;
+}
+
+.shop-demos ul {
+  display: grid;
+  gap: var(--s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shop-demos li {
+  display: grid;
+  grid-template-columns: 11em minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s3);
+  font-size: 14.5px;
+}
+
+.shop-demos audio {
+  width: 100%;
+  height: 34px;
+}
+
+@media (max-width: 640px) {
+  .shop-demos li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
   }
 }

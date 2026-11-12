@@ -72,6 +72,8 @@ export type Software = Base & {
   paddlePrice?: string
   /** real screenshots for the product page (files in public/), first shown first; cards keep the cover */
   screenshots?: { src: string; caption: string }[]
+  /** short demo clips made with the software (files in public/), played on the product page */
+  demos?: { src: string; title: string }[]
 }
 
 export type Product = Software | AudioPack | Loop | Merch
@@ -135,7 +137,7 @@ export const products: Product[] = [
       'Four envelopes, four LFOs and four macros, with drag-and-drop modulation',
       'Nine effects in a chain you can reorder',
       'VANTA Dynamics included: its opto compressor and OTT as an effect for any track',
-      'Over 200 factory presets in nine categories, with Brightness, Space, Movement and Drive macros',
+      '216 factory presets in nine categories and 24 wavetables, with Brightness, Space, Movement and Drive macros',
       'Works offline: no account, no cloud, no subscription',
     ],
     specs: [
@@ -143,6 +145,26 @@ export const products: Product[] = [
       ['Formats', 'VST3 · AU · Standalone'],
       ['Systems', 'macOS 11 or later (Apple Silicon and Intel) · Windows 10 and 11, 64-bit'],
       ['Licence', 'Perpetual, for two computers'],
+      ['Includes', 'VANTA Dynamics effect plugin'],
+      ['Needs', '4 GB of memory, 100 MB of disk, and the internet once to activate (offline activation available)'],
+    ],
+    screenshots: [
+      { src: 'shop/vanta/vanta-synth.webp', caption: 'Three wavetable oscillators, a sub, noise and a deep filter.' },
+      { src: 'shop/vanta/vanta-sample-lab.webp', caption: 'The Sample Lab: your sound rebuilt as a patch, measured dimension by dimension.' },
+      { src: 'shop/vanta/vanta-modulation.webp', caption: 'Drag any source onto any knob: envelopes, drawable LFOs, macros.' },
+      { src: 'shop/vanta/vanta-fx.webp', caption: 'Nine effects in a chain you reorder, Opto and OTT included.' },
+      { src: 'shop/vanta/vanta-browser.webp', caption: '216 factory presets, searchable, with tags and favourites.' },
+      { src: 'shop/vanta/vanta-about.webp', caption: 'VANTA by Vital Acoustica.' },
+    ],
+    demos: [
+      { src: 'shop/vanta/vanta-future-bass-chords.mp3', title: 'Future bass chords' },
+      { src: 'shop/vanta/vanta-classic-wub.mp3', title: 'Classic wub' },
+      { src: 'shop/vanta/vanta-neon-lead.mp3', title: 'Neon lead' },
+      { src: 'shop/vanta/vanta-shimmer-bells.mp3', title: 'Shimmer bells' },
+      { src: 'shop/vanta/vanta-deep-space-drone.mp3', title: 'Deep space drone' },
+      { src: 'shop/vanta/vanta-outrun-pad.mp3', title: 'Outrun pad' },
+      { src: 'shop/vanta/vanta-trap-808.mp3', title: 'Trap 808' },
+      { src: 'shop/vanta/vanta-glitch-cloud.mp3', title: 'Glitch cloud' },
     ],
   },
   {

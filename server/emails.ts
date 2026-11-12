@@ -439,3 +439,54 @@ ${button(accountLink, 'Open my account')}`
     ]),
   }
 }
+
+/** A beta tester's invitation, with their key (the wording is VANTA's docs/email/beta-invite.txt). */
+export function betaInvite(b: Brand, r: { product: string; name: string; key: string; expires: string; download: string; guide?: string }): Mail {
+  const steps = [
+    'Download the installer for your system and run it.',
+    `Read and accept the terms when the installer (and ${r.product} on first launch) asks.`,
+    `Open ${r.product} in your DAW (VST3 / AU) or as the standalone app.`,
+    'On first launch, paste your key in the activation window and click Activate.',
+  ]
+  const tries = [
+    'Play the factory presets (Browser tab) across genres.',
+    'Drop 3–5 of your own sounds into the Sample Lab and tell us how close the result is.',
+    'Build one sound from Init using drag-and-drop modulation.',
+    `Use ${r.product} in a real session for an hour: CPU, stability, anything odd.`,
+  ]
+  const list = (items: string[]) =>
+    `<ol style="margin:0 0 20px;padding-left:20px;font:15px/1.65 ${SANS};color:${C.ink};">${items.map((i) => `<li style="margin:0 0 6px;">${esc(i)}</li>`).join('')}</ol>`
+  const body = `${label('Beta invitation')}
+${headline(`Thank you for testing ${esc(r.product)}${r.name ? `, ${esc(first(r.name))}` : ''}.`)}
+${text(`${esc(r.product)} is Vital Acoustica’s new hybrid synthesizer with the Sample Lab: drop in a sound and it builds a playable patch that approximates it. Here’s your beta key. It activates ${esc(r.product)} on one computer; please keep it private and don’t share the installer.`)}
+<p style="margin:8px 0 24px;padding:16px 18px;border:1px solid ${C.line};font:600 18px/1.4 'SFMono-Regular',Menlo,Consolas,monospace;letter-spacing:1px;color:${C.ink};">${esc(r.key)}</p>
+${text(`Download the installers (macOS and Windows) from your account: sign in, or create an account, with this email address. The beta runs until ${esc(r.expires)}, then asks you to install the next version.`)}
+${button(r.download, 'Download the beta')}
+${label('Install')}
+${list(steps)}
+${r.guide ? text(`The full install guide and manual: <a href="${esc(r.guide)}" style="color:${C.ink};">${esc(r.guide)}</a>`) : ''}
+${label('What we’d love you to try')}
+${list(tries)}
+${label('Sending feedback')}
+${text(`The quickest way is the Send feedback button at the top of ${esc(r.product)}’s window. It attaches diagnostic logs for us, never your audio or personal files. If ${esc(r.product)} ever closes unexpectedly, it offers to send a crash report next time it opens. You can also just reply to this email.`)}
+${text('Everything here is confidential until release: please don’t post screenshots, recordings or the installer publicly yet. Your feedback shapes the 1.0 release.')}`
+  return {
+    subject: `Your ${r.product} beta key`,
+    html: shell(b, `Your ${r.product} beta key and download.`, body, `You’re receiving this because you signed up to test ${r.product}. This is a one-off beta invitation.`),
+    text: plain([
+      `Thank you for helping test ${r.product}.`,
+      '',
+      `Your beta key: ${r.key}`,
+      `It activates ${r.product} on one computer. Please keep it private and don't share the installer.`,
+      '',
+      `Download (macOS and Windows): ${r.download}`,
+      `Sign in, or create an account, with this email address. The beta runs until ${r.expires}.`,
+      '',
+      ...steps.map((s, i) => `${i + 1}. ${s}`),
+      ...(r.guide ? ['', `Install guide and manual: ${r.guide}`] : []),
+      '',
+      `Send feedback with the Send feedback button in ${r.product}, or reply to this email.`,
+      'Everything here is confidential until release.',
+    ]),
+  }
+}

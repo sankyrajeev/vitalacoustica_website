@@ -300,9 +300,16 @@ function Dashboard({ me, notice, reload }: { me: Me; notice: string | null; relo
       {notice && NOTICES[notice] && <Notice tone={notice === 'link_expired' || notice.startsWith('google') ? 'error' : 'info'}>{NOTICES[notice]}</Notice>}
       <div className="account__bar">
         <p className="lede">{first ? `Hello, ${first}.` : 'Hello.'}</p>
-        <button className="text-link" type="button" onClick={signOut}>
-          Sign out
-        </button>
+        <span className="account__links">
+          {me.user.admin && (
+            <Link to="/account/admin" className="text-link">
+              Admin
+            </Link>
+          )}
+          <button className="text-link" type="button" onClick={signOut}>
+            Sign out
+          </button>
+        </span>
       </div>
 
       <section className="account__section">

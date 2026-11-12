@@ -48,7 +48,7 @@ function d1(): D1Database {
 
 /* ── stubs: email, Paddle, Google ── */
 const SITE = 'https://vitalacoustica.com'
-const mail: { to: string; subject: string; text: string; html: string }[] = []
+const mail: { to: string; subject: string; text: string; html: string; replyTo?: string }[] = []
 const lastLink = (to: string, path: string) => {
   const m = [...mail].reverse().find((x) => x.to === to)
   const link = m?.text.match(new RegExp(`${SITE}${path}\\S+`))?.[0]
@@ -82,13 +82,14 @@ before(() => {
     GOOGLE_CLIENT_ID: 'gid.apps.googleusercontent.com',
     GOOGLE_CLIENT_SECRET: 'test',
     LICENCE_KEY_VANTA: signing,
+    ADMIN_EMAILS: 'Owner@Example.com, buyer@example.com',
     LICENCE_KEY_PIXELFORGE: pixelForge.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(),
   }
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input instanceof Request ? input.url : input)
     if (url === 'https://api.resend.com/emails') {
       const b = JSON.parse(String(init?.body))
-      mail.push({ to: b.to[0], subject: b.subject, text: b.text, html: b.html })
+      mail.push({ to: b.to[0], subject: b.subject, text: b.text, html: b.html, replyTo: b.reply_to })
       return Response.json({ id: 'email' })
     }
     if (url.startsWith('https://sandbox-api.paddle.com/customers/')) return Response.json({ data: { email: paddleEmail } })
@@ -380,6 +381,65 @@ test('Pixel Forge: one computer at a time, a PF1 token its app accepts, with a l
   await db.prepare('UPDATE activations SET activated_at = ? WHERE key != ?').bind(t - 85 * day, pfKey).run()
   await setLastSeen(0)
   assert.equal(await sendLeaseReminders(env, db, t), 0)
+})
+
+test('beta testing: feedback, check-ins, beta keys and the admin page', async () => {
+  // what beta builds send
+  assert.equal((await call('/api/licence/v1/feedback', { method: 'POST', body: { message: '  ', machine: 'm' } })).status, 400)
+  const logs = 'x'.repeat(300_000)
+  let res = await call('/api/licence/v1/feedback', { method: 'POST', body: { type: 'Bug', message: 'Sample Lab froze', crash: true, system: 'macOS 14', logs, machine: 'm1' } })
+  assert.deepEqual(await res.json(), { ok: true })
+  await call('/api/licence/v1/feedback', { method: 'POST', body: { type: 'Idea', message: 'More wub presets', email: 't@example.com', machine: 'm1' } })
+
+  // the admin page is invisible to everyone but the owner
+  assert.equal((await call('/api/admin/beta')).status, 404)
+  assert.equal((await call('/api/admin/beta/issue', { method: 'POST', body: { email: 'x@example.com', expires: '2099-01-01' } })).status, 404)
+  const me = (await (await call('/api/account/me', { cookie: session })).json()) as { user: { admin: boolean } }
+  assert.equal(me.user.admin, true)
+
+  // issuing a beta key sends the invitation, replies going to the beta address
+  assert.equal((await call('/api/admin/beta/issue', { method: 'POST', cookie: session, body: { email: 'tester@example.com', expires: '2020-01-01' } })).status, 400)
+  res = await call('/api/admin/beta/issue', { method: 'POST', cookie: session, body: { email: 'Tester@Example.com', name: 'Ravi Kumar', expires: '2099-06-30', note: 'from the Discord', send: true } })
+  const { key: betaKey, sent } = (await res.json()) as { key: string; sent: boolean }
+  assert.match(betaKey, /^VNTA(-[A-Z2-9]{5}){4}$/)
+  assert.equal(sent, true)
+  const invite = mail.at(-1)!
+  assert.equal(invite.to, 'tester@example.com')
+  assert.equal(invite.subject, 'Your VANTA beta key')
+  assert.equal(invite.replyTo, 'beta@vitalacoustica.com')
+  assert.ok(invite.text.includes(betaKey) && invite.text.includes('30 June 2099'))
+
+  // one computer, and the licence carries the beta's end date
+  const activate = (machine: string) => call('/api/licence/v1/activate', { method: 'POST', body: { key: betaKey, machine, machineName: 'Ravi’s MacBook', termsVersion: '2026-11-beta-1', termsAccepted: '2026-11-12T09:00:00Z' } })
+  res = await activate('c'.repeat(32))
+  assert.equal(res.status, 200)
+  const licence = verifyLicence(((await res.json()) as { licence: string }).licence)
+  assert.deepEqual([licence.edition, licence.expires, licence.email], ['Beta', '2099-06-30', 'tester@example.com'])
+  assert.equal((await activate('d'.repeat(32))).status, 409)
+  await call('/api/licence/v1/ping', { method: 'POST', body: { machine: 'c'.repeat(32), key: betaKey.toLowerCase(), version: '0.4.0' } })
+  await call('/api/licence/v1/ping', { method: 'POST', body: { machine: 'c'.repeat(32), key: betaKey, version: '0.4.1' } })
+  assert.equal((await call('/api/licence/v1/ping', { method: 'POST', body: { version: '1' } })).status, 400)
+
+  const { testers } = (await (await call('/api/admin/beta', { cookie: session })).json()) as { testers: Record<string, unknown>[] }
+  assert.equal(testers.length, 1)
+  assert.deepEqual(
+    { ...testers[0], created: 0, lastSeen: typeof testers[0].lastSeen },
+    { key: betaKey, product: 'vanta', email: 'tester@example.com', note: 'Ravi Kumar · from the Discord', expires: '2099-06-30', revoked: false, created: 0, devices: 1, termsAccepted: '2026-11-12T09:00:00Z', termsVersion: '2026-11-beta-1', lastSeen: 'number', version: '0.4.1', sessions: 2, feedback: 0, crashes: 0 },
+  )
+
+  // feedback: all, crashes only, and one report with its logs
+  const all = (await (await call('/api/admin/feedback', { cookie: session })).json()) as { feedback: { id: number; message: string; log_size: number; logs?: string }[] }
+  assert.deepEqual(all.feedback.map((f) => f.message), ['More wub presets', 'Sample Lab froze'])
+  assert.equal(all.feedback[0].logs, undefined)
+  const crashes = (await (await call('/api/admin/feedback?crash=1', { cookie: session })).json()) as { feedback: { id: number; log_size: number }[] }
+  assert.equal(crashes.feedback.length, 1)
+  assert.equal(crashes.feedback[0].log_size, 300_000)
+  const item = (await (await call(`/api/admin/feedback/item?id=${crashes.feedback[0].id}`, { cookie: session })).json()) as { item: { logs: string } }
+  assert.equal(item.item.logs.length, 300_000)
+
+  // revoking stops the key
+  assert.equal((await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 200)
+  assert.equal((await activate('c'.repeat(32))).status, 403)
 })
 
 test('without the database, account routes say so and nothing else breaks', async () => {

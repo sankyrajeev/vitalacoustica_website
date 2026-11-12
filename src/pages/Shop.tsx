@@ -188,7 +188,8 @@ export function ShopItem({ id }: { id: string }) {
       </div>
 
       <div className="wrap gear-detail__grid">
-        <figure className="gear-detail__figure shop-item__figure">
+        <div className="gear-detail__figure">
+        <figure className="shop-item__figure">
           <Art p={p} colour={colour} view={shown} />
           {views.length > 1 && (
             <div className={`shop-item__views ${p.kind === 'software' ? 'shop-item__views--screens' : ''}`}>
@@ -222,6 +223,20 @@ export function ShopItem({ id }: { id: string }) {
                   : section.note}
           </figcaption>
         </figure>
+          {p.kind === 'software' && p.demos && (
+            <div className="shop-demos">
+              <p className="label">Hear it: factory presets, nothing added</p>
+              <ul>
+                {p.demos.map((d) => (
+                  <li key={d.src}>
+                    <span>{d.title}</span>
+                    <audio controls preload="none" src={`${import.meta.env.BASE_URL}${d.src}`} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
 
         <div className="gear-detail__info">
           <p className="gear-card__meta">

@@ -11,6 +11,7 @@ import { useRevealOnScroll } from './hooks/useMedia'
 import { PAGE_SECTIONS, useSectionSnap } from './hooks/useSectionSnap'
 import { ThemeProvider } from './hooks/useTheme'
 import { AccountPage, ForgotPage, ResetPage } from './pages/Account'
+import { AdminPage } from './pages/Admin'
 import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
 import { LegalPage, PrivacyPage } from './pages/Legal'
@@ -55,6 +56,7 @@ function resolve(path: string): Resolved {
   if (path === '/testimonials') return { title: 'Testimonials', page: <TestimonialsPage /> }
   if (path === '/account') return { title: 'Your account', page: <AccountPage /> }
   if (path === '/account/forgot') return { title: 'Forgotten password', page: <ForgotPage /> }
+  if (path === '/account/admin') return { title: 'Admin', page: <AdminPage /> }
   if (path === '/account/reset') return { title: 'Choose a new password', page: <ResetPage /> }
   if (path === '/privacy') return { title: 'Privacy notice', page: <PrivacyPage /> }
   if (path === '/legal') return { title: 'Legal information', page: <LegalPage /> }

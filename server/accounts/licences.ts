@@ -173,3 +173,41 @@ export async function removeDevice(request: Request, db: D1Database, userId: str
     .run()
   return res.meta.changes ? json({ status: 'removed' }) : json({ error: 'not_found' }, 404)
 }
+
+/* ─────────────── beta builds: feedback and check-ins ─────────────── */
+// As VANTA's reference server (tools/licensing/admin.py feedback() and ping()). Only beta builds call
+// these, and they ignore failures; the owner reads the results on the admin page.
+
+const str = (v: unknown, max: number) => (typeof v === 'string' ? v.slice(0, max) : v == null ? '' : String(v).slice(0, max))
+const keyPrefixProduct = (key: string) => Object.values(PRODUCTS).find((p) => key.startsWith(`${p.keyPrefix}-`))?.id ?? null
+
+/** POST /v1/feedback { type, message, email?, crash, system, logs, key?, machine }: reports can carry logs, so up to 2 MB. */
+export async function feedback(request: Request, db: D1Database) {
+  if (await limited(db, `feedback:${clientIp(request)}`, 30, 3600)) return json({ error: 'Too many reports. Try again later.' }, 429)
+  const body = await readJson<Record<string, unknown>>(request, 2 * 1024 * 1024)
+  if (!body) return json({ error: 'The report was too large or not understood.' }, 400)
+  const message = str(body.message, 20000).trim()
+  if (!message) return json({ error: 'Empty feedback.' }, 400)
+  const key = normaliseKey(str(body.key, 64))
+  await db
+    .prepare('INSERT INTO feedback (received_at, product, key, machine, type, email, crash, message, system, logs) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(now(), keyPrefixProduct(key), key || null, str(body.machine, 128), str(body.type, 64), str(body.email, 254), body.crash ? 1 : 0, message, str(body.system, 4000), str(body.logs, 400000))
+    .run()
+  return json({ ok: true })
+}
+
+/** POST /v1/ping { machine, key?, version }: a beta build opening, to see who's testing and on which version. */
+export async function ping(request: Request, db: D1Database) {
+  const body = await readJson<Record<string, unknown>>(request)
+  const machine = str(body?.machine, 128)
+  if (!machine) return json({ error: 'No machine.' }, 400)
+  if (await limited(db, `ping:${clientIp(request)}`, 200, 3600)) return json({ ok: true }) // quietly: nothing recorded
+  await db
+    .prepare(
+      `INSERT INTO pings (key, machine, last_seen, version, sessions) VALUES (?, ?, ?, ?, 1)
+       ON CONFLICT (key, machine) DO UPDATE SET last_seen = excluded.last_seen, version = excluded.version, sessions = sessions + 1`,
+    )
+    .bind(normaliseKey(str(body?.key, 64)), machine, now(), str(body?.version, 32))
+    .run()
+  return json({ ok: true })
+}

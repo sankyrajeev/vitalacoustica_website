@@ -41,9 +41,42 @@ export type Order = {
 }
 
 export type Me = {
-  user: { id: string; email: string; name: string | null; hasPassword: boolean; google: boolean }
+  user: { id: string; admin?: boolean; email: string; name: string | null; hasPassword: boolean; google: boolean }
   licences: Licence[]
   orders: Order[]
+}
+
+export type Tester = {
+  key: string
+  product: string
+  email: string
+  note: string | null
+  expires: string | null
+  revoked: boolean
+  created: number
+  devices: number
+  termsAccepted: string | null
+  termsVersion: string | null
+  lastSeen: number | null
+  version: string | null
+  sessions: number
+  feedback: number
+  crashes: number
+}
+
+export type Report = {
+  id: number
+  received_at: number
+  product: string | null
+  key: string | null
+  machine: string
+  type: string
+  email: string
+  crash: number
+  message: string
+  system: string
+  log_size: number | null
+  logs?: string
 }
 
 export type Result<T = Record<string, unknown>> = { ok: boolean; status: number; data: T & { error?: string; status?: string } }
@@ -74,6 +107,13 @@ export const api = {
   changePassword: async (email: string, current: string | null, next: string) =>
     request('/api/account/password', { current: current === null ? undefined : await passwordHash(email, current), next: await passwordHash(email, next) }),
   removeDevice: (key: string, machine: string) => request('/api/account/device/remove', { key, machine }),
+  admin: {
+    testers: () => request<{ testers: Tester[] }>('/api/admin/beta'),
+    feedback: (crashOnly: boolean) => request<{ feedback: Report[] }>(`/api/admin/feedback${crashOnly ? '?crash=1' : ''}`),
+    report: (id: number) => request<{ item: Report }>(`/api/admin/feedback/item?id=${id}`),
+    issue: (b: { email: string; name: string; expires: string; note: string; send: boolean }) => request<{ key: string; sent: boolean }>('/api/admin/beta/issue', b),
+    revoke: (key: string) => request('/api/admin/beta/revoke', { key }),
+  },
   downloads: (product: string) => request<{ version?: string; files: { id: number; name: string; size: number }[]; note?: string }>(`/api/account/downloads?product=${encodeURIComponent(product)}`),
 }
 
@@ -90,6 +130,8 @@ export function explain(error: string | undefined) {
       return 'Too many attempts. Please wait a little and try again.'
     case 'wrong_password':
       return 'Your current password isn’t right.'
+    case 'invalid_expiry':
+      return 'Choose an end date in the future.'
     case 'link_expired':
       return 'This link has expired or has already been used. Please ask for a new one.'
     case 'not_configured':
