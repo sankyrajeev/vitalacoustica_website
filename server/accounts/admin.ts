@@ -19,6 +19,7 @@ import { newLicenceKey, normaliseKey } from './licence.ts'
 import { brand, sendMail } from './mail.ts'
 import { launchAlertCounts, sendLaunch } from './launch.ts'
 import { PRODUCTS } from './products.ts'
+import { setupStatus } from './status.ts'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const DATE = /^\d{4}-\d{2}-\d{2}$/
@@ -161,6 +162,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
   if (request.method === 'GET') {
     if (pathname === '/api/admin/beta') return json({ testers: await testers(db) })
     if (pathname === '/api/admin/launch') return json({ alerts: await launchAlertCounts(db) })
+    if (pathname === '/api/admin/status') return json(setupStatus(env))
     if (pathname === '/api/admin/beta/requests') {
       const status = ['pending', 'approved', 'declined'].includes(url.searchParams.get('status') || '') ? url.searchParams.get('status') : 'pending'
       const rows = (await db.prepare('SELECT * FROM beta_requests WHERE status = ? ORDER BY created_at DESC LIMIT 300').bind(status).all<BetaRequest>()).results

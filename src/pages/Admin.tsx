@@ -3,6 +3,7 @@ import { api, explain, type BetaRequest, type Report, type Tester } from '../acc
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { Arrow } from '../components/ui'
+import { makeRsaKeyPair, type KeyPair } from '../account/keys'
 
 // The owner's admin page: beta keys, testers and what beta builds report. The server only answers
 // accounts listed in ADMIN_EMAILS (server/accounts/admin.ts); for anyone else this page is empty.
@@ -158,6 +159,108 @@ function Requests({ onChange }: { onChange: () => void }) {
         ))
       )}
     </>
+  )
+}
+
+type Status = Record<'database' | 'email' | 'admins' | 'vantaKey' | 'pixelForgeKey' | 'downloads' | 'paddle' | 'google', boolean>
+
+const CHECKS: [keyof Status, string, string][] = [
+  ['database', 'Database', 'Accounts, licences, beta requests and launch lists are stored.'],
+  ['email', 'Email', 'Confirmations, beta invitations and licence keys are sent (Resend).'],
+  ['admins', 'Admin notifications', 'Beta requests are emailed to ADMIN_EMAILS.'],
+  ['vantaKey', 'VANTA signing key', 'Beta and bought VANTA keys can be activated (LICENCE_KEY_VANTA).'],
+  ['pixelForgeKey', 'Pixel Forge signing key', 'Pixel Forge keys can be activated (LICENCE_KEY_PIXELFORGE).'],
+  ['downloads', 'Downloads', 'Owners and testers get the installers from GitHub Releases (GITHUB_RELEASES_TOKEN).'],
+  ['paddle', 'Paddle', 'Purchases create orders and licence keys.'],
+  ['google', 'Sign in with Google', 'Optional.'],
+]
+
+function Setup() {
+  const [s, setS] = useState<Status | null>(null)
+  useEffect(() => {
+    void api.admin.status().then((r) => r.ok && setS(r.data))
+  }, [])
+  if (!s) return null
+  return (
+    <ul className="admin__setup">
+      {CHECKS.map(([k, name, what]) => (
+        <li key={k} className={s[k] ? 'is-on' : ''}>
+          <span className="admin__tick" aria-hidden>
+            {s[k] ? '✓' : '○'}
+          </span>
+          <span>
+            <strong>{name}</strong> <span className="muted">{s[k] ? 'on' : 'not set up yet'}</span>
+            <span className="admin__sub">{what}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function SigningKeys() {
+  const [keys, setKeys] = useState<KeyPair | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [copied, setCopied] = useState('')
+
+  async function make() {
+    if (!window.confirm('Make VANTA’s licence key pair? Do this only once: every VANTA licence will depend on it. If VANTA already has a key pair, stop here.')) return
+    setBusy(true)
+    setKeys(await makeRsaKeyPair())
+    setBusy(false)
+  }
+  async function copy(label: string, value: string) {
+    await navigator.clipboard.writeText(value).catch(() => undefined)
+    setCopied(label)
+    setTimeout(() => setCopied(''), 1600)
+  }
+  function download() {
+    if (!keys) return
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob([keys.backup], { type: 'application/json' }))
+    a.download = 'vanta-private_key.json'
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
+
+  if (!keys)
+    return (
+      <div className="admin__keys">
+        <p className="muted">
+          Makes VANTA’s key pair here, in your browser: nothing is sent to the website or anywhere else. You get three things to put in three places.
+        </p>
+        <button className="cta" type="button" onClick={make} disabled={busy}>
+          <span>{busy ? 'Making… (a few seconds)' : 'Make VANTA’s key pair'}</span>
+        </button>
+      </div>
+    )
+  const box = (n: string, title: string, where: string, value: string, secret = false) => (
+    <div className="admin__keybox">
+      <p className="label">
+        {n} · {title}
+      </p>
+      <p className="admin__sub">{where}</p>
+      <textarea readOnly rows={secret ? 4 : 3} value={value} onFocus={(e) => e.currentTarget.select()} />
+      <button className="chip" type="button" onClick={() => copy(title, value)}>
+        {copied === title ? 'Copied' : 'Copy'}
+      </button>
+    </div>
+  )
+  return (
+    <div className="admin__keys">
+      <p className="form__error" role="alert">
+        Keep this page open until all three are saved. Once you leave it, the private key is gone for good unless you downloaded the backup.
+      </p>
+      {box('1', 'Website secret', 'Cloudflare → Workers & Pages → vitalacoustica-website → Settings → Variables and Secrets → Add → type Secret, name LICENCE_KEY_VANTA, paste this.', keys.secret, true)}
+      {box('2', 'Public key for VANTA builds', 'GitHub → sankyrajeev/vanta_vitalacoustica → Settings → Secrets and variables → Actions → New repository secret, name VANTA_LICENCE_PUBLIC_KEY, paste this. (It isn’t secret, but that’s where VANTA’s builds read it.)', keys.publicKey)}
+      <div className="admin__keybox">
+        <p className="label">3 · Backup</p>
+        <p className="admin__sub">The private key in VANTA’s own format. Keep it offline (a USB stick, a password manager). Never email it, paste it into a chat, or commit it.</p>
+        <button className="cta cta--primary" type="button" onClick={download}>
+          <span>Download vanta-private_key.json</span>
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -349,6 +452,14 @@ export function AdminPage() {
         )}
         {state === 'ok' && (
           <>
+            <section className="account__section">
+              <h2 className="account__h">Setup</h2>
+              <Setup />
+            </section>
+            <section className="account__section">
+              <h2 className="account__h">Signing keys</h2>
+              <SigningKeys />
+            </section>
             <section className="account__section">
               <h2 className="account__h">Requests to join</h2>
               <Requests onChange={loadTesters} />

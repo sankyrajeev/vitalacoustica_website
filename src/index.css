@@ -9830,3 +9830,60 @@ img.cover--screen {
     order: 0;
   }
 }
+
+.admin__setup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--s2) var(--s5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin__setup li {
+  display: flex;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  border-bottom: var(--hair) solid var(--line);
+  font-size: 14.5px;
+}
+
+.admin__tick {
+  flex: none;
+  width: 1.2em;
+  color: var(--muted);
+}
+
+.admin__setup li.is-on .admin__tick {
+  color: var(--accent-text);
+}
+
+.admin__keys {
+  display: grid;
+  gap: var(--s4);
+  max-width: 760px;
+  justify-items: start;
+}
+
+.admin__keybox {
+  display: grid;
+  gap: var(--s2);
+  width: 100%;
+  justify-items: start;
+  padding: var(--s4);
+  border: var(--hair) solid var(--line);
+}
+
+.admin__keybox .label {
+  margin: 0;
+}
+
+.admin__keybox textarea {
+  width: 100%;
+  padding: var(--s2);
+  border: var(--hair) solid var(--line-strong);
+  background: var(--surface);
+  font: 12px/1.4 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  word-break: break-all;
+  resize: vertical;
+}

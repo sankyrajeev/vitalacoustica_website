@@ -60,11 +60,9 @@ It prints a `database_id`. Add the binding to `wrangler.jsonc` (top level, next 
 ],
 ```
 
-Then create the tables and deploy:
+The tables create themselves: the first request after a deploy applies any migration the database doesn't have yet (`server/accounts/migrate.ts`). No command needed. `npx wrangler d1 migrations apply vitalacoustica --remote` still works, and the Worker recognises what it applied.
 
-```sh
-npx wrangler d1 migrations apply vitalacoustica --remote
-```
+The database can also be created in the dashboard: **Storage & Databases → D1 → Create**, named `vitalacoustica`. Its Database ID goes in the binding above.
 
 After this, `https://vitalacoustica.com/api/licence/health` answers `{"ok":true,"configured":true}`.
 
@@ -82,7 +80,7 @@ To send them from another address, add a variable `ACCOUNT_FROM`, for example `V
 
 Each app has a key pair. The app is built with the **public** key, and the website signs licences with the **private** key.
 
-**VANTA** already has its pair: `private_key.json` from `tools/licensing/admin.py genkeys`. Convert it to the Worker secret and store it:
+**VANTA:** the easiest way is the admin page's **Signing keys**. It makes the pair in your browser and gives you three things: the website secret (`LICENCE_KEY_VANTA`), the public key for VANTA's builds (GitHub secret `VANTA_LICENCE_PUBLIC_KEY` in the VANTA repo), and an offline backup. Or, if VANTA already has its pair `private_key.json` from `tools/licensing/admin.py genkeys`. Convert it to the Worker secret and store it:
 
 ```sh
 node scripts/licence-key.mjs convert path/to/private_key.json | npx wrangler secret put LICENCE_KEY_VANTA

@@ -15,6 +15,7 @@ import { handleAccounts } from '../server/accounts/index.ts'
 import type { AccountsEnv, D1Database, D1PreparedStatement } from '../server/accounts/db.ts'
 import { hmacHex } from '../server/accounts/crypto.ts'
 import { verifyPaddleSignature } from '../server/accounts/paddle.ts'
+import { MIGRATIONS } from '../server/accounts/schema.ts'
 import { sendLeaseReminders } from '../server/accounts/reminders.ts'
 import { products } from '../src/content/shop.ts'
 
@@ -22,8 +23,7 @@ import { products } from '../src/content/shop.ts'
 function d1(): D1Database {
   const db = new DatabaseSync(':memory:')
   db.exec('PRAGMA foreign_keys = ON')
-  const dir = new URL('../migrations/', import.meta.url)
-  for (const f of readdirSync(dir).sort()) db.exec(readFileSync(new URL(f, dir), 'utf8'))
+  // starts empty: the Worker creates its own tables on first use (server/accounts/migrate.ts)
   const statement = (sql: string, args: unknown[] = []): D1PreparedStatement => ({
     bind: (...values) => statement(sql, values),
     first: async <T,>() => (db.prepare(sql).get(...(args as never[])) as T) ?? null,
@@ -171,6 +171,20 @@ function verifyLicence(text: string) {
 /* ── the flow ── */
 let session = ''
 let key = ''
+
+test('the database sets itself up from migrations/, which schema.ts mirrors', async () => {
+  const dir = new URL('../migrations/', import.meta.url)
+  const files = readdirSync(dir).filter((f) => f.endsWith('.sql')).sort()
+  assert.deepEqual(
+    MIGRATIONS.map((m) => [m.name, m.sql]),
+    files.map((f) => [f, readFileSync(new URL(f, dir), 'utf8')]),
+    'run node scripts/schema.mjs',
+  )
+  await handleAccounts(new Request(`${SITE}/api/licence/health`), env) // any request sets it up
+  await call('/api/account/me')
+  const applied = (await env.DB!.prepare('SELECT name FROM schema_migrations ORDER BY name').all<{ name: string }>()).results.map((r) => r.name)
+  assert.deepEqual(applied, files)
+})
 
 test('sign up, verify the email, sign in', async () => {
   let res = await call('/api/account/signup', { method: 'POST', body: { email: 'Buyer@Example.com', name: 'Asha Rao', password: clientHash('correct horse') } })

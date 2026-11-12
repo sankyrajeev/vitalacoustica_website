@@ -8,6 +8,7 @@ import { handleAdmin, isAdmin } from './admin.ts'
 import { requestBeta } from './beta.ts'
 import { notifyMe } from './launch.ts'
 import { activate, deactivate, feedback, licencesFor, ping, removeDevice } from './licences.ts'
+import { ensureSchema } from './migrate.ts'
 import { paddleWebhook } from './paddle.ts'
 import { latestVersion } from './updates.ts'
 
@@ -52,6 +53,9 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
   if (pathname === '/api/licence/health') return json({ ok: true, configured: !!env.DB })
   // update checks need no database
   if (pathname === '/api/pixelforge/v1/latest') return method === 'GET' || method === 'HEAD' ? latestVersion(request, env, 'pixel-forge') : methodNotAllowed('GET')
+  // a new or upgraded database sets itself up on first use
+  if (env.DB) await ensureSchema(env.DB)
+
   // the shop's forms work before the database is set up too (by email to the team)
   if (pathname === '/api/beta/request' || pathname === '/api/notify') {
     if (method !== 'POST') return methodNotAllowed('POST')
