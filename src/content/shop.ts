@@ -70,6 +70,8 @@ export type Software = Base & {
    * (docs/accounts.md). Hardware can't be sold through Paddle, so it keeps `checkout` instead.
    */
   paddlePrice?: string
+  /** real screenshots for the product page (files in public/), first shown first; cards keep the cover */
+  screenshots?: { src: string; caption: string }[]
 }
 
 export type Product = Software | AudioPack | Loop | Merch
@@ -224,31 +226,42 @@ export const products: Product[] = [
     kind: 'software',
     name: 'Pixel Forge',
     type: 'LED pixel mapping',
-    tagline: 'Pixel mapping and LED control, live. Launching soon.',
+    tagline: 'Pixel-perfect LED lighting, live. Launching soon.',
     description:
-      'Pixel Forge drives LED strips, panels and pixel fixtures in real time. Two decks of effects with a crossfader, layers, sound-reactive looks and beat sync, a cue list and a timeline for the show, and a 2D patch and 3D view of the rig. Output goes over Art-Net, sACN or a USB DMX adapter, with no limit on channels. Try it free in demo mode on as many computers as you like; a licence turns on output on one computer at a time. Launching soon.',
+      'Pixel Forge turns your Mac or PC into a real-time LED pixel-mapping desk for strips, ropes, panels and matrices. Mix two decks of living effects, layer dimmer chases that follow the beat, build looks, sequences and cues, and send it all to your lights over Art-Net, sACN, USB DMX or a video output, with no channel limit. Try every feature free in demo mode; a licence turns on output, on one computer at a time. Launching soon.',
     price: 0,
     checkout: '',
     art: 'pixelforge',
     features: [
-      'Two decks of effects with a crossfader and 13 blend modes, at 60 frames a second',
-      'Layers: stack effects with their own blend, opacity and area, or one per fixture',
-      'Procedural effects, RGB matrix patterns, images, video and scrolling text',
-      'Sound-reactive looks and BPM sync: tap, follow the music or a MIDI clock',
-      'Cue list with fades and auto-follow, and a timeline with SMPTE and Art-Net timecode',
-      'Visual 2D patch with snake wiring, colour-order finder and a 3D view of the rig',
-      'Art-Net, sACN and USB DMX output, with no channel limit',
-      'MIDI controllers with MIDI Learn, Ableton Push 2, and a web remote for phones',
-      'Demo mode on any number of computers; output on one licensed computer at a time',
+      'Over 20 effects, from plasma, fire and rainbows to a 16-pattern RGB matrix, text, pictures and video',
+      'Sound-to-light: spectrum, level, waveform, beat flashes and bursts',
+      'Two decks with a crossfader and blend modes, or one deck with Preview and Take',
+      '21 beat-synced dimmer effects, across the whole rig or row by row',
+      'Looks, sequences in beats or seconds, and a cue list for the show, with MIDI learn',
+      'BPM from tap, the music or a MIDI clock; master dimmer, Blackout, Freeze and White Out',
+      'Patch strips, ropes and matrices in minutes, and find each fixture’s colour order',
+      '2D preview and a 3D view of the rig; web remote and REST API',
+      'Art-Net, sACN, ENTTEC USB DMX and full-screen video output, with no channel or universe limit',
     ],
     specs: [
       ['Type', 'LED pixel mapping and lighting control'],
-      ['Output', 'Art-Net 4 · sACN (E1.31) · USB DMX (ENTTEC DMX USB Pro) · second screen'],
-      ['Channels', 'No limit'],
-      ['Systems', 'macOS (Apple Silicon and Intel) · Windows 10 and 11, 64-bit'],
-      ['Licence', 'One computer at a time, move it any time; demo mode everywhere'],
+      ['Version', '1.0'],
+      ['Output', 'Art-Net · sACN (E1.31) · ENTTEC DMX USB Pro · full-screen video (DVI/HDMI)'],
+      ['Limits', 'No channel, universe or fixture limit'],
+      ['Control', 'MIDI (notes, CC, clock) · web remote · REST API · keyboard'],
+      ['Systems', 'macOS 11 or later, Apple Silicon and Intel (separate downloads) · Windows 10 and 11, 64-bit'],
+      ['Licence', 'Free demo without output, on any computer · licence: output on one computer at a time, move it any time'],
     ],
-    notice: 'Art-Net is a trademark of Artistic Licence, ENTTEC is a trademark of its owner, and Ableton and Push are trademarks of Ableton AG. Pixel Forge works with them and is not made or endorsed by them.',
+    screenshots: [
+      { src: 'shop/pixel-forge/01-main-window.webp', caption: 'Two decks, one crossfader, live on your LEDs.' },
+      { src: 'shop/pixel-forge/02-dimmer-effects.webp', caption: 'Beat-synced dimmer effects, whole rig or row by row.' },
+      { src: 'shop/pixel-forge/03-cue-list.webp', caption: 'Cues that stack looks and sequences.' },
+      { src: 'shop/pixel-forge/04-sequences.webp', caption: 'Sequences in beats: fades, steps, loops.' },
+      { src: 'shop/pixel-forge/05-3d-view.webp', caption: 'See your rig in 3D.' },
+      { src: 'shop/pixel-forge/06-patch-editor.webp', caption: 'Patch strips, ropes and matrices in minutes.' },
+    ],
+    notice:
+      'Pixel Forge can produce flashing and strobing light: use strobe effects responsibly and warn audiences where required. Art-Net is a trademark of Artistic Licence and ENTTEC of its owner; Pixel Forge works with them and is not made or endorsed by them.',
   },
   {
     id: 'lumiere-resident',

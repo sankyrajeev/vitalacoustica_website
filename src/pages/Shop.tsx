@@ -10,7 +10,11 @@ import { scrollToId } from '../router'
 import { NotFound } from './NotFound'
 
 function Art({ p, colour, view }: { p: Product; colour?: number; view?: string }) {
-  if (p.kind === 'software') return <SoftwareCover p={p} />
+  if (p.kind === 'software') {
+    const shot = view ? p.screenshots?.find((s) => s.src === view) : undefined
+    if (shot) return <img className="cover cover--screen" src={`${import.meta.env.BASE_URL}${shot.src}`} alt={shot.caption} />
+    return <SoftwareCover p={p} />
+  }
   if (p.kind === 'audio') return <AudioCover p={p} />
   if (p.kind === 'loops') return <LoopPreview p={p} />
   const photo = view ?? p.photo
@@ -164,7 +168,9 @@ export function ShopItem({ id }: { id: string }) {
   const [size, setSize] = useState<string | null>(null)
   const [view, setView] = useState<string | undefined>(undefined)
   if (!p) return <NotFound />
-  const views = p.kind === 'merch' && p.photo && p.gallery ? [p.photo, ...p.gallery] : []
+  const views =
+    p.kind === 'merch' && p.photo && p.gallery ? [p.photo, ...p.gallery] : p.kind === 'software' && p.screenshots ? p.screenshots.map((s) => s.src) : []
+  const shot = p.kind === 'software' ? p.screenshots?.find((s) => s.src === (view && views.includes(view) ? view : views[0])) : undefined
   // a view picked on another product's page doesn't carry over
   const shown = view && views.includes(view) ? view : views[0]
   const section = sectionOf(p.kind)
@@ -185,13 +191,13 @@ export function ShopItem({ id }: { id: string }) {
         <figure className="gear-detail__figure shop-item__figure">
           <Art p={p} colour={colour} view={shown} />
           {views.length > 1 && (
-            <div className="shop-item__views">
+            <div className={`shop-item__views ${p.kind === 'software' ? 'shop-item__views--screens' : ''}`}>
               {views.map((v, i) => (
                 <button
                   key={v}
                   className={shown === v ? 'is-on' : ''}
                   onClick={() => setView(v)}
-                  aria-label={i === 0 ? 'Main view' : `View ${i + 1}`}
+                  aria-label={p.kind === 'software' ? (p.screenshots?.[i].caption ?? `Screenshot ${i + 1}`) : i === 0 ? 'Main view' : `View ${i + 1}`}
                   aria-pressed={shown === v}
                 >
                   <img src={`${import.meta.env.BASE_URL}${v}`} alt="" loading="lazy" />
@@ -209,7 +215,9 @@ export function ShopItem({ id }: { id: string }) {
                   : 'Sample product. Mock-up of the design.'
               : p.kind === 'merch' && !p.checkout
                 ? 'Mock-up of the design. Launching soon.'
-                : p.kind === 'software' && !p.checkout
+                : shot
+                  ? shot.caption
+                  : p.kind === 'software' && !p.checkout
                   ? 'Cover artwork. Screenshots to follow. Launching soon.'
                   : section.note}
           </figcaption>

@@ -96,7 +96,9 @@ export function PrivacyPage() {
                 it, and your password, which your browser scrambles before it reaches us so that we never see or store it (if you
                 sign in with Google, we receive your name, email address and Google account id from Google instead). For software
                 you buy: your orders, licence keys, and the computers each key is activated on, as a name such as "Studio Mac" and
-                an anonymous computer id the app makes. A signed-in session is kept in a cookie that is needed for the account to
+                an anonymous computer id the app makes. When an app activates or checks its licence, we also receive its version,
+                the computer's operating system, which version of the software's terms you accepted and when, and the IP address
+                the request comes from. Nothing you make with the software is ever sent. A signed-in session is kept in a cookie that is needed for the account to
                 work, not for tracking.
               </li>
               <li>

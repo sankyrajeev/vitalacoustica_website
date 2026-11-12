@@ -5828,6 +5828,36 @@ img.cover {
   aspect-ratio: 16 / 9;
 }
 
+/* a real screenshot of the app, whole */
+img.cover--screen {
+  aspect-ratio: 5 / 3;
+  object-fit: contain;
+  background: #0d0d0c;
+}
+
+.shop-item__views.shop-item__views--screens {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s2);
+}
+
+.shop-item__views--screens.shop-item__views button {
+  width: auto;
+}
+
+.shop-item__views--screens img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .shop-item__views.shop-item__views--screens {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .shop-item__price {
   font-size: 22px;
   font-weight: 600;
@@ -8053,6 +8083,7 @@ img.cover {
 /* a product's other views (e.g. the back), under its photo */
 .shop-item__views {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--s3);
   margin-top: var(--s3);
 }
