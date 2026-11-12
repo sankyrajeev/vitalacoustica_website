@@ -48,6 +48,8 @@ All of this runs in the site's own Worker. The data is in **Cloudflare D1**, the
 
 ## 1. Create the database
 
+**Done (12 November 2026):** the D1 database `vitalacoustica` exists and is bound as `DB` in `wrangler.jsonc`. The steps below are for reference, for example to set it up again in another account.
+
 ```sh
 npx wrangler d1 create vitalacoustica
 ```
