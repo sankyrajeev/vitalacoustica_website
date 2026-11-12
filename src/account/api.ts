@@ -131,6 +131,7 @@ export const api = {
     requests: (status: BetaRequest['status']) => request<{ requests: BetaRequest[] }>(`/api/admin/beta/requests?status=${status}`),
     approve: (id: number, expires: string) => request<{ key: string; sent: boolean }>('/api/admin/beta/approve', { id, expires }),
     decline: (id: number) => request('/api/admin/beta/decline', { id }),
+    testEmail: (which: string) => request<{ sent: string }>('/api/admin/test-email', { which }),
     status: () => request<Record<'database' | 'email' | 'admins' | 'vantaKey' | 'pixelForgeKey' | 'downloads' | 'paddle' | 'google', boolean>>('/api/admin/status'),
     launchAlerts: () => request<{ alerts: { product: string; name: string; waiting: number; told: number }[] }>('/api/admin/launch'),
     sendLaunch: (product: string) => request<{ sent: number; left: number }>('/api/admin/launch/send', { product }),

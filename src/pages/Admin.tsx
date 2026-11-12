@@ -198,6 +198,47 @@ function Setup() {
   )
 }
 
+const SAMPLE_EMAILS: [string, string][] = [
+  ['beta-invite', 'Beta invitation (VANTA)'],
+  ['beta-request-received', 'Beta request received'],
+  ['licence-keys', 'Licence keys after buying'],
+  ['confirm-email', 'Confirm your email'],
+  ['reset-password', 'Reset your password'],
+  ['launch-signup', 'You’re on the launch list'],
+  ['launch-out', 'It’s out'],
+  ['offline-reminder', 'Pixel Forge: go online'],
+]
+
+function TestEmails() {
+  const [which, setWhich] = useState('beta-invite')
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  async function send() {
+    setBusy(true)
+    const r = await api.admin.testEmail(which)
+    setBusy(false)
+    setMsg(r.ok ? `Sent to ${r.data.sent}. Check your inbox (and spam) on your phone and laptop.` : 'Couldn’t send it. Check Resend’s Emails page for the error.')
+  }
+  return (
+    <div className="admin__test">
+      <label className="field">
+        <span>Email</span>
+        <select value={which} onChange={(e) => setWhich(e.target.value)}>
+          {SAMPLE_EMAILS.map(([id, name]) => (
+            <option key={id} value={id}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <button className="cta" type="button" onClick={send} disabled={busy}>
+        <span>{busy ? 'Sending…' : 'Send me a test'}</span>
+      </button>
+      {msg && <p className="muted admin__sub">{msg}</p>}
+    </div>
+  )
+}
+
 function SigningKeys() {
   const [keys, setKeys] = useState<KeyPair | null>(null)
   const [busy, setBusy] = useState(false)
@@ -455,6 +496,11 @@ export function AdminPage() {
             <section className="account__section">
               <h2 className="account__h">Setup</h2>
               <Setup />
+            </section>
+            <section className="account__section">
+              <h2 className="account__h">Test emails</h2>
+              <p className="muted">Sends a sample of any customer email to you, with made-up details. Nothing else happens.</p>
+              <TestEmails />
             </section>
             <section className="account__section">
               <h2 className="account__h">Signing keys</h2>

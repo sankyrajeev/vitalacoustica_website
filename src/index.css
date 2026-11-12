@@ -9887,3 +9887,19 @@ img.cover--screen {
   word-break: break-all;
   resize: vertical;
 }
+
+.admin__test {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s3) var(--s5);
+  max-width: 760px;
+}
+
+.admin__test .field {
+  flex: 1 1 260px;
+}
+
+.admin__test .admin__sub {
+  flex-basis: 100%;
+}

@@ -462,6 +462,13 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   const item = (await (await call(`/api/admin/feedback/item?id=${crashes.feedback[0].id}`, { cookie: session })).json()) as { item: { logs: string } }
   assert.equal(item.item.logs.length, 300_000)
 
+  // a sample of any customer email, to the admin only
+  const testBefore = mail.length
+  assert.equal((await call('/api/admin/test-email', { method: 'POST', cookie: session, body: { which: 'beta-invite' } })).status, 200)
+  assert.equal(mail.length, testBefore + 1)
+  assert.deepEqual([mail.at(-1)!.to, mail.at(-1)!.subject], ['buyer@example.com', '[Test] Your VANTA beta key'])
+  assert.equal((await call('/api/admin/test-email', { method: 'POST', body: { which: 'beta-invite' } })).status, 404)
+
   // revoking stops the key
   assert.equal((await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 200)
   assert.equal((await activate('c'.repeat(32))).status, 403)

@@ -12,7 +12,7 @@
 //   GET  /api/admin/launch            how many wait for each product ("Tell me when it's out")
 //   POST /api/admin/launch/send       { product }: email them all that it's out
 
-import { betaInvite } from '../emails.ts'
+import { accountReset, accountVerify, betaInvite, betaRequestReceived, launchAlertOut, launchAlertSaved, leaseReminder, licenceDelivery, type Mail } from '../emails.ts'
 import type { User } from './auth.ts'
 import { json, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { newLicenceKey, normaliseKey } from './licence.ts'
@@ -148,6 +148,32 @@ async function decline(request: Request, db: D1Database) {
   return res.meta.changes ? json({ status: 'declined' }) : json({ error: 'not_found' }, 404)
 }
 
+/** Sample versions of the customer emails, sent only to the signed-in admin: no keys, accounts or lists change. */
+const SAMPLES: Record<string, (site: string) => Mail> = {
+  'beta-invite': (site) => betaInvite(brand(site), { product: 'VANTA', name: 'Sample Tester', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', expires: '31 January 2027', download: `${site}/account` }),
+  'beta-request-received': (site) => betaRequestReceived(brand(site), { product: 'VANTA', name: 'Sample Tester' }),
+  'licence-keys': (site) => licenceDelivery(brand(site), [{ product: 'VANTA', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', devices: 2 }], `${site}/account`),
+  'confirm-email': (site) => accountVerify(brand(site), `${site}/account`, 'Sample Tester'),
+  'reset-password': (site) => accountReset(brand(site), `${site}/account`),
+  'launch-signup': (site) => launchAlertSaved(brand(site), { product: 'ORBIT', detail: '', link: `${site}/shop/orbit` }),
+  'launch-out': (site) => launchAlertOut(brand(site), { product: 'ORBIT', detail: '', link: `${site}/shop/orbit` }),
+  'offline-reminder': (site) => leaseReminder(brand(site), { product: 'Pixel Forge', computer: 'Studio Mac', until: '26 November 2026', daysLeft: 14 }, `${site}/account`),
+}
+
+async function testEmail(request: Request, env: AccountsEnv, user: User) {
+  const which = String((await readJson<{ which?: string }>(request))?.which || '')
+  const make = SAMPLES[which]
+  if (!make) return json({ error: 'not_found' }, 404)
+  const mail = make(siteUrl(env, request))
+  try {
+    await sendMail(env, user.email, { ...mail, subject: `[Test] ${mail.subject}` })
+  } catch (e) {
+    console.error('test email', e)
+    return json({ error: 'unavailable' }, 503)
+  }
+  return json({ sent: user.email })
+}
+
 async function revoke(request: Request, db: D1Database) {
   const key = normaliseKey(String((await readJson<{ key?: string }>(request))?.key ?? ''))
   const res = await db.prepare('UPDATE licences SET revoked = 1 WHERE key = ?').bind(key).run()
@@ -191,6 +217,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     if (pathname === '/api/admin/beta/approve') return approve(request, env, db)
     if (pathname === '/api/admin/beta/decline') return decline(request, db)
     if (pathname === '/api/admin/launch/send') return sendLaunch(request, env, db)
+    if (pathname === '/api/admin/test-email') return testEmail(request, env, user!)
   }
   return json({ error: 'not_found' }, 404)
 }
