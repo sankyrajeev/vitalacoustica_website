@@ -42,6 +42,10 @@ function SignIn({ notice }: { notice: string | null }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [sent, setSent] = useState('')
+  const [google, setGoogle] = useState(false)
+  useEffect(() => {
+    void api.options().then((r) => setGoogle(r.ok && r.data.google))
+  }, [])
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -81,13 +85,17 @@ function SignIn({ notice }: { notice: string | null }) {
         ))}
       </div>
 
-      <a className="cta account__google" href="/api/account/google">
-        <GoogleMark />
-        <span>Continue with Google</span>
-      </a>
-      <p className="account__or" aria-hidden>
-        <span>or with your email</span>
-      </p>
+      {google && (
+        <>
+          <a className="cta account__google" href="/api/account/google">
+            <GoogleMark />
+            <span>Continue with Google</span>
+          </a>
+          <p className="account__or" aria-hidden>
+            <span>or with your email</span>
+          </p>
+        </>
+      )}
 
       <form className="form account__form" onSubmit={submit} key={mode}>
         {mode === 'up' && <Field label="Your name" name="name" autoComplete="name" maxLength={80} />}

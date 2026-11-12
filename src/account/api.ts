@@ -112,6 +112,7 @@ async function request<T>(path: string, body?: unknown): Promise<Result<T>> {
 
 export const api = {
   me: () => request<Me>('/api/account/me'),
+  options: () => request<{ google: boolean }>('/api/account/options'),
   signup: async (email: string, name: string, password: string) => request('/api/account/signup', { email, name, password: await passwordHash(email, password) }),
   login: async (email: string, password: string) => request('/api/account/login', { email, password: await passwordHash(email, password) }),
   logout: () => request('/api/account/logout', {}),

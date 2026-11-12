@@ -321,6 +321,8 @@ test('forgotten password: the reset link signs out other sessions', async () => 
 })
 
 test('Google sign-in: state is checked, then the verified email signs in', async () => {
+  assert.deepEqual(await (await call('/api/account/options')).json(), { google: true })
+  assert.deepEqual(await (await handleAccounts(new Request(`${SITE}/api/account/options`), { ...env, GOOGLE_CLIENT_ID: undefined }))!.json(), { google: false })
   let res = await call('/api/account/google')
   assert.equal(res.status, 303)
   const location = new URL(res.headers.get('Location')!)

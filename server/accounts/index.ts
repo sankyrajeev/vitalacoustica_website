@@ -51,6 +51,8 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
   if (!pathname.startsWith('/api/account') && !pathname.startsWith('/api/licence') && !pathname.startsWith('/api/admin') && pathname !== '/api/notify' && pathname !== '/api/beta/request' && pathname !== '/api/pixelforge/v1/latest' && pathname !== '/api/paddle/webhook') return null
 
   if (pathname === '/api/licence/health') return json({ ok: true, configured: !!env.DB })
+  // what the sign-in page can offer (it hides "Continue with Google" until Google sign-in is set up)
+  if (pathname === '/api/account/options') return json({ google: !!env.GOOGLE_CLIENT_ID && !!env.GOOGLE_CLIENT_SECRET })
   // update checks need no database
   if (pathname === '/api/pixelforge/v1/latest') return method === 'GET' || method === 'HEAD' ? latestVersion(request, env, 'pixel-forge') : methodNotAllowed('GET')
   // a new or upgraded database sets itself up on first use
