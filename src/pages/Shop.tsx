@@ -238,7 +238,7 @@ export function ShopItem({ id }: { id: string }) {
             <div className="shop-demos">
               <p className="label">Hear it · every sound is VANTA, drums included</p>
               {p.demos.map((d) => {
-                const wave = PEAKS[d.src as keyof typeof PEAKS]
+                const wave = (PEAKS as Record<string, { peaks: number[]; length: number } | undefined>)[d.src]
                 return wave ? <DemoTrack key={d.src} src={d.src} title={d.title} detail={d.detail} peaks={wave.peaks} length={wave.length} /> : null
               })}
             </div>
@@ -338,6 +338,38 @@ export function ShopItem({ id }: { id: string }) {
           {p.kind === 'software' && p.notice && <p className="fineprint">{p.notice}</p>}
         </div>
       </div>
+
+      {p.kind === 'software' && p.story && (
+        <section className="wrap product-story" aria-labelledby="story-title">
+          <header className="product-story__head">
+            <Label>Inside {p.name}</Label>
+            <h2 id="story-title" className="h1">
+              {p.tagline}
+            </h2>
+          </header>
+          {p.story.map((b, i) => (
+            <article key={b.title} className={`product-story__block ${b.shot ? '' : 'product-story__block--text'} ${i % 2 ? 'is-flipped' : ''}`}>
+              <div className="product-story__text">
+                <p className="product-story__n">{String(i + 1).padStart(2, '0')}</p>
+                <h3>{b.title}</h3>
+                <p>{b.text}</p>
+                {b.points && (
+                  <ul>
+                    {b.points.map((pt) => (
+                      <li key={pt}>{pt}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              {b.shot && (
+                <figure className="product-story__shot">
+                  <img src={`${import.meta.env.BASE_URL}${b.shot}`} alt={`${p.name}: ${b.title}`} loading="lazy" />
+                </figure>
+              )}
+            </article>
+          ))}
+        </section>
+      )}
 
       {more.length > 0 && (
         <section className="wrap shop-item__more" aria-labelledby="more-title">

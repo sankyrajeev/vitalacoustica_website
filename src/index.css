@@ -9709,3 +9709,124 @@ img.cover--screen {
   text-transform: uppercase;
   color: #d9c79f;
 }
+
+/* ─────────────── A product's story: what's inside, block by block ─────────────── */
+
+.product-story {
+  display: grid;
+  gap: clamp(56px, 8vw, 120px);
+  padding-block: clamp(64px, 9vw, 140px);
+  border-top: var(--hair) solid var(--line);
+  margin-top: clamp(48px, 7vw, 96px);
+}
+
+.product-story__head {
+  display: grid;
+  gap: var(--s3);
+  max-width: 40em;
+}
+
+.product-story__head .label {
+  margin: 0;
+}
+
+.product-story__block {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 80px);
+}
+
+.product-story__block.is-flipped {
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+}
+
+.product-story__block.is-flipped .product-story__text {
+  order: 2;
+}
+
+.product-story__block--text,
+.product-story__block--text.is-flipped {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 46em;
+}
+
+.product-story__block--text.is-flipped .product-story__text {
+  order: 0;
+}
+
+.product-story__text {
+  display: grid;
+  gap: var(--s4);
+}
+
+.product-story__n {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--accent-text);
+}
+
+.product-story__text h3 {
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.product-story__text p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.product-story__text ul {
+  display: grid;
+  gap: var(--s2);
+  margin: var(--s2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-story__text li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.product-story__text li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 10px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.product-story__shot {
+  margin: 0;
+  overflow: hidden;
+  border: var(--hair) solid var(--line);
+  background: #0d0d0c;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.7);
+}
+
+.product-story__shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 860px) {
+  .product-story__block,
+  .product-story__block.is-flipped {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .product-story__block.is-flipped .product-story__text {
+    order: 0;
+  }
+}

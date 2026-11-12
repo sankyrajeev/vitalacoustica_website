@@ -79,6 +79,8 @@ export type Software = Base & {
   screenshots?: { src: string; caption: string }[]
   /** a free beta people can ask to join (the admin page approves them); the server's list is server/accounts/beta.ts */
   beta?: { line: string }
+  /** the longer story on the product page: what's inside, a block at a time, each with an optional screenshot */
+  story?: { title: string; text: string; points?: string[]; shot?: string }[]
   /** short demo clips made with the software (files in public/), played on the product page */
   demos?: { src: string; title: string; detail?: string }[]
 }
@@ -139,17 +141,19 @@ export const products: Product[] = [
     type: 'Synthesizer plugin',
     tagline: 'Sound, reconstructed.',
     description:
-      'A synthesizer that listens to a sound and rebuilds it as a patch you can play. Drop a sample into the Sample Lab and VANTA analyses it, reconstructs it from wavetable, additive and noise layers, and scores every attempt against the original, so it measures itself. Then play it, shape it and modulate it like any synth. Launching soon.',
+      'VANTA is a hybrid wavetable and additive synthesizer, built to be played and shaped: three oscillators with sample, granular and spectral modes, a deep filter, modulation you drag onto any knob, nine studio effects and 216 presets ready to go. And when you hear a sound you love, it can start from that too: drop it into the Sample Lab and VANTA rebuilds it as a patch you can play, showing you exactly how close it got.',
     price: 0,
     checkout: '',
     art: 'vanta',
     logo: { src: 'shop/vanta/vanta-logo.webp' },
     features: [
-      'Sample Lab: analyse a sound, rebuild it, compare and improve, then play it',
-      'Three wavetable oscillators with unison and FM, plus a sub and 11 noise types',
-      '12 filter types, including ladder, comb and formant',
-      'Four envelopes, four LFOs and four macros, with drag-and-drop modulation',
-      'Nine effects in a chain you can reorder',
+      'Three wavetable oscillators with unison and FM, plus sample, granular and spectral modes',
+      'A sub, and noise in 11 textures or from your own recordings',
+      '12 filter types, including ladder, comb and formant, with drive',
+      'Drag-and-drop modulation: four envelopes, four drawable LFOs, four macros, 63 destinations',
+      'Nine effects in a chain you can reorder, including Opto and OTT',
+      'The Sample Lab: rebuild any sound as a playable patch, and see how close it got',
+      'An Assistant that turns “warmer and wider” into measured, undoable changes',
       'VANTA Dynamics included: its opto compressor and OTT as an effect for any track',
       '216 factory presets in nine categories and 24 wavetables, with Brightness, Space, Movement and Drive macros',
       'Works offline: no account, no cloud, no subscription',
@@ -165,6 +169,59 @@ export const products: Product[] = [
     beta: {
       line: 'The first round of testing is free. Tell us a little about yourself and we’ll pick testers by hand; if you’re in, your beta key and the download arrive by email.',
     },
+    story: [
+      {
+        title: 'A synth first',
+        text: 'Three wavetable oscillators, each with up to eight unison voices, FM and phase modulation, and four ways to sound: classic wavetables, your own sample, a cloud of grains, or a spectral rebuild that plays a recording’s harmonics at any pitch. Under them sit a sub and a noise oscillator, and everything runs through a multimode filter with drive.',
+        points: [
+          '24 factory wavetables, or import your own',
+          'Noise in 11 textures: vinyl, tape hiss, crackle, wind, rain, breath, radio and more, or your own recording',
+          'Filters: state-variable, ladder, comb, formant and peak, with a Fat drive and per-oscillator routing',
+          'Clean at every pitch: band-limited tables and an oversampled filter, with an output limiter that never distorts',
+        ],
+        shot: 'shop/vanta/vanta-synth.webp',
+      },
+      {
+        title: 'Modulation you can see',
+        text: 'Grab an envelope or an LFO and drop it on any knob. A ring shows how far it moves and a dot shows it moving, so you always know what’s going on. Every effect control can be modulated too.',
+        points: [
+          'Four envelopes with draggable points and four drawable LFOs, including chaos and drift shapes',
+          'Draw how velocity and the played note shape the sound',
+          'Four macros, a 16-slot matrix and 63 destinations, with a routing view of everything',
+          'Undo and redo for every move',
+        ],
+        shot: 'shop/vanta/vanta-modulation.webp',
+      },
+      {
+        title: 'The Sample Lab',
+        text: 'Drop in any sound: a synth you love, a vocal, a bell, a field recording. VANTA tells you what it is, measures its pitch, harmonics, noise, attack and movement, then rebuilds it several ways and keeps the closest. You get an honest score for how close it is, dimension by dimension, and a patch you can play across the keyboard and change like any other.',
+        points: [
+          'Wavetable, additive-plus-noise and hybrid rebuilds, each one rendered and measured',
+          'Compare source and synth, level-matched; Improve refines the patch and never makes it worse',
+          'Sound DNA: a profile of every sound’s traits, saved for later',
+          'Sculpt individual harmonics while you play, or morph towards another sound’s DNA',
+        ],
+        shot: 'shop/vanta/vanta-sample-lab.webp',
+      },
+      {
+        title: 'Studio effects, and VANTA Dynamics',
+        text: 'Nine effects close the chain, in any order you drag them: distortion, chorus, delay, reverb, compressor, EQ, width, and two that are worth the price on their own. Opto is an analog-style optical compressor with a VU meter; OTT pushes quiet detail up and pulls peaks down across three bands. Both come as a separate plugin too, VANTA Dynamics, for any track in your session.',
+        shot: 'shop/vanta/vanta-fx.webp',
+      },
+      {
+        title: 'Describe the sound you want',
+        text: 'Type what you’re after, “warmer and wider”, “keep the attack but make the sustain metallic”, “darker as the note decays”, and the Assistant proposes the change, measures it, and lets you apply or undo it. Or press Mutate for level-matched variations of the current sound, with the parts you like locked. All of it runs on your computer.',
+      },
+      {
+        title: '216 presets, ready to play',
+        text: 'Basses, leads, pads, plucks, keys, sequences, textures, percussion and effects, from wub basses and arps to synthwave, lo-fi, cinematic and future bass. Each new one comes with four macros, Brightness, Space, Movement and Drive, so you can make it yours in seconds. Search, tag, favourite and preview them in the browser.',
+        shot: 'shop/vanta/vanta-browser.webp',
+      },
+      {
+        title: 'Yours, offline',
+        text: 'No subscription and no cloud. Activate once and VANTA runs without the internet; your audio never leaves your computer. One licence works on two computers, and you can move it whenever you like.',
+      },
+    ],
     screenshots: [
       { src: 'shop/vanta/vanta-synth.webp', caption: 'Three wavetable oscillators, a sub, noise and a deep filter.' },
       { src: 'shop/vanta/vanta-sample-lab.webp', caption: 'The Sample Lab: your sound rebuilt as a patch, measured dimension by dimension.' },
@@ -172,16 +229,6 @@ export const products: Product[] = [
       { src: 'shop/vanta/vanta-fx.webp', caption: 'Nine effects in a chain you reorder, Opto and OTT included.' },
       { src: 'shop/vanta/vanta-browser.webp', caption: '216 factory presets, searchable, with tags and favourites.' },
       { src: 'shop/vanta/vanta-about.webp', caption: 'VANTA by Vital Acoustica.' },
-    ],
-    demos: [
-      { src: 'shop/vanta/vanta-demo-boom-bap.mp3', title: 'Boom bap', detail: '90 BPM · Mellow Sine Bass · Boom Bap Keys · Kalimba Drift' },
-      { src: 'shop/vanta/vanta-demo-trap.mp3', title: 'Trap', detail: '140 BPM · Trap Glide 808 · Trap Bell Lead · Dusty Rhodes Pad' },
-      { src: 'shop/vanta/vanta-demo-techno.mp3', title: 'Techno', detail: '128 BPM · Acid Wah · House Stab' },
-      { src: 'shop/vanta/vanta-demo-house.mp3', title: 'House', detail: '124 BPM · Square Sub · Deep House Organ · Pulse Keys' },
-      { src: 'shop/vanta/vanta-demo-future-bass.mp3', title: 'Future bass', detail: '150 BPM · Future Bass Chords · Driven Sine Sub · Kawaii Pluck' },
-      { src: 'shop/vanta/vanta-demo-synthwave.mp3', title: 'Synthwave', detail: '100 BPM · Synthwave Bass · Outrun Pad · Neon Lead' },
-      { src: 'shop/vanta/vanta-demo-lo-fi.mp3', title: 'Lo-fi', detail: '80 BPM · Mellow Sine Bass · Wobbly Tape Keys · Chillhop Pluck' },
-      { src: 'shop/vanta/vanta-demo-cinematic.mp3', title: 'Cinematic', detail: '70 BPM · Blooming Reverb Pad · Cinematic Low Brass · Shimmer Bells' },
     ],
   },
   {
