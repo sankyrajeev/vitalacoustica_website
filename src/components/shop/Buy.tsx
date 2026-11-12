@@ -147,7 +147,7 @@ function NotifyMe({ p, option }: { p: Product; option?: string }) {
     const r = await api.notifyMe({ product: p.id, email: String(f.get('email') || ''), detail: option ?? '', _gotcha: String(f.get('_gotcha') || '') })
     setBusy(false)
     if (r.ok) setDone(true)
-    else setError(r.data.error === 'not_configured' || r.data.error === 'unreachable' ? 'We couldn’t save that just now. Please try again later.' : explain(r.data.error))
+    else setError(['unavailable', 'unreachable', 'not_configured'].includes(r.data.error ?? '') ? 'We couldn’t save that just now. Please try again later.' : explain(r.data.error))
   }
 
   return (

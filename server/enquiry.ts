@@ -33,6 +33,14 @@ export type EnquiryEnv = {
 
 const DEFAULT_TO = 'lakshmiranganatha@thevitalvines.com'
 const DEFAULT_CC = 'sankarsh@thevitalvines.com'
+
+/** The team's inbox: who receives enquiries (and anything else meant for the team). */
+export const teamInbox = (env: EnquiryEnv) =>
+  [env.ENQUIRY_TO || DEFAULT_TO, env.ENQUIRY_CC ?? DEFAULT_CC]
+    .join(',')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
 export const BRAND = { whatsapp: '918904858422', instagram: 'vitalacoustica', x: 'vitalacoustica' } // DUMMY: confirm the X handle
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/

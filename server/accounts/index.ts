@@ -52,6 +52,13 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
   if (pathname === '/api/licence/health') return json({ ok: true, configured: !!env.DB })
   // update checks need no database
   if (pathname === '/api/pixelforge/v1/latest') return method === 'GET' || method === 'HEAD' ? latestVersion(request, env, 'pixel-forge') : methodNotAllowed('GET')
+  // the shop's forms work before the database is set up too (by email to the team)
+  if (pathname === '/api/beta/request' || pathname === '/api/notify') {
+    if (method !== 'POST') return methodNotAllowed('POST')
+    if (!sameOrigin(request, env)) return json({ error: 'forbidden' }, 403)
+    return pathname === '/api/notify' ? notifyMe(request, env, env.DB) : requestBeta(request, env, env.DB)
+  }
+
   const db = env.DB
   if (!db) return notConfigured()
 
@@ -70,8 +77,6 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
 
   if (method === 'POST') {
     if (!sameOrigin(request, env)) return json({ error: 'forbidden' }, 403)
-    if (pathname === '/api/beta/request') return requestBeta(request, env, db)
-    if (pathname === '/api/notify') return notifyMe(request, env, db)
     if (pathname === '/api/account/signup') return signup(request, env, db)
     if (pathname === '/api/account/login') return login(request, env, db)
     if (pathname === '/api/account/logout') return logout(request, db)

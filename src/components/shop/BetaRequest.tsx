@@ -21,7 +21,12 @@ export function BetaRequest({ p }: { p: Software }) {
     const r = await api.requestBeta({ product: p.id, name: v('name'), email: v('email'), about: v('about'), system: v('system'), daw: v('daw'), _gotcha: v('_gotcha') })
     setBusy(false)
     if (r.ok) setDone(true)
-    else setError(explain(r.data.error))
+    else
+      setError(
+        ['unavailable', 'unreachable', 'not_configured'].includes(r.data.error ?? '')
+          ? 'We couldn’t send your request just now. Please try again in a few minutes.'
+          : explain(r.data.error),
+      )
   }
 
   return (

@@ -508,7 +508,12 @@ ${text('Nothing to do until then. If you have a question, just reply to this ema
 }
 
 /** To the owner: someone asked to join a beta. */
-export function betaRequestAdmin(b: Brand, r: { product: string; name: string; email: string; about: string; system: string; daw: string }, adminLink: string): Mail {
+export function betaRequestAdmin(
+  b: Brand,
+  r: { product: string; name: string; email: string; about: string; system: string; daw: string },
+  adminLink: string,
+  stored = true,
+): Mail {
   const rows = [
     ['Name', r.name],
     ['Email', r.email],
@@ -525,11 +530,15 @@ export function betaRequestAdmin(b: Brand, r: { product: string; name: string; e
 ${headline(`${esc(r.name || r.email)} wants to test ${esc(r.product)}.`)}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;border-top:1px solid ${C.line};">${rows}</table>
 ${r.about ? text(para(r.about)) : ''}
-${button(adminLink, 'Approve or decline')}`
+${
+  stored
+    ? button(adminLink, 'Approve or decline')
+    : text('The website’s database isn’t set up yet, so this request is only in this email. Reply to answer them; once the database is set up, you can send them a beta key from the admin page.')
+}`
   return {
     subject: `${r.product} beta request: ${r.name || r.email}`,
     html: shell(b, `${r.name || r.email} asked to test ${r.product}.`, body, 'Sent to Vital Acoustica’s admins.'),
-    text: plain([`${r.name || r.email} <${r.email}> asked to test ${r.product}.`, r.system && `System: ${r.system}`, r.daw && `DAW: ${r.daw}`, r.about, '', `Approve or decline: ${adminLink}`]),
+    text: plain([`${r.name || r.email} <${r.email}> asked to test ${r.product}.`, r.system && `System: ${r.system}`, r.daw && `DAW: ${r.daw}`, r.about, '', stored ? `Approve or decline: ${adminLink}` : 'Reply to this email to answer them.']),
   }
 }
 
@@ -557,5 +566,17 @@ ${text('This was the one email you signed up for; we won’t write again about i
     subject: `${r.product} is out`,
     html: shell(b, `${r.product} is available now.`, body, 'You’re receiving this because you asked to hear when this product launched on vitalacoustica.com.'),
     text: plain([`${r.product} is out. You asked us to tell you when it was available.`, '', r.link]),
+  }
+}
+
+/** To the team, when the website can't keep a "tell me when it's out" sign-up itself (no database yet). */
+export function launchAlertAdmin(b: Brand, r: { product: string; email: string; detail: string }): Mail {
+  const body = `${label('Launch list')}
+${headline(`${esc(r.email)} wants to hear when ${esc(r.product)} is out.`)}
+${text(`${r.detail ? `Option: ${esc(r.detail)}. ` : ''}The website’s database isn’t set up yet, so this sign-up is only in this email. Keep it, and email them when ${esc(r.product)} launches.`)}`
+  return {
+    subject: `Launch list: ${r.product} · ${r.email}`,
+    html: shell(b, `${r.email} signed up for ${r.product}.`, body, 'Sent to Vital Acoustica’s team.'),
+    text: plain([`${r.email} wants to hear when ${r.product} is out.${r.detail ? ` (${r.detail})` : ''}`, "The website's database isn't set up yet, so this sign-up is only in this email."]),
   }
 }

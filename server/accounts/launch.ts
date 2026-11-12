@@ -2,7 +2,8 @@
 // One confirmation email now; one launch email when the owner presses "Tell them it's out" on the
 // admin page (sendLaunch); nothing else.
 
-import { launchAlertOut, launchAlertSaved } from '../emails.ts'
+import { launchAlertAdmin, launchAlertOut, launchAlertSaved } from '../emails.ts'
+import { teamInbox } from '../enquiry.ts'
 import { products } from '../../src/content/shop.ts'
 import { clientIp, json, limited, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { brand, sendMail } from './mail.ts'
@@ -10,7 +11,7 @@ import { brand, sendMail } from './mail.ts'
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const productNamed = (id: string) => products.find((p) => p.id === id)
 
-export async function notifyMe(request: Request, env: AccountsEnv, db: D1Database) {
+export async function notifyMe(request: Request, env: AccountsEnv, db: D1Database | undefined) {
   const body = await readJson<{ product?: string; email?: string; detail?: string; _gotcha?: string }>(request)
   if (!body) return json({ error: 'invalid' }, 400)
   if (body._gotcha) return json({ status: 'saved' })
@@ -18,14 +19,28 @@ export async function notifyMe(request: Request, env: AccountsEnv, db: D1Databas
   const email = String(body.email || '').trim().toLowerCase()
   if (!p) return json({ error: 'not_found' }, 404)
   if (!EMAIL.test(email) || email.length > 254) return json({ error: 'invalid_email' }, 400)
-  if ((await limited(db, `notify-ip:${clientIp(request)}`, 20, 3600)) || (await limited(db, `notify:${email}`, 10, 86400))) return json({ error: 'rate_limited' }, 429)
   const detail = String(body.detail || '').trim().slice(0, 80)
+  const site = siteUrl(env, request)
+
+  if (!db) {
+    // no database yet: the sign-up goes to the team by email, so nothing is lost
+    const admins = (env.ADMIN_EMAILS || '').split(',').map((e) => e.trim()).filter(Boolean)
+    try {
+      await Promise.all((admins.length ? admins : teamInbox(env)).map((a) => sendMail(env, a, launchAlertAdmin(brand(site), { product: p.name, email, detail }))))
+    } catch (e) {
+      console.error('launch alert (email only)', e)
+      return json({ error: 'unavailable' }, 503)
+    }
+    await sendMail(env, email, launchAlertSaved(brand(site), { product: p.name, detail, link: `${site}/shop/${p.id}` })).catch((e) => console.error('launch alert email', e))
+    return json({ status: 'saved' })
+  }
+
+  if ((await limited(db, `notify-ip:${clientIp(request)}`, 20, 3600)) || (await limited(db, `notify:${email}`, 10, 86400))) return json({ error: 'rate_limited' }, 429)
   const res = await db
     .prepare('INSERT INTO launch_alerts (product, email, detail, created_at) VALUES (?, ?, ?, ?) ON CONFLICT (product, email) DO UPDATE SET detail = excluded.detail, notified_at = NULL')
     .bind(p.id, email, detail || null, now())
     .run()
   if (res.meta.changes) {
-    const site = siteUrl(env, request)
     await sendMail(env, email, launchAlertSaved(brand(site), { product: p.name, detail, link: `${site}/shop/${p.id}` })).catch((e) => console.error('launch alert email', e))
   }
   return json({ status: 'saved' })

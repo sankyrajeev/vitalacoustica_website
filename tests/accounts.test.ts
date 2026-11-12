@@ -519,6 +519,31 @@ test('Tell me when it’s out: one confirmation now, one email at launch', async
   assert.equal(((await (await call('/api/admin/launch/send', { method: 'POST', cookie: session, body: { product: 'orbit' } })).json()) as { sent: number }).sent, 0) // once
 })
 
+test('before the database is set up, beta requests and launch sign-ups still reach the team by email', async () => {
+  const noDb = { ...env, DB: undefined, ADMIN_EMAILS: undefined, ENQUIRY_TO: 'team@example.com', ENQUIRY_CC: '' }
+  const post = (path: string, body: unknown) =>
+    handleAccounts(new Request(`${SITE}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: SITE }, body: JSON.stringify(body) }), noDb)
+  let before = mail.length
+  let res = (await post('/api/beta/request', { product: 'vanta', name: 'Dev', email: 'dev@example.com', about: 'Trap producer', system: 'Windows', daw: 'FL Studio' }))!
+  assert.deepEqual(await res.json(), { status: 'received' })
+  const sent = mail.slice(before)
+  assert.deepEqual(sent.map((m) => m.to).sort(), ['dev@example.com', 'team@example.com'])
+  const toTeam = sent.find((m) => m.to === 'team@example.com')!
+  assert.equal(toTeam.replyTo, 'dev@example.com')
+  assert.match(toTeam.text, /Trap producer/)
+  assert.match(toTeam.text, /Reply to this email/)
+
+  before = mail.length
+  res = (await post('/api/notify', { product: 'orbit', email: 'fan3@example.com' }))!
+  assert.deepEqual(await res.json(), { status: 'saved' })
+  assert.deepEqual(mail.slice(before).map((m) => [m.to, m.subject]).sort(), [
+    ['fan3@example.com', 'You’re on the list for ORBIT'],
+    ['team@example.com', 'Launch list: ORBIT · fan3@example.com'],
+  ])
+  // everything else still needs the database
+  assert.equal((await handleAccounts(new Request(`${SITE}/api/account/me`), noDb))!.status, 503)
+})
+
 test('Pixel Forge update check: the latest release, public and without the database', async () => {
   const check = (e: AccountsEnv) => handleAccounts(new Request(`${SITE}/api/pixelforge/v1/latest?platform=mac-intel&version=1.0.0`, { headers: { 'User-Agent': 'PixelForge/1.0.0' } }), e)
   assert.equal((await check({}))!.status, 503) // no token yet: the app ignores it

@@ -165,6 +165,11 @@ The website is VANTA's only licence server, betas included. Beta builds also sen
 2. They get a "we've got your request" email, and each address in `ADMIN_EMAILS` gets one with their details. Reply to that email to answer them directly.
 3. On the admin page, under **Requests to join**, choose the date betas end, then press **Approve and send key**. That issues their beta key and emails the invitation. **Decline** sends nothing.
 
+**Before the database is set up,** beta requests and "Tell me when it's out" sign-ups still work, by email only.
+- They go to `ADMIN_EMAILS`, or to the enquiry inbox (`ENQUIRY_TO` / `ENQUIRY_CC`) if that isn't set.
+- The person still gets their confirmation email.
+- Nothing is stored. Once the database exists, they're kept and listed on the admin page.
+
 Which products have an open beta is set in `server/accounts/beta.ts` (`OPEN_BETAS`) and in the product's `beta` text in `src/content/shop.ts`.
 
 **Setting it up:**
