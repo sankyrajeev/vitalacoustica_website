@@ -161,6 +161,65 @@ function Requests({ onChange }: { onChange: () => void }) {
   )
 }
 
+function LaunchAlerts() {
+  const [rows, setRows] = useState<{ product: string; name: string; waiting: number; told: number }[] | null>(null)
+  const [msg, setMsg] = useState('')
+  const [busy, setBusy] = useState('')
+  const load = () => api.admin.launchAlerts().then((r) => setRows(r.ok ? r.data.alerts : []))
+  useEffect(() => {
+    void load()
+  }, [])
+
+  async function send(product: string, name: string, waiting: number) {
+    if (!window.confirm(`Email ${waiting} ${waiting === 1 ? 'person' : 'people'} that ${name} is out? Do this once it's on sale.`)) return
+    setBusy(product)
+    const r = await api.admin.sendLaunch(product)
+    setBusy('')
+    setMsg(r.ok ? `${name}: ${r.data.sent} emailed${r.data.left ? `, ${r.data.left} could not be sent (press again to retry)` : ''}.` : explain(r.data.error))
+    void load()
+  }
+
+  if (rows === null) return <p className="muted">Loading…</p>
+  if (!rows.length) return <p className="muted">No one has signed up yet.</p>
+  return (
+    <>
+      {msg && (
+        <p className="notice account__notice" role="status">
+          {msg}
+        </p>
+      )}
+      <div className="admin__scroll">
+        <table className="admin__table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Waiting</th>
+              <th>Already told</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.product}>
+                <td>{r.name}</td>
+                <td>{r.waiting}</td>
+                <td>{r.told}</td>
+                <td>
+                  {r.waiting > 0 && (
+                    <button className="text-link" type="button" disabled={busy === r.product} onClick={() => send(r.product, r.name, r.waiting)}>
+                      {busy === r.product ? 'Sending…' : 'Tell them it’s out'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )
+}
+
 function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => void }) {
   async function revoke(t: Tester) {
     if (!window.confirm(`Revoke ${t.key} (${t.email})? VANTA stops working on their computer.`)) return
@@ -278,7 +337,7 @@ export function AdminPage() {
 
   return (
     <>
-      <PageHead label="Admin" title="Beta testing">
+      <PageHead label="Admin" title="Beta and launch">
         Who’s asked to test VANTA, who’s testing, and what the beta builds report. Testing is free.
       </PageHead>
       <div className="wrap account admin">
@@ -301,6 +360,11 @@ export function AdminPage() {
             <section className="account__section">
               <h2 className="account__h">Testers</h2>
               <Testers testers={testers} onChange={loadTesters} />
+            </section>
+            <section className="account__section">
+              <h2 className="account__h">Waiting for launch</h2>
+              <p className="muted">People who asked to hear when a product is out. Press “Tell them it’s out” once it’s on sale: they get one email.</p>
+              <LaunchAlerts />
             </section>
             <section className="account__section">
               <div className="account__bar">

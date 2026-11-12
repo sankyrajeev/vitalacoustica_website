@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
-import { api } from '../../account/api'
+import { useEffect, useState, type FormEvent } from 'react'
+import { api, explain } from '../../account/api'
 import { price, type Product } from '../../content/shop'
-import { site } from '../../content/site'
 import { navigate } from '../../router'
 import { Arrow } from '../ui'
 
@@ -113,24 +112,7 @@ export function Buy({ p, option }: { p: Product; option?: string }) {
 
   if (paddlePrice) return <PaddleBuy p={p} priceId={paddlePrice} />
 
-  if (!p.checkout) {
-    const text = `Hi Vital Acoustica, please let me know when ${p.name}${option ? ` (${option})` : ''} is available.`
-    return (
-      <div className="buy">
-        <span className="cta cta--disabled" aria-disabled="true">
-          <span>Launching soon</span>
-        </span>
-        <a
-          className="text-link"
-          href={`https://wa.me/${site.contact.whatsapp}?text=${encodeURIComponent(text)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Tell me when it’s out <Arrow />
-        </a>
-      </div>
-    )
-  }
+  if (!p.checkout) return <NotifyMe p={p} option={option} />
 
   return (
     <div className="buy">
@@ -146,6 +128,59 @@ export function Buy({ p, option }: { p: Product; option?: string }) {
         </span>
         <Arrow />
       </a>
+    </div>
+  )
+}
+
+/** Not on sale yet: "Launching soon", and an email sign-up for one message when it's out. */
+function NotifyMe({ p, option }: { p: Product; option?: string }) {
+  const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [done, setDone] = useState(false)
+  const [error, setError] = useState('')
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const f = new FormData(e.currentTarget)
+    setBusy(true)
+    setError('')
+    const r = await api.notifyMe({ product: p.id, email: String(f.get('email') || ''), detail: option ?? '', _gotcha: String(f.get('_gotcha') || '') })
+    setBusy(false)
+    if (r.ok) setDone(true)
+    else setError(r.data.error === 'not_configured' || r.data.error === 'unreachable' ? 'We couldn’t save that just now. Please try again later.' : explain(r.data.error))
+  }
+
+  return (
+    <div className="buy buy--soon">
+      <span className="cta cta--disabled" aria-disabled="true">
+        <span>Launching soon</span>
+      </span>
+      {done ? (
+        <p className="notify__done" role="status">
+          You’re on the list. We’ll email you once, when it’s out.
+        </p>
+      ) : !open ? (
+        <button className="text-link notify__open" type="button" onClick={() => setOpen(true)}>
+          Tell me when it’s out <Arrow />
+        </button>
+      ) : (
+        <form className="notify" onSubmit={submit} noValidate>
+          <label className="field notify__field">
+            <span>Your email{option ? ` · ${option}` : ''}</span>
+            <input name="email" type="email" autoComplete="email" required autoFocus placeholder="you@example.com" />
+          </label>
+          <input className="hp" type="text" name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden />
+          <button className="cta cta--primary" type="submit" disabled={busy}>
+            <span>{busy ? 'Saving…' : 'Notify me'}</span>
+          </button>
+          <p className="notify__note muted">One email when it launches. Nothing else.</p>
+          {error && (
+            <p className="form__error notify__error" role="alert">
+              {error}
+            </p>
+          )}
+        </form>
+      )}
     </div>
   )
 }

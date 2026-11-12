@@ -264,3 +264,74 @@ export function AudioPreview({ p, compact }: { p: AudioPack; compact?: boolean }
     </div>
   )
 }
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
+
+/**
+ * One demo clip in a list (a software product's "Hear it"): the site's player, with the clip's real
+ * waveform (src/content/audio-peaks.json, from scripts/audio-peaks.mjs), its title and its time.
+ * Shares the one-at-a-time rule with the pack previews.
+ */
+export function DemoTrack({ src, title, peaks, length }: { src: string; title: string; peaks: number[]; length: number }) {
+  const [on, setOn] = useState(false)
+  const [time, setTime] = useState(0)
+  const bar = useRef<HTMLDivElement>(null)
+
+  useEffect(
+    () => () => {
+      if (playing?.id === src) stopAll()
+    },
+    [src],
+  )
+
+  useEffect(() => {
+    if (!on) {
+      bar.current?.style.setProperty('--progress', '0')
+      return
+    }
+    let raf = 0
+    const tick = () => {
+      const k = playing?.id === src ? playing.player.progress() : 1
+      bar.current?.style.setProperty('--progress', String(Math.min(1, k)))
+      setTime(k * length)
+      if (k >= 1) {
+        stopAll()
+        return
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [on, src, length])
+
+  const toggle = () => {
+    if (on) return stopAll()
+    stopAll()
+    playing = { id: src, player: file(src), onStop: () => (setOn(false), setTime(0)) }
+    setOn(true)
+  }
+
+  return (
+    <div className={`player player--track ${on ? 'is-on' : ''}`}>
+      <button className="player__btn" onClick={toggle} aria-label={on ? `Stop ${title}` : `Play ${title}`} aria-pressed={on}>
+        {on ? (
+          <svg viewBox="0 0 16 16" aria-hidden>
+            <rect x="4" y="3" width="3" height="10" />
+            <rect x="9" y="3" width="3" height="10" />
+          </svg>
+        ) : (
+          <svg viewBox="0 0 16 16" aria-hidden>
+            <path d="M5 3l8 5-8 5z" />
+          </svg>
+        )}
+      </button>
+      <span className="player__title">{title}</span>
+      <div ref={bar} className="player__wave" aria-hidden>
+        {peaks.map((v, i) => (
+          <span key={i} style={{ height: `${v * 100}%`, ['--at' as string]: i / peaks.length }} />
+        ))}
+      </div>
+      <span className="player__time">{on ? mmss(time) : mmss(length)}</span>
+    </div>
+  )
+}

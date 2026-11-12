@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from '../components/Link'
-import { AudioPreview } from '../components/shop/AudioPreview'
+import { AudioPreview, DemoTrack } from '../components/shop/AudioPreview'
+import PEAKS from '../content/audio-peaks.json'
 import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
 import { BetaRequest } from '../components/shop/BetaRequest'
 import { Buy } from '../components/shop/Buy'
@@ -230,15 +231,11 @@ export function ShopItem({ id }: { id: string }) {
         </figure>
           {p.kind === 'software' && p.demos && (
             <div className="shop-demos">
-              <p className="label">Hear it: factory presets, nothing added</p>
-              <ul>
-                {p.demos.map((d) => (
-                  <li key={d.src}>
-                    <span>{d.title}</span>
-                    <audio controls preload="none" src={`${import.meta.env.BASE_URL}${d.src}`} />
-                  </li>
-                ))}
-              </ul>
+              <p className="label">Hear it</p>
+              {p.demos.map((d) => {
+                const wave = PEAKS[d.src as keyof typeof PEAKS]
+                return wave ? <DemoTrack key={d.src} src={d.src} title={d.title} peaks={wave.peaks} length={wave.length} /> : null
+              })}
             </div>
           )}
         </div>

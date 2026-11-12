@@ -16,6 +16,7 @@ import type { AccountsEnv, D1Database, D1PreparedStatement } from '../server/acc
 import { hmacHex } from '../server/accounts/crypto.ts'
 import { verifyPaddleSignature } from '../server/accounts/paddle.ts'
 import { sendLeaseReminders } from '../server/accounts/reminders.ts'
+import { products } from '../src/content/shop.ts'
 
 /* ── a D1 stand-in ── */
 function d1(): D1Database {
@@ -492,6 +493,30 @@ test('free beta: people ask, the owner approves (key and invitation) or declines
   assert.equal(left.requests.length, 0)
   const { testers } = (await (await call('/api/admin/beta', { cookie: session })).json()) as { testers: { key: string; note: string }[] }
   assert.equal(testers.find((t) => t.key === key)!.note, 'Asha Nair · macOS, Apple Silicon, Ableton Live 12')
+})
+
+test('Tell me when it’s out: one confirmation now, one email at launch', async () => {
+  const notify = (body: Record<string, unknown>) => call('/api/notify', { method: 'POST', body })
+  assert.equal((await notify({ product: 'no-such-thing', email: 'f@example.com' })).status, 404)
+  assert.equal((await notify({ product: 'orbit', email: 'nope' })).status, 400)
+  let before = mail.length
+  assert.deepEqual(await (await notify({ product: 'orbit', email: 'Fan@Example.com' })).json(), { status: 'saved' })
+  assert.equal(mail.length, before + 1)
+  assert.equal(mail.at(-1)!.subject, 'You’re on the list for ORBIT')
+  await notify({ product: 'orbit', email: 'fan2@example.com' })
+  const merch = products.find((p) => p.kind === 'merch')!
+  await notify({ product: merch.id, email: 'fan@example.com', detail: 'Black, L' })
+  assert.match(mail.at(-1)!.text, /\(Black, L\)/)
+
+  const counts = (await (await call('/api/admin/launch', { cookie: session })).json()) as { alerts: { product: string; name: string; waiting: number; told: number }[] }
+  assert.deepEqual(counts.alerts.find((a) => a.product === 'orbit'), { product: 'orbit', name: 'ORBIT', waiting: 2, told: 0 })
+  assert.equal((await call('/api/admin/launch')).status, 404)
+
+  before = mail.length
+  const sent = (await (await call('/api/admin/launch/send', { method: 'POST', cookie: session, body: { product: 'orbit' } })).json()) as { sent: number }
+  assert.equal(sent.sent, 2)
+  assert.deepEqual(mail.slice(before).map((m) => [m.to, m.subject]).sort(), [['fan2@example.com', 'ORBIT is out'], ['fan@example.com', 'ORBIT is out']])
+  assert.equal(((await (await call('/api/admin/launch/send', { method: 'POST', cookie: session, body: { product: 'orbit' } })).json()) as { sent: number }).sent, 0) // once
 })
 
 test('Pixel Forge update check: the latest release, public and without the database', async () => {

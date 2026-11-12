@@ -532,3 +532,30 @@ ${button(adminLink, 'Approve or decline')}`
     text: plain([`${r.name || r.email} <${r.email}> asked to test ${r.product}.`, r.system && `System: ${r.system}`, r.daw && `DAW: ${r.daw}`, r.about, '', `Approve or decline: ${adminLink}`]),
   }
 }
+
+/** "Tell me when it's out": confirms the sign-up. */
+export function launchAlertSaved(b: Brand, r: { product: string; detail: string; link: string }): Mail {
+  const body = `${label('Launching soon')}
+${headline(`We’ll tell you when ${esc(r.product)} is out.`)}
+${text(`You’re on the list for ${esc(r.product)}${r.detail ? ` (${esc(r.detail)})` : ''}. We’ll send you one email when it’s available, and nothing else.`)}
+${button(r.link, `See ${r.product}`)}`
+  return {
+    subject: `You’re on the list for ${r.product}`,
+    html: shell(b, `We’ll email you once when ${r.product} is out.`, body, 'You’re receiving this because you asked to hear when this product launches on vitalacoustica.com. Reply if you’d rather not.'),
+    text: plain([`You're on the list for ${r.product}${r.detail ? ` (${r.detail})` : ''}. We'll send you one email when it's available, and nothing else.`, '', r.link]),
+  }
+}
+
+/** The launch: the product someone waited for is on sale. */
+export function launchAlertOut(b: Brand, r: { product: string; detail: string; link: string }): Mail {
+  const body = `${label('It’s out')}
+${headline(`${esc(r.product)} is here.`)}
+${text(`You asked us to tell you when ${esc(r.product)}${r.detail ? ` (${esc(r.detail)})` : ''} was available. It is now.`)}
+${button(r.link, `Get ${r.product}`)}
+${text('This was the one email you signed up for; we won’t write again about it.')}`
+  return {
+    subject: `${r.product} is out`,
+    html: shell(b, `${r.product} is available now.`, body, 'You’re receiving this because you asked to hear when this product launched on vitalacoustica.com.'),
+    text: plain([`${r.product} is out. You asked us to tell you when it was available.`, '', r.link]),
+  }
+}

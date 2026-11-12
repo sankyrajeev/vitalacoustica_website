@@ -130,7 +130,10 @@ export const api = {
     requests: (status: BetaRequest['status']) => request<{ requests: BetaRequest[] }>(`/api/admin/beta/requests?status=${status}`),
     approve: (id: number, expires: string) => request<{ key: string; sent: boolean }>('/api/admin/beta/approve', { id, expires }),
     decline: (id: number) => request('/api/admin/beta/decline', { id }),
+    launchAlerts: () => request<{ alerts: { product: string; name: string; waiting: number; told: number }[] }>('/api/admin/launch'),
+    sendLaunch: (product: string) => request<{ sent: number; left: number }>('/api/admin/launch/send', { product }),
   },
+  notifyMe: (b: { product: string; email: string; detail: string; _gotcha: string }) => request('/api/notify', b),
   requestBeta: (b: { product: string; name: string; email: string; about: string; system: string; daw: string; _gotcha: string }) => request('/api/beta/request', b),
   downloads: (product: string) => request<{ version?: string; files: { id: number; name: string; size: number }[]; note?: string }>(`/api/account/downloads?product=${encodeURIComponent(product)}`),
 }

@@ -8,7 +8,8 @@
 //   Gumroad link into `checkout` and its Buy button opens Gumroad's checkout over our page.
 // - Merch is printed and shipped per order by a print-on-demand partner (Qikink). Paste the product's
 //   payment or store link into `checkout`.
-// Until `checkout` is filled in, the product shows as coming soon with a "Tell me when it's out" button.
+// Until `checkout` is filled in, the product shows as coming soon with "Tell me when it's out": people
+// leave their email, and the admin page emails them all once it's on sale (server/accounts/launch.ts).
 //
 // DUMMY: the audio packs and VJ loops below are samples, to show how the shop will look. The merch is
 // our first collection (the designs are final; it's on sale once `checkout` is filled in).

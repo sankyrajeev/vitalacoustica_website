@@ -150,6 +150,12 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
 - The download link goes to the buyer's account.
 - It uses the same `GITHUB_RELEASES_TOKEN` as downloads (step 6), and the answer is cached for 10 minutes.
 
+### "Tell me when it's out"
+
+Products not on sale yet show "Launching soon" and an email field. People who sign up get a confirmation email.
+- On the admin page, **Waiting for launch** shows how many are waiting for each product.
+- Once a product is on sale, press **Tell them it's out**. Everyone waiting gets one email with a link to it, and is marked as told.
+
 ### Beta testing (VANTA)
 
 The website is VANTA's only licence server, betas included. Beta builds also send feedback, crash reports and a check-in to the website. You manage all of it on the **admin page**, at `vitalacoustica.com/account/admin`.

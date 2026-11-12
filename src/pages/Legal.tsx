@@ -102,6 +102,10 @@ export function PrivacyPage() {
                 work, not for tracking.
               </li>
               <li>
+                <strong>"Tell me when it's out":</strong> your email address and the product (and, for merch, the colour and
+                size), to send you one email when it's available. We delete it on request.
+              </li>
+              <li>
                 <strong>Beta testing:</strong> if you ask to test our software, your name, email address, computer, music
                 software and what you tell us about your work, so we can choose testers. Beta versions also send us how often they're
                 opened and which version, and, when you press Send feedback or after a crash, your message and diagnostic logs (never

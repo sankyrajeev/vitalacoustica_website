@@ -9,12 +9,15 @@
 //   GET  /api/admin/beta/requests     people who asked to join the beta (?status=pending|approved|declined)
 //   POST /api/admin/beta/approve      { id, expires } → a beta key and the invitation, to the person who asked
 //   POST /api/admin/beta/decline      { id }
+//   GET  /api/admin/launch            how many wait for each product ("Tell me when it's out")
+//   POST /api/admin/launch/send       { product }: email them all that it's out
 
 import { betaInvite } from '../emails.ts'
 import type { User } from './auth.ts'
 import { json, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { newLicenceKey, normaliseKey } from './licence.ts'
 import { brand, sendMail } from './mail.ts'
+import { launchAlertCounts, sendLaunch } from './launch.ts'
 import { PRODUCTS } from './products.ts'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -157,6 +160,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
   const url = new URL(request.url)
   if (request.method === 'GET') {
     if (pathname === '/api/admin/beta') return json({ testers: await testers(db) })
+    if (pathname === '/api/admin/launch') return json({ alerts: await launchAlertCounts(db) })
     if (pathname === '/api/admin/beta/requests') {
       const status = ['pending', 'approved', 'declined'].includes(url.searchParams.get('status') || '') ? url.searchParams.get('status') : 'pending'
       const rows = (await db.prepare('SELECT * FROM beta_requests WHERE status = ? ORDER BY created_at DESC LIMIT 300').bind(status).all<BetaRequest>()).results
@@ -184,6 +188,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     if (pathname === '/api/admin/beta/revoke') return revoke(request, db)
     if (pathname === '/api/admin/beta/approve') return approve(request, env, db)
     if (pathname === '/api/admin/beta/decline') return decline(request, db)
+    if (pathname === '/api/admin/launch/send') return sendLaunch(request, env, db)
   }
   return json({ error: 'not_found' }, 404)
 }
