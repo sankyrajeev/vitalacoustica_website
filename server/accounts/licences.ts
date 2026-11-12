@@ -65,7 +65,8 @@ export async function activate(request: Request, env: AccountsEnv, db: D1Databas
          activated_at = excluded.activated_at,
          os = COALESCE(excluded.os, os),
          terms_version = COALESCE(excluded.terms_version, terms_version),
-         terms_accepted = COALESCE(excluded.terms_accepted, terms_accepted)
+         terms_accepted = COALESCE(excluded.terms_accepted, terms_accepted),
+         lease_notice = 0
        RETURNING machine_name`,
     )
     .bind(key, machine, machineName, now(), text(body.os, 80), text(body.termsVersion, 40), text(body.termsAccepted, 40))
@@ -112,13 +113,13 @@ export async function issueLicences(
   order: { id: string; userId: string | null; email: string },
   items: { product: ProductId; quantity: number }[],
 ) {
-  const keys: { product: string; key: string }[] = []
+  const keys: { product: string; key: string; devices: number }[] = []
   const statements = []
   for (const item of items) {
     const p = PRODUCTS[item.product]
     for (let i = 0; i < Math.min(item.quantity, 20); i++) {
       const key = newLicenceKey(p.keyPrefix)
-      keys.push({ product: p.name, key })
+      keys.push({ product: p.name, key, devices: p.maxDevices })
       statements.push(
         db
           .prepare('INSERT INTO licences (key, product, user_id, email, order_id, edition, max_devices, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')

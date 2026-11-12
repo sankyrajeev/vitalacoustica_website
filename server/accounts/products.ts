@@ -59,7 +59,7 @@ export const PRODUCTS: Record<ProductId, LicensedProduct> = {
     signingKey: 'LICENCE_KEY_PIXELFORGE',
     releases: '',
     format: 'pf1',
-    leaseDays: 30,
+    leaseDays: 90,
   },
 }
 

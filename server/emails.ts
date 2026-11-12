@@ -387,7 +387,17 @@ ${text('The link works for one hour. If you didn’t ask to reset your password,
 }
 
 /** The licence keys from an order. */
-export function licenceDelivery(b: Brand, keys: { product: string; key: string }[], accountLink: string): Mail {
+const NUMBERS = ['no', 'one', 'two', 'three', 'four', 'five']
+const computers = (n: number) => `${NUMBERS[n] ?? n} computer${n === 1 ? '' : 's'}`
+
+/** How many computers each product's keys work on, in a sentence. */
+function deviceRule(keys: { product: string; devices: number }[]) {
+  const byProduct = [...new Map(keys.map((k) => [k.product, k.devices])).entries()]
+  if (new Set(byProduct.map(([, n]) => n)).size === 1) return `Each key works on ${computers(byProduct[0][1])} at a time`
+  return byProduct.map(([p, n]) => `${p} works on ${computers(n)} at a time`).join('; ')
+}
+
+export function licenceDelivery(b: Brand, keys: { product: string; key: string; devices: number }[], accountLink: string): Mail {
   const rows = keys
     .map(
       (k) =>
@@ -396,7 +406,7 @@ export function licenceDelivery(b: Brand, keys: { product: string; key: string }
     .join('')
   const body = `${label('Thank you')}
 ${headline('Your licence keys.')}
-${text('Thank you for your order. Install the software, open it, and paste your key when it asks to activate. Each key works on two computers at a time, and you can move it from your account.')}
+${text(`Thank you for your order. Install the software, open it, and paste your key when it asks to activate. ${deviceRule(keys)}, and you can move it from your account.`)}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;border-top:1px solid ${C.line};">${rows}</table>
 ${text('Your keys, downloads and order history are always in your account. Sign in with this email address; if you don’t have an account yet, create one with this address and everything will be there.')}
 ${button(accountLink, 'Open my account')}`
@@ -404,5 +414,28 @@ ${button(accountLink, 'Open my account')}`
     subject: 'Your Vital Acoustica licence keys',
     html: shell(b, 'Your licence keys and downloads are ready.', body, 'You’re receiving this because you bought software from vitalacoustica.com. Keep this email: it has your licence keys.'),
     text: plain(['Thank you for your order. Your licence keys:', ...keys.map((k) => `${k.product}: ${k.key}`), '', `Your account: ${accountLink}`]),
+  }
+}
+
+/**
+ * A licensed computer hasn't checked in for a while: it needs the internet before its licence
+ * lease runs out, or its output pauses until it does (Pixel Forge).
+ */
+export function leaseReminder(b: Brand, r: { product: string; computer: string; until: string; daysLeft: number }, accountLink: string): Mail {
+  const when = r.daysLeft <= 1 ? 'by tomorrow' : `within ${r.daysLeft} days`
+  const body = `${label('Your licence')}
+${headline(`Connect ${esc(r.computer)} to the internet.`)}
+${text(`${esc(r.product)} on ${esc(r.computer)} hasn’t been online for a while. It confirms its licence with us whenever it’s connected, and it needs to do that ${when} (by ${esc(r.until)}). If it doesn’t, ${esc(r.product)} keeps running but stops sending to your lights until it’s back online.`)}
+${text('Just open it on that computer with an internet connection; nothing else to do. If you no longer use that computer, remove it in your account so you can activate another one.')}
+${button(accountLink, 'Open my account')}`
+  return {
+    subject: `${r.product} on ${r.computer} needs to go online ${when}`,
+    html: shell(b, `Open ${r.product} on ${r.computer} with an internet connection by ${r.until}.`, body, 'You’re receiving this because you own a licence for software from vitalacoustica.com.'),
+    text: plain([
+      `${r.product} on ${r.computer} hasn't been online for a while. Open it on that computer with an internet connection ${when} (by ${r.until}).`,
+      `If it doesn't, ${r.product} keeps running but stops sending to your lights until it's back online.`,
+      '',
+      `Your account: ${accountLink}`,
+    ]),
   }
 }

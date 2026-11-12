@@ -4,6 +4,7 @@
 // (dist/) for everything else. Settings are in wrangler.jsonc.
 
 import { handleAccounts, type AccountsEnv } from '../server/accounts/index.ts'
+import { sendLeaseReminders } from '../server/accounts/reminders.ts'
 import { handleEnquiry, type EnquiryEnv } from '../server/enquiry.ts'
 import { handleJournalApi, journalPage, type JournalEnv } from '../server/journal.ts'
 import { confirm, subscribe, unsubscribe, type NewsletterEnv } from '../server/newsletter.ts'
@@ -32,5 +33,10 @@ export default {
     if (pathname === '/sitemap.xml') return sitemap((env.SITE_URL || url.origin).replace(/\/$/, ''))
     if ((pathname === '/journal' || pathname.startsWith('/journal/')) && read) return journalPage(request, env, env.ASSETS)
     return env.ASSETS.fetch(request)
+  },
+
+  // once a day (wrangler.jsonc "triggers"): remind owners whose licensed computers need to go online
+  async scheduled(_event: unknown, env: Env, ctx: ExecutionContext) {
+    if (env.DB) ctx.waitUntil(sendLeaseReminders(env, env.DB).then((n) => console.log(`lease reminders sent: ${n}`)))
   },
 }

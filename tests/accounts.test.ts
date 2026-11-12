@@ -15,6 +15,7 @@ import { handleAccounts } from '../server/accounts/index.ts'
 import type { AccountsEnv, D1Database, D1PreparedStatement } from '../server/accounts/db.ts'
 import { hmacHex } from '../server/accounts/crypto.ts'
 import { verifyPaddleSignature } from '../server/accounts/paddle.ts'
+import { sendLeaseReminders } from '../server/accounts/reminders.ts'
 
 /* ── a D1 stand-in ── */
 function d1(): D1Database {
@@ -47,7 +48,7 @@ function d1(): D1Database {
 
 /* ── stubs: email, Paddle, Google ── */
 const SITE = 'https://vitalacoustica.com'
-const mail: { to: string; subject: string; text: string }[] = []
+const mail: { to: string; subject: string; text: string; html: string }[] = []
 const lastLink = (to: string, path: string) => {
   const m = [...mail].reverse().find((x) => x.to === to)
   const link = m?.text.match(new RegExp(`${SITE}${path}\\S+`))?.[0]
@@ -87,7 +88,7 @@ before(() => {
     const url = String(input instanceof Request ? input.url : input)
     if (url === 'https://api.resend.com/emails') {
       const b = JSON.parse(String(init?.body))
-      mail.push({ to: b.to[0], subject: b.subject, text: b.text })
+      mail.push({ to: b.to[0], subject: b.subject, text: b.text, html: b.html })
       return Response.json({ id: 'email' })
     }
     if (url.startsWith('https://sandbox-api.paddle.com/customers/')) return Response.json({ data: { email: paddleEmail } })
@@ -211,6 +212,7 @@ test('a purchase records the order, issues a key and emails it', async () => {
   const email = mail.at(-1)!
   assert.equal(email.to, 'buyer@example.com')
   key = email.text.match(/VNTA(-[A-Z2-9]{5}){4}/)![0]
+  assert.match(email.html, /Each key works on two computers at a time/)
   // a retried delivery does nothing
   await purchase('evt_1', 'txn_1', [{ product: 'pro_vanta', quantity: 1 }])
   await purchase('evt_1b', 'txn_1', [{ product: 'pro_vanta', quantity: 1 }])
@@ -335,7 +337,7 @@ test('Pixel Forge: one computer at a time, a PF1 token its app accepts, with a l
   assert.equal(fields.t, 'full')
   assert.equal(fields.e, 'buyer@example.com')
   assert.equal(fields.x, null)
-  assert.equal(Math.round((Date.parse(fields.r) - Date.parse(fields.i)) / 86400e3), 30)
+  assert.equal(Math.round((Date.parse(fields.r) - Date.parse(fields.i)) / 86400e3), 90)
 
   // Pixel Forge's own check (pixelforge/licensing.py), when that repository is next to this one
   const pf = new URL('../../pixel_forge/', import.meta.url)
@@ -352,6 +354,32 @@ test('Pixel Forge: one computer at a time, a PF1 token its app accepts, with a l
   assert.equal((await activate('AB12-CD34-EF56-7890')).status, 200) // the lease renews on the same computer
   await call('/api/licence/v1/deactivate', { method: 'POST', body: { key: pfKey, machine: 'AB12-CD34-EF56-7890' } })
   assert.equal((await activate('9999-8888-7777-6666', 'Laptop')).status, 200)
+  assert.match(mail.find((m) => m.text.includes(pfKey))!.html, /works on one computer at a time/)
+
+  // the owner is emailed when the computer hasn't checked in: 14 days before its output pauses, then 3
+  const db = env.DB!
+  const day = 86400
+  const t = Math.floor(Date.now() / 1000)
+  const setLastSeen = (daysAgo: number) =>
+    db.prepare('UPDATE activations SET activated_at = ? WHERE key = ?').bind(t - daysAgo * day, pfKey).run()
+  await setLastSeen(70)
+  assert.equal(await sendLeaseReminders(env, db, t), 0) // 20 days left: nothing yet
+  await setLastSeen(77)
+  assert.equal(await sendLeaseReminders(env, db, t), 1)
+  assert.equal(mail.at(-1)!.subject, 'Pixel Forge on Laptop needs to go online within 13 days')
+  assert.equal(await sendLeaseReminders(env, db, t), 0) // once
+  await setLastSeen(88)
+  assert.equal(await sendLeaseReminders(env, db, t), 1)
+  assert.match(mail.at(-1)!.subject, /within 2 days/)
+  assert.equal(await sendLeaseReminders(env, db, t), 0)
+  // checking in starts the 90 days again, reminders included
+  assert.equal((await activate('9999-8888-7777-6666')).status, 200)
+  await setLastSeen(77)
+  assert.equal(await sendLeaseReminders(env, db, t), 1)
+  // VANTA isn't leased: no reminders, however long ago
+  await db.prepare('UPDATE activations SET activated_at = ? WHERE key != ?').bind(t - 85 * day, pfKey).run()
+  await setLastSeen(0)
+  assert.equal(await sendLeaseReminders(env, db, t), 0)
 })
 
 test('without the database, account routes say so and nothing else breaks', async () => {

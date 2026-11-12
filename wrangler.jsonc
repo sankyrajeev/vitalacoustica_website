@@ -24,5 +24,7 @@
   // customer accounts and software licences use a D1 database: add its binding here once it's created
   // (docs/accounts.md, step 1). Until then the account pages say accounts aren't available yet.
   //   "d1_databases": [{ "binding": "DB", "database_name": "vitalacoustica", "database_id": "…" }],
+  // once a day at 03:17 UTC: licence reminder emails (server/accounts/reminders.ts); does nothing until the database is set up
+  "triggers": { "crons": ["17 3 * * *"] },
   "observability": { "enabled": true }
 }

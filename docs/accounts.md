@@ -119,10 +119,16 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
 
 **How the licence works.** The demo runs on any number of computers. A licence turns on output to the lights on **one computer at a time**, with no channel limit.
 
-**What the website does.** It issues `PXFG-…` keys. When the app activates a key, the server answers with a PF1 token locked to that computer, carrying a refresh date (`"r"`) 30 days ahead.
-- The app asks again (the same `/v1/activate` call) whenever it's online. This renews the 30 days.
+**What the website does.** It issues `PXFG-…` keys. When the app activates a key, the server answers with a PF1 token locked to that computer, carrying a refresh date (`"r"`) 90 days ahead.
+- The app asks again (the same `/v1/activate` call) whenever it's online. This renews the 90 days.
 - If the server answers that the computer was removed, or the key is in use elsewhere, the app goes back to demo.
-- A computer freed from the account page therefore stops outputting within 30 days, even if it never comes online.
+- A computer freed from the account page therefore stops outputting within 90 days, even if it never comes online.
+
+**Reminder emails.** If a licensed computer hasn't checked in, its owner gets an email 14 days before its output would pause, and a last one 3 days before.
+- They're sent by a daily job: the `triggers` cron in `wrangler.jsonc`, running `server/accounts/reminders.ts`. Cron triggers are free.
+- Checking in resets the reminders.
+
+**Moving the licence.** As with Lightkey, a key moves by freeing the old computer first: "Deactivate" in the app, or removing that computer in the account page. Activating on a second computer while the first still holds the key is refused, and the message names that computer.
 
 **Turning it on:**
 1. On the owner's Mac, open Pixel Forge's `Licence Manager.command` and click "Create signing keys". This makes `~/Documents/Vital Acoustica Licensing/private_key.pem`.
