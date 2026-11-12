@@ -102,6 +102,12 @@ export function PrivacyPage() {
                 work, not for tracking.
               </li>
               <li>
+                <strong>Beta testing:</strong> if you ask to test our software, your name, email address, computer, music
+                software and what you tell us about your work, so we can choose testers. Beta versions also send us how often they're
+                opened and which version, and, when you press Send feedback or after a crash, your message and diagnostic logs (never
+                your audio or files).
+              </li>
+              <li>
                 <strong>When we work together:</strong> billing and contact details needed for quotes, invoices, GST and delivery.
               </li>
               <li>

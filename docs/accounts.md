@@ -154,6 +154,13 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
 
 The website is VANTA's only licence server, betas included. Beta builds also send feedback, crash reports and a check-in to the website. You manage all of it on the **admin page**, at `vitalacoustica.com/account/admin`.
 
+**Requests.** Testing is free and by invitation:
+1. On VANTA's shop page, people press "Request beta access" and fill in their name, email, computer, DAW and what they make.
+2. They get a "we've got your request" email, and each address in `ADMIN_EMAILS` gets one with their details. Reply to that email to answer them directly.
+3. On the admin page, under **Requests to join**, choose the date betas end, then press **Approve and send key**. That issues their beta key and emails the invitation. **Decline** sends nothing.
+
+Which products have an open beta is set in `server/accounts/beta.ts` (`OPEN_BETAS`) and in the product's `beta` text in `src/content/shop.ts`.
+
 **Setting it up:**
 1. Add the variable `ADMIN_EMAILS` to the Worker: your email address, or several separated by commas. Make an account on the site with that address and confirm it. An **Admin** link then appears in your account.
 2. Make sure replies to beta invitations reach you:

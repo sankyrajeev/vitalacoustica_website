@@ -6,6 +6,9 @@
 //   GET  /api/admin/feedback/item     one report with its logs (?id=)
 //   POST /api/admin/beta/issue        { email, name?, expires, note?, send? } → a beta key (and the invitation)
 //   POST /api/admin/beta/revoke       { key }
+//   GET  /api/admin/beta/requests     people who asked to join the beta (?status=pending|approved|declined)
+//   POST /api/admin/beta/approve      { id, expires } → a beta key and the invitation, to the person who asked
+//   POST /api/admin/beta/decline      { id }
 
 import { betaInvite } from '../emails.ts'
 import type { User } from './auth.ts'
@@ -69,32 +72,31 @@ async function testers(db: D1Database) {
   })
 }
 
-async function issue(request: Request, env: AccountsEnv, db: D1Database) {
-  const body = await readJson<{ email?: string; name?: string; expires?: string; note?: string; send?: boolean }>(request)
-  const email = (body?.email || '').trim().toLowerCase()
-  const expires = (body?.expires || '').trim()
-  if (!EMAIL.test(email)) return json({ error: 'invalid_email' }, 400)
-  if (!DATE.test(expires) || expires <= new Date().toISOString().slice(0, 10)) return json({ error: 'invalid_expiry' }, 400)
+/** Makes a beta key for a tester and, if asked, emails them the invitation. */
+export async function issueBetaKey(
+  env: AccountsEnv,
+  db: D1Database,
+  site: string,
+  t: { email: string; name: string; expires: string; note: string; send: boolean },
+) {
   const product = PRODUCTS.vanta
   const key = newLicenceKey(product.keyPrefix)
-  const name = (body?.name || '').trim().slice(0, 80)
-  const note = [name, (body?.note || '').trim()].filter(Boolean).join(' · ').slice(0, 300) || null
+  const note = [t.name, t.note].filter(Boolean).join(' · ').slice(0, 300) || null
   // if the tester already has a verified account, the key goes straight into it; otherwise it joins
   // the account they make with this email
-  const user = await db.prepare('SELECT id FROM users WHERE email = ? AND email_verified = 1').bind(email).first<{ id: string }>()
+  const user = await db.prepare('SELECT id FROM users WHERE email = ? AND email_verified = 1').bind(t.email).first<{ id: string }>()
   await db
     .prepare('INSERT INTO licences (key, product, user_id, email, edition, max_devices, expires, note, created_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)')
-    .bind(key, product.id, user?.id ?? null, email, 'Beta', expires, note, now())
+    .bind(key, product.id, user?.id ?? null, t.email, 'Beta', t.expires, note, now())
     .run()
   let sent = false
-  if (body?.send) {
-    const site = siteUrl(env, request)
-    const until = new Date(`${expires}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  if (t.send) {
+    const until = new Date(`${t.expires}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
     try {
       await sendMail(
         env,
-        email,
-        betaInvite(brand(site), { product: product.name, name, key, expires: until, download: `${site}/account`, guide: env.BETA_GUIDE_URL || undefined }),
+        t.email,
+        betaInvite(brand(site), { product: product.name, name: t.name, key, expires: until, download: `${site}/account`, guide: env.BETA_GUIDE_URL || undefined }),
         env.BETA_REPLY_TO || 'beta@vitalacoustica.com',
       )
       sent = true
@@ -102,7 +104,44 @@ async function issue(request: Request, env: AccountsEnv, db: D1Database) {
       console.error('beta invite', e)
     }
   }
-  return json({ key, sent })
+  return { key, sent }
+}
+
+const validExpiry = (d: string) => DATE.test(d) && d > new Date().toISOString().slice(0, 10)
+
+async function issue(request: Request, env: AccountsEnv, db: D1Database) {
+  const body = await readJson<{ email?: string; name?: string; expires?: string; note?: string; send?: boolean }>(request)
+  const email = (body?.email || '').trim().toLowerCase()
+  const expires = (body?.expires || '').trim()
+  if (!EMAIL.test(email)) return json({ error: 'invalid_email' }, 400)
+  if (!validExpiry(expires)) return json({ error: 'invalid_expiry' }, 400)
+  const t = { email, name: (body?.name || '').trim().slice(0, 80), expires, note: (body?.note || '').trim(), send: !!body?.send }
+  return json(await issueBetaKey(env, db, siteUrl(env, request), t))
+}
+
+type BetaRequest = { id: number; product: string; email: string; name: string | null; about: string | null; system: string | null; daw: string | null; status: string; licence_key: string | null; created_at: number; decided_at: number | null }
+
+async function approve(request: Request, env: AccountsEnv, db: D1Database) {
+  const body = await readJson<{ id?: number; expires?: string }>(request)
+  const expires = (body?.expires || '').trim()
+  if (!validExpiry(expires)) return json({ error: 'invalid_expiry' }, 400)
+  const r = await db.prepare("SELECT * FROM beta_requests WHERE id = ? AND status = 'pending'").bind(Number(body?.id)).first<BetaRequest>()
+  if (!r) return json({ error: 'not_found' }, 404)
+  const result = await issueBetaKey(env, db, siteUrl(env, request), {
+    email: r.email,
+    name: r.name || '',
+    expires,
+    note: [r.system, r.daw].filter(Boolean).join(', '),
+    send: true,
+  })
+  await db.prepare("UPDATE beta_requests SET status = 'approved', licence_key = ?, decided_at = ? WHERE id = ?").bind(result.key, now(), r.id).run()
+  return json(result)
+}
+
+async function decline(request: Request, db: D1Database) {
+  const id = Number((await readJson<{ id?: number }>(request))?.id)
+  const res = await db.prepare("UPDATE beta_requests SET status = 'declined', decided_at = ? WHERE id = ? AND status = 'pending'").bind(now(), id).run()
+  return res.meta.changes ? json({ status: 'declined' }) : json({ error: 'not_found' }, 404)
 }
 
 async function revoke(request: Request, db: D1Database) {
@@ -118,6 +157,11 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
   const url = new URL(request.url)
   if (request.method === 'GET') {
     if (pathname === '/api/admin/beta') return json({ testers: await testers(db) })
+    if (pathname === '/api/admin/beta/requests') {
+      const status = ['pending', 'approved', 'declined'].includes(url.searchParams.get('status') || '') ? url.searchParams.get('status') : 'pending'
+      const rows = (await db.prepare('SELECT * FROM beta_requests WHERE status = ? ORDER BY created_at DESC LIMIT 300').bind(status).all<BetaRequest>()).results
+      return json({ requests: rows })
+    }
     if (pathname === '/api/admin/feedback') {
       const crash = url.searchParams.get('crash') === '1'
       const rows = (
@@ -138,6 +182,8 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
   if (request.method === 'POST') {
     if (pathname === '/api/admin/beta/issue') return issue(request, env, db)
     if (pathname === '/api/admin/beta/revoke') return revoke(request, db)
+    if (pathname === '/api/admin/beta/approve') return approve(request, env, db)
+    if (pathname === '/api/admin/beta/decline') return decline(request, db)
   }
   return json({ error: 'not_found' }, 404)
 }

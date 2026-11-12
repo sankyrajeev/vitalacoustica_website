@@ -5,6 +5,7 @@ import { changePassword, currentUser, type User, forgot, googleCallback, googleS
 import { json, notConfigured, sameOrigin, type AccountsEnv, type D1Database } from './db.ts'
 import { download, listDownloads } from './downloads.ts'
 import { handleAdmin, isAdmin } from './admin.ts'
+import { requestBeta } from './beta.ts'
 import { activate, deactivate, feedback, licencesFor, ping, removeDevice } from './licences.ts'
 import { paddleWebhook } from './paddle.ts'
 import { latestVersion } from './updates.ts'
@@ -45,7 +46,7 @@ async function me(db: D1Database, user: User, admin: boolean) {
 export async function handleAccounts(request: Request, env: AccountsEnv): Promise<Response | null> {
   const { pathname } = new URL(request.url)
   const method = request.method
-  if (!pathname.startsWith('/api/account') && !pathname.startsWith('/api/licence') && !pathname.startsWith('/api/admin') && pathname !== '/api/pixelforge/v1/latest' && pathname !== '/api/paddle/webhook') return null
+  if (!pathname.startsWith('/api/account') && !pathname.startsWith('/api/licence') && !pathname.startsWith('/api/admin') && pathname !== '/api/beta/request' && pathname !== '/api/pixelforge/v1/latest' && pathname !== '/api/paddle/webhook') return null
 
   if (pathname === '/api/licence/health') return json({ ok: true, configured: !!env.DB })
   // update checks need no database
@@ -68,6 +69,7 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
 
   if (method === 'POST') {
     if (!sameOrigin(request, env)) return json({ error: 'forbidden' }, 403)
+    if (pathname === '/api/beta/request') return requestBeta(request, env, db)
     if (pathname === '/api/account/signup') return signup(request, env, db)
     if (pathname === '/api/account/login') return login(request, env, db)
     if (pathname === '/api/account/logout') return logout(request, db)

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { api, explain, type Report, type Tester } from '../account/api'
+import { api, explain, type BetaRequest, type Report, type Tester } from '../account/api'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { Arrow } from '../components/ui'
@@ -71,6 +71,93 @@ function IssueBeta({ onIssued }: { onIssued: () => void }) {
         </button>
       </div>
     </form>
+  )
+}
+
+function Requests({ onChange }: { onChange: () => void }) {
+  const [status, setStatus] = useState<BetaRequest['status']>('pending')
+  const [rows, setRows] = useState<BetaRequest[] | null>(null)
+  const [expires, setExpires] = useState(inDays(60))
+  const [busy, setBusy] = useState<number | null>(null)
+  const [msg, setMsg] = useState('')
+
+  const load = (s = status) => api.admin.requests(s).then((r) => setRows(r.ok ? r.data.requests : []))
+  useEffect(() => {
+    void load(status)
+  }, [status]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function approve(r: BetaRequest) {
+    setBusy(r.id)
+    const res = await api.admin.approve(r.id, expires)
+    setBusy(null)
+    setMsg(res.ok ? `Approved ${r.email}: key ${res.data.key}${res.data.sent ? ', invitation sent.' : '. The invitation could not be sent: send the key yourself.'}` : explain(res.data.error))
+    void load()
+    onChange()
+  }
+  async function decline(r: BetaRequest) {
+    if (!window.confirm(`Decline ${r.email}? They won't be emailed.`)) return
+    setBusy(r.id)
+    await api.admin.decline(r.id)
+    setBusy(null)
+    void load()
+  }
+
+  return (
+    <>
+      <div className="account__bar">
+        <div className="account__tabs">
+          {(['pending', 'approved', 'declined'] as const).map((s) => (
+            <button key={s} className="chip" type="button" aria-pressed={status === s} onClick={() => setStatus(s)}>
+              {s === 'pending' ? 'Waiting' : s === 'approved' ? 'Approved' : 'Declined'}
+            </button>
+          ))}
+        </div>
+        {status === 'pending' && (
+          <label className="field admin__expiry">
+            <span>Approved betas end on</span>
+            <input type="date" value={expires} min={inDays(1)} onChange={(e) => setExpires(e.target.value)} />
+          </label>
+        )}
+      </div>
+      {msg && (
+        <p className="notice account__notice" role="status">
+          {msg}
+        </p>
+      )}
+      {rows === null ? (
+        <p className="muted">Loading…</p>
+      ) : !rows.length ? (
+        <p className="muted">{status === 'pending' ? 'No one is waiting.' : 'None.'}</p>
+      ) : (
+        rows.map((r) => (
+          <article key={r.id} className="admin__report admin__request">
+            <header>
+              <span className="label">{r.name || r.email}</span>
+              <span className="muted">
+                {r.email} · {time(r.created_at)}
+                {r.system ? ` · ${r.system}` : ''}
+                {r.daw ? ` · ${r.daw}` : ''}
+              </span>
+            </header>
+            {r.about && <p className="admin__msg">{r.about}</p>}
+            {r.status === 'pending' ? (
+              <div className="admin__actions">
+                <button className="cta cta--primary" type="button" disabled={busy === r.id} onClick={() => approve(r)}>
+                  <span>{busy === r.id ? 'Approving…' : 'Approve and send key'}</span>
+                </button>
+                <button className="text-link text-link--quiet" type="button" disabled={busy === r.id} onClick={() => decline(r)}>
+                  Decline
+                </button>
+              </div>
+            ) : (
+              <p className="muted admin__sys">
+                {r.status === 'approved' ? `Approved ${day(r.decided_at)} · ${r.licence_key}` : `Declined ${day(r.decided_at)}`}
+              </p>
+            )}
+          </article>
+        ))
+      )}
+    </>
   )
 }
 
@@ -192,7 +279,7 @@ export function AdminPage() {
   return (
     <>
       <PageHead label="Admin" title="Beta testing">
-        VANTA beta keys, who’s testing, and what the beta builds report.
+        Who’s asked to test VANTA, who’s testing, and what the beta builds report. Testing is free.
       </PageHead>
       <div className="wrap account admin">
         {state === 'loading' && <p className="muted">Loading…</p>}
@@ -204,7 +291,11 @@ export function AdminPage() {
         {state === 'ok' && (
           <>
             <section className="account__section">
-              <h2 className="account__h">Invite a tester</h2>
+              <h2 className="account__h">Requests to join</h2>
+              <Requests onChange={loadTesters} />
+            </section>
+            <section className="account__section">
+              <h2 className="account__h">Invite someone yourself</h2>
               <IssueBeta onIssued={loadTesters} />
             </section>
             <section className="account__section">

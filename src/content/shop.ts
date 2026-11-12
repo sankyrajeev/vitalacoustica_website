@@ -72,6 +72,8 @@ export type Software = Base & {
   paddlePrice?: string
   /** real screenshots for the product page (files in public/), first shown first; cards keep the cover */
   screenshots?: { src: string; caption: string }[]
+  /** a free beta people can ask to join (the admin page approves them); the server's list is server/accounts/beta.ts */
+  beta?: { line: string }
   /** short demo clips made with the software (files in public/), played on the product page */
   demos?: { src: string; title: string }[]
 }
@@ -148,6 +150,9 @@ export const products: Product[] = [
       ['Includes', 'VANTA Dynamics effect plugin'],
       ['Needs', '4 GB of memory, 100 MB of disk, and the internet once to activate (offline activation available)'],
     ],
+    beta: {
+      line: 'The first round of testing is free. Tell us a little about yourself and we’ll pick testers by hand; if you’re in, your beta key and the download arrive by email.',
+    },
     screenshots: [
       { src: 'shop/vanta/vanta-synth.webp', caption: 'Three wavetable oscillators, a sub, noise and a deep filter.' },
       { src: 'shop/vanta/vanta-sample-lab.webp', caption: 'The Sample Lab: your sound rebuilt as a patch, measured dimension by dimension.' },

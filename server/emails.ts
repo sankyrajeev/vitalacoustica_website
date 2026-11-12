@@ -490,3 +490,45 @@ ${text('Everything here is confidential until release: please don’t post scree
     ]),
   }
 }
+
+/** To someone who asked to join a beta: we have it, and we'll be in touch. */
+export function betaRequestReceived(b: Brand, r: { product: string; name: string }): Mail {
+  const body = `${label('Beta request')}
+${headline(`Thanks${r.name ? `, ${esc(first(r.name))}` : ''}. We’ve got your request.`)}
+${text(`We’re choosing the first ${esc(r.product)} testers by hand, so it may take a few days. If you’re in, you’ll get an email with your beta key and the download. Testing is free.`)}
+${text('Nothing to do until then. If you have a question, just reply to this email.')}`
+  return {
+    subject: `Your ${r.product} beta request`,
+    html: shell(b, `We’ve got your request to test ${r.product}.`, body, `You’re receiving this because you asked to test ${r.product} on vitalacoustica.com.`),
+    text: plain([
+      `Thanks${r.name ? `, ${first(r.name)}` : ''}. We've got your request to test ${r.product}.`,
+      "We're choosing the first testers by hand, so it may take a few days. If you're in, you'll get an email with your beta key and the download. Testing is free.",
+    ]),
+  }
+}
+
+/** To the owner: someone asked to join a beta. */
+export function betaRequestAdmin(b: Brand, r: { product: string; name: string; email: string; about: string; system: string; daw: string }, adminLink: string): Mail {
+  const rows = [
+    ['Name', r.name],
+    ['Email', r.email],
+    ['System', r.system],
+    ['DAW', r.daw],
+  ]
+    .filter(([, v]) => v)
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:8px 0;border-bottom:1px solid ${C.line};font:600 11px ${SANS};letter-spacing:1.5px;text-transform:uppercase;color:${C.muted};width:30%;">${esc(k)}</td><td style="padding:8px 0;border-bottom:1px solid ${C.line};font:15px/1.5 ${SANS};color:${C.ink};">${esc(v)}</td></tr>`,
+    )
+    .join('')
+  const body = `${label('New beta request')}
+${headline(`${esc(r.name || r.email)} wants to test ${esc(r.product)}.`)}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;border-top:1px solid ${C.line};">${rows}</table>
+${r.about ? text(para(r.about)) : ''}
+${button(adminLink, 'Approve or decline')}`
+  return {
+    subject: `${r.product} beta request: ${r.name || r.email}`,
+    html: shell(b, `${r.name || r.email} asked to test ${r.product}.`, body, 'Sent to Vital Acoustica’s admins.'),
+    text: plain([`${r.name || r.email} <${r.email}> asked to test ${r.product}.`, r.system && `System: ${r.system}`, r.daw && `DAW: ${r.daw}`, r.about, '', `Approve or decline: ${adminLink}`]),
+  }
+}

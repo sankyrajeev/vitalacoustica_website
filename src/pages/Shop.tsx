@@ -3,6 +3,7 @@ import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { AudioPreview } from '../components/shop/AudioPreview'
 import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
+import { BetaRequest } from '../components/shop/BetaRequest'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
 import { price, products, SECTIONS, sectionOf, type Product } from '../content/shop'
@@ -286,6 +287,7 @@ export function ShopItem({ id }: { id: string }) {
           )}
 
           <Buy p={p} option={option} />
+          {p.kind === 'software' && <BetaRequest p={p} />}
 
           {p.kind === 'software' && (
             <div className="shop-item__contents shop-item__features">

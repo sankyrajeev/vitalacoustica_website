@@ -9295,7 +9295,7 @@ img.cover--screen {
   white-space: pre-wrap;
 }
 
-.admin__report button {
+.admin__report > button {
   justify-self: start;
   background: none;
   font-size: 12.5px;
@@ -9349,4 +9349,54 @@ img.cover--screen {
     grid-template-columns: minmax(0, 1fr);
     gap: 4px;
   }
+}
+
+/* "Request free beta access" on a product page */
+.beta-request {
+  display: grid;
+  gap: var(--s3);
+  justify-items: start;
+  padding: var(--s5);
+  border: var(--hair) solid var(--line);
+  border-left: 2px solid var(--accent);
+  background: var(--surface);
+}
+
+.beta-request .label {
+  margin: 0;
+  color: var(--accent-text);
+}
+
+.beta-request__title {
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 400;
+}
+
+.beta-request p {
+  margin: 0;
+}
+
+.beta-request__form {
+  width: 100%;
+  max-width: none;
+}
+
+.admin__expiry {
+  min-width: 200px;
+}
+
+.admin__actions .text-link {
+  background: none;
+}
+
+.admin__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s5);
+}
+
+.admin__request .label {
+  color: var(--text);
 }

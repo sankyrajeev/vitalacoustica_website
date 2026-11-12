@@ -79,6 +79,20 @@ export type Report = {
   logs?: string
 }
 
+export type BetaRequest = {
+  id: number
+  product: string
+  email: string
+  name: string | null
+  about: string | null
+  system: string | null
+  daw: string | null
+  status: 'pending' | 'approved' | 'declined'
+  licence_key: string | null
+  created_at: number
+  decided_at: number | null
+}
+
 export type Result<T = Record<string, unknown>> = { ok: boolean; status: number; data: T & { error?: string; status?: string } }
 
 async function request<T>(path: string, body?: unknown): Promise<Result<T>> {
@@ -113,7 +127,11 @@ export const api = {
     report: (id: number) => request<{ item: Report }>(`/api/admin/feedback/item?id=${id}`),
     issue: (b: { email: string; name: string; expires: string; note: string; send: boolean }) => request<{ key: string; sent: boolean }>('/api/admin/beta/issue', b),
     revoke: (key: string) => request('/api/admin/beta/revoke', { key }),
+    requests: (status: BetaRequest['status']) => request<{ requests: BetaRequest[] }>(`/api/admin/beta/requests?status=${status}`),
+    approve: (id: number, expires: string) => request<{ key: string; sent: boolean }>('/api/admin/beta/approve', { id, expires }),
+    decline: (id: number) => request('/api/admin/beta/decline', { id }),
   },
+  requestBeta: (b: { product: string; name: string; email: string; about: string; system: string; daw: string; _gotcha: string }) => request('/api/beta/request', b),
   downloads: (product: string) => request<{ version?: string; files: { id: number; name: string; size: number }[]; note?: string }>(`/api/account/downloads?product=${encodeURIComponent(product)}`),
 }
 

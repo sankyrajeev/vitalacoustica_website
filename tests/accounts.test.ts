@@ -450,6 +450,50 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   assert.equal((await activate('c'.repeat(32))).status, 403)
 })
 
+test('free beta: people ask, the owner approves (key and invitation) or declines', async () => {
+  const ask = (body: Record<string, unknown>, headers: Record<string, string> = {}) => call('/api/beta/request', { method: 'POST', body, headers })
+  assert.equal((await ask({ product: 'vanta', email: 'a@example.com' }, { Origin: 'https://evil.example' })).status, 403)
+  assert.equal((await ask({ product: 'pixel-forge', email: 'a@example.com' })).status, 404) // no open beta
+  assert.equal((await ask({ product: 'vanta', email: 'nope' })).status, 400)
+  const before = mail.length
+  assert.equal((await ask({ product: 'vanta', email: 'bot@example.com', _gotcha: 'http://spam' })).status, 200)
+  assert.equal(mail.length, before) // the hidden field caught a bot: nothing stored or sent
+
+  const request = { product: 'vanta', name: 'Asha Nair', email: 'Asha@Example.com', about: 'Melodic techno, Ableton.', system: 'macOS, Apple Silicon', daw: 'Ableton Live 12' }
+  assert.deepEqual(await (await ask(request)).json(), { status: 'received' })
+  const sentNow = mail.slice(before)
+  assert.deepEqual(sentNow.map((m) => [m.to, m.subject]).sort(), [
+    ['Owner@Example.com', 'VANTA beta request: Asha Nair'],
+    ['asha@example.com', 'Your VANTA beta request'],
+    ['buyer@example.com', 'VANTA beta request: Asha Nair'],
+  ])
+  assert.equal(sentNow.find((m) => m.to === 'buyer@example.com')!.replyTo, 'asha@example.com') // the owner can reply straight to them
+  await ask(request) // asking twice: one request, no more emails
+  assert.equal(mail.length, before + 3)
+
+  await ask({ product: 'vanta', email: 'spam@example.com' })
+  const pending = (await (await call('/api/admin/beta/requests', { cookie: session })).json()) as { requests: { id: number; email: string }[] }
+  assert.deepEqual(pending.requests.map((r) => r.email), ['spam@example.com', 'asha@example.com'])
+  assert.equal((await call('/api/admin/beta/requests')).status, 404) // not for anyone else
+
+  const asha = pending.requests[1].id
+  assert.equal((await call('/api/admin/beta/approve', { method: 'POST', cookie: session, body: { id: asha, expires: '2001-01-01' } })).status, 400)
+  const res = await call('/api/admin/beta/approve', { method: 'POST', cookie: session, body: { id: asha, expires: '2099-03-31' } })
+  const { key, sent } = (await res.json()) as { key: string; sent: boolean }
+  assert.equal(sent, true)
+  assert.equal(mail.at(-1)!.to, 'asha@example.com')
+  assert.ok(mail.at(-1)!.text.includes(key))
+  assert.equal((await call('/api/admin/beta/approve', { method: 'POST', cookie: session, body: { id: asha, expires: '2099-03-31' } })).status, 404) // once
+  assert.equal((await call('/api/admin/beta/decline', { method: 'POST', cookie: session, body: { id: pending.requests[0].id } })).status, 200)
+
+  const approved = (await (await call('/api/admin/beta/requests?status=approved', { cookie: session })).json()) as { requests: { email: string; licence_key: string }[] }
+  assert.deepEqual(approved.requests.map((r) => [r.email, r.licence_key]), [['asha@example.com', key]])
+  const left = (await (await call('/api/admin/beta/requests', { cookie: session })).json()) as { requests: unknown[] }
+  assert.equal(left.requests.length, 0)
+  const { testers } = (await (await call('/api/admin/beta', { cookie: session })).json()) as { testers: { key: string; note: string }[] }
+  assert.equal(testers.find((t) => t.key === key)!.note, 'Asha Nair · macOS, Apple Silicon, Ableton Live 12')
+})
+
 test('Pixel Forge update check: the latest release, public and without the database', async () => {
   const check = (e: AccountsEnv) => handleAccounts(new Request(`${SITE}/api/pixelforge/v1/latest?platform=mac-intel&version=1.0.0`, { headers: { 'User-Agent': 'PixelForge/1.0.0' } }), e)
   assert.equal((await check({}))!.status, 503) // no token yet: the app ignores it
