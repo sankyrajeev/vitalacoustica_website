@@ -1,0 +1,199 @@
+# Accounts, orders and software licences
+
+Customers can make an account on vitalacoustica.com. They sign in with an email and password, or with Google. The account holds:
+
+- their licence keys;
+- the computers each key is active on (they can free one from here);
+- the installers to download;
+- their orders.
+
+Payments go through **Paddle**. Paddle is the merchant of record: it takes the payment, handles tax worldwide, and sends the receipts.
+
+All of this runs in the site's own Worker. The data is in **Cloudflare D1**, the free database. Everything below can be done on free plans. Until the database is set up, the account pages say accounts aren't available and the rest of the site works as normal.
+
+| Piece | Where |
+| --- | --- |
+| Database tables | `migrations/0001_accounts.sql` |
+| Sign-up, sign-in, Google, password reset | `server/accounts/auth.ts` |
+| The activation server the apps call | `server/accounts/licences.ts` |
+| Signed licence files (VANTA's format) | `server/accounts/licence.ts` |
+| Paddle webhook: orders, keys, refunds | `server/accounts/paddle.ts` |
+| Private downloads from GitHub Releases | `server/accounts/downloads.ts` |
+| The products we license | `server/accounts/products.ts` |
+| Account pages | `src/pages/Account.tsx` and `src/account/api.ts` |
+| Buy button (Paddle checkout) | `src/components/shop/Buy.tsx` |
+| Tests | `tests/accounts.test.ts` (`npm test`) |
+
+## Security in short
+
+- **Passwords never reach us.**
+  - The browser turns the password into a slow hash (PBKDF2, 600,000 rounds) before sending it.
+  - The server stores only a salted HMAC of that hash.
+  - A leaked database is still slow to crack, and the Worker stays inside its CPU allowance.
+- **Sessions are protected.**
+  - A session is a random token in an HttpOnly, Secure cookie. The database stores only the token's SHA-256.
+  - Requests that change something must come from our own pages, as JSON.
+- **Email links can't be reused.**
+  - Verification links last 24 hours; reset links last 1 hour.
+  - Each works once, and only the link's hash is stored.
+  - A reset signs out every other session.
+- **Attempts are rate-limited:** sign-in, sign-up, resets and activations.
+- **Licence files are signed with RSA** in the same format VANTA already checks. The private signing keys are Worker secrets: never in the repository, never in an app.
+- **Every Paddle webhook is checked.**
+  - Its signature is verified, and it must be recent.
+  - Each event is handled once.
+  - A full refund or chargeback revokes the order's keys and frees their computers.
+- **Installers stay private.** Only owners can download them, through short-lived links.
+
+## 1. Create the database
+
+```sh
+npx wrangler d1 create vitalacoustica
+```
+
+It prints a `database_id`. Add the binding to `wrangler.jsonc` (top level, next to `"vars"`):
+
+```jsonc
+"d1_databases": [
+  { "binding": "DB", "database_name": "vitalacoustica", "database_id": "<the id it printed>" }
+],
+```
+
+Then create the tables and deploy:
+
+```sh
+npx wrangler d1 migrations apply vitalacoustica --remote
+```
+
+After this, `https://vitalacoustica.com/api/licence/health` answers `{"ok":true,"configured":true}`.
+
+## 2. Email
+
+Account emails use the same Resend setup as the enquiry form: `RESEND_API_KEY` and `ENQUIRY_FROM`. They cover:
+
+- confirming the email address;
+- resetting the password;
+- delivering licence keys.
+
+To send them from another address, add a variable `ACCOUNT_FROM`, for example `Vital Acoustica <accounts@vitalacoustica.com>`.
+
+## 3. Licence signing keys
+
+Each app has a key pair. The app is built with the **public** key, and the website signs licences with the **private** key.
+
+**VANTA** already has its pair: `private_key.json` from `tools/licensing/admin.py genkeys`. Convert it to the Worker secret and store it:
+
+```sh
+node scripts/licence-key.mjs convert path/to/private_key.json | npx wrangler secret put LICENCE_KEY_VANTA
+```
+
+Then build VANTA against this site:
+
+```sh
+cmake ... -DVANTA_LICENCE_SERVER=https://vitalacoustica.com/api/licence -DVANTA_LICENCE_PUBLIC_KEY_FILE=path/to/public_key.txt
+```
+
+The app adds `/v1/activate` and `/v1/deactivate` itself. The server answers exactly like `tools/licensing/server.py`:
+
+- two computers per key;
+- reinstalling on the same computer keeps its slot;
+- a third computer is told which two are active.
+
+**ORBIT** and **Lumière Link** need their own pairs, and so does any later product:
+
+```sh
+node scripts/licence-key.mjs new keys/orbit        # private_key.json (secret) + public_key.txt (for the app)
+node scripts/licence-key.mjs convert keys/orbit/private_key.json | npx wrangler secret put LICENCE_KEY_ORBIT
+```
+
+Keep every `private_key.json` backed up offline. Never commit it or paste it into a chat. Every licence ever issued depends on it.
+
+Product names, key prefixes and device limits are in `server/accounts/products.ts`.
+
+- **VANTA Dynamics** signs with VANTA's key, with `"product": "VANTA Dynamics"` in its licence files.
+- Each app must check its own product name. VANTA checks `"VANTA"`.
+
+## 4. Paddle
+
+1. Create a Paddle account at paddle.com.
+   - Start in the **sandbox** (sandbox-vendors.paddle.com), which uses test cards.
+   - The live account needs Paddle's website and business checks before it can take payments.
+2. In **Catalog → Products**, create each product (VANTA, ORBIT, …) with a one-time price.
+3. In **Checkout → Checkout settings**, set the default payment link to `https://vitalacoustica.com/shop`. Paddle asks you to approve the domain.
+4. In **Developer tools → Notifications**, add a destination:
+   - URL: `https://vitalacoustica.com/api/paddle/webhook`
+   - Events: `transaction.completed`, `adjustment.created`, `adjustment.updated`
+
+   Copy its secret key.
+5. In **Developer tools → Authentication**, create:
+   - an **API key** with permission to read customers;
+   - a **client-side token**.
+6. Add these to the Worker (Cloudflare dashboard → the Worker → Settings → Variables and secrets):
+
+   | Name | Type | Value |
+   | --- | --- | --- |
+   | `PADDLE_WEBHOOK_SECRET` | secret | the notification destination's secret key |
+   | `PADDLE_API_KEY` | secret | the API key |
+   | `PADDLE_PRODUCTS` | variable | which Paddle product is which of ours, e.g. `{"pro_01h…":"vanta","pro_01j…":"orbit"}` |
+   | `PADDLE_ENV` | variable | `sandbox` while testing; remove it for live |
+
+7. Add these **build** variables (Cloudflare → the Worker → Settings → Build → Variables):
+   - `VITE_PADDLE_CLIENT_TOKEN` = the client-side token. This one is public by design: it can only open checkouts.
+   - `VITE_PADDLE_ENV=sandbox` while testing.
+8. In `src/content/shop.ts`, give each software product its price, and its Paddle price id as `paddlePrice: 'pri_…'`.
+   - Its Buy button then opens Paddle's checkout over the page, in place of "Launching soon".
+   - If the buyer is signed in, the order joins their account.
+   - If not, the key is emailed to them. It also appears in the account they make (or already have) with the same email address, once that address is confirmed.
+
+**Lumière Resident** is hardware, and Paddle only sells digital products. It stays as an enquiry, or gets its own `checkout` link like the merch.
+
+To issue a key by hand (a gift, a reviewer, a replacement):
+
+```sh
+npx wrangler d1 execute vitalacoustica --remote --command "INSERT INTO licences (key, product, email, created_at) VALUES ('VNTA-XXXXX-XXXXX-XXXXX-XXXXX', 'vanta', 'their@email', unixepoch())"
+```
+
+Use a key made by the site's format: 20 characters from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`. It appears in their account once they sign up with that email.
+
+## 5. Sign in with Google (optional)
+
+1. In Google Cloud Console → APIs & Services → Credentials, create an **OAuth client ID** of type *Web application*.
+2. Set the authorised redirect URI to `https://vitalacoustica.com/api/account/google/callback`.
+3. On the OAuth consent screen, set the app name, logo and privacy link (`https://vitalacoustica.com/privacy`). Publish it.
+4. Add the secrets `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+
+Without them, the Google button says Google sign-in isn't available yet.
+
+How Google sign-ins join accounts:
+
+- A Google sign-in joins an existing account with the same email address.
+- If that account's email was never confirmed, its password is removed, because someone else could have set it. The owner can set a new one in their account.
+
+Facebook sign-in isn't included. It needs Meta's app review and a business verification. It can be added later in the same way.
+
+## 6. Downloads
+
+Installers are kept private on GitHub:
+
+1. Make a private repository for installers, e.g. `vitalacoustica/vanta-releases`.
+2. Publish each version as a **release** with the installers attached (`.pkg`, `.dmg`, `.exe`, …).
+3. Put the repository in `releases` for that product in `server/accounts/products.ts`.
+4. Make a fine-grained GitHub token with **Contents: read-only** on those repositories. Save it as the secret `GITHUB_RELEASES_TOKEN`.
+
+What owners see:
+
+- Owners see the latest release's files under **Download** in their account.
+- Each click gives them GitHub's short-lived link to that file.
+
+## Testing
+
+- `npm test` runs the whole flow against an in-memory database:
+  - sign-up, verify, sign-in, reset;
+  - Google;
+  - a Paddle purchase and a refund;
+  - activations.
+- To click through it locally:
+  1. Run `npx wrangler dev` with the D1 binding.
+  2. Add `DEV_EMAIL_LOG=1` in `.dev.vars`. Emails are then printed in the terminal instead of sent.
+  3. Apply the migrations with `npx wrangler d1 migrations apply vitalacoustica --local`.
+- For Paddle, use the sandbox and its test card `4242 4242 4242 4242`.

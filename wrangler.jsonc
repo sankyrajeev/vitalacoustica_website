@@ -21,5 +21,8 @@
   },
   // keep anything else set in the dashboard (e.g. ENQUIRY_TO, ENQUIRY_CC, RESEND_AUDIENCE_ID) when deploying
   "keep_vars": true,
+  // customer accounts and software licences use a D1 database: add its binding here once it's created
+  // (docs/accounts.md, step 1). Until then the account pages say accounts aren't available yet.
+  //   "d1_databases": [{ "binding": "DB", "database_name": "vitalacoustica", "database_id": "…" }],
   "observability": { "enabled": true }
 }

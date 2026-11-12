@@ -91,6 +91,7 @@ export function Footer() {
           © {YEAR} {site.name}
         </p>
         <p className="footer__legal">
+          <Link to="/account">Account</Link>
           <Link to="/privacy">Privacy</Link>
           <Link to="/legal">Legal</Link>
         </p>

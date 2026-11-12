@@ -1,7 +1,59 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { api } from '../../account/api'
 import { price, type Product } from '../../content/shop'
 import { site } from '../../content/site'
+import { navigate } from '../../router'
 import { Arrow } from '../ui'
+
+// Paddle's client-side token is public by design (it can only open checkouts). Set it when building:
+// VITE_PADDLE_CLIENT_TOKEN=live_… (or test_… with VITE_PADDLE_ENV=sandbox). See docs/accounts.md.
+const PADDLE_TOKEN = (import.meta.env.VITE_PADDLE_CLIENT_TOKEN as string | undefined) ?? ''
+const PADDLE_SANDBOX = import.meta.env.VITE_PADDLE_ENV === 'sandbox'
+
+type PaddleGlobal = {
+  Environment: { set: (env: string) => void }
+  Initialize: (o: { token: string; eventCallback?: (e: { name: string }) => void }) => void
+  Checkout: {
+    open: (o: {
+      items: { priceId: string; quantity: number }[]
+      customer?: { email: string }
+      customData?: Record<string, string>
+      settings?: Record<string, unknown>
+    }) => void
+  }
+}
+declare global {
+  interface Window {
+    Paddle?: PaddleGlobal
+  }
+}
+
+let paddleReady: Promise<PaddleGlobal> | null = null
+function loadPaddle() {
+  paddleReady ??= new Promise((resolve, reject) => {
+    const s = document.createElement('script')
+    s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js'
+    s.async = true
+    s.onload = () => {
+      const P = window.Paddle
+      if (!P) return reject(new Error('Paddle did not load'))
+      if (PADDLE_SANDBOX) P.Environment.set('sandbox')
+      P.Initialize({
+        token: PADDLE_TOKEN,
+        eventCallback: (e) => {
+          if (e.name === 'checkout.completed') setTimeout(() => navigate('/account?notice=purchased'), 2500)
+        },
+      })
+      resolve(P)
+    }
+    s.onerror = () => {
+      paddleReady = null
+      reject(new Error('Paddle did not load'))
+    }
+    document.head.appendChild(s)
+  })
+  return paddleReady
+}
 
 // Gumroad's checkout script, added once and only when a digital product is on sale.
 // It turns links to Gumroad products into a checkout that opens over our page.
@@ -16,10 +68,50 @@ function useGumroad(on: boolean) {
   }, [on])
 }
 
+/** Software sold through Paddle: the licence key joins the buyer's account when they're signed in. */
+function PaddleBuy({ p, priceId }: { p: Product; priceId: string }) {
+  const [busy, setBusy] = useState(false)
+  const [failed, setFailed] = useState(false)
+
+  async function open() {
+    setBusy(true)
+    setFailed(false)
+    try {
+      const [P, me] = await Promise.all([loadPaddle(), api.me()])
+      P.Checkout.open({
+        items: [{ priceId, quantity: 1 }],
+        ...(me.ok ? { customer: { email: me.data.user.email }, customData: { user_id: me.data.user.id } } : {}),
+        settings: { displayMode: 'overlay', theme: document.documentElement.dataset.theme === 'light' ? 'light' : 'dark' },
+      })
+    } catch {
+      setFailed(true)
+    }
+    setBusy(false)
+  }
+
+  return (
+    <div className="buy">
+      <button className="cta cta--primary" type="button" onClick={open} disabled={busy}>
+        <span>{busy ? 'Opening checkout…' : `Buy · ${price(p)}`}</span>
+        <Arrow />
+      </button>
+      {failed && (
+        <p className="form__error" role="alert">
+          The checkout couldn’t open. Please check your connection and try again.
+        </p>
+      )}
+      <p className="muted buy__note">Instant licence key by email and in your account. Payments by Paddle.</p>
+    </div>
+  )
+}
+
 /** Buy button, or "launching soon" with a way to hear when it's out. `option` is e.g. "Black, M". */
 export function Buy({ p, option }: { p: Product; option?: string }) {
   const digital = p.kind !== 'merch'
-  useGumroad(digital && !!p.checkout)
+  const paddlePrice = p.kind === 'software' && PADDLE_TOKEN ? p.paddlePrice : undefined
+  useGumroad(digital && !!p.checkout && !paddlePrice)
+
+  if (paddlePrice) return <PaddleBuy p={p} priceId={paddlePrice} />
 
   if (!p.checkout) {
     const text = `Hi Vital Acoustica, please let me know when ${p.name}${option ? ` (${option})` : ''} is available.`

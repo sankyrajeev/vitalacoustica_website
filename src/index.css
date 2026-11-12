@@ -5903,6 +5903,12 @@ img.cover {
   gap: var(--s4) var(--s6);
 }
 
+.buy__note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+}
+
 .cta--disabled {
   border-color: var(--line-strong);
   color: var(--muted);
@@ -8919,5 +8925,228 @@ img.cover {
 @media (max-width: 560px) {
   .shop-grid--software {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ─────────────── Account ─────────────── */
+
+.account {
+  display: grid;
+  gap: var(--s7);
+  padding-bottom: var(--s9, 120px);
+}
+
+.account__card {
+  width: 100%;
+  max-width: 520px;
+}
+
+.account__auth {
+  display: grid;
+  gap: var(--s5);
+}
+
+.account__notice {
+  max-width: 520px;
+}
+
+.account__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.account__google {
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  border: var(--hair) solid var(--line-strong);
+}
+
+.account__google:hover {
+  border-color: var(--accent);
+}
+
+.account__or {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.account__or::before,
+.account__or::after {
+  content: '';
+  flex: 1;
+  height: var(--hair);
+  background: var(--line);
+}
+
+.account__form {
+  gap: var(--s5);
+  max-width: 520px;
+}
+
+.account__dash {
+  display: grid;
+  gap: var(--s8, 72px);
+}
+
+.account__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.account__bar .lede {
+  margin: 0;
+}
+
+.account__section {
+  display: grid;
+  gap: var(--s5);
+}
+
+.account__h {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 400;
+}
+
+.account__small {
+  font-size: 13.5px;
+}
+
+.account__licences {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: var(--s5);
+}
+
+.account__licence {
+  display: grid;
+  align-content: start;
+  gap: var(--s4);
+  padding: var(--s6);
+  border: var(--hair) solid var(--line);
+  background: var(--surface);
+}
+
+.account__licence.is-revoked {
+  opacity: 0.6;
+}
+
+.account__licence h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.account__licence header p {
+  margin-top: 4px;
+}
+
+.account__key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
+}
+
+.account__key code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+.account__key .chip {
+  min-height: 34px;
+  padding: 0 14px;
+}
+
+.account__devices {
+  display: grid;
+  gap: var(--s2);
+}
+
+.account__devices .label,
+.account__files .label {
+  margin: 0;
+}
+
+.account__devices ul,
+.account__files ul {
+  display: grid;
+  gap: var(--s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account__devices li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+  border-bottom: var(--hair) solid var(--line);
+  font-size: 14.5px;
+}
+
+.account__devices li button {
+  background: none;
+  font-size: 13px;
+}
+
+.account__files {
+  display: grid;
+  gap: var(--s2);
+}
+
+.account__orders {
+  display: grid;
+  border-top: var(--hair) solid var(--line);
+}
+
+.account__order {
+  display: grid;
+  grid-template-columns: 9em minmax(0, 1fr) auto auto;
+  gap: var(--s4);
+  padding: var(--s3) 0;
+  border-bottom: var(--hair) solid var(--line);
+  font-size: 14.5px;
+}
+
+.account__order > :last-child {
+  text-align: right;
+  min-width: 6em;
+}
+
+@media (max-width: 640px) {
+  .account__order {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s1) var(--s4);
+  }
+  .account__order > :nth-child(1) {
+    grid-area: 1 / 1;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .account__order > :nth-child(2) {
+    grid-area: 2 / 1 / 3 / 3;
+  }
+  .account__order > :nth-child(3) {
+    display: none;
+  }
+  .account__order > :last-child {
+    grid-area: 1 / 2;
   }
 }

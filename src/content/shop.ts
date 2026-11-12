@@ -1,7 +1,9 @@
 // The shop: software, sample packs and VJ loops (digital, sold worldwide) and merch (printed on demand in India).
 //
 // How buying works (see docs/shop-setup.md):
-// - Software, audio packs and VJ loops are sold through Gumroad. Gumroad stores the files, takes the payment
+// - Software is sold through Paddle and licensed through customer accounts: give a product its `paddlePrice`
+//   (docs/accounts.md). The buyer's licence key is emailed and kept in their account.
+// - Audio packs and VJ loops are sold through Gumroad. Gumroad stores the files, takes the payment
 //   (cards, PayPal, UPI), handles tax for buyers abroad and emails the download. Paste each product's
 //   Gumroad link into `checkout` and its Buy button opens Gumroad's checkout over our page.
 // - Merch is printed and shipped per order by a print-on-demand partner (Qikink). Paste the product's
@@ -62,6 +64,12 @@ export type Software = Base & {
   specs: [string, string][]
   /** fine print under the specs, e.g. other companies' trademarks the product works with */
   notice?: string
+  /**
+   * The product's Paddle price id (pri_…). With it, and VITE_PADDLE_CLIENT_TOKEN set when the site is
+   * built, Buy opens Paddle's checkout; the licence key arrives by email and in the buyer's account
+   * (docs/accounts.md). Hardware can't be sold through Paddle, so it keeps `checkout` instead.
+   */
+  paddlePrice?: string
 }
 
 export type Product = Software | AudioPack | Loop | Merch

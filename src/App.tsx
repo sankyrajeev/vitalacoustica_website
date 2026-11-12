@@ -10,6 +10,7 @@ import { site } from './content/site'
 import { useRevealOnScroll } from './hooks/useMedia'
 import { PAGE_SECTIONS, useSectionSnap } from './hooks/useSectionSnap'
 import { ThemeProvider } from './hooks/useTheme'
+import { AccountPage, ForgotPage, ResetPage } from './pages/Account'
 import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
 import { LegalPage, PrivacyPage } from './pages/Legal'
@@ -52,6 +53,9 @@ function resolve(path: string): Resolved {
   if (path === '/story') return { title: 'Our Story', page: <StoryPage /> }
   if (path === '/careers') return { title: 'Careers', page: <CareersPage /> }
   if (path === '/testimonials') return { title: 'Testimonials', page: <TestimonialsPage /> }
+  if (path === '/account') return { title: 'Your account', page: <AccountPage /> }
+  if (path === '/account/forgot') return { title: 'Forgotten password', page: <ForgotPage /> }
+  if (path === '/account/reset') return { title: 'Choose a new password', page: <ResetPage /> }
   if (path === '/privacy') return { title: 'Privacy notice', page: <PrivacyPage /> }
   if (path === '/legal') return { title: 'Legal information', page: <LegalPage /> }
   return { title: 'Not found', page: <NotFoundPage /> }
@@ -60,8 +64,9 @@ function resolve(path: string): Resolved {
 function Page({ path }: { path: string }) {
   const { title, page } = resolve(path)
   useRevealOnScroll(path)
-  // the homepage sets its own stops; the Journal is for reading, so it scrolls freely
-  useSectionSnap(path === '/' || path === '/journal' || path.startsWith('/journal/') ? '' : PAGE_SECTIONS)
+  // the homepage sets its own stops; the Journal is for reading and accounts are forms, so they scroll freely
+  const free = path === '/' || path === '/journal' || path.startsWith('/journal/') || path === '/account' || path.startsWith('/account/')
+  useSectionSnap(free ? '' : PAGE_SECTIONS)
 
   useEffect(() => {
     document.title = path === '/' ? title : `${title} — ${site.name}`

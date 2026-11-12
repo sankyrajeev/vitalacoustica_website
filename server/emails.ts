@@ -339,3 +339,70 @@ ${text('If you didn’t sign up, ignore this email: you won’t be added, and we
     ]),
   }
 }
+
+/* ─────────────── Accounts ─────────────── */
+
+const ACCOUNT_NOTE = 'You’re receiving this because of your account on vitalacoustica.com.'
+
+/** Confirms a new account's email address. */
+export function accountVerify(b: Brand, link: string, name: string): Mail {
+  const body = `${label('Your account')}
+${headline(`Welcome${name ? `, ${esc(first(name))}` : ''}.`)}
+${text('Please confirm your email address to finish setting up your Vital Acoustica account. Your orders, licence keys and downloads will be waiting inside.')}
+${button(link, 'Confirm my email')}
+${text('The link works for 24 hours. If you didn’t create an account, ignore this email.')}`
+  return {
+    subject: 'Confirm your email for Vital Acoustica',
+    html: shell(b, 'Confirm your email to finish setting up your account.', body, ACCOUNT_NOTE),
+    text: plain(['Confirm your email to finish setting up your Vital Acoustica account (the link works for 24 hours):', link, '', 'If you didn’t create an account, ignore this email.']),
+  }
+}
+
+/** Sent when someone tries to sign up with an address that already has an account. */
+export function accountExists(b: Brand, signIn: string, reset: string): Mail {
+  const body = `${label('Your account')}
+${headline('You already have an account.')}
+${text('Someone, probably you, tried to create a Vital Acoustica account with this email address. You already have one: sign in, or reset your password if you’ve forgotten it.')}
+${button(signIn, 'Sign in')}${button(reset, 'Reset password', false)}
+${text('If this wasn’t you, you can ignore this email. Your account hasn’t changed.')}`
+  return {
+    subject: 'You already have a Vital Acoustica account',
+    html: shell(b, 'You already have an account with this email address.', body, ACCOUNT_NOTE),
+    text: plain(['You already have a Vital Acoustica account with this email address.', `Sign in: ${signIn}`, `Reset your password: ${reset}`]),
+  }
+}
+
+/** A password reset link. */
+export function accountReset(b: Brand, link: string): Mail {
+  const body = `${label('Your account')}
+${headline('Reset your password.')}
+${text('Use the button below to choose a new password. For your security, this signs you out everywhere else.')}
+${button(link, 'Choose a new password')}
+${text('The link works for one hour. If you didn’t ask to reset your password, ignore this email: nothing changes.')}`
+  return {
+    subject: 'Reset your Vital Acoustica password',
+    html: shell(b, 'Choose a new password for your account.', body, ACCOUNT_NOTE),
+    text: plain(['Choose a new password (the link works for one hour):', link, '', 'If you didn’t ask for this, ignore this email.']),
+  }
+}
+
+/** The licence keys from an order. */
+export function licenceDelivery(b: Brand, keys: { product: string; key: string }[], accountLink: string): Mail {
+  const rows = keys
+    .map(
+      (k) =>
+        `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.line};font:600 11px ${SANS};letter-spacing:1.5px;text-transform:uppercase;color:${C.muted};width:34%;">${esc(k.product)}</td><td style="padding:12px 0;border-bottom:1px solid ${C.line};font:600 16px/1.4 'SFMono-Regular',Menlo,Consolas,monospace;letter-spacing:1px;color:${C.ink};">${esc(k.key)}</td></tr>`,
+    )
+    .join('')
+  const body = `${label('Thank you')}
+${headline('Your licence keys.')}
+${text('Thank you for your order. Install the software, open it, and paste your key when it asks to activate. Each key works on two computers at a time, and you can move it from your account.')}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;border-top:1px solid ${C.line};">${rows}</table>
+${text('Your keys, downloads and order history are always in your account. Sign in with this email address; if you don’t have an account yet, create one with this address and everything will be there.')}
+${button(accountLink, 'Open my account')}`
+  return {
+    subject: 'Your Vital Acoustica licence keys',
+    html: shell(b, 'Your licence keys and downloads are ready.', body, 'You’re receiving this because you bought software from vitalacoustica.com. Keep this email: it has your licence keys.'),
+    text: plain(['Thank you for your order. Your licence keys:', ...keys.map((k) => `${k.product}: ${k.key}`), '', `Your account: ${accountLink}`]),
+  }
+}

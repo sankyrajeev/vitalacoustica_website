@@ -63,6 +63,12 @@ export function Nav({ path }: { path: string }) {
       </nav>
 
       <div className="nav__tools">
+        <Link to="/account" className="icon-btn nav__account" aria-label="Your account" title="Your account" aria-current={isActive('/account') ? 'page' : undefined} onClick={close}>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden>
+            <circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" strokeWidth="1.4" />
+            <path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+        </Link>
         <button
           className="icon-btn"
           onClick={toggle}
