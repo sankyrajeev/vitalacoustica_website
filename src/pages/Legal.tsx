@@ -313,6 +313,15 @@ export function LegalPage() {
           </Section>
 
           <Section n={8} title="Shop">
+            <p id="refunds">
+              <strong>Software</strong> (such as VANTA and Pixel Forge) is sold through Paddle, our online reseller and the
+              merchant of record for these orders: Paddle takes the payment, charges any tax due in your country and sends your
+              receipt. Your licence key arrives by email and in your account on this site. Many of our apps have a free demo, so
+              please try it before you buy. <strong>Refunds:</strong> if you're not happy, for any reason, you can ask for a full
+              refund within 14 days of your purchase, through the link in Paddle's receipt email or by contacting us. After 14
+              days, we'll still refund you if the software doesn't work as described on a supported system and we can't fix it.
+              When an order is refunded, its licence keys stop working. None of this affects your rights under consumer law.
+            </p>
             <p>
               <strong>Sample packs and VJ loops</strong> are sold through Gumroad, which processes the payment, charges any tax
               due in your country and delivers the download. Buying one gives you a non-exclusive, royalty-free licence to use it

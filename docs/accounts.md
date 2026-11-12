@@ -147,6 +147,10 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
    - Start in the **sandbox** (sandbox-vendors.paddle.com), which uses test cards.
    - The live account needs Paddle's website and business checks before it can take payments.
 2. In **Catalog → Products**, create each product (VANTA, ORBIT, …) with a one-time price.
+   Paddle's website review looks for terms, a privacy notice and a refund policy. They are:
+   - terms: `https://vitalacoustica.com/legal`;
+   - privacy notice: `/privacy`;
+   - refund policy: `/legal#refunds`, a 14-day no-questions refund for software, which is within Paddle's required 14–90 days.
 3. In **Checkout → Checkout settings**, set the default payment link to `https://vitalacoustica.com/shop`. Paddle asks you to approve the domain.
 4. In **Developer tools → Notifications**, add a destination:
    - URL: `https://vitalacoustica.com/api/paddle/webhook`
