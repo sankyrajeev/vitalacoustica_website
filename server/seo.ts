@@ -110,7 +110,7 @@ const plain = (h1: string, lead: string, more = '') => `${nav()}<h1>${esc(h1)}</
 /* ─────────────── every page ─────────────── */
 
 const HOME_DESCRIPTION =
-  'Sound and lighting hire with the crew to run it. d&b audiotechnik V10P and B22 systems, beam moving heads, LED matrix and pixel bars, delivered, set up and operated.'
+  'Sound and lighting hire with the crew to run it: d&b audiotechnik V10P and B22 systems, beam moving heads, LED matrices and pixel bars, delivered and operated.'
 
 /** Preview images for the software (its logo above its real interface). */
 const SOFTWARE_IMAGE: Record<string, string> = { vanta: '/email/vanta.jpg', 'pixel-forge': '/email/pixel-forge.jpg' }
@@ -205,7 +205,7 @@ export function metaFor(path: string, site: string): PageMeta | null {
   if (path === '/equipment')
     return base(
       'Equipment for hire',
-      'Sound, lighting and effects for hire with crew: d&b audiotechnik V10P and B22-SUB, Pioneer DJ CDJ-3000X, beam moving heads, LED matrices, pixel bars, hazers and more.',
+      'Sound, lighting and effects for hire with crew: d&b audiotechnik V10P and B22-SUB, Pioneer DJ CDJ-3000X, beam moving heads, LED matrices, hazers and more.',
       {
         structured: [
           {

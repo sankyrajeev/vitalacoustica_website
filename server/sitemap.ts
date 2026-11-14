@@ -1,21 +1,12 @@
-// GET /sitemap.xml — every public page, including the Journal's live articles (scheduled ones join
-// by themselves once their time comes). Pages held back in the app (Work, while it's unpublished)
-// are left out; add them here when they return.
+// GET /sitemap.xml — every public page (server/paths.ts), and the Journal's live articles (scheduled
+// ones join by themselves once their time comes).
 
-import { capabilities } from '../src/content/capabilities.ts'
-import { gear } from '../src/content/gear.ts'
-import { products } from '../src/content/shop.ts'
 import { liveArticles } from './journal.ts'
-
-const PAGES = ['/', '/story', '/equipment', '/capabilities', '/shop', '/testimonials', '/journal', '/contact', '/careers', '/privacy', '/legal']
+import { sitePaths } from './paths.ts'
 
 export function sitemap(site: string): Response {
   const urls: { loc: string; lastmod?: string }[] = [
-    ...PAGES.map((p) => ({ loc: p })),
-    ...gear.map((g) => ({ loc: `/equipment/${g.id}` })),
-    ...capabilities.map((c) => ({ loc: `/capabilities/${c.id}` })),
-    // sample products (placeholders) stay out of search results
-    ...products.filter((p) => !p.sample).map((p) => ({ loc: `/shop/${p.id}` })),
+    ...sitePaths().map((loc) => ({ loc })),
     ...liveArticles().map((a) => ({ loc: `/journal/${a.slug}`, lastmod: (a.updatedAt ?? a.publishAt).slice(0, 10) })),
   ]
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
