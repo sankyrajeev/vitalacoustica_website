@@ -8,8 +8,8 @@ publishAt: 2026-10-27T09:00:00+05:30
 author: Vital Acoustica
 featured: true
 cover: venue-system
-coverAlt: A loudspeaker system flown above a stage in a darkened venue, lit from behind
-coverCredit:
+coverAlt: Line drawing of two loudspeaker stacks and the overlapping areas of the room they cover
+coverCredit: Illustration by Vital Acoustica
 services:
   - sound
   - production
@@ -19,8 +19,7 @@ related:
   - technical-planning-improves-live-events
 verify:
   - The summary of India's noise rules (night-time restrictions, zone limits, police permission) is current for the states we work in
-  - Confirm the byline (The Acoustica Journal, or a named author)
-  - Add the cover photo and its credit
+  - Confirm the byline
 verified: false
 ---
 

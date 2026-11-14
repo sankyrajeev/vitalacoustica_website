@@ -7,8 +7,8 @@ status: review
 publishAt: 2026-11-10T09:00:00+05:30
 author: Vital Acoustica
 cover: production-cases
-coverAlt: Road cases and cable trunks lined up backstage before a load-in
-coverCredit:
+coverAlt: Line drawing of flight cases stacked for transport
+coverCredit: Illustration by Vital Acoustica
 services:
   - sound
   - light
@@ -20,7 +20,6 @@ verify:
   - Nothing here should read as a price or a promise about our own pricing; confirm you are happy with the wording
   - Confirm how our quotes treat GST, so the GST advice matches what we do
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 

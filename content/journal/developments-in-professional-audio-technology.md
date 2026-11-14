@@ -7,8 +7,8 @@ status: review
 publishAt: 2026-11-06T09:00:00+05:30
 author: Vital Acoustica
 cover: digital-console
-coverAlt: Close-up of a digital mixing console's channel strips and touchscreen at front of house
-coverCredit:
+coverAlt: Line drawing of a digital mixing console’s fader bank
+coverCredit: Illustration by Vital Acoustica
 services:
   - sound
 related:
@@ -20,7 +20,6 @@ verify:
   - Confirm every product and standard named here (ArrayCalc, Soundvision, MAPP 3D, Soundscape, L-ISA, Spacemap Go, Holoplot, Dante, AES67, Milan) and its current status with the manufacturer
   - Update the article with anything announced since it was drafted (October 2026), and set updatedAt
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 

@@ -8,8 +8,8 @@ publishAt: 2026-10-30T09:00:00+05:30
 author: Vital Acoustica
 featured: true
 cover: production-planning
-coverAlt: A production desk at front of house with drawings, a laptop and a talkback headset
-coverCredit:
+coverAlt: Line drawing of a production plan: a truss rectangle with fixture positions, dimensions and the mixing position
+coverCredit: Illustration by Vital Acoustica
 services:
   - production
   - sound
@@ -21,7 +21,6 @@ related:
 verify:
   - Check that this describes how we plan, and adjust anything we do differently
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 

@@ -7,8 +7,8 @@ status: review
 publishAt: 2026-11-24T09:00:00+05:30
 author: Vital Acoustica
 cover: corporate-stage
-coverAlt: A conference stage with a lectern under soft front light and a lit backdrop
-coverCredit:
+coverAlt: Line drawing of a lectern on a stage under two soft front lights, with a lit backdrop behind
+coverCredit: Illustration by Vital Acoustica
 services:
   - light
   - production
@@ -19,7 +19,6 @@ related:
 verify:
   - Technical review by our lighting lead
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 

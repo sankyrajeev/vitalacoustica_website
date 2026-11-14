@@ -7,8 +7,8 @@ status: review
 publishAt: 2026-11-03T09:00:00+05:30
 author: Vital Acoustica
 cover: line-array-hang
-coverAlt: A curved line array of loudspeakers hanging from rigging above an empty stage
-coverCredit:
+coverAlt: Line drawing of a curved line array hanging from its frame, with wavefronts spreading from it
+coverCredit: Illustration by Vital Acoustica
 services:
   - sound
 related:
@@ -17,7 +17,6 @@ related:
 verify:
   - Technical review by our sound lead
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 
