@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// The Acoustica Journal's publishing tool. Articles are Markdown files in content/journal/, each
+// The Vital Acoustica Blog's publishing tool (it began as the Journal, hence the names). Articles are Markdown files in content/journal/, each
 // with a header of details (title, category, status, publish time, cover photo…). See docs/journal.md.
 //
 //   npm run journal                  list every article: status, publish time, what still needs checking
@@ -16,7 +16,8 @@
 //   - only `scheduled` and `published` articles ever appear on the site, from their publishAt time
 //   - an article with anything left on its `verify` list needs `verified: true` before either
 //   - Industry News articles need at least one source, and `verified: true`
-//   - a live article needs its cover photo in public/journal/
+//   - a Daily Roundup (the day's news, written each morning) needs at least two sources; no photo
+//   - every other live article needs its cover photo in public/media/journal/
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -29,7 +30,7 @@ const SITE = process.env.SITE_URL || 'https://vitalacoustica.com'
 const TZ = '+05:30' // India; publish times are written in local time
 
 // keep in step with src/journal/types.ts
-const CATEGORIES = ['Audio Engineering', 'Lighting & Production', 'Industry News', 'Production Notes', 'Guides & Insights']
+const CATEGORIES = ['Daily Roundup', 'Audio Engineering', 'Lighting & Production', 'Industry News', 'Production Notes', 'Guides & Insights']
 const STATUSES = ['draft', 'review', 'scheduled', 'published']
 const SERVICES = ['sound', 'light', 'visuals', 'production', 'installations']
 const FRIDAY_KINDS = ['Industry News', 'Production Notes'] // Tuesday: guides and insight; Friday: news and production stories
@@ -237,8 +238,13 @@ export function collect() {
         fail(`is ${h.status} but its verify list hasn't been signed off: check each item, then set verified: true`)
       if (h.category === 'Industry News' && (!sources.length || h.verified !== true))
         fail('Industry News needs its sources listed and verified: true before it can be scheduled or published')
-      if (!h.cover || !coverExists(h.cover)) fail(`is ${h.status} but its cover photo is missing (public/media/journal/${h.cover ?? '<cover>'}-{480,800,1600}.webp)`)
-      if (!h.coverAlt) fail(`is ${h.status} but has no coverAlt (a description of the photo)`)
+      if (h.category === 'Daily Roundup') {
+        // the day's news in our words: every story credited and linked; no cover photo needed
+        if (sources.length < 2) fail('a Daily Roundup needs at least two sources (each story credited and linked)')
+      } else {
+        if (!h.cover || !coverExists(h.cover)) fail(`is ${h.status} but its cover photo is missing (public/media/journal/${h.cover ?? '<cover>'}-{480,800,1600}.webp)`)
+        if (!h.coverAlt) fail(`is ${h.status} but has no coverAlt (a description of the photo)`)
+      }
     } else if (h.cover && !coverExists(h.cover)) warnings.push(`${where}: cover photo "${h.cover}" isn't in public/media/journal yet`)
     if (h.excerpt && String(h.excerpt).length > 220) warnings.push(`${where}: the excerpt is long for cards and search results (over 220 characters)`)
     articles.push({

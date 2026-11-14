@@ -8217,6 +8217,41 @@ img.cover--screen {
   content: '';
 }
 
+/* a daily roundup has no photo: its date stands in */
+.j-cover__empty--day {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--s1);
+  background-color: var(--surface);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.j-cover__empty--day strong {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(44px, 6vw, 84px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.j-cover__empty--day span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.j-cover__empty--day em {
+  margin-top: var(--s2);
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--text-soft);
+}
+
 /* category · date · reading time */
 .j-meta {
   display: flex;
@@ -8780,6 +8815,80 @@ img.cover--screen {
 
 .edit__done p {
   margin: 0;
+}
+
+.edit__leave {
+  justify-self: start;
+  margin-top: var(--s2);
+}
+
+/* the footer's one-line sign-up, on every page */
+.footer-edit {
+  max-width: 440px;
+  margin-top: var(--s7);
+}
+
+.footer-edit .label {
+  margin-bottom: var(--s2);
+}
+
+.footer-edit__line {
+  margin: 0 0 var(--s4);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.35;
+  color: var(--text-soft);
+}
+
+.footer-edit__form {
+  display: flex;
+  gap: var(--s3);
+  align-items: stretch;
+}
+
+.footer-edit__form input[type='email'] {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: var(--hair) solid var(--line-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 16px;
+  transition: border-color var(--t-fast);
+}
+
+.footer-edit__form input[type='email']:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.footer-edit__form input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.footer-edit__form .cta {
+  flex: none;
+}
+
+.footer-edit__note {
+  margin: var(--s3) 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.footer-edit__note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-edit .form__error {
+  margin: var(--s3) 0 0;
 }
 
 /* the homepage's three stories: compact, so the enquiry stays the focus */

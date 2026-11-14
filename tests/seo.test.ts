@@ -7,7 +7,7 @@ import { sitePaths } from '../server/paths.ts'
 const SITE = 'https://vitalacoustica.com'
 
 test('every page in the sitemap has its own title, description and canonical address', () => {
-  const paths = sitePaths().filter((p) => !p.startsWith('/journal'))
+  const paths = sitePaths().filter((p) => !p.startsWith('/blog'))
   assert.ok(paths.length > 30)
   const titles = new Set<string>()
   for (const p of paths) {

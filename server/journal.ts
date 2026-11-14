@@ -1,4 +1,4 @@
-// The Acoustica Journal on the Worker: the articles' API, and the HTML for /journal pages with
+// The Blog on the Worker (formerly the Journal): the articles' API, and the HTML for /blog pages with
 // their own title, description, canonical link, sharing tags and structured data (so search
 // engines and link previews see them without running the app).
 //
@@ -6,7 +6,7 @@
 // server/generated/journal.json at build time. Only live articles are ever served: `published` or
 // `scheduled`, from their publishAt time, so a scheduled article appears by itself without a
 // redeploy. Articles in `review` (or `draft`) can be read with the preview key:
-//   /journal/<slug>?preview=<JOURNAL_PREVIEW_TOKEN>   (never indexed, never listed)
+//   /blog/<slug>?preview=<JOURNAL_PREVIEW_TOKEN>   (never indexed, never listed)
 //
 // Environment: JOURNAL_PREVIEW_TOKEN (a secret, optional; without it there is no preview).
 
@@ -18,8 +18,8 @@ export type JournalEnv = { JOURNAL_PREVIEW_TOKEN?: string; SITE_URL?: string }
 type Assets = { fetch: (request: Request) => Promise<Response> }
 
 const journal = data as unknown as JournalData
-export const JOURNAL_TITLE = 'The Acoustica Journal'
-const JOURNAL_LINE = 'Perspectives on the art and engineering of live sound and light.'
+export const JOURNAL_TITLE = 'The Vital Acoustica Blog'
+const JOURNAL_LINE = 'The latest from the world of sound, light and visuals, every day, with guides and notes from our own shows.'
 
 const meta = (a: Article): ArticleMeta => {
   const { html: _html, verify: _verify, ...rest } = a
@@ -78,7 +78,7 @@ export function handleJournalApi(request: Request, env: JournalEnv): Response {
 const coverUrl = (site: string, a: ArticleMeta) => (a.cover ? `${site}/media/journal/${a.cover}-1600.webp` : `${site}/media/og.jpg`)
 
 
-/** GET /journal and /journal/<slug>: the app's HTML, with the page's own metadata. */
+/** GET /blog and /blog/<slug>: the app's HTML, with the page's own metadata. */
 export async function journalPage(request: Request, env: JournalEnv, assets: Assets): Promise<Response> {
   const url = new URL(request.url)
   const site = (env.SITE_URL || url.origin).replace(/\/$/, '')
@@ -87,16 +87,16 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
     return Response.redirect(`${url.origin}${url.pathname.replace(/\/+$/, '')}${url.search}`, 301)
 
 
-  if (url.pathname === '/journal') {
+  if (url.pathname === '/blog') {
     const live = liveArticles()
     return page(request, assets, {
       title: `${JOURNAL_TITLE} — ${SITE_NAME}`,
       description: `${JOURNAL_LINE} Guides, production notes and industry news from ${SITE_NAME}.`,
-      canonical: `${site}/journal`,
+      canonical: `${site}/blog`,
       image: live[0] ? coverUrl(site, live[0]) : `${site}/media/og.jpg`,
       type: 'website',
       body: `<h1>${JOURNAL_TITLE}</h1><p>${esc(JOURNAL_LINE)}</p><ul>${live
-        .map((a) => `<li><a href="/journal/${esc(a.slug)}">${esc(a.title)}</a>: ${esc(a.excerpt)}</li>`)
+        .map((a) => `<li><a href="/blog/${esc(a.slug)}">${esc(a.title)}</a>: ${esc(a.excerpt)}</li>`)
         .join('')}</ul>`,
       structured: [
         {
@@ -104,24 +104,24 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
           '@type': 'Blog',
           name: JOURNAL_TITLE,
           description: JOURNAL_LINE,
-          url: `${site}/journal`,
+          url: `${site}/blog`,
           publisher: organisation(site),
           blogPost: live.slice(0, 12).map((a) => ({
             '@type': 'BlogPosting',
             headline: a.title,
-            url: `${site}/journal/${a.slug}`,
+            url: `${site}/blog/${a.slug}`,
             datePublished: a.publishAt,
           })),
         },
         crumbs([
           ['Home', `${site}/`],
-          [JOURNAL_TITLE, `${site}/journal`],
+          [JOURNAL_TITLE, `${site}/blog`],
         ]),
       ],
     })
   }
 
-  const slug = decodeURIComponent(url.pathname.slice('/journal/'.length))
+  const slug = decodeURIComponent(url.pathname.slice('/blog/'.length))
   const preview = sameKey(url.searchParams.get('preview'), env.JOURNAL_PREVIEW_TOKEN)
   const found = slug.includes('/') ? null : find(slug, preview)
   if (!found) {
@@ -131,7 +131,7 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
       {
         title: `Not found — ${SITE_NAME}`,
         description: 'This page could not be found.',
-        canonical: `${site}/journal`,
+        canonical: `${site}/blog`,
         image: `${site}/media/og.jpg`,
         type: 'website',
         noindex: true,
@@ -140,7 +140,7 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
     )
   }
   const a = found.article
-  const canonical = `${site}/journal/${a.slug}`
+  const canonical = `${site}/blog/${a.slug}`
   const image = coverUrl(site, a)
   return page(request, assets, {
     title: `${a.title} — ${JOURNAL_TITLE}`,
@@ -151,7 +151,7 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
     type: 'article',
     noindex: found.preview,
     // the article itself, for crawlers that don't run the app
-    body: `<p><a href="/journal">${JOURNAL_TITLE}</a></p><article><h1>${esc(a.title)}</h1><p>${esc(a.excerpt)}</p>${a.html}</article>`,
+    body: `<p><a href="/blog">${JOURNAL_TITLE}</a></p><article><h1>${esc(a.title)}</h1><p>${esc(a.excerpt)}</p>${a.html}</article>`,
     extra: [
       `<meta property="article:published_time" content="${esc(a.publishAt)}">`,
       `<meta property="article:modified_time" content="${esc(a.updatedAt ?? a.publishAt)}">`,
@@ -168,13 +168,13 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
         dateModified: a.updatedAt ?? a.publishAt,
         articleSection: a.category,
         author:
-          a.author === JOURNAL_TITLE ? { '@type': 'Organization', name: SITE_NAME, url: site } : { '@type': 'Person', name: a.author },
+          a.author === SITE_NAME || a.author === JOURNAL_TITLE ? { '@type': 'Organization', name: SITE_NAME, url: site } : { '@type': 'Person', name: a.author },
         publisher: organisation(site),
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
       },
       crumbs([
         ['Home', `${site}/`],
-        [JOURNAL_TITLE, `${site}/journal`],
+        [JOURNAL_TITLE, `${site}/blog`],
         [a.title, canonical],
       ]),
     ],

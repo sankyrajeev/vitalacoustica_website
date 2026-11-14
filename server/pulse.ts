@@ -225,7 +225,7 @@ async function read(source: Source): Promise<{ items: PulseItem[]; ok: boolean }
   try {
     const res = await fetch(source.url, {
       headers: {
-        'User-Agent': 'VitalAcousticaPulse/1.0 (+https://vitalacoustica.com/journal)',
+        'User-Agent': 'VitalAcousticaPulse/1.0 (+https://vitalacoustica.com/blog)',
         Accept: 'application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.5',
       },
       signal: AbortSignal.timeout(8000),

@@ -5,7 +5,7 @@ excerpt: Start with the room, the audience and the programme, not a list of spea
 category: Guides & Insights
 status: review
 publishAt: 2026-10-27T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 featured: true
 cover: venue-system
 coverAlt: A loudspeaker system flown above a stage in a darkened venue, lit from behind

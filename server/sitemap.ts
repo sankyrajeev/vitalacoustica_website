@@ -7,7 +7,7 @@ import { sitePaths } from './paths.ts'
 export function sitemap(site: string): Response {
   const urls: { loc: string; lastmod?: string }[] = [
     ...sitePaths().map((loc) => ({ loc })),
-    ...liveArticles().map((a) => ({ loc: `/journal/${a.slug}`, lastmod: (a.updatedAt ?? a.publishAt).slice(0, 10) })),
+    ...liveArticles().map((a) => ({ loc: `/blog/${a.slug}`, lastmod: (a.updatedAt ?? a.publishAt).slice(0, 10) })),
   ]
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

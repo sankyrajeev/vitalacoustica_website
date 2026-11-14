@@ -5,7 +5,7 @@ excerpt: Line arrays are not simply bigger or louder. What each design actually 
 category: Audio Engineering
 status: review
 publishAt: 2026-11-03T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 cover: line-array-hang
 coverAlt: A curved line array of loudspeakers hanging from rigging above an empty stage
 coverCredit:

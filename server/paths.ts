@@ -6,7 +6,7 @@ import { capabilities } from '../src/content/capabilities.ts'
 import { gear } from '../src/content/gear.ts'
 import { products } from '../src/content/shop.ts'
 
-const PAGES = ['/', '/story', '/equipment', '/capabilities', '/shop', '/testimonials', '/journal', '/contact', '/careers', '/privacy', '/legal']
+const PAGES = ['/', '/story', '/equipment', '/capabilities', '/shop', '/testimonials', '/blog', '/contact', '/careers', '/privacy', '/legal']
 
 export const sitePaths = () => [
   ...PAGES,

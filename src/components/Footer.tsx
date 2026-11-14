@@ -1,5 +1,6 @@
 import { capabilities } from '../content/capabilities'
 import { site, waLink } from '../content/site'
+import { FooterSignup } from './journal/AcousticaEdit'
 import { Link } from './Link'
 import { Logo } from './ui'
 
@@ -22,6 +23,7 @@ export function Footer() {
               </span>
             ))}
           </p>
+          <FooterSignup />
         </div>
 
         <nav className="footer__cols" aria-label="Footer">
@@ -50,7 +52,7 @@ export function Footer() {
                 <Link to="/careers">Careers</Link>
               </li>
               <li>
-                <Link to="/journal">Journal</Link>
+                <Link to="/blog">Blog</Link>
               </li>
               <li>
                 <Link to="/deck">Capability deck</Link>

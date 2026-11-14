@@ -57,8 +57,8 @@ function resolve(path: string): Resolved {
   const cap = match('/capabilities/:id', path)
   if (cap) return { title: capabilityById(cap.id)?.name ?? 'Not found', page: <CapabilityPage id={cap.id} /> }
   // Studio is retired for now (the name is kept for the real studio); its page stays in Other.tsx
-  if (path === '/journal') return { title: 'The Acoustica Journal', page: <JournalIndex /> }
-  const article = match('/journal/:slug', path)
+  if (path === '/blog') return { title: 'The Acoustica Journal', page: <JournalIndex /> }
+  const article = match('/blog/:slug', path)
   if (article) return { title: 'The Acoustica Journal', page: <JournalArticle slug={article.slug} /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
   if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }

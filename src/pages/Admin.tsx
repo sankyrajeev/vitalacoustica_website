@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { api, explain, type BetaRequest, type Report, type Tester } from '../account/api'
+import { api, explain, type BetaRequest, type NewsletterOverview, type Report, type Tester } from '../account/api'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { Arrow } from '../components/ui'
@@ -305,6 +305,65 @@ function SigningKeys() {
   )
 }
 
+const EDITION_STATUS = { sending: 'Sending', sent: 'Sent', empty: 'Skipped (no new posts)' } as const
+
+function Newsletter() {
+  const [o, setO] = useState<NewsletterOverview | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  useEffect(() => {
+    void api.admin.newsletter().then((r) => r.ok && setO(r.data))
+  }, [])
+  async function test() {
+    setBusy(true)
+    const r = await api.admin.testEdition()
+    setBusy(false)
+    setMsg(r.ok ? `Sent to ${r.data.sent}, with ${r.data.posts} ${r.data.posts === 1 ? 'post' : 'posts'}.` : 'Couldn’t send it. Check Resend’s Emails page for the error.')
+  }
+  if (!o) return <p className="muted">Loading…</p>
+  const { active, pending, unsubscribed } = o.subscribers
+  return (
+    <>
+      <p className="muted">
+        {active} {active === 1 ? 'subscriber' : 'subscribers'}
+        {pending ? `, ${pending} not confirmed yet` : ''}
+        {unsubscribed ? `, ${unsubscribed} left` : ''}. Each Monday morning the week’s edition goes out by itself, up to {o.dailyLimit} emails a
+        day; a longer list is finished on the following days.
+      </p>
+      <div className="admin__test">
+        <button className="cta" type="button" onClick={test} disabled={busy}>
+          <span>{busy ? 'Sending…' : 'Send me this week’s edition'}</span>
+        </button>
+        {msg && <p className="muted admin__sub">{msg}</p>}
+      </div>
+      {o.editions.length > 0 && (
+        <div className="admin__scroll">
+          <table className="admin__table">
+            <thead>
+              <tr>
+                <th>Edition</th>
+                <th>Posts</th>
+                <th>Sent to</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {o.editions.map((e) => (
+                <tr key={e.id}>
+                  <td>{e.subject.replace(/^The Acoustica Edit: /, '')}</td>
+                  <td>{e.posts}</td>
+                  <td>{e.sent}</td>
+                  <td>{EDITION_STATUS[e.status]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  )
+}
+
 function LaunchAlerts() {
   const [rows, setRows] = useState<{ product: string; name: string; waiting: number; told: number }[] | null>(null)
   const [msg, setMsg] = useState('')
@@ -517,6 +576,10 @@ export function AdminPage() {
             <section className="account__section">
               <h2 className="account__h">Testers</h2>
               <Testers testers={testers} onChange={loadTesters} />
+            </section>
+            <section className="account__section">
+              <h2 className="account__h">Newsletter</h2>
+              <Newsletter />
             </section>
             <section className="account__section">
               <h2 className="account__h">Waiting for launch</h2>

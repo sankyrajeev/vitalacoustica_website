@@ -98,7 +98,7 @@ const NAV: [string, string][] = [
   ['/capabilities', 'Services'],
   ['/shop', 'Shop'],
   ['/testimonials', 'Testimonials'],
-  ['/journal', 'Journal'],
+  ['/blog', 'Blog'],
   ['/contact', 'Get a quote'],
 ]
 

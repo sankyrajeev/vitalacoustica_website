@@ -5,7 +5,7 @@ excerpt: Networked audio, directional low end, prediction-led design and immersi
 category: Industry News
 status: review
 publishAt: 2026-11-06T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 cover: digital-console
 coverAlt: Close-up of a digital mixing console's channel strips and touchscreen at front of house
 coverCredit:

@@ -135,6 +135,8 @@ export const api = {
     status: () => request<Record<'database' | 'email' | 'admins' | 'vantaKey' | 'pixelForgeKey' | 'downloads' | 'paddle' | 'google', boolean>>('/api/admin/status'),
     launchAlerts: () => request<{ alerts: { product: string; name: string; waiting: number; told: number }[] }>('/api/admin/launch'),
     sendLaunch: (product: string) => request<{ sent: number; left: number }>('/api/admin/launch/send', { product }),
+    newsletter: () => request<NewsletterOverview>('/api/admin/newsletter'),
+    testEdition: () => request<{ sent: string; posts: number }>('/api/admin/newsletter/test', {}),
   },
   notifyMe: (b: { product: string; email: string; detail: string; _gotcha: string }) => request('/api/notify', b),
   requestBeta: (b: { product: string; name: string; email: string; about: string; system: string; daw: string; _gotcha: string }) => request('/api/beta/request', b),
@@ -167,3 +169,9 @@ export function explain(error: string | undefined) {
 }
 
 export const MIN_PASSWORD = 10
+
+export type NewsletterOverview = {
+  subscribers: { active: number; pending: number; unsubscribed: number }
+  editions: { id: string; subject: string; status: 'sending' | 'sent' | 'empty'; sent: number; created_at: number; finished_at: number | null; posts: number }[]
+  dailyLimit: number
+}

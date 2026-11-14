@@ -19,8 +19,16 @@ export function Cover({ a, sizes, priority, ratio = '3 / 2' }: { a: ArticleMeta;
           onError={(e) => e.currentTarget.parentElement?.classList.add('is-missing')}
         />
       ) : (
-        <span className="j-cover__empty" aria-hidden>
-          {a.category}
+        <span className={`j-cover__empty ${a.category === 'Daily Roundup' ? 'j-cover__empty--day' : ''}`} aria-hidden>
+          {a.category === 'Daily Roundup' ? (
+            <>
+              <strong>{new Date(a.publishAt).toLocaleDateString('en-GB', { day: 'numeric', timeZone: 'Asia/Kolkata' })}</strong>
+              <span>{new Date(a.publishAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })}</span>
+              <em>Today in sound, light &amp; visuals</em>
+            </>
+          ) : (
+            a.category
+          )}
         </span>
       )}
     </div>
@@ -46,7 +54,7 @@ export function StatusTag({ a }: { a: ArticleMeta }) {
   return <span className="j-status">{label}</span>
 }
 
-/** The editorial card used in the Journal grid, the homepage (compact) and related articles. */
+/** The editorial card used in the blog's grid, the homepage (compact) and related articles. */
 export function ArticleCard({
   a,
   compact,
@@ -58,17 +66,17 @@ export function ArticleCard({
 }) {
   return (
     <article className={`j-card ${compact ? 'j-card--compact' : ''}`}>
-      <Link to={`/journal/${a.slug}`} className="j-card__link" aria-label={a.title}>
+      <Link to={`/blog/${a.slug}`} className="j-card__link" aria-label={a.title}>
         <Cover a={a} sizes={sizes} ratio={compact ? '16 / 9' : '3 / 2'} />
       </Link>
       <div className="j-card__body">
         <ArticleMetaLine a={a} short time={!compact} />
         <h3 className="j-card__title">
-          <Link to={`/journal/${a.slug}`}>{a.title}</Link>
+          <Link to={`/blog/${a.slug}`}>{a.title}</Link>
           <StatusTag a={a} />
         </h3>
         <p className="j-card__excerpt">{a.excerpt}</p>
-        <Link to={`/journal/${a.slug}`} className="text-link j-card__more" tabIndex={-1} aria-hidden>
+        <Link to={`/blog/${a.slug}`} className="text-link j-card__more" tabIndex={-1} aria-hidden>
           Read <Arrow />
         </Link>
       </div>

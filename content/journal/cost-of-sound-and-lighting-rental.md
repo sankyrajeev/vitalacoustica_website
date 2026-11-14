@@ -5,7 +5,7 @@ excerpt: Two quotes for the same event can differ widely, and for good reasons. 
 category: Guides & Insights
 status: review
 publishAt: 2026-11-10T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 cover: production-cases
 coverAlt: Road cases and cable trunks lined up backstage before a load-in
 coverCredit:

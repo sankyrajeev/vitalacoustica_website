@@ -14,6 +14,7 @@
 
 import { accountReset, accountVerify, betaInvite, betaRequestReceived, launchAlertOut, launchAlertSaved, leaseReminder, licenceDelivery, type Mail } from '../emails.ts'
 import type { User } from './auth.ts'
+import { newsletterOverview, sendTestEdition } from '../newsletter.ts'
 import { json, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { newLicenceKey, normaliseKey } from './licence.ts'
 import { brand, sendMail } from './mail.ts'
@@ -174,6 +175,17 @@ async function testEmail(request: Request, env: AccountsEnv, user: User) {
   return json({ sent: user.email })
 }
 
+/** This week's newsletter as subscribers will get it, sent only to the signed-in admin. */
+async function testEdition(request: Request, env: AccountsEnv, user: User) {
+  try {
+    const posts = await sendTestEdition(env, user.email, siteUrl(env, request))
+    return json({ sent: user.email, posts })
+  } catch (e) {
+    console.error('test edition', e)
+    return json({ error: 'unavailable' }, 503)
+  }
+}
+
 async function revoke(request: Request, db: D1Database) {
   const key = normaliseKey(String((await readJson<{ key?: string }>(request))?.key ?? ''))
   const res = await db.prepare('UPDATE licences SET revoked = 1 WHERE key = ?').bind(key).run()
@@ -189,6 +201,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     if (pathname === '/api/admin/beta') return json({ testers: await testers(db) })
     if (pathname === '/api/admin/launch') return json({ alerts: await launchAlertCounts(db) })
     if (pathname === '/api/admin/status') return json(setupStatus(env))
+    if (pathname === '/api/admin/newsletter') return json(await newsletterOverview(env, db))
     if (pathname === '/api/admin/beta/requests') {
       const status = ['pending', 'approved', 'declined'].includes(url.searchParams.get('status') || '') ? url.searchParams.get('status') : 'pending'
       const rows = (await db.prepare('SELECT * FROM beta_requests WHERE status = ? ORDER BY created_at DESC LIMIT 300').bind(status).all<BetaRequest>()).results
@@ -218,6 +231,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     if (pathname === '/api/admin/beta/decline') return decline(request, db)
     if (pathname === '/api/admin/launch/send') return sendLaunch(request, env, db)
     if (pathname === '/api/admin/test-email') return testEmail(request, env, user!)
+    if (pathname === '/api/admin/newsletter/test') return testEdition(request, env, user!)
   }
   return json({ error: 'not_found' }, 404)
 }

@@ -5,7 +5,7 @@ excerpt: Universes, addresses, modes and termination. A clear guide to the proto
 category: Lighting & Production
 status: review
 publishAt: 2026-11-17T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 featured: true
 cover: lighting-console
 coverAlt: A lighting console's faders and screens glowing in a dark control position

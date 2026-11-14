@@ -5,7 +5,7 @@ excerpt: From the advance to the last soundcheck, a step-by-step look at how a p
 category: Audio Engineering
 status: review
 publishAt: 2026-11-13T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 cover: amp-rack
 coverAlt: Amplifier racks with status lights and neatly dressed cables backstage
 coverCredit:

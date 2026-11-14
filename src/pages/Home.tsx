@@ -12,7 +12,7 @@ import { scrollToId } from '../router'
 
 const SNAP_SECTIONS = '.intro, .entrance, .statement, .voices, .home-journal, .final'
 
-// The homepage: the brand, what clients say, three Journal stories, and the enquiry. The Resonance Form
+// The homepage: the brand, what clients say, three stories from the Blog, and the enquiry. The Resonance Form
 // (a fixed 3D layer) changes with each section. Equipment, services and work have their own pages.
 export function Home() {
   // each section settles centred on screen instead of stopping wherever the scroll ends
@@ -130,7 +130,7 @@ function Voices() {
   )
 }
 
-/* 03 — The Acoustica Journal: three stories, kept small so the enquiry stays the focus */
+/* 03 — The Blog: three stories, kept small so the enquiry stays the focus */
 function JournalPicks() {
   const list = useLoad(loadJournal, 'journal')
   if (list.state !== 'ready') return null
@@ -140,11 +140,11 @@ function JournalPicks() {
     <section className="section home-journal" data-scene="voices" aria-labelledby="home-journal-title">
       <div className="wrap">
         <header className="section-head home-journal__head">
-          <Label index="03">Journal</Label>
+          <Label index="03">Blog</Label>
           <h2 id="home-journal-title" className="h1">
-            The Acoustica Journal
+            Sound, light and visuals, today
           </h2>
-          <p className="section-head__sub">Ideas, insights and perspectives on the art and engineering of live sound and light.</p>
+          <p className="section-head__sub">The latest from around the world, every day, with guides and notes from our own shows.</p>
         </header>
         <div className="j-grid j-grid--home">
           {picks.map((a) => (
@@ -152,7 +152,7 @@ function JournalPicks() {
           ))}
         </div>
         <p className="home-journal__all">
-          <TextLink to="/journal">Explore the Journal</TextLink>
+          <TextLink to="/blog">Read the blog</TextLink>
         </p>
       </div>
     </section>

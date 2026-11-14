@@ -12,18 +12,20 @@ import { navigate } from '../router'
 import { NotFound } from './NotFound'
 
 const PAGE = 6 // articles per "Load more"
-const JOURNAL_LINE = 'Perspectives on the art and engineering of live sound and light.'
+const JOURNAL_LINE = 'The latest from the world of sound, light and visuals, every day, with guides and notes from our own shows.'
 
-/* ─────────────── /journal ─────────────── */
+/* ─────────────── /blog ─────────────── */
 
 export function JournalIndex() {
   const list = useLoad(loadJournal, 'journal')
   const [category, setCategory] = useState<Category | 'All'>('All')
   const [shown, setShown] = useState(PAGE)
-  usePageMeta({ title: 'The Acoustica Journal — Vital Acoustica', description: JOURNAL_LINE, path: '/journal' })
+  usePageMeta({ title: 'Blog — Vital Acoustica', description: JOURNAL_LINE, path: '/blog' })
 
   const articles = list.state === 'ready' ? list.data.articles : []
-  const featured = featuredFirst(articles)[0]
+  // the newest daily roundup leads the page; without one, the featured story
+  const roundup = articles.filter((a) => a.category === 'Daily Roundup').sort((a, b) => Date.parse(b.publishAt) - Date.parse(a.publishAt))[0]
+  const featured = roundup ?? featuredFirst(articles)[0]
   const rest = articles.filter((a) => a !== featured)
   const filtered = category === 'All' ? rest : articles.filter((a) => a.category === category)
   const counts = Object.fromEntries(CATEGORIES.map((c) => [c, articles.filter((a) => a.category === c).length]))
@@ -36,8 +38,8 @@ export function JournalIndex() {
   return (
     <>
       <header className="page-head wrap j-hero">
-        <Label>Journal</Label>
-        <h1 className="display display--sm">The Acoustica Journal</h1>
+        <Label>Blog</Label>
+        <h1 className="display display--sm">Sound, light and visuals, today.</h1>
         <p className="lede">{JOURNAL_LINE}</p>
       </header>
 
@@ -56,7 +58,7 @@ export function JournalIndex() {
         <div className="wrap">
           <div className="coming-soon">
             <span className="label">Unavailable</span>
-            <p>The Journal couldn’t be loaded just now. Please refresh the page in a moment.</p>
+            <p>The blog couldn’t be loaded just now. Please refresh the page in a moment.</p>
           </div>
         </div>
       )}
@@ -68,7 +70,7 @@ export function JournalIndex() {
               <span className="label">First stories soon</span>
               <p>
                 Guides, production notes and analysis on sound, light and live production are on their way. Industry Pulse below brings
-                the latest news from the trade press in the meantime, and The Acoustica Edit will bring new stories to your inbox.
+                the latest news from the trade press in the meantime, and our weekly newsletter will bring the best of it to your inbox.
               </p>
             </div>
           </div>
@@ -78,17 +80,17 @@ export function JournalIndex() {
       {featured && (
         <section className="section section--tight j-featured" aria-labelledby="featured-title">
           <div className="wrap j-featured__inner">
-            <Link to={`/journal/${featured.slug}`} className="j-featured__media" aria-hidden tabIndex={-1}>
+            <Link to={`/blog/${featured.slug}`} className="j-featured__media" aria-hidden tabIndex={-1}>
               <Cover a={featured} sizes="(max-width: 900px) 100vw, 60vw" priority ratio="16 / 10" />
             </Link>
             <div className="j-featured__text">
-              <p className="label">Featured</p>
+              <p className="label">{roundup ? 'Latest roundup' : 'Featured'}</p>
               <ArticleMetaLine a={featured} />
               <h2 id="featured-title" className="h1 j-featured__title">
-                <Link to={`/journal/${featured.slug}`}>{featured.title}</Link> <StatusTag a={featured} />
+                <Link to={`/blog/${featured.slug}`}>{featured.title}</Link> <StatusTag a={featured} />
               </h2>
               <p className="j-featured__excerpt">{featured.excerpt}</p>
-              <TextLink to={`/journal/${featured.slug}`}>Read the story</TextLink>
+              <TextLink to={`/blog/${featured.slug}`}>{roundup ? 'Read the roundup' : 'Read the story'}</TextLink>
             </div>
           </div>
         </section>
@@ -99,7 +101,7 @@ export function JournalIndex() {
           <div className="wrap">
             <header className="j-latest__head">
               <h2 id="latest-title" className="h2">
-                Latest articles
+                Latest posts
               </h2>
               <div className="chips j-filters" role="group" aria-label="Filter by category">
                 <button type="button" className="chip" aria-pressed={category === 'All'} onClick={() => pick('All')}>
@@ -123,7 +125,7 @@ export function JournalIndex() {
 
             {filtered.length === 0 ? (
               <p className="muted j-latest__none">
-                {category === 'All' ? 'More articles soon.' : `No articles in ${category} yet. New ones appear here as they are published.`}
+                {category === 'All' ? 'More posts soon.' : `No posts in ${category} yet. New ones appear here as they are published.`}
               </p>
             ) : (
               <div className="j-grid" aria-live="polite">
@@ -268,7 +270,7 @@ function IndustryPulse() {
   )
 }
 
-/* ─────────────── /journal/:slug ─────────────── */
+/* ─────────────── /blog/:slug ─────────────── */
 
 export function JournalArticle({ slug }: { slug: string }) {
   const res = useLoad(() => loadArticle(slug), `article:${slug}`)
@@ -277,9 +279,9 @@ export function JournalArticle({ slug }: { slug: string }) {
   usePageMeta(
     a
       ? {
-          title: `${a.title} — The Acoustica Journal`,
+          title: `${a.title} — Vital Acoustica Blog`,
           description: a.excerpt,
-          path: `/journal/${a.slug}`,
+          path: `/blog/${a.slug}`,
           image: a.cover ? coverSrc(a.cover, 1600) : undefined,
           type: 'article',
         }
@@ -311,7 +313,7 @@ export function JournalArticle({ slug }: { slug: string }) {
     <article className="j-article">
       <div className="wrap">
         <nav className="crumbs" aria-label="Breadcrumb">
-          <Link to="/journal">The Acoustica Journal</Link>
+          <Link to="/blog">Blog</Link>
           <span aria-hidden>/</span>
           <span>{a.category}</span>
         </nav>
@@ -339,6 +341,8 @@ export function JournalArticle({ slug }: { slug: string }) {
         </p>
       </header>
 
+      {/* a daily roundup without a photo goes straight to the stories */}
+      {(a.cover || a.category !== 'Daily Roundup') && (
       <figure className="wrap j-article__cover">
         <Cover a={a} sizes="(max-width: 1360px) 100vw, 1360px" priority ratio="16 / 9" />
         {a.coverCredit && (
@@ -353,6 +357,7 @@ export function JournalArticle({ slug }: { slug: string }) {
           </figcaption>
         )}
       </figure>
+      )}
 
       <div className="wrap j-article__layout">
         <div className="j-article__body" onClick={onBodyClick} dangerouslySetInnerHTML={{ __html: a.html }} />
@@ -413,7 +418,7 @@ export function JournalArticle({ slug }: { slug: string }) {
               ))}
             </div>
             <p className="j-related__all">
-              <TextLink to="/journal">All articles</TextLink>
+              <TextLink to="/blog">All articles</TextLink>
             </p>
           </div>
         </section>

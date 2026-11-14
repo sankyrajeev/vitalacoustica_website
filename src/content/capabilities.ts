@@ -60,7 +60,7 @@ export const capabilities: Capability[] = [
     approach: [
       { title: 'Surface', body: 'Start from the architecture or object being mapped: its geometry decides the content, not the other way round.' },
       { title: 'Material', body: 'Generative systems built to sit inside the lighting palette rather than compete with it.' },
-      { title: 'Study', body: 'New ideas are tested as studies first. You can see them in the Journal, clearly labelled as such.' },
+      { title: 'Study', body: 'New ideas are tested as studies first. You can see them on the Blog, clearly labelled as such.' },
     ],
     gear: ['matrix'],
   },

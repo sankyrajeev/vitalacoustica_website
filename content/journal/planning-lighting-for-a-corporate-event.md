@@ -5,7 +5,7 @@ excerpt: Presenters who look good on camera, brand colours that read correctly, 
 category: Lighting & Production
 status: review
 publishAt: 2026-11-24T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 cover: corporate-stage
 coverAlt: A conference stage with a lectern under soft front light and a lit backdrop
 coverCredit:

@@ -5,7 +5,7 @@ excerpt: The cheapest place to solve a problem is on paper. The documents, conve
 category: Production Notes
 status: review
 publishAt: 2026-10-30T09:00:00+05:30
-author: The Acoustica Journal
+author: Vital Acoustica
 featured: true
 cover: production-planning
 coverAlt: A production desk at front of house with drawings, a laptop and a talkback headset

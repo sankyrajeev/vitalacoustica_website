@@ -1,7 +1,8 @@
-# The Acoustica Journal
+# The Vital Acoustica Blog
 
-The Journal lives at `/journal`, with each article at `/journal/<slug>`. Three featured articles
-also appear on the homepage. Everything is driven by files in this repository; there is no
+The blog (formerly the Journal) lives at `/blog`, with each post at `/blog/<slug>`; old `/journal`
+links redirect there. The newest daily roundup leads the blog page, and three stories also appear
+on the homepage. The code and folders keep the old name (`journal`). Everything is driven by files in this repository; there is no
 separate CMS to log into.
 
 - **Articles:** Markdown files in `content/journal/`.
@@ -13,7 +14,15 @@ separate CMS to log into.
 
 ## The publishing schedule
 
-Two pieces a week:
+**Every morning: the Daily Roundup.** A scheduled Claude session researches the last day or two
+of news in sound, lighting and visuals from around the world and writes a short roundup of 3 to 5
+stories, in its own words, each one credited and linked to its source. It is saved as
+`content/journal/roundup-YYYY-MM-DD.md`, category *Daily Roundup*, status `published`, and pushed;
+the site deploys it within minutes. A roundup needs no cover photo (the date stands in) but must
+list at least two sources. If there isn't enough real news that day, it skips the day. To stop it,
+turn off the scheduled task in Claude (claude.ai/code → Scheduled).
+
+**Features**, two a week when there are approved ones:
 
 - **Tuesday:** an evergreen guide, educational article or production insight. Use the categories
   *Guides & Insights*, *Audio Engineering* or *Lighting & Production*.
@@ -53,7 +62,7 @@ something that breaks these:
   repository can do it. For an extra check, turn on branch protection for the deploy branch
   (GitHub → Settings → Branches), so changes need a pull request and an approval.
 - **Previews are protected by a secret.** Set `JOURNAL_PREVIEW_TOKEN` (see below), then open
-  `https://vitalacoustica.com/journal?preview=<token>`. You'll see every article in review,
+  `https://vitalacoustica.com/blog?preview=<token>`. You'll see every article in review,
   clearly marked, with its open checks listed. Preview pages are never indexed, cached or put in
   the sitemap. Without the token, an unpublished article is a plain 404.
 - **Nothing in review reaches the public files.** Articles are served only by the Worker, and the
@@ -77,7 +86,7 @@ Then commit and push. The article goes live at its time.
 ```markdown
 ---
 title: How to Choose the Right Sound System for Your Venue
-slug: how-to-choose-a-sound-system        # the address: /journal/how-to-choose-a-sound-system
+slug: how-to-choose-a-sound-system        # the address: /blog/how-to-choose-a-sound-system
 excerpt: One or two sentences for cards, search results and link previews (under ~200 characters).
 category: Guides & Insights               # Audio Engineering · Lighting & Production · Industry News · Production Notes · Guides & Insights
 status: review
@@ -162,57 +171,36 @@ scheduled until someone has:
 - confirmed the facts;
 - set `verified: true`.
 
-## The Acoustica Edit: the newsletter
+## The Acoustica Edit: the weekly newsletter
 
-Sign-up uses **double opt-in** through **Resend**, the provider already used for the enquiry emails:
+Every Monday morning (the Worker's daily cron, 08:47 India time) the week's edition is made from
+the posts of the previous seven days, roundups first, and emailed to every confirmed subscriber.
+A week with no new posts sends nothing. Nothing needs doing by hand.
 
-1. Someone enters their email address and ticks the consent box.
-2. Resend sends them a confirmation email.
-3. They are added to the Resend audience only when they click the link in it.
+- **Sign-up:** the full form on the blog, and a one-line form in the footer of every page.
+- **Double opt-in:** nobody is on the list until they click the link in the confirmation email
+  (it works for seven days). The form gives the same answer whether or not the address is already
+  on the list, and a repeat sign-up within 15 minutes sends nothing.
+- **Where the list is kept:** the site's own database (D1, tables `newsletter_subscribers` and
+  `newsletter_editions`). Nothing to set up in Resend; emails go through the same Resend account.
+- **Unsubscribing:** every edition has an unsubscribe link and the one-click unsubscribe header
+  mail apps show beside the sender. Opening the link asks "Leave The Acoustica Edit?" first, so a
+  mail scanner opening links can't unsubscribe anyone.
+- **The daily allowance:** at most 80 emails a day (Resend's free plan allows 100, leaving room
+  for account emails). A longer list is finished on the following days. Change it with the
+  `NEWSLETTER_DAILY_LIMIT` variable; set `NEWSLETTER_FROM` for another sender (optional).
+- **Admin page:** subscriber counts, each edition and how many it went to, and **Send me this
+  week's edition** to see it in your own inbox first.
 
-The sign-up form gives the same answer whether or not the address is already on the list, so it
-can't be used to check who subscribes. Repeat sign-ups within 15 minutes send nothing. Subscriber
-addresses are stored only in Resend.
-
-### Setting it up
-
-1. In Resend, go to **Audiences → Create audience** and name it "The Acoustica Edit". Copy the
-   audience id.
-2. In Cloudflare, open **Workers & Pages → vitalacoustica-website → Settings → Variables and
-   Secrets** and add:
-
-| Name | Value | Type |
-|---|---|---|
-| `RESEND_AUDIENCE_ID` | the audience id | Text |
-| `NEWSLETTER_SECRET` | a long random string (e.g. from a password manager) | Secret |
-| `NEWSLETTER_FROM` | optional, e.g. `The Acoustica Edit <edit@vitalacoustica.com>`; defaults to the enquiry sender | Text |
-| `JOURNAL_PREVIEW_TOKEN` | a long random string, for article previews | Secret |
-
-`RESEND_API_KEY` is already set. Until the first two are added, the form says "Sign-ups open soon"
-and saves nothing.
-
-### Sending an edition
-
-Nothing is ever sent to the list automatically. To send an edition:
-
-1. Write it in Resend → **Broadcasts**.
-2. Choose the audience.
-3. Review it and send.
-
-Resend adds its own unsubscribe link to every broadcast. The site also has its own signed
-unsubscribe link, `/api/newsletter/unsubscribe` (see `unsubscribeUrl` in `server/newsletter.ts`).
-
-> This integration uses Resend's Audiences/Contacts API. It hasn't yet been tried against a live
-> Resend account. After setting it up, sign up with your own address once and confirm, to check
-> the whole flow.
+`JOURNAL_PREVIEW_TOKEN` (a secret, optional) turns on article previews.
 
 ## Search engines and sharing
 
-- **Page metadata.** Every Journal page is served with its own title, description, canonical
+- **Page metadata.** Every blog page is served with its own title, description, canonical
   address, Open Graph and Twitter tags. Articles also get `article:*` tags and structured data
-  (`Article` and `BreadcrumbList`). The Journal page gets `Blog` structured data.
+  (`Article` and `BreadcrumbList`). The blog page gets `Blog` structured data.
 - **Sitemap.** `/sitemap.xml` lists the site's pages and every live article. `robots.txt` points
   to it.
-- **Addresses.** Article addresses have no trailing slash; `/journal/<slug>/` redirects there.
+- **Addresses.** Article addresses have no trailing slash; `/blog/<slug>/` redirects there.
 - **Unpublished articles** return 404 and are never listed.
 - **Analytics.** The site has no analytics script, so none was added.

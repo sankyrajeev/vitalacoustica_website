@@ -11,7 +11,7 @@ const LEGAL = {
   company: 'Vital Acoustica',
   address: 'Bangalore, Karnataka, India', // DUMMY: full registered address
   gstin: site.gst,
-  updated: '12 November 2026',
+  updated: '14 November 2026',
   jurisdiction: 'Bengaluru, Karnataka',
 }
 
@@ -89,7 +89,7 @@ export function PrivacyPage() {
               </li>
               <li>
                 <strong>The Acoustica Edit (our newsletter):</strong> if you sign up, your email address, the fact that you agreed to
-                receive it and when you confirmed. You are added only after you confirm by clicking the link we email you.
+                receive it, when you confirmed, and which weekly editions we have sent you. You are added only after you confirm by clicking the link we email you.
               </li>
               <li>
                 <strong>Your account and software:</strong> if you create an account, your email address, your name if you give
@@ -134,7 +134,7 @@ export function PrivacyPage() {
                 To run your account: sign you in, deliver and look after your licence keys and downloads, let you move a licence
                 between computers, and stop keys from being shared beyond their limit.
               </li>
-              <li>To send The Acoustica Edit, only if you have signed up and confirmed. Every edition has an unsubscribe link.</li>
+              <li>To send The Acoustica Edit, once a week, only if you have signed up and confirmed. Every edition has an unsubscribe link.</li>
               <li>To meet our legal obligations, including tax and accounting records.</li>
               <li>To keep this website secure and working.</li>
             </ul>
@@ -149,7 +149,7 @@ export function PrivacyPage() {
             <p>We share personal data only with service providers who help us run the business, and only as needed:</p>
             <ul>
               <li>the form or email service that delivers your enquiry to us;</li>
-              <li>our email provider (Resend), which stores the newsletter list and delivers The Acoustica Edit;</li>
+              <li>our email provider (Resend), which delivers our emails, The Acoustica Edit included (the newsletter list itself is kept on our own website’s database);</li>
               <li>our website hosting provider;</li>
               <li>
                 for shop orders, the checkout provider (Paddle, which sells our software as the merchant of record, or Gumroad)

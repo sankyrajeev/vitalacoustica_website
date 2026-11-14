@@ -2,6 +2,7 @@
 // script. Articles themselves live in content/journal/*.md (see docs/journal.md).
 
 export const CATEGORIES = [
+  'Daily Roundup',
   'Audio Engineering',
   'Lighting & Production',
   'Industry News',

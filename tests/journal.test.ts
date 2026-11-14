@@ -125,6 +125,16 @@ test('industry news needs sources and sign-off', () => {
   assert.equal(check(news('sources:\n  - title: A\n    url: https://example.com\n    publisher: Ex\nverified: true'), true).ok, true)
 })
 
+test('a daily roundup needs two sources but no cover photo', () => {
+  const roundup = (sources: string) =>
+    article(`status: published\nsources:\n${sources}`).replace('Guides & Insights', 'Daily Roundup').replace(/cover: test-cover\ncoverAlt: A test photo\n/, '')
+  const source = (n: number) => `  - title: Story ${n}\n    url: https://example.com/${n}\n    publisher: Ex\n    date: 2026-11-13\n`
+  const one = check(roundup(source(1)))
+  assert.equal(one.ok, false, 'one source is not a roundup')
+  assert.match(one.out, /at least two sources/)
+  assert.equal(check(roundup(source(1) + source(2))).ok, true)
+})
+
 test('the real articles all pass', () => {
   execFileSync('node', [join(ROOT, 'scripts/journal.mjs'), 'check'], { stdio: 'pipe' })
 })

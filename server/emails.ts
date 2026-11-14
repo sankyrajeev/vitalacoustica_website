@@ -328,11 +328,13 @@ ${button(b.site, 'Visit the site', false)}`
 
 /* ─────────────── The Acoustica Edit ─────────────── */
 
+const EDIT_NOTE = 'You’re receiving this because you subscribed to The Acoustica Edit on vitalacoustica.com.'
+
 /** Asks a new subscriber to confirm: nobody is added to the list until they click. */
 export function newsletterConfirm(b: Brand, confirmUrl: string): Mail {
   const body = `${label('The Acoustica Edit')}
 ${headline('One click to confirm.')}
-${text('Thank you for signing up to The Acoustica Edit: a considered perspective on sound, light and live production, with selected Journal articles, verified industry news and genuine production updates.')}
+${text('Thank you for signing up to The Acoustica Edit: once a week, the best of the week’s news in sound, light and visuals, with our newest guides from the Vital Acoustica Blog.')}
 ${text('Please confirm that this is your address. Until you do, you won’t receive anything from us.')}
 ${button(confirmUrl, 'Confirm my subscription')}
 ${text('If you didn’t sign up, ignore this email: you won’t be added, and we won’t write again. The link works for seven days.')}
@@ -344,6 +346,8 @@ ${text('If you didn’t sign up, ignore this email: you won’t be added, and we
       'Confirm your subscription to The Acoustica Edit.',
       body,
       'You’re receiving this because this address was entered to subscribe to The Acoustica Edit on vitalacoustica.com.',
+      false,
+      'none',
     ),
     text: plain([
       'The Acoustica Edit',
@@ -353,6 +357,48 @@ ${text('If you didn’t sign up, ignore this email: you won’t be added, and we
       '',
       'If you didn’t sign up, ignore this email: you won’t be added.',
       `How we use your email: ${b.site}/privacy`,
+    ]),
+  }
+}
+
+export type DigestItem = { title: string; excerpt: string; category: string; url: string; date: string }
+
+/** The weekly edition: the week’s daily roundups first, then everything else that went up. */
+export function newsletterDigest(b: Brand, r: { week: string; items: DigestItem[]; unsubscribe: string }): Mail {
+  const news = r.items.filter((i) => i.category === 'Daily Roundup')
+  const rest = r.items.filter((i) => i.category !== 'Daily Roundup')
+  const item = (i: DigestItem) => `<tr><td style="padding:0 0 22px;">
+<p style="margin:0 0 6px;font:600 10px ${SANS};letter-spacing:2px;text-transform:uppercase;color:${C.muted};">${esc(i.category)} &nbsp;·&nbsp; ${esc(i.date)}</p>
+<a href="${i.url}" style="text-decoration:none;"><p style="margin:0 0 6px;font:400 21px/1.25 ${SERIF};color:${C.ink};">${esc(i.title)}</p></a>
+<p style="margin:0 0 6px;font:14px/1.6 ${SANS};color:${C.soft};">${esc(i.excerpt)}</p>
+<a href="${i.url}" style="font:600 13px ${SANS};color:${C.brass};text-decoration:none;">Read &rarr;</a>
+</td></tr>`
+  const group = (title: string, list: DigestItem[]) =>
+    list.length
+      ? `<p style="margin:10px 0 18px;padding-top:18px;border-top:1px solid ${C.line};font:600 11px ${SANS};letter-spacing:2.5px;text-transform:uppercase;color:${C.brass};">${esc(title)}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${list.map(item).join('\n')}</table>`
+      : ''
+  const lead = r.items.length === 1 ? 'One new post this week.' : `${r.items.length} new posts this week.`
+  const body = `${label('The Acoustica Edit')}
+${headline(esc(r.week))}
+${text(`The week in sound, light and visuals, from the Vital Acoustica Blog. ${lead}`)}
+${group('This week’s news', news)}
+${group('From the blog', rest)}
+${button(`${b.site}/blog`, 'Read the blog', false)}`
+  const footnote = `${EDIT_NOTE} <a href="${r.unsubscribe}" style="color:${C.soft};text-decoration:underline;">Unsubscribe</a> &nbsp;·&nbsp; <a href="${b.site}/privacy" style="color:${C.soft};text-decoration:underline;">Privacy</a>`
+  return {
+    subject: `The Acoustica Edit: ${r.week}`,
+    html: shell(b, `${lead} ${r.items[0]?.title ?? ''}`.trim(), body, footnote, false, 'none'),
+    text: plain([
+      `The Acoustica Edit: ${r.week}`,
+      '',
+      lead,
+      '',
+      ...r.items.flatMap((i) => [`${i.title} (${i.category}, ${i.date})`, i.excerpt, i.url, '']),
+      `The blog: ${b.site}/blog`,
+      '',
+      EDIT_NOTE,
+      `Unsubscribe: ${r.unsubscribe}`,
     ]),
   }
 }
