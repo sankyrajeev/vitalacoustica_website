@@ -90,7 +90,7 @@ export function ShopIndex() {
   return (
     <>
       <header className="page-head wrap shop-head">
-        <Label>Shop</Label>
+        <h1 className="label shop-head__title">Shop</h1>
         <nav className="shop-shelves" aria-label="Shop">
           {SECTIONS.map((s) => (
             <button key={s.kind} type="button" className="shop-shelves__item" aria-pressed={shelf === s.kind} onClick={() => choose(s.kind)}>

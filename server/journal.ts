@@ -12,12 +12,12 @@
 
 import data from './generated/journal.json'
 import { isLive, type Article, type ArticleMeta, type JournalData } from '../src/journal/types.ts'
+import { crumbs, esc, organisation, page, SITE_NAME } from './seo.ts'
 
 export type JournalEnv = { JOURNAL_PREVIEW_TOKEN?: string; SITE_URL?: string }
 type Assets = { fetch: (request: Request) => Promise<Response> }
 
 const journal = data as unknown as JournalData
-const SITE_NAME = 'Vital Acoustica'
 export const JOURNAL_TITLE = 'The Acoustica Journal'
 const JOURNAL_LINE = 'Perspectives on the art and engineering of live sound and light.'
 
@@ -73,66 +73,10 @@ export function handleJournalApi(request: Request, env: JournalEnv): Response {
 }
 
 /* ─────────────── the pages, with their metadata ─────────────── */
-
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-/** JSON for a <script> tag: nothing in it can close the tag. */
-const ld = (o: unknown) => JSON.stringify(o).replace(/</g, '\\u003c')
-
-type PageMeta = {
-  title: string
-  description: string
-  canonical: string
-  image: string
-  imageAlt?: string
-  type: 'website' | 'article'
-  noindex?: boolean
-  extra?: string // more <meta> tags
-  structured?: unknown[]
-}
-
-function headTags(m: PageMeta) {
-  const tags = [
-    `<link rel="canonical" href="${esc(m.canonical)}">`,
-    `<meta property="og:site_name" content="${SITE_NAME}">`,
-    `<meta property="og:image:alt" content="${esc(m.imageAlt ?? m.title)}">`,
-    `<meta name="twitter:card" content="summary_large_image">`,
-    `<meta name="twitter:title" content="${esc(m.title)}">`,
-    `<meta name="twitter:description" content="${esc(m.description)}">`,
-    `<meta name="twitter:image" content="${esc(m.image)}">`,
-    m.noindex ? '<meta name="robots" content="noindex, nofollow">' : '',
-    m.extra ?? '',
-    ...(m.structured ?? []).map((s) => `<script type="application/ld+json">${ld(s)}</script>`),
-  ]
-  return tags.filter(Boolean).join('\n')
-}
-
-async function page(request: Request, assets: Assets, m: PageMeta, status = 200) {
-  // a fresh request, so the app's HTML always comes back whole (never a 304 to a conditional request)
-  const shell = await assets.fetch(new Request(new URL('/', request.url)))
-  const res = new HTMLRewriter()
-    .on('title', { element: (e) => void e.setInnerContent(m.title) })
-    .on('meta[name="description"]', { element: (e) => void e.setAttribute('content', m.description) })
-    .on('meta[property="og:title"]', { element: (e) => void e.setAttribute('content', m.title) })
-    .on('meta[property="og:description"]', { element: (e) => void e.setAttribute('content', m.description) })
-    .on('meta[property="og:type"]', { element: (e) => void e.setAttribute('content', m.type) })
-    .on('meta[property="og:url"]', { element: (e) => void e.setAttribute('content', m.canonical) })
-    .on('meta[property="og:image"]', { element: (e) => void e.setAttribute('content', m.image) })
-    .on('head', { element: (e) => void e.append(headTags(m), { html: true }) })
-    .transform(shell)
-  const headers = new Headers(res.headers)
-  headers.set('Cache-Control', m.noindex ? 'private, no-store' : 'public, max-age=300')
-  headers.set('Content-Type', 'text/html; charset=utf-8')
-  return new Response(res.body, { status, headers })
-}
+// page(), the tags and the plain version are shared with every other page: server/seo.ts
 
 const coverUrl = (site: string, a: ArticleMeta) => (a.cover ? `${site}/media/journal/${a.cover}-1600.webp` : `${site}/media/og.jpg`)
 
-const organisation = (site: string) => ({
-  '@type': 'Organization',
-  name: SITE_NAME,
-  url: site,
-  logo: { '@type': 'ImageObject', url: `${site}/brand/logo-full-black.png` },
-})
 
 /** GET /journal and /journal/<slug>: the app's HTML, with the page's own metadata. */
 export async function journalPage(request: Request, env: JournalEnv, assets: Assets): Promise<Response> {
@@ -142,11 +86,6 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
   if (url.pathname.length > 1 && url.pathname.endsWith('/'))
     return Response.redirect(`${url.origin}${url.pathname.replace(/\/+$/, '')}${url.search}`, 301)
 
-  const crumbs = (items: [string, string][]) => ({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })),
-  })
 
   if (url.pathname === '/journal') {
     const live = liveArticles()
@@ -156,6 +95,9 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
       canonical: `${site}/journal`,
       image: live[0] ? coverUrl(site, live[0]) : `${site}/media/og.jpg`,
       type: 'website',
+      body: `<h1>${JOURNAL_TITLE}</h1><p>${esc(JOURNAL_LINE)}</p><ul>${live
+        .map((a) => `<li><a href="/journal/${esc(a.slug)}">${esc(a.title)}</a>: ${esc(a.excerpt)}</li>`)
+        .join('')}</ul>`,
       structured: [
         {
           '@context': 'https://schema.org',
@@ -208,6 +150,8 @@ export async function journalPage(request: Request, env: JournalEnv, assets: Ass
     imageAlt: a.coverAlt,
     type: 'article',
     noindex: found.preview,
+    // the article itself, for crawlers that don't run the app
+    body: `<p><a href="/journal">${JOURNAL_TITLE}</a></p><article><h1>${esc(a.title)}</h1><p>${esc(a.excerpt)}</p>${a.html}</article>`,
     extra: [
       `<meta property="article:published_time" content="${esc(a.publishAt)}">`,
       `<meta property="article:modified_time" content="${esc(a.updatedAt ?? a.publishAt)}">`,

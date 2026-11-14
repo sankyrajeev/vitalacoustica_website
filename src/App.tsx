@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, type ReactNode } from 'react'
 import { Chat } from './components/Chat'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
@@ -9,21 +9,33 @@ import { projectBySlug } from './content/projects'
 import { site } from './content/site'
 import { useRevealOnScroll } from './hooks/useMedia'
 import { ThemeProvider } from './hooks/useTheme'
-import { AccountPage, ForgotPage, ResetPage } from './pages/Account'
-import { AdminPage } from './pages/Admin'
-import { CapabilitiesIndex, CapabilityPage } from './pages/Capabilities'
 import { Home } from './pages/Home'
-import { LegalPage, PrivacyPage } from './pages/Legal'
-import { ContactPage, DeckPage, NotFoundPage } from './pages/Other'
-import { JournalArticle, JournalIndex } from './pages/Journal'
-import { TestimonialsPage } from './pages/Testimonials'
-import { CareersPage } from './pages/Careers'
-import { StoryPage } from './pages/Story'
-import { CaseStudy, WorkIndex } from './pages/Work'
-import { EquipmentDetail, EquipmentIndex } from './pages/Equipment'
-import { ShopIndex, ShopItem } from './pages/Shop'
 import { productById } from './content/shop'
 import { match, useRoute } from './router'
+
+// every page but the homepage loads its own code when it's first opened
+const AccountPage = lazy(() => import('./pages/Account').then((m) => ({ default: m.AccountPage })))
+const ForgotPage = lazy(() => import('./pages/Account').then((m) => ({ default: m.ForgotPage })))
+const ResetPage = lazy(() => import('./pages/Account').then((m) => ({ default: m.ResetPage })))
+const AdminPage = lazy(() => import('./pages/Admin').then((m) => ({ default: m.AdminPage })))
+const CapabilitiesIndex = lazy(() => import('./pages/Capabilities').then((m) => ({ default: m.CapabilitiesIndex })))
+const CapabilityPage = lazy(() => import('./pages/Capabilities').then((m) => ({ default: m.CapabilityPage })))
+const LegalPage = lazy(() => import('./pages/Legal').then((m) => ({ default: m.LegalPage })))
+const PrivacyPage = lazy(() => import('./pages/Legal').then((m) => ({ default: m.PrivacyPage })))
+const ContactPage = lazy(() => import('./pages/Other').then((m) => ({ default: m.ContactPage })))
+const DeckPage = lazy(() => import('./pages/Other').then((m) => ({ default: m.DeckPage })))
+const NotFoundPage = lazy(() => import('./pages/Other').then((m) => ({ default: m.NotFoundPage })))
+const JournalArticle = lazy(() => import('./pages/Journal').then((m) => ({ default: m.JournalArticle })))
+const JournalIndex = lazy(() => import('./pages/Journal').then((m) => ({ default: m.JournalIndex })))
+const TestimonialsPage = lazy(() => import('./pages/Testimonials').then((m) => ({ default: m.TestimonialsPage })))
+const CareersPage = lazy(() => import('./pages/Careers').then((m) => ({ default: m.CareersPage })))
+const StoryPage = lazy(() => import('./pages/Story').then((m) => ({ default: m.StoryPage })))
+const CaseStudy = lazy(() => import('./pages/Work').then((m) => ({ default: m.CaseStudy })))
+const WorkIndex = lazy(() => import('./pages/Work').then((m) => ({ default: m.WorkIndex })))
+const EquipmentDetail = lazy(() => import('./pages/Equipment').then((m) => ({ default: m.EquipmentDetail })))
+const EquipmentIndex = lazy(() => import('./pages/Equipment').then((m) => ({ default: m.EquipmentIndex })))
+const ShopIndex = lazy(() => import('./pages/Shop').then((m) => ({ default: m.ShopIndex })))
+const ShopItem = lazy(() => import('./pages/Shop').then((m) => ({ default: m.ShopItem })))
 
 type Resolved = { title: string; page: ReactNode }
 
@@ -76,7 +88,7 @@ function Page({ path }: { path: string }) {
 
   return (
     <main id="main" tabIndex={-1} className={`page ${path === '/' ? 'page--home' : ''}`} key={path}>
-      {page}
+      <Suspense fallback={<div className="page-loading" />}>{page}</Suspense>
     </main>
   )
 }

@@ -10,6 +10,7 @@ import { handleEnquiry, type EnquiryEnv } from '../server/enquiry.ts'
 import { handleJournalApi, journalPage, type JournalEnv } from '../server/journal.ts'
 import { confirm, subscribe, unsubscribe, type NewsletterEnv } from '../server/newsletter.ts'
 import { handlePulse, type PulseEnv } from '../server/pulse.ts'
+import { sitePage } from '../server/seo.ts'
 import { sitemap } from '../server/sitemap.ts'
 
 type Env = AccountsEnv & EnquiryEnv & JournalEnv & NewsletterEnv & PulseEnv & { ASSETS: { fetch: (request: Request) => Promise<Response> } }
@@ -33,6 +34,9 @@ export default {
 
     if (pathname === '/sitemap.xml') return sitemap((env.SITE_URL || url.origin).replace(/\/$/, ''))
     if ((pathname === '/journal' || pathname.startsWith('/journal/')) && read) return journalPage(request, env, env.ASSETS)
+    // every other page of the app, with its own title, description, preview and structured data;
+    // files (anything with an extension) go straight out
+    if (read && !/\.[a-z0-9]+$/i.test(pathname)) return sitePage(request, (env.SITE_URL || url.origin).replace(/\/$/, ''), env.ASSETS)
     return env.ASSETS.fetch(request)
   },
 

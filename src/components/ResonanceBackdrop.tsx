@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useRef, useState, type ReactNode } from 'react'
+import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useMediaQuery } from '../hooks/useMedia'
 import { useTheme } from '../hooks/useTheme'
 import { mediaUrl } from '../media'
@@ -36,6 +36,23 @@ export function ResonanceBackdrop() {
   const mobile = useMediaQuery('(max-width: 760px)')
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const { theme } = useTheme()
+  // the 3D engine is large: fetch it only once the page has loaded and the browser is idle,
+  // so the still image and the text appear first (and count for the page's speed)
+  const [start, setStart] = useState(false)
+  useEffect(() => {
+    if (!webgl) return
+    let idle = 0
+    const go = () => {
+      const ric = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200))
+      idle = ric(() => setStart(true), { timeout: 1500 })
+    }
+    if (document.readyState === 'complete') go()
+    else window.addEventListener('load', go, { once: true })
+    return () => {
+      window.removeEventListener('load', go)
+      window.cancelIdleCallback?.(idle)
+    }
+  }, [webgl])
 
   return (
     <div className={`resonance ${ready ? 'is-ready' : ''} ${webgl ? '' : 'resonance--still'}`} aria-hidden>
@@ -43,7 +60,7 @@ export function ResonanceBackdrop() {
       {/* still render: shown while loading and as the fallback without WebGL */}
       <div className="resonance__still" style={{ backgroundImage: `url(${mediaUrl(`resonance-${mobile ? 'mobile' : 'desktop'}-${theme}.webp`)})` }} />
       <div ref={host} className="resonance__canvas">
-        {webgl && (
+        {webgl && start && (
           <Quiet>
             <Suspense fallback={null}>
               <ResonanceCanvas theme={theme} mobile={mobile} reducedMotion={reducedMotion} host={host} onReady={() => setReady(true)} />

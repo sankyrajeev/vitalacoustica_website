@@ -9903,3 +9903,13 @@ img.cover--screen {
 .admin__test .admin__sub {
   flex-basis: 100%;
 }
+
+/* while a page's code arrives (usually a blink): hold the space so the footer doesn't jump up */
+.page-loading {
+  min-height: 100vh;
+}
+
+.shop-head__title {
+  font-size: 11px;
+  font-weight: 600;
+}
