@@ -155,7 +155,7 @@ export async function licencesFor(db: D1Database, userId: string) {
     revoked: !!l.revoked,
     orderId: l.order_id,
     created: l.created_at,
-    download: isProduct(l.product) && !!PRODUCTS[l.product].releases && !l.revoked,
+    download: isProduct(l.product) && !!PRODUCTS[l.product].releases?.length && !l.revoked,
     devices: devices
       .filter((d) => d.key === l.key)
       .map((d) => ({ machine: d.machine, name: d.machine_name || `Computer ${d.machine.slice(0, 6)}`, activated: d.activated_at })),

@@ -94,6 +94,8 @@ before(() => {
       return Response.json({ id: 'email' })
     }
     if (url.startsWith('https://sandbox-api.paddle.com/customers/')) return Response.json({ data: { email: paddleEmail } })
+    // before the move to the organization: GitHub answers 404 there, and the site falls back
+    if (url.startsWith('https://api.github.com/repos/vitalacoustica/')) return new Response('Not Found', { status: 404 })
     if (url === 'https://api.github.com/repos/sankyrajeev/pixel_forge/releases/latest')
       return Response.json({
         tag_name: 'v1.0.1',

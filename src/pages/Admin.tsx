@@ -293,7 +293,7 @@ function SigningKeys() {
         Keep this page open until all three are saved. Once you leave it, the private key is gone for good unless you downloaded the backup.
       </p>
       {box('1', 'Website secret', 'Cloudflare → Workers & Pages → vitalacoustica-website → Settings → Variables and Secrets → Add → type Secret, name LICENCE_KEY_VANTA, paste this.', keys.secret, true)}
-      {box('2', 'Public key for VANTA builds', 'GitHub → sankyrajeev/vanta_vitalacoustica → Settings → Secrets and variables → Actions → New repository secret, name VANTA_LICENCE_PUBLIC_KEY, paste this. (It isn’t secret, but that’s where VANTA’s builds read it.)', keys.publicKey)}
+      {box('2', 'Public key for VANTA builds', 'GitHub → vitalacoustica/vanta_vitalacoustica (formerly sankyrajeev/vanta_vitalacoustica) → Settings → Secrets and variables → Actions → New repository secret, name VANTA_LICENCE_PUBLIC_KEY, paste this. (It isn’t secret, but that’s where VANTA’s builds read it.)', keys.publicKey)}
       <div className="admin__keybox">
         <p className="label">3 · Backup</p>
         <p className="admin__sub">The private key in VANTA’s own format. Keep it offline (a USB stick, a password manager). Never email it, paste it into a chat, or commit it.</p>

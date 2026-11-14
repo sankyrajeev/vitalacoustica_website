@@ -143,12 +143,12 @@ Pixel Forge has its own key format: `PF1.<payload>.<signature>`, signed with Ed2
 3. Never make a new key pair after this: every licence depends on the current one.
 
 **Update notices.** The app checks `GET /api/pixelforge/v1/latest?platform=…&version=…` (public, no licence needed) when it starts and once a day.
-- The website answers with the latest GitHub Release of `sankyrajeev/pixel_forge`:
+- The website answers with the latest GitHub Release of `vitalacoustica/pixel_forge` (or, until the repository has moved there, `sankyrajeev/pixel_forge`):
   - the tag `vX.Y.Z` is the version;
   - the release notes' bullet points become the "what's new" list;
   - writing `[critical]` anywhere in the notes makes the app open its update window instead of only showing a button.
 - The download link goes to the buyer's account.
-- It uses the same `GITHUB_RELEASES_TOKEN` as downloads (step 6), and the answer is cached for 10 minutes.
+- It uses the same tokens as downloads (step 6), and the answer is cached for 10 minutes.
 
 ### "Tell me when it's out"
 
@@ -191,9 +191,9 @@ Which products have an open beta is set in `server/accounts/beta.ts` (`OPEN_BETA
 - after the end date, activation is refused.
 
 **Downloads for testers.** A tester signs in, or creates an account, with the email address the key was sent to. The key appears in their account with a Download button.
-- That button lists the files of the latest GitHub Release of `sankyrajeev/vanta_vitalacoustica`.
+- That button lists the files of the latest GitHub Release of `vitalacoustica/vanta_vitalacoustica` (or, until the repository has moved there, `sankyrajeev/vanta_vitalacoustica`).
 - Releases are published when CI builds a `vX.Y.Z` tag.
-- The website needs `GITHUB_RELEASES_TOKEN` (step 6) with read access to that repository.
+- The website needs the token for that repository's owner (step 6).
 
 ## 4. Paddle
 
@@ -263,8 +263,11 @@ Installers are kept private on GitHub:
 
 1. Make a private repository for installers, e.g. `vitalacoustica/vanta-releases`.
 2. Publish each version as a **release** with the installers attached (`.pkg`, `.dmg`, `.exe`, …).
-3. Put the repository in `releases` for that product in `server/accounts/products.ts`.
-4. Make a fine-grained GitHub token with **Contents: read-only** on those repositories. Save it as the secret `GITHUB_RELEASES_TOKEN`.
+3. Put the repository in `releases` for that product in `server/accounts/products.ts`. The list is tried in order, so a repository that is moving can be listed at its new and old place.
+4. Make a fine-grained GitHub token with **Contents: read-only** on those repositories, one per owner (a fine-grained token belongs to one account):
+   - repositories in the `vitalacoustica` organization: resource owner `vitalacoustica`, saved as the secret `GITHUB_RELEASES_TOKEN_ORG`;
+   - repositories under the personal account: saved as the secret `GITHUB_RELEASES_TOKEN`.
+   Once every product's repository is in the organization, the personal entries and `GITHUB_RELEASES_TOKEN` can be removed.
 
 What owners see:
 

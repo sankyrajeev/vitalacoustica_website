@@ -4,8 +4,9 @@
 // keyPrefix   the start of each licence key: VNTA-XXXXX-XXXXX-XXXXX-XXXXX
 // licenceName the "product" written into signed licence files; each app checks it (VANTA checks "VANTA")
 // signingKey  the environment secret holding this product's private signing key (see docs/accounts.md)
-// releases    the GitHub repository whose latest release holds the installers; downloads stay
-//             private and are handed only to owners, through short-lived links
+// releases    the GitHub repositories whose latest release holds the installers, tried in order (the
+//             vitalacoustica organization first, the old place second, while the repositories move);
+//             downloads stay private and are handed only to owners, through short-lived links
 // format      the signed licence each app understands:
 //             'vanta' VANTA's licence file (RSA; JUCE apps: VANTA, VANTA Dynamics, ORBIT, Lumière Link)
 //             'pf1'   Pixel Forge's PF1.<payload>.<signature> token (Ed25519), locked to the computer
@@ -21,13 +22,13 @@ export type LicensedProduct = {
   licenceName: string
   maxDevices: number
   signingKey: string
-  releases?: string
+  releases?: readonly string[]
   format: 'vanta' | 'pf1'
   leaseDays?: number
 }
 
 export const PRODUCTS: Record<ProductId, LicensedProduct> = {
-  vanta: { id: 'vanta', name: 'VANTA', keyPrefix: 'VNTA', licenceName: 'VANTA', maxDevices: 2, signingKey: 'LICENCE_KEY_VANTA', releases: 'sankyrajeev/vanta_vitalacoustica', format: 'vanta' },
+  vanta: { id: 'vanta', name: 'VANTA', keyPrefix: 'VNTA', licenceName: 'VANTA', maxDevices: 2, signingKey: 'LICENCE_KEY_VANTA', releases: ['vitalacoustica/vanta_vitalacoustica', 'sankyrajeev/vanta_vitalacoustica'], format: 'vanta' },
   'vanta-dynamics': {
     id: 'vanta-dynamics',
     name: 'VANTA Dynamics',
@@ -36,10 +37,10 @@ export const PRODUCTS: Record<ProductId, LicensedProduct> = {
     maxDevices: 2,
     signingKey: 'LICENCE_KEY_VANTA',
     // Dynamics is in VANTA's installer
-    releases: 'sankyrajeev/vanta_vitalacoustica',
+    releases: ['vitalacoustica/vanta_vitalacoustica', 'sankyrajeev/vanta_vitalacoustica'],
     format: 'vanta',
   },
-  orbit: { id: 'orbit', name: 'ORBIT', keyPrefix: 'ORBT', licenceName: 'ORBIT', maxDevices: 2, signingKey: 'LICENCE_KEY_ORBIT', releases: '', format: 'vanta' },
+  orbit: { id: 'orbit', name: 'ORBIT', keyPrefix: 'ORBT', licenceName: 'ORBIT', maxDevices: 2, signingKey: 'LICENCE_KEY_ORBIT', releases: [], format: 'vanta' },
   'lumiere-link': {
     id: 'lumiere-link',
     name: 'Lumière Link',
@@ -47,7 +48,7 @@ export const PRODUCTS: Record<ProductId, LicensedProduct> = {
     licenceName: 'Lumiere Link',
     maxDevices: 2,
     signingKey: 'LICENCE_KEY_LUMIERE',
-    releases: '',
+    releases: [],
     format: 'vanta',
   },
   // demo mode on any number of computers; output to fixtures on one licensed computer at a time
@@ -58,7 +59,7 @@ export const PRODUCTS: Record<ProductId, LicensedProduct> = {
     licenceName: 'Pixel Forge',
     maxDevices: 1,
     signingKey: 'LICENCE_KEY_PIXELFORGE',
-    releases: 'sankyrajeev/pixel_forge',
+    releases: ['vitalacoustica/pixel_forge', 'sankyrajeev/pixel_forge'],
     format: 'pf1',
     leaseDays: 90,
   },

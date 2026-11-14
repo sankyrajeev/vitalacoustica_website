@@ -24,7 +24,10 @@ export type AccountsEnv = {
   PADDLE_API_KEY?: string
   PADDLE_ENV?: string // 'sandbox' while testing; production otherwise
   PADDLE_PRODUCTS?: string // JSON: { "pro_…": "vanta", … }
+  /** fine-grained, Contents read-only, on the release repositories under the personal account */
   GITHUB_RELEASES_TOKEN?: string
+  /** the same for the release repositories in the vitalacoustica organization */
+  GITHUB_RELEASES_TOKEN_ORG?: string
   LICENCE_KEY_VANTA?: string
   LICENCE_KEY_ORBIT?: string
   LICENCE_KEY_LUMIERE?: string
