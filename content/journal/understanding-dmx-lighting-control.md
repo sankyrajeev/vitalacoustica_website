@@ -8,8 +8,8 @@ publishAt: 2026-11-17T09:00:00+05:30
 author: Vital Acoustica
 featured: true
 cover: lighting-console
-coverAlt: A lighting console's faders and screens glowing in a dark control position
-coverCredit:
+coverAlt: Line drawing of a row of lights above a grid of 512 DMX addresses, a few of them lit
+coverCredit: Illustration by Vital Acoustica
 services:
   - light
   - visuals
@@ -19,7 +19,6 @@ related:
 verify:
   - Technical review by our lighting lead
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 

@@ -7,8 +7,8 @@ status: review
 publishAt: 2026-11-13T09:00:00+05:30
 author: Vital Acoustica
 cover: amp-rack
-coverAlt: Amplifier racks with status lights and neatly dressed cables backstage
-coverCredit:
+coverAlt: Line drawing of a sound system’s signal flow: console, processor, amplifiers and loudspeakers
+coverCredit: Illustration by Vital Acoustica
 services:
   - sound
   - production
@@ -19,7 +19,6 @@ related:
 verify:
   - Check that the steps describe how our crews actually work, and adjust anything we do differently
   - Confirm the byline
-  - Add the cover photo and its credit
 verified: false
 ---
 
