@@ -3,14 +3,17 @@
 // written to public/media/journal/<name>-{480,800,1600}.webp (the files articles name as `cover`).
 // We don't have photos for every article, so the covers are drawn instead.
 //
-//   node scripts/covers.mjs             draw every motif below
-//   node scripts/covers.mjs amp-rack    draw one
+//   node scripts/covers.mjs                       draw every motif below
+//   node scripts/covers.mjs amp-rack              draw one
+//   node scripts/covers.mjs roundup 2026-11-15    draw that day's Daily Roundup cover
+//                                                 (roundup-2026-11-15; reads the services in
+//                                                 content/journal/roundup-2026-11-15.md)
 //
 // Needs Playwright's Chromium (to render) and Python's Pillow (to write WebP). The images are
 // committed, so the site's build never needs either.
 
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -152,31 +155,120 @@ const MOTIFS = {
   },
 }
 
-function svg(name) {
+// The site's own typefaces, embedded so the drawn text matches the pages.
+const font = (file) => `data:font/woff2;base64,${readFileSync(join(ROOT, 'node_modules', file)).toString('base64')}`
+const FONTS = () => `<style>
+@font-face { font-family: 'Instrument Serif'; src: url(${font('@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2')}) format('woff2'); }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url(${font('@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2')}) format('woff2'); }
+</style>`
+
+function svg(body) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <defs><radialGradient id="glow" cx="0.5" cy="0.45" r="0.75"><stop offset="0" stop-color="#1f1c17"/><stop offset="1" stop-color="${BG}"/></radialGradient></defs>
 <rect width="${W}" height="${H}" fill="url(#glow)"/>
-${MOTIFS[name]()}
+${body}
 <text x="80" y="${H - 70}" font-family="Manrope, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="6" fill="${INK}" opacity="0.55">VITAL ACOUSTICA</text>
 </svg>`
+}
+
+// ---- Daily Roundup covers: the date, and a tile for each field the day's stories touch ----
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const FIELDS = [
+  ['sound', 'Sound'],
+  ['light', 'Light'],
+  ['visuals', 'Visuals'],
+]
+
+/** A tile's drawing, centred on (cx, cy); `c` is brass when the day covers that field, faint when not. */
+const GLYPHS = {
+  sound: (cx, cy, c, random) => {
+    let s = rect(cx - 70, cy - 40, 44, 80, c, 2.2, 4) + circle(cx - 48, cy - 16, 9, c, 1.8) + circle(cx - 48, cy + 16, 13, c, 1.8)
+    const arcs = 3 + Math.floor(random() * 2)
+    for (const i of range(arcs)) {
+      const r = 34 + i * 22
+      s += line(`M${cx - 10 + r * 0.25} ${cy - r * 0.9} Q ${cx - 10 + r} ${cy} ${cx - 10 + r * 0.25} ${cy + r * 0.9}`, 1.8, c)
+    }
+    return s
+  },
+  light: (cx, cy, c, random, id) => {
+    const spread = 40 + random() * 30
+    const lit = c === BRASS
+    let s = lit
+      ? `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BRASS}" stop-opacity="0.4"/><stop offset="1" stop-color="${BRASS}" stop-opacity="0"/></linearGradient></defs><path d="M${cx} ${cy - 50} L${cx - spread} ${cy + 80} L${cx + spread} ${cy + 80} Z" fill="url(#${id})"/>`
+      : ''
+    s += line(`M${cx - 60} ${cy - 86} L${cx + 60} ${cy - 86}`, 2.2, c) + line(`M${cx} ${cy - 86} L${cx} ${cy - 72}`, 1.8, c)
+    s += rect(cx - 20, cy - 72, 40, 26, c, 2, 5)
+    return s + line(`M${cx - spread} ${cy + 80} L${cx} ${cy - 46} L${cx + spread} ${cy + 80}`, 1.4, lit ? DIM : c)
+  },
+  visuals: (cx, cy, c, random) => {
+    let s = ''
+    for (const r of range(5)) for (const k of range(6)) {
+      const x = cx - 75 + k * 30
+      const y = cy - 60 + r * 30
+      s += c === BRASS && random() < 0.45 ? `<rect x="${x}" y="${y}" width="24" height="24" rx="2" fill="${BRASS}" opacity="${(0.35 + random() * 0.65).toFixed(2)}"/>` : rect(x, y, 24, 24, c === BRASS ? DIM : c, 1.2, 2)
+    }
+    return s
+  },
+}
+
+function roundupCover(date, services) {
+  const [y, m, d] = date.split('-').map(Number)
+  // the same day always draws the same cover; different days differ a little
+  let seed = y * 10000 + m * 100 + d
+  const random = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648)
+  let s = `<text x="130" y="230" font-family="Manrope, sans-serif" font-size="24" font-weight="600" letter-spacing="7" fill="${BRASS}">DAILY ROUNDUP</text>`
+  s += line('M130 262 L520 262', 1.4, DIM)
+  s += `<text x="118" y="560" font-family="'Instrument Serif', serif" font-size="330" fill="${INK}">${d}</text>`
+  s += `<text x="130" y="660" font-family="'Instrument Serif', serif" font-size="92" fill="${INK}">${MONTHS[m - 1]} ${y}</text>`
+  s += `<text x="130" y="730" font-family="Manrope, sans-serif" font-size="26" font-weight="500" letter-spacing="2" fill="${INK}" opacity="0.6">News in sound, light and visuals</text>`
+  FIELDS.forEach(([key, label], i) => {
+    const on = services.includes(key)
+    const c = on ? BRASS : FAINT
+    const x = 860 + i * 205
+    s += rect(x, 300, 180, 330, on ? DIM : FAINT, 1.6, 10)
+    s += GLYPHS[key](x + 90, 450, c, random, `g${i}`)
+    s += `<text x="${x + 90}" y="595" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="600" letter-spacing="4" fill="${on ? BRASS : INK}" opacity="${on ? 1 : 0.3}">${label.toUpperCase()}</text>`
+  })
+  return s
+}
+
+function roundupServices(date) {
+  const file = join(ROOT, `content/journal/roundup-${date}.md`)
+  if (!existsSync(file)) return FIELDS.map(([k]) => k)
+  const head = readFileSync(file, 'utf8').split(/^---$/m)[1] ?? ''
+  const block = head.match(/^services:\n((?:\s+-\s*\S+\n?)+)/m)
+  return block ? [...block[1].matchAll(/-\s*(\S+)/g)].map((x) => x[1]) : FIELDS.map(([k]) => k)
 }
 
 const require = createRequire(import.meta.url)
 const { chromium } = require('playwright')
 
 const only = process.argv[2]
-const names = only ? [only] : Object.keys(MOTIFS)
-if (only && !MOTIFS[only]) {
-  console.error(`no motif "${only}"; there are: ${Object.keys(MOTIFS).join(', ')}`)
-  process.exit(1)
+/** [file name, svg] for each cover to draw */
+let jobs
+if (only === 'roundup') {
+  const date = process.argv[3]
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date ?? '')) {
+    console.error('usage: node scripts/covers.mjs roundup YYYY-MM-DD')
+    process.exit(1)
+  }
+  jobs = [[`roundup-${date}`, svg(FONTS() + roundupCover(date, roundupServices(date)))]]
+} else {
+  if (only && !MOTIFS[only]) {
+    console.error(`no motif "${only}"; there are: ${Object.keys(MOTIFS).join(', ')} (or: roundup YYYY-MM-DD)`)
+    process.exit(1)
+  }
+  jobs = (only ? [only] : Object.keys(MOTIFS)).map((name) => [name, svg(MOTIFS[name]())])
 }
 
 mkdirSync(OUT, { recursive: true })
 const work = mkdtempSync(join(tmpdir(), 'covers-'))
 const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: W, height: H } })
-for (const name of names) {
-  await page.setContent(`<html><body style="margin:0;background:${BG}">${svg(name)}</body></html>`)
+for (const [name, art] of jobs) {
+  await page.setContent(`<html><body style="margin:0;background:${BG}">${art}</body></html>`)
+  await page.evaluate(() => document.fonts.ready)
   const png = join(work, `${name}.png`)
   await page.screenshot({ path: png })
   // three sizes, as the site expects

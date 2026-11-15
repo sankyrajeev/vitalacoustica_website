@@ -18,7 +18,9 @@ separate CMS to log into.
 of news in sound, lighting and visuals from around the world and writes a short roundup of 3 to 5
 stories, in its own words, each one credited and linked to its source. It is saved as
 `content/journal/roundup-YYYY-MM-DD.md`, category *Daily Roundup*, status `published`, and pushed;
-the site deploys it within minutes. A roundup needs no cover photo (the date stands in) but must
+the site deploys it within minutes. Each roundup gets a drawn cover showing its date and the fields
+its stories cover (`node scripts/covers.mjs roundup YYYY-MM-DD`, after the article is written);
+photos from the source articles aren't used, as we don't hold the rights to them. A roundup must
 list at least two sources. If there isn't enough real news that day, it skips the day. To stop it,
 turn off the scheduled task in Claude (claude.ai/code → Scheduled).
 
