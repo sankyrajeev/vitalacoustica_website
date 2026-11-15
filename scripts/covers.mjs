@@ -203,9 +203,10 @@ const GLYPHS = {
   },
   visuals: (cx, cy, c, random) => {
     let s = ''
-    for (const r of range(5)) for (const k of range(6)) {
-      const x = cx - 75 + k * 30
-      const y = cy - 60 + r * 30
+    // a 5 × 5 LED tile, centred in its panel
+    for (const r of range(5)) for (const k of range(5)) {
+      const x = cx - 72 + k * 30
+      const y = cy - 72 + r * 30
       s += c === BRASS && random() < 0.45 ? `<rect x="${x}" y="${y}" width="24" height="24" rx="2" fill="${BRASS}" opacity="${(0.35 + random() * 0.65).toFixed(2)}"/>` : rect(x, y, 24, 24, c === BRASS ? DIM : c, 1.2, 2)
     }
     return s
@@ -217,18 +218,18 @@ function roundupCover(date, services) {
   // the same day always draws the same cover; different days differ a little
   let seed = y * 10000 + m * 100 + d
   const random = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648)
-  let s = `<text x="130" y="230" font-family="Manrope, sans-serif" font-size="24" font-weight="600" letter-spacing="7" fill="${BRASS}">DAILY ROUNDUP</text>`
-  s += line('M130 262 L520 262', 1.4, DIM)
-  s += `<text x="118" y="560" font-family="'Instrument Serif', serif" font-size="330" fill="${INK}">${d}</text>`
-  s += `<text x="130" y="660" font-family="'Instrument Serif', serif" font-size="92" fill="${INK}">${MONTHS[m - 1]} ${y}</text>`
-  s += `<text x="130" y="730" font-family="Manrope, sans-serif" font-size="26" font-weight="500" letter-spacing="2" fill="${INK}" opacity="0.6">News in sound, light and visuals</text>`
+  let s = `<text x="130" y="270" font-family="Manrope, sans-serif" font-size="24" font-weight="600" letter-spacing="7" fill="${BRASS}">DAILY ROUNDUP</text>`
+  s += line('M130 302 L520 302', 1.4, DIM)
+  s += `<text x="118" y="600" font-family="'Instrument Serif', serif" font-size="330" fill="${INK}">${d}</text>`
+  s += `<text x="130" y="700" font-family="'Instrument Serif', serif" font-size="92" fill="${INK}">${MONTHS[m - 1]} ${y}</text>`
+  s += `<text x="130" y="770" font-family="Manrope, sans-serif" font-size="26" font-weight="500" letter-spacing="2" fill="${INK}" opacity="0.6">News in sound, light and visuals</text>`
   FIELDS.forEach(([key, label], i) => {
     const on = services.includes(key)
     const c = on ? BRASS : FAINT
     const x = 860 + i * 205
-    s += rect(x, 300, 180, 330, on ? DIM : FAINT, 1.6, 10)
-    s += GLYPHS[key](x + 90, 450, c, random, `g${i}`)
-    s += `<text x="${x + 90}" y="595" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="600" letter-spacing="4" fill="${on ? BRASS : INK}" opacity="${on ? 1 : 0.3}">${label.toUpperCase()}</text>`
+    s += rect(x, 340, 180, 330, on ? DIM : FAINT, 1.6, 10)
+    s += GLYPHS[key](x + 90, 480, c, random, `g${i}`)
+    s += `<text x="${x + 90}" y="635" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="600" letter-spacing="4" fill="${on ? BRASS : INK}" opacity="${on ? 1 : 0.3}">${label.toUpperCase()}</text>`
   })
   return s
 }
