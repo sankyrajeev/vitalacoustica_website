@@ -227,7 +227,7 @@ async function revoke(request: Request, env: AccountsEnv, db: D1Database) {
   if (!l.revoked) {
     const product = PRODUCTS[l.product as keyof typeof PRODUCTS]?.name ?? l.product
     try {
-      await sendMail(env, l.email, licenceRevoked(brand(siteUrl(env, request)), { product, name: l.name ?? '', key, beta: l.edition === 'Beta' }), env.BETA_REPLY_TO || 'beta@vitalacoustica.com')
+      await sendMail(env, l.email, licenceRevoked(brand(siteUrl(env, request)), { product, name: l.name ?? '', key, beta: l.edition === 'Beta' }), l.edition === 'Beta' ? env.BETA_REPLY_TO || 'beta@vitalacoustica.com' : 'support@vitalacoustica.com')
       emailed = true
     } catch (e) {
       console.error('revoke email', e)

@@ -561,7 +561,7 @@ export function licenceRevoked(b: Brand, r: { product: string; name: string; key
   const what = r.beta ? `${r.product} beta key` : `${r.product} licence key`
   const body = `${label(r.beta ? 'Beta access' : 'Your licence')}
 ${headline(`Your ${esc(what)} has been turned off.`)}
-${text(`${r.name ? `Hi ${esc(first(r.name))}, we` : 'We'}’ve turned off the ${esc(what)} ending in <strong>${esc(ending)}</strong>. ${esc(r.product)} will stop working with it, and it can’t be activated again.`)}
+${text(`${r.name ? `Hi ${esc(first(r.name))}, we` : 'We'}’ve turned off the ${esc(what)} ending in <strong>${esc(ending)}</strong>. ${esc(r.product)} will stop working with it the next time it checks in, and it can’t be activated again.`)}
 ${r.beta ? text(`Thank you for the time you gave to testing ${esc(r.product)}: it has helped shape the release.`) : ''}
 ${text('If you think this is a mistake, or have a question, just reply to this email.')}`
   return {
@@ -570,7 +570,7 @@ ${text('If you think this is a mistake, or have a question, just reply to this e
     text: plain([
       `Your ${what} has been turned off.`,
       '',
-      `We’ve turned off the ${what} ending in ${ending}. ${r.product} will stop working with it, and it can’t be activated again.`,
+      `We’ve turned off the ${what} ending in ${ending}. ${r.product} will stop working with it the next time it checks in, and it can’t be activated again.`,
       r.beta && `Thank you for the time you gave to testing ${r.product}.`,
       '',
       'If you think this is a mistake, or have a question, just reply to this email.',

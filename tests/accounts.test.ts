@@ -514,6 +514,16 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   assert.ok(again.text.includes(betaKey) && again.text.includes('30 June 2099'))
   assert.ok(again.text.includes(`${SITE}/account?from=beta-invite&email=tester%40example.com`))
 
+  // the app's daily check: active here, not on a computer it isn't activated on, 404 for made-up keys
+  const check = async (key: string, machine: string) => {
+    const r = await call('/api/licence/v1/validate', { method: 'POST', body: { key, machine } })
+    return r.status === 200 ? ((await r.json()) as { status: string }).status : r.status
+  }
+  assert.equal(await check(` ${betaKey.toLowerCase()} `, 'c'.repeat(32)), 'active')
+  assert.equal(await check(betaKey, 'e'.repeat(32)), 'not_activated')
+  assert.equal(await check('VNTA-AAAAA-BBBBB-CCCCC-DDDDD', 'c'.repeat(32)), 404)
+  assert.equal(await check(betaKey, ''), 400)
+
   // revoking stops the key, and tells the tester (once)
   res = await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })
   assert.deepEqual(await res.json(), { status: 'revoked', emailed: true })
@@ -523,6 +533,7 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   const afterRevoke = mail.length
   assert.deepEqual(await (await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).json(), { status: 'revoked', emailed: false })
   assert.equal(mail.length, afterRevoke)
+  assert.equal(await check(betaKey, 'c'.repeat(32)), 'revoked')
   assert.equal((await activate('c'.repeat(32))).status, 403)
   assert.equal((await call('/api/admin/beta/resend', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 409)
 })

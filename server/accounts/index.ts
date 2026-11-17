@@ -7,7 +7,7 @@ import { download, listDownloads } from './downloads.ts'
 import { handleAdmin, isAdmin } from './admin.ts'
 import { requestBeta } from './beta.ts'
 import { notifyMe } from './launch.ts'
-import { activate, deactivate, feedback, licencesFor, ping, removeDevice } from './licences.ts'
+import { activate, deactivate, feedback, licencesFor, ping, removeDevice, validate } from './licences.ts'
 import { ensureSchema } from './migrate.ts'
 import { paddleWebhook } from './paddle.ts'
 import { latestVersion, pluginLatest } from './updates.ts'
@@ -73,6 +73,7 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
   if (pathname === '/api/licence/v1/activate') return method === 'POST' ? activate(request, env, db) : methodNotAllowed('POST')
   if (pathname === '/api/licence/v1/feedback') return method === 'POST' ? feedback(request, db) : methodNotAllowed('POST')
   if (pathname === '/api/licence/v1/ping') return method === 'POST' ? ping(request, db) : methodNotAllowed('POST')
+  if (pathname === '/api/licence/v1/validate') return method === 'POST' ? validate(request, db) : methodNotAllowed('POST')
   if (pathname === '/api/licence/v1/deactivate') return method === 'POST' ? deactivate(request, db) : methodNotAllowed('POST')
   if (pathname === '/api/paddle/webhook') return method === 'POST' ? paddleWebhook(request, env, db) : methodNotAllowed('POST')
 

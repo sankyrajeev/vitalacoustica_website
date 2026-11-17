@@ -211,3 +211,30 @@ export async function ping(request: Request, db: D1Database) {
     .run()
   return json({ ok: true })
 }
+
+/**
+ * POST /api/licence/v1/validate {key, machine}: what VANTA asks once a day, so a key turned off
+ * here (revoked, refunded, or this computer removed from the account) stops working there too.
+ *
+ *   200 {status: "active"}         valid, and this computer is one of its activations
+ *   200 {status: "revoked"}        turned off: the app deletes its licence
+ *   200 {status: "not_activated"}  valid, but not on this computer any more: the app deletes it
+ *   200 {status: "expired"}        past its end date (informational)
+ *   404 unknown key; anything else (400, 429, 5xx) the app treats as "no answer" and changes nothing
+ */
+export async function validate(request: Request, db: D1Database) {
+  const body = await readJson<{ key?: string; machine?: string }>(request)
+  const key = normaliseKey(String(body?.key ?? ''))
+  const machine = String(body?.machine ?? '')
+  if (!key || !machine || machine.length > 128) return json({ error: 'The request was not understood.' }, 400)
+  if (await limited(db, `validate:${clientIp(request)}`, 120, 3600)) return json({ error: 'Too many requests. Try again later.' }, 429)
+  const row = await db.prepare('SELECT revoked, expires FROM licences WHERE key = ?').bind(key).first<{ revoked: number; expires: string | null }>()
+  if (!row) return json({ error: 'Unknown licence key.' }, 404)
+  if (row.revoked) return json({ status: 'revoked' })
+  const here = await db.prepare('SELECT 1 FROM activations WHERE key = ? AND machine = ?').bind(key, machine).first()
+  if (!here) return json({ status: 'not_activated' })
+  // the beta's last check-in counts as being seen
+  await db.prepare('UPDATE pings SET last_seen = ? WHERE key = ? AND machine = ?').bind(now(), key, machine).run()
+  if (row.expires && row.expires < today()) return json({ status: 'expired' })
+  return json({ status: 'active' })
+}
