@@ -39,6 +39,12 @@ export async function requestBeta(request: Request, env: AccountsEnv, db: D1Data
   }
 
   if ((await limited(db, `beta-ip:${clientIp(request)}`, 5, 3600)) || (await limited(db, `beta:${email}`, 3, 86400))) return json({ error: 'rate_limited' }, 429)
+  // someone who already has a working key for it needs no request: same answer, nothing new
+  const has = await db
+    .prepare("SELECT 1 FROM licences WHERE product = ? AND email = ? AND revoked = 0 AND (expires IS NULL OR expires >= date('now'))")
+    .bind(product, email)
+    .first()
+  if (has) return json({ status: 'received' })
   // one open request per person and product: asking again just says it's received
   const res = await db
     .prepare('INSERT INTO beta_requests (product, email, name, about, system, daw, created_at) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING')

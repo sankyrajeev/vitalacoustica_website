@@ -58,6 +58,20 @@ async function newEmailToken(db: D1Database, userId: string, purpose: 'verify' |
   return token
 }
 
+/**
+ * A confirmation link's user, without using it up: it keeps working until it expires. Mail
+ * scanners (Outlook, company filters) often open links before the person does; a one-time link
+ * would already be spent when they click it.
+ */
+async function peekEmailToken(db: D1Database, token: string, purpose: 'verify') {
+  if (!token || token.length > 100) return null
+  const row = await db
+    .prepare('SELECT user_id FROM email_tokens WHERE token_hash = ? AND purpose = ? AND expires_at > ?')
+    .bind(await sha256Hex(token), purpose, now())
+    .first<{ user_id: string }>()
+  return row?.user_id ?? null
+}
+
 /** Uses up a one-time email token; returns its user id if it was valid. */
 async function takeEmailToken(db: D1Database, token: string, purpose: 'verify' | 'reset') {
   if (!token || token.length > 100) return null
@@ -112,7 +126,7 @@ export async function signup(request: Request, env: AccountsEnv, db: D1Database)
 
 export async function verify(request: Request, env: AccountsEnv, db: D1Database) {
   const site = siteUrl(env, request)
-  const userId = await takeEmailToken(db, new URL(request.url).searchParams.get('token') || '', 'verify')
+  const userId = await peekEmailToken(db, new URL(request.url).searchParams.get('token') || '', 'verify')
   if (!userId) return Response.redirect(`${site}/account?notice=link_expired`, 303)
   const user = await db.prepare('UPDATE users SET email_verified = 1 WHERE id = ? RETURNING email').bind(userId).first<{ email: string }>()
   if (!user) return Response.redirect(`${site}/account?notice=link_expired`, 303)
@@ -134,6 +148,8 @@ export async function login(request: Request, env: AccountsEnv, db: D1Database) 
     if (!(await limited(db, `verify-mail:${email}`, 3, 3600))) await sendVerification(env, db, siteUrl(env, request), user)
     return json({ error: 'unverified' }, 403)
   }
+  // anything bought, or a beta key issued, with this address since last time joins the account
+  await claimPurchases(db, user.id, user.email)
   return json({ status: 'signed_in' }, 200, { 'Set-Cookie': await startSession(db, user.id) })
 }
 

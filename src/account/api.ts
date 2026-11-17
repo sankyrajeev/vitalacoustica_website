@@ -151,7 +151,7 @@ export function explain(error: string | undefined) {
     case 'invalid_credentials':
       return 'That email and password don’t match an account.'
     case 'unverified':
-      return 'Please confirm your email address first. We’ve sent you the link again.'
+      return 'Please confirm your email address first, with the link we emailed you (it can take a minute, and may be in spam). Signing in again sends a fresh link, up to three an hour.'
     case 'rate_limited':
       return 'Too many attempts. Please wait a little and try again.'
     case 'wrong_password':

@@ -199,8 +199,10 @@ test('sign up, verify the email, sign in', async () => {
   assert.equal(res.status, 303)
   assert.equal(res.headers.get('Location'), `${SITE}/account?notice=verified`)
   assert.ok(cookieOf(res))
-  // the link works once
-  assert.match((await call(link.slice(SITE.length))).headers.get('Location')!, /link_expired/)
+  // the link keeps working until it expires: a mail scanner opening it first doesn't spend it
+  res = await call(link.slice(SITE.length))
+  assert.equal(res.headers.get('Location'), `${SITE}/account?notice=verified`)
+  assert.equal((await call('/api/account/verify?token=made-up')).headers.get('Location'), `${SITE}/account?notice=link_expired`)
 
   assert.equal((await call('/api/account/login', { method: 'POST', body: { email: 'buyer@example.com', password: clientHash('wrong') } })).status, 401)
   res = await call('/api/account/login', { method: 'POST', body: { email: 'buyer@example.com', password: clientHash('correct horse') } })

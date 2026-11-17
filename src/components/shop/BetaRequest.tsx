@@ -1,16 +1,52 @@
-import { useState, type FormEvent } from 'react'
-import { api, explain } from '../../account/api'
+import { useEffect, useState, type FormEvent } from 'react'
+import { api, explain, type Licence, type Me } from '../../account/api'
 import type { Software } from '../../content/shop'
 import { Link } from '../Link'
 import { Arrow } from '../ui'
 
-/** "Request free beta access": the owner approves each request on the admin page. */
+const today = () => new Date().toISOString().slice(0, 10)
+
+/** A beta (or full) licence for this product that still works. */
+const access = (me: Me | null, product: string): Licence | undefined =>
+  me?.licences.find((l) => l.product === product && !l.revoked && (!l.expires || l.expires >= today()))
+
+const longDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+
+/**
+ * "Request free beta access": the owner approves each request on the admin page. Someone signed
+ * in who already has a key for this product sees that instead, with the way to their download.
+ */
 export function BetaRequest({ p }: { p: Software }) {
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
+  const [me, setMe] = useState<Me | null>(null)
+  useEffect(() => {
+    // signed out (or no accounts on this copy of the site): the request form as usual
+    void api.me().then((r) => r.ok && setMe(r.data))
+  }, [])
   if (!p.beta) return null
+
+  const has = access(me, p.id)
+  if (has)
+    return (
+      <section className="beta-request" aria-labelledby="beta-request-title">
+        <p className="label">{has.edition === 'Beta' ? 'Free beta' : 'Your licence'}</p>
+        <h2 id="beta-request-title" className="beta-request__title">
+          {has.edition === 'Beta' ? `You’re in the ${p.name} beta.` : `You already own ${p.name}.`}
+        </h2>
+        <p className="muted">
+          {has.edition === 'Beta'
+            ? `You already have access${has.expires ? ` until ${longDate(has.expires)}` : ''}, so there’s nothing to request. Your key and the latest beta download are in your account.`
+            : 'Your key and the latest download are in your account.'}
+        </p>
+        <Link to="/account" className="cta cta--primary">
+          <span>Download and your key</span>
+          <Arrow />
+        </Link>
+      </section>
+    )
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -50,11 +86,11 @@ export function BetaRequest({ p }: { p: Software }) {
           <div className="form__grid">
             <label className="field">
               <span>Your name</span>
-              <input name="name" autoComplete="name" maxLength={80} required />
+              <input name="name" autoComplete="name" maxLength={80} required defaultValue={me?.user.name ?? ''} />
             </label>
             <label className="field">
               <span>Email</span>
-              <input name="email" type="email" autoComplete="email" required />
+              <input name="email" type="email" autoComplete="email" required defaultValue={me?.user.email ?? ''} />
             </label>
             <label className="field">
               <span>Your computer</span>
