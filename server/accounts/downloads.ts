@@ -11,7 +11,15 @@ import { json, type AccountsEnv, type D1Database } from './db.ts'
 import { PRODUCTS, isProduct } from './products.ts'
 
 type Asset = { id: number; name: string; size: number; url: string }
-export type Release = { tag_name: string; name: string | null; body?: string | null; published_at: string; assets: Asset[] }
+export type Release = {
+  tag_name: string
+  name: string | null
+  body?: string | null
+  published_at: string
+  prerelease?: boolean
+  draft?: boolean
+  assets: Asset[]
+}
 export type Found = { release: Release; repo: string }
 
 export const RELEASES_ORG = 'vitalacoustica'
@@ -30,35 +38,55 @@ const gh = (token: string, url: string, accept = 'application/vnd.github+json') 
 // Answers that mean "not here, try the next place": not found, moved, or a token that can't see it.
 const TRY_NEXT = new Set([301, 302, 307, 308, 401, 403, 404])
 
-/** The latest release, from the first listed repository that has one. Stops (null) on a GitHub
- *  outage or network error rather than quietly answering from an older place. */
-export async function latest(env: AccountsEnv, repos: readonly string[]): Promise<Found | null> {
+/**
+ * The latest release, from the first listed repository that has one. Stops (null) on a GitHub
+ * outage or network error rather than quietly answering from an older place.
+ *
+ * GitHub's "latest release" never includes pre-releases, which is how beta builds are published.
+ * With `prerelease`, the newest published release of either kind counts, so beta testers get the
+ * newest beta.
+ */
+export async function latest(env: AccountsEnv, repos: readonly string[], opts: { prerelease?: boolean } = {}): Promise<Found | null> {
   for (const repo of repos) {
     const token = releasesToken(env, repo)
     if (!token) continue
     let res: Response
     try {
-      res = await gh(token, `https://api.github.com/repos/${repo}/releases/latest`)
+      res = await gh(token, `https://api.github.com/repos/${repo}/releases${opts.prerelease ? '?per_page=20' : '/latest'}`)
     } catch {
       return null
     }
-    if (res.ok) return { release: (await res.json()) as Release, repo }
+    if (res.ok) {
+      if (!opts.prerelease) return { release: (await res.json()) as Release, repo }
+      // newest first; drafts are never handed out
+      const release = ((await res.json()) as Release[]).find((r) => !r.draft)
+      if (release) return { release, repo }
+      continue
+    }
     if (!TRY_NEXT.has(res.status)) return null
   }
   return null
 }
 
+/** Does this account hold a working key for the product, and is it a beta tester's? */
 async function owns(db: D1Database, userId: string, product: string) {
-  return !!(await db.prepare('SELECT key FROM licences WHERE user_id = ? AND product = ? AND revoked = 0 LIMIT 1').bind(userId, product).first())
+  const rows = (
+    await db
+      .prepare("SELECT edition FROM licences WHERE user_id = ? AND product = ? AND revoked = 0 AND (expires IS NULL OR expires >= date('now'))")
+      .bind(userId, product)
+      .all<{ edition: string | null }>()
+  ).results
+  return { any: rows.length > 0, beta: rows.some((r) => r.edition === 'Beta') }
 }
 
 /** GET /api/account/downloads?product=vanta → the latest version's files. */
 export async function listDownloads(request: Request, env: AccountsEnv, db: D1Database, userId: string) {
   const product = new URL(request.url).searchParams.get('product') || ''
-  if (!isProduct(product) || !(await owns(db, userId, product))) return json({ error: 'not_found' }, 404)
+  const has = isProduct(product) ? await owns(db, userId, product) : null
+  if (!isProduct(product) || !has?.any) return json({ error: 'not_found' }, 404)
   const repos = PRODUCTS[product].releases ?? []
   if (!repos.length || !hasReleasesToken(env)) return json({ files: [], note: 'not_yet' })
-  const found = await latest(env, repos)
+  const found = await latest(env, repos, { prerelease: has.beta })
   if (!found) return json({ files: [], note: 'not_yet' })
   const { release } = found
   return json({
@@ -73,11 +101,12 @@ export async function download(request: Request, env: AccountsEnv, db: D1Databas
   const params = new URL(request.url).searchParams
   const product = params.get('product') || ''
   const fileId = Number(params.get('file'))
-  if (!isProduct(product) || !fileId || !(await owns(db, userId, product))) return json({ error: 'not_found' }, 404)
+  const has = isProduct(product) ? await owns(db, userId, product) : null
+  if (!isProduct(product) || !fileId || !has?.any) return json({ error: 'not_found' }, 404)
   const repos = PRODUCTS[product].releases ?? []
   if (!repos.length || !hasReleasesToken(env)) return json({ error: 'not_found' }, 404)
   // only files of the latest release, so older builds and other repositories can't be fetched by id
-  const found = await latest(env, repos)
+  const found = await latest(env, repos, { prerelease: has.beta })
   if (!found?.release.assets.some((a) => a.id === fileId)) return json({ error: 'not_found' }, 404)
   // the file comes from the same repository, with the same token, as the release that lists it
   const res = await gh(releasesToken(env, found.repo)!, `https://api.github.com/repos/${found.repo}/releases/assets/${fileId}`, 'application/octet-stream')

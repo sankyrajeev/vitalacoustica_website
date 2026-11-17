@@ -30,7 +30,7 @@ afterEach(() => {
 const latestUrl = (repo: string) => `https://api.github.com/repos/${repo}/releases/latest`
 const ok = (body: unknown) => () => Response.json(body)
 const status = (code: number) => () => new Response(null, { status: code })
-const owner = { prepare: () => ({ bind: () => ({ first: async () => ({ key: 'VNTA-1' }) }) }) } as unknown as D1Database
+const owner = { prepare: () => ({ bind: () => ({ first: async () => ({ key: 'VNTA-1' }), all: async () => ({ results: [{ edition: 'Standard' }] }) }) }) } as unknown as D1Database
 
 test('after the move: found in the organization, with the organization token', async () => {
   mockGitHub({ [latestUrl(ORG)]: ok(release('v1.0.0')) })

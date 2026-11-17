@@ -104,6 +104,16 @@ before(() => {
         body: '## What changed\n- Fixed **sACN** output on Windows\n* Added a [timeline](https://x) zoom\n\nThanks!',
         assets: [],
       })
+    // VANTA so far has beta builds only, published as pre-releases (and GitHub's "latest" skips those)
+    if (url === 'https://api.github.com/repos/sankyrajeev/vanta_vitalacoustica/releases/latest') return new Response('Not Found', { status: 404 })
+    if (url === 'https://api.github.com/repos/sankyrajeev/vanta_vitalacoustica/releases?per_page=20')
+      return Response.json([
+        { tag_name: 'v0.5.0-beta.1', name: 'not published yet', draft: true, prerelease: true, published_at: '', assets: [{ id: 99, name: 'draft.dmg', size: 1, url: '' }] },
+        { tag_name: 'v0.4.0-beta.3', name: 'VANTA 0.4.0 Beta 3', draft: false, prerelease: true, published_at: '2026-11-15T10:47:22Z', assets: [{ id: 77, name: 'VANTA-0.4.0-beta.3.dmg', size: 1234, url: '' }] },
+        { tag_name: 'v0.4.0-beta.2', name: 'VANTA 0.4.0-beta.2', draft: false, prerelease: true, published_at: '2026-11-15T09:39:57Z', assets: [{ id: 66, name: 'VANTA-0.4.0-beta.2.dmg', size: 1234, url: '' }] },
+      ])
+    if (url === 'https://api.github.com/repos/sankyrajeev/vanta_vitalacoustica/releases/assets/77')
+      return new Response(null, { status: 302, headers: { Location: 'https://objects.githubusercontent.com/vanta-beta-3.dmg' } })
     if (url === 'https://oauth2.googleapis.com/token') {
       const part = (o: object) => Buffer.from(JSON.stringify(o)).toString('base64url')
       return Response.json({ id_token: `${part({ alg: 'RS256' })}.${part(googleClaims)}.sig` })
@@ -476,6 +486,29 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   // revoking stops the key
   assert.equal((await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 200)
   assert.equal((await activate('c'.repeat(32))).status, 403)
+})
+
+test('a beta tester can download the newest beta build as soon as they have the key', async () => {
+  env.GITHUB_RELEASES_TOKEN = 'test'
+  try {
+    await call('/api/account/signup', { method: 'POST', body: { email: 'early@example.com', name: 'Early Tester', password: clientHash('early bird pass') } })
+    const res = await call(lastLink('early@example.com', '/api/account/verify').slice(SITE.length))
+    const tester = cookieOf(res)
+    // nothing to download before the key
+    assert.equal((await call('/api/account/downloads?product=vanta', { cookie: tester })).status, 404)
+    await call('/api/admin/beta/issue', { method: 'POST', cookie: session, body: { email: 'early@example.com', name: 'Early Tester', expires: '2099-01-31', send: false } })
+    const list = (await (await call('/api/account/downloads?product=vanta', { cookie: tester })).json()) as { version: string; files: { id: number; name: string }[] }
+    assert.equal(list.version, 'VANTA 0.4.0 Beta 3', 'the newest published beta, not a draft')
+    assert.deepEqual(list.files.map((f) => f.id), [77])
+    const file = await call('/api/account/download?product=vanta&file=77', { cookie: tester })
+    assert.equal(file.status, 302)
+    assert.equal(file.headers.get('Location'), 'https://objects.githubusercontent.com/vanta-beta-3.dmg')
+    // only the newest build's files, and never a draft's
+    assert.equal((await call('/api/account/download?product=vanta&file=99', { cookie: tester })).status, 404)
+    assert.equal((await call('/api/account/download?product=vanta&file=66', { cookie: tester })).status, 404)
+  } finally {
+    delete env.GITHUB_RELEASES_TOKEN
+  }
 })
 
 test('free beta: people ask, the owner approves (key and invitation) or declines', async () => {
