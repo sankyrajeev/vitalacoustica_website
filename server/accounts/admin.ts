@@ -12,7 +12,7 @@
 //   GET  /api/admin/launch            how many wait for each product ("Tell me when it's out")
 //   POST /api/admin/launch/send       { product }: email them all that it's out
 
-import { accountReset, accountVerify, betaInvite, betaRequestReceived, launchAlertOut, launchAlertSaved, leaseReminder, licenceDelivery, type Mail } from '../emails.ts'
+import { accountReset, accountVerify, betaInvite, betaRequestReceived, launchAlertOut, launchAlertSaved, leaseReminder, licenceDelivery, licenceRevoked, type Mail } from '../emails.ts'
 import type { User } from './auth.ts'
 import { newsletterOverview, sendTestEdition } from '../newsletter.ts'
 import { json, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
@@ -184,6 +184,7 @@ const SAMPLES: Record<string, (site: string) => Mail> = {
   'reset-password': (site) => accountReset(brand(site), `${site}/account`),
   'launch-signup': (site) => launchAlertSaved(brand(site), { product: 'ORBIT', detail: '', link: `${site}/shop/orbit` }),
   'launch-out': (site) => launchAlertOut(brand(site), { product: 'ORBIT', detail: '', link: `${site}/shop/orbit` }),
+  'key-revoked': (site) => licenceRevoked(brand(site), { product: 'VANTA', name: 'Sample Tester', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', beta: true }),
   'offline-reminder': (site) => leaseReminder(brand(site), { product: 'Pixel Forge', computer: 'Studio Mac', until: '26 November 2026', daysLeft: 14 }, `${site}/account`),
 }
 
@@ -212,12 +213,27 @@ async function testEdition(request: Request, env: AccountsEnv, user: User) {
   }
 }
 
-async function revoke(request: Request, db: D1Database) {
+/** Turns a key off, and tells its owner by email (replies go to the beta address). */
+async function revoke(request: Request, env: AccountsEnv, db: D1Database) {
   const key = normaliseKey(String((await readJson<{ key?: string }>(request))?.key ?? ''))
-  const res = await db.prepare('UPDATE licences SET revoked = 1 WHERE key = ?').bind(key).run()
-  if (!res.meta.changes) return json({ error: 'not_found' }, 404)
+  const l = await db
+    .prepare('SELECT l.product, l.email, l.edition, l.revoked, u.name FROM licences l LEFT JOIN users u ON u.id = l.user_id WHERE l.key = ?')
+    .bind(key)
+    .first<{ product: string; email: string; edition: string | null; revoked: number; name: string | null }>()
+  if (!l) return json({ error: 'not_found' }, 404)
+  await db.prepare('UPDATE licences SET revoked = 1 WHERE key = ?').bind(key).run()
   await db.prepare('DELETE FROM activations WHERE key = ?').bind(key).run()
-  return json({ status: 'revoked' })
+  let emailed = false
+  if (!l.revoked) {
+    const product = PRODUCTS[l.product as keyof typeof PRODUCTS]?.name ?? l.product
+    try {
+      await sendMail(env, l.email, licenceRevoked(brand(siteUrl(env, request)), { product, name: l.name ?? '', key, beta: l.edition === 'Beta' }), env.BETA_REPLY_TO || 'beta@vitalacoustica.com')
+      emailed = true
+    } catch (e) {
+      console.error('revoke email', e)
+    }
+  }
+  return json({ status: 'revoked', emailed })
 }
 
 export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Database, user: User | null, pathname: string) {
@@ -252,7 +268,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
   }
   if (request.method === 'POST') {
     if (pathname === '/api/admin/beta/issue') return issue(request, env, db)
-    if (pathname === '/api/admin/beta/revoke') return revoke(request, db)
+    if (pathname === '/api/admin/beta/revoke') return revoke(request, env, db)
     if (pathname === '/api/admin/beta/resend') return resendInvite(request, env, db)
     if (pathname === '/api/admin/beta/approve') return approve(request, env, db)
     if (pathname === '/api/admin/beta/decline') return decline(request, db)

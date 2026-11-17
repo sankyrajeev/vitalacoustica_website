@@ -206,6 +206,7 @@ const SAMPLE_EMAILS: [string, string][] = [
   ['reset-password', 'Reset your password'],
   ['launch-signup', 'You’re on the launch list'],
   ['launch-out', 'It’s out'],
+  ['key-revoked', 'Beta key turned off'],
   ['offline-reminder', 'Pixel Forge: go online'],
 ]
 
@@ -434,8 +435,9 @@ function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => voi
     setMsg(r.ok ? `Invitation sent again to ${r.data.sent}.` : 'Couldn’t send it. Check Resend’s Emails page for the error.')
   }
   async function revoke(t: Tester) {
-    if (!window.confirm(`Revoke ${t.key} (${t.email})? VANTA stops working on their computer.`)) return
-    await api.admin.revoke(t.key)
+    if (!window.confirm(`Revoke ${t.key} (${t.email})? VANTA stops working on their computer, and they get an email saying their key has been turned off.`)) return
+    const r = await api.admin.revoke(t.key)
+    setMsg(r.ok ? (r.data.emailed ? `Revoked. ${t.email} has been told by email.` : `Revoked, but the email to ${t.email} couldn’t be sent.`) : 'Couldn’t revoke it. Please try again.')
     onChange()
   }
   if (!testers.length) return <p className="muted">No beta keys yet.</p>

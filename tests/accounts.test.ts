@@ -514,8 +514,15 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   assert.ok(again.text.includes(betaKey) && again.text.includes('30 June 2099'))
   assert.ok(again.text.includes(`${SITE}/account?from=beta-invite&email=tester%40example.com`))
 
-  // revoking stops the key
-  assert.equal((await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 200)
+  // revoking stops the key, and tells the tester (once)
+  res = await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })
+  assert.deepEqual(await res.json(), { status: 'revoked', emailed: true })
+  const told = mail.at(-1)!
+  assert.deepEqual([told.to, told.subject, told.replyTo], ['tester@example.com', 'Your VANTA beta key has been turned off', 'beta@vitalacoustica.com'])
+  assert.ok(told.text.includes(betaKey.split('-').pop()!))
+  const afterRevoke = mail.length
+  assert.deepEqual(await (await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).json(), { status: 'revoked', emailed: false })
+  assert.equal(mail.length, afterRevoke)
   assert.equal((await activate('c'.repeat(32))).status, 403)
   assert.equal((await call('/api/admin/beta/resend', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 409)
 })
