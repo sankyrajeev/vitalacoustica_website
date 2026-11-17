@@ -56,6 +56,7 @@ const lastLink = (to: string, path: string) => {
   assert.ok(link, `no ${path} link emailed to ${to}`)
   return link
 }
+let mailDown = false
 let googleClaims: Record<string, unknown> = {}
 let paddleEmail = 'Buyer@Example.com'
 const realFetch = globalThis.fetch
@@ -89,6 +90,7 @@ before(() => {
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input instanceof Request ? input.url : input)
     if (url === 'https://api.resend.com/emails') {
+      if (mailDown) return new Response('{"message":"down"}', { status: 500 })
       const b = JSON.parse(String(init?.body))
       mail.push({ to: b.to[0], subject: b.subject, text: b.text, html: b.html, replyTo: b.reply_to })
       return Response.json({ id: 'email' })
@@ -106,7 +108,10 @@ before(() => {
       })
     // VANTA so far has beta builds only, published as pre-releases (and GitHub's "latest" skips those)
     if (url === 'https://api.github.com/repos/sankyrajeev/vanta_vitalacoustica/releases/latest') return new Response('Not Found', { status: 404 })
+    // the repository moved into the organization: GitHub redirects its old address
     if (url === 'https://api.github.com/repos/sankyrajeev/vanta_vitalacoustica/releases?per_page=20')
+      return new Response(null, { status: 301, headers: { Location: 'https://api.github.com/repositories/4242/releases?per_page=20' } })
+    if (url === 'https://api.github.com/repositories/4242/releases?per_page=20')
       return Response.json([
         { tag_name: 'v0.5.0-beta.1', name: 'not published yet', draft: true, prerelease: true, published_at: '', assets: [{ id: 99, name: 'draft.dmg', size: 1, url: '' }] },
         { tag_name: 'v0.4.0-beta.3', name: 'VANTA 0.4.0 Beta 3', draft: false, prerelease: true, published_at: '2026-11-15T10:47:22Z', assets: [{ id: 77, name: 'VANTA-0.4.0-beta.3.dmg', size: 1234, url: '' }] },
@@ -221,6 +226,23 @@ test('sign up, verify the email, sign in', async () => {
   const me = (await (await call('/api/account/me', { cookie: session })).json()) as { user: { email: string; name: string } }
   assert.equal(me.user.email, 'buyer@example.com')
   assert.equal(me.user.name, 'Asha Rao')
+})
+
+test('if the confirmation email can’t be sent, sign-up says so, and the link can be sent again', async () => {
+  mailDown = true
+  let res = await call('/api/account/signup', { method: 'POST', body: { email: 'unlucky@example.com', password: clientHash('unlucky pass') } })
+  assert.deepEqual([res.status, await res.json()], [502, { error: 'email_failed' }])
+  res = await call('/api/account/login', { method: 'POST', body: { email: 'unlucky@example.com', password: clientHash('unlucky pass') } })
+  assert.deepEqual([res.status, await res.json()], [403, { error: 'unverified', resent: false }])
+  mailDown = false
+  const before = mail.length
+  res = await call('/api/account/resend', { method: 'POST', body: { email: 'Unlucky@Example.com' } })
+  assert.deepEqual(await res.json(), { status: 'check_email' })
+  assert.equal(mail.length, before + 1)
+  res = await call(lastLink('unlucky@example.com', '/api/account/verify').slice(SITE.length))
+  assert.equal(res.headers.get('Location'), `${SITE}/account?notice=verified`)
+  // nobody's address is given away: the same answer for an address with no account
+  assert.deepEqual(await (await call('/api/account/resend', { method: 'POST', body: { email: 'nobody@example.com' } })).json(), { status: 'check_email' })
 })
 
 test('signing up again with the same email reveals nothing, and emails the owner', async () => {

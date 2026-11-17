@@ -37,11 +37,33 @@ function Field({ label, hint, ...input }: { label: string; hint?: string } & Inp
 
 /* ─────────────── signed out ─────────────── */
 
+/** "Didn't get it? Send the link again", for an address that isn't confirmed yet. */
+function ResendLink({ email }: { email: string }) {
+  const [state, setState] = useState<'idle' | 'busy' | 'sent' | string>('idle')
+  async function send() {
+    setState('busy')
+    const r = await api.resend(email)
+    setState(r.ok ? 'sent' : explain(r.data.error))
+  }
+  if (state === 'sent') return <p className="muted account__small">A new link is on its way to {email}.</p>
+  return (
+    <p className="muted account__small">
+      Didn’t get the email?{' '}
+      <button className="text-link" type="button" onClick={send} disabled={state === 'busy'}>
+        {state === 'busy' ? 'Sending…' : 'Send the link again'}
+      </button>
+      {state !== 'idle' && state !== 'busy' && <span role="alert"> {state}</span>}
+    </p>
+  )
+}
+
 function SignIn({ notice }: { notice: string | null }) {
   const [mode, setMode] = useState<'in' | 'up'>('in')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [sent, setSent] = useState('')
+  // an address whose confirmation link may need sending again
+  const [unconfirmed, setUnconfirmed] = useState('')
   const [google, setGoogle] = useState(false)
   useEffect(() => {
     void api.options().then((r) => setGoogle(r.ok && r.data.google))
@@ -60,6 +82,7 @@ function SignIn({ notice }: { notice: string | null }) {
     setBusy(false)
     if (r.ok && r.data.status === 'signed_in') return window.location.reload()
     if (r.ok) return setSent(email)
+    setUnconfirmed(r.data.error === 'unverified' || r.data.error === 'email_failed' ? email : '')
     setError(explain(r.data.error))
   }
 
@@ -69,8 +92,10 @@ function SignIn({ notice }: { notice: string | null }) {
         <p className="label">One more step</p>
         <h3>Check your email.</h3>
         <p className="muted">
-          We’ve sent a link to <strong>{sent}</strong>. Open it to confirm your address and sign in. It works for 24 hours.
+          We’ve sent a link to <strong>{sent}</strong>. Open it to confirm your address and sign in. It works for 24 hours, and may take a
+          minute to arrive: check your spam folder too.
         </p>
+        <ResendLink email={sent} />
       </div>
     )
 
@@ -111,6 +136,7 @@ function SignIn({ notice }: { notice: string | null }) {
         />
         {mode === 'up' && <Field label="Password, again" name="confirm" type="password" autoComplete="new-password" required />}
         {error && <Notice tone="error">{error}</Notice>}
+        {unconfirmed && <ResendLink email={unconfirmed} />}
         <div className="form__foot">
           <button className="cta cta--primary" type="submit" disabled={busy}>
             <span>{busy ? 'One moment…' : mode === 'in' ? 'Sign in' : 'Create account'}</span>
@@ -148,6 +174,15 @@ function GoogleMark() {
 const date = (seconds: number) => new Date(seconds * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 const money = (o: Order) =>
   o.total == null || !o.currency ? '' : new Intl.NumberFormat('en', { style: 'currency', currency: o.currency }).format(o.total / 100)
+/** "VANTA-0.4.0-33270df-macOS.pkg" → "macOS installer", by its ending; anything else by its name. */
+const fileLabel = (name: string) =>
+  /mac(os)?\.(pkg|dmg|zip)$/i.test(name) || /\.(pkg|dmg)$/i.test(name)
+    ? 'macOS installer'
+    : /win(dows)?\.(exe|msi|zip)$/i.test(name) || /\.(exe|msi)$/i.test(name)
+      ? 'Windows installer'
+      : /sha256sums/i.test(name)
+        ? 'Checksums'
+        : name
 const size = (bytes: number) => (bytes > 1e9 ? `${(bytes / 1e9).toFixed(1)} GB` : `${Math.max(1, Math.round(bytes / 1e6))} MB`)
 
 function Downloads({ product }: { product: string }) {
@@ -178,7 +213,7 @@ function Downloads({ product }: { product: string }) {
         {files.map((f) => (
           <li key={f.id}>
             <a className="text-link" href={`/api/account/download?product=${encodeURIComponent(product)}&file=${f.id}`}>
-              {f.name} <span className="muted">· {size(f.size)}</span>
+              {fileLabel(f.name)} <span className="muted">· {fileLabel(f.name) === f.name ? '' : `${f.name} · `}{size(f.size)}</span>
             </a>
           </li>
         ))}

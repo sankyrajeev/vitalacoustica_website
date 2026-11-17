@@ -117,6 +117,7 @@ export const api = {
   login: async (email: string, password: string) => request('/api/account/login', { email, password: await passwordHash(email, password) }),
   logout: () => request('/api/account/logout', {}),
   forgot: (email: string) => request('/api/account/forgot', { email }),
+  resend: (email: string) => request('/api/account/resend', { email }),
   resetInfo: (token: string) => request<{ email: string }>(`/api/account/reset?token=${encodeURIComponent(token)}`),
   reset: async (token: string, email: string, password: string) => request('/api/account/reset', { token, password: await passwordHash(email, password) }),
   changePassword: async (email: string, current: string | null, next: string) =>
@@ -151,7 +152,9 @@ export function explain(error: string | undefined) {
     case 'invalid_credentials':
       return 'That email and password don’t match an account.'
     case 'unverified':
-      return 'Please confirm your email address first, with the link we emailed you (it can take a minute, and may be in spam). Signing in again sends a fresh link, up to three an hour.'
+      return 'Please confirm your email address first, with the link we emailed you. It can take a minute, and may be in your spam folder.'
+    case 'email_failed':
+      return 'We couldn’t send the email just now. Please try again in a few minutes, or write to support@vitalacoustica.com.'
     case 'rate_limited':
       return 'Too many attempts. Please wait a little and try again.'
     case 'wrong_password':

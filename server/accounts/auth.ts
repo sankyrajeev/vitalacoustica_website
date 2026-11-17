@@ -90,9 +90,16 @@ export async function claimPurchases(db: D1Database, userId: string, email: stri
   ])
 }
 
+/** Emails a confirmation link. Returns false (and logs why) if the email couldn't be sent. */
 async function sendVerification(env: AccountsEnv, db: D1Database, site: string, user: { id: string; email: string; name: string | null }) {
   const token = await newEmailToken(db, user.id, 'verify', VERIFY_HOURS)
-  await sendMail(env, user.email, accountVerify(brand(site), `${site}/api/account/verify?token=${token}`, user.name ?? ''))
+  try {
+    await sendMail(env, user.email, accountVerify(brand(site), `${site}/api/account/verify?token=${token}`, user.name ?? ''))
+    return true
+  } catch (e) {
+    console.error('verification email failed', user.email, e)
+    return false
+  }
 }
 
 const normaliseEmail = (e: unknown) => (typeof e === 'string' ? e.trim().toLowerCase() : '')
@@ -112,7 +119,7 @@ export async function signup(request: Request, env: AccountsEnv, db: D1Database)
   if (existing) {
     // the same answer either way, so the form can't be used to find out who has an account
     if (!(await limited(db, `exists-mail:${email}`, 2, 3600)))
-      await sendMail(env, email, accountExists(brand(site), `${site}/account`, `${site}/account/forgot`))
+      await sendMail(env, email, accountExists(brand(site), `${site}/account`, `${site}/account/forgot`)).catch((e) => console.error('account-exists email failed', e))
     return json({ status: 'check_email' })
   }
   const id = newId()
@@ -120,7 +127,18 @@ export async function signup(request: Request, env: AccountsEnv, db: D1Database)
     .prepare('INSERT INTO users (id, email, name, password_hash, email_verified, created_at) VALUES (?, ?, ?, ?, 0, ?)')
     .bind(id, email, name || null, await hashPassword(password), now())
     .run()
-  await sendVerification(env, db, site, { id, email, name })
+  // the account exists either way; if the email didn't go, say so (they can ask for it again)
+  if (!(await sendVerification(env, db, site, { id, email, name }))) return json({ error: 'email_failed' }, 502)
+  return json({ status: 'check_email' })
+}
+
+/** POST /api/account/resend {email}: the confirmation link again. The same answer whoever asks. */
+export async function resendVerification(request: Request, env: AccountsEnv, db: D1Database) {
+  const email = normaliseEmail((await readJson<{ email?: string }>(request))?.email)
+  if (!EMAIL.test(email)) return json({ error: 'invalid_email' }, 400)
+  if ((await limited(db, `resend-ip:${clientIp(request)}`, 10, 3600)) || (await limited(db, `verify-mail:${email}`, 3, 3600))) return json({ error: 'rate_limited' }, 429)
+  const user = await db.prepare('SELECT id, email, name, email_verified FROM users WHERE email = ?').bind(email).first<{ id: string; email: string; name: string | null; email_verified: number }>()
+  if (user && !user.email_verified && !(await sendVerification(env, db, siteUrl(env, request), user))) return json({ error: 'email_failed' }, 502)
   return json({ status: 'check_email' })
 }
 
@@ -145,8 +163,8 @@ export async function login(request: Request, env: AccountsEnv, db: D1Database) 
   const user = await db.prepare('SELECT id, email, name, password_hash, email_verified FROM users WHERE email = ?').bind(email).first<User>()
   if (!user || !(await checkPassword(password, user.password_hash))) return json({ error: 'invalid_credentials' }, 401)
   if (!user.email_verified) {
-    if (!(await limited(db, `verify-mail:${email}`, 3, 3600))) await sendVerification(env, db, siteUrl(env, request), user)
-    return json({ error: 'unverified' }, 403)
+    const sent = !(await limited(db, `verify-mail:${email}`, 3, 3600)) && (await sendVerification(env, db, siteUrl(env, request), user))
+    return json({ error: 'unverified', resent: sent }, 403)
   }
   // anything bought, or a beta key issued, with this address since last time joins the account
   await claimPurchases(db, user.id, user.email)
@@ -169,7 +187,12 @@ export async function forgot(request: Request, env: AccountsEnv, db: D1Database)
   if (user) {
     const site = siteUrl(env, request)
     const token = await newEmailToken(db, user.id, 'reset', RESET_HOURS)
-    await sendMail(env, email, accountReset(brand(site), `${site}/account/reset?token=${token}`))
+    try {
+      await sendMail(env, email, accountReset(brand(site), `${site}/account/reset?token=${token}`))
+    } catch (e) {
+      console.error('reset email failed', email, e)
+      return json({ error: 'email_failed' }, 502)
+    }
   }
   return json({ status: 'check_email' })
 }

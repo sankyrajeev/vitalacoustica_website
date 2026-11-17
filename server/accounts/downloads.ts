@@ -53,6 +53,10 @@ export async function latest(env: AccountsEnv, repos: readonly string[], opts: {
     let res: Response
     try {
       res = await gh(token, `https://api.github.com/repos/${repo}/releases${opts.prerelease ? '?per_page=20' : '/latest'}`)
+      // a repository moved to another owner (e.g. into the organization) answers with a redirect
+      // to its new address: follow it once, with the same token
+      const moved = res.headers.get('Location')
+      if ([301, 302, 307, 308].includes(res.status) && moved?.startsWith('https://api.github.com/')) res = await gh(token, moved)
     } catch {
       return null
     }

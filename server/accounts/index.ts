@@ -1,7 +1,7 @@
 // Routes for accounts, orders and licences. Everything here needs the D1 database (binding DB);
 // until it's set up these routes answer 503 not_configured and the rest of the site is unaffected.
 
-import { changePassword, currentUser, type User, forgot, googleCallback, googleStart, login, logout, reset, resetInfo, signup, verify } from './auth.ts'
+import { changePassword, currentUser, resendVerification, type User, forgot, googleCallback, googleStart, login, logout, reset, resetInfo, signup, verify } from './auth.ts'
 import { json, notConfigured, sameOrigin, type AccountsEnv, type D1Database } from './db.ts'
 import { download, listDownloads } from './downloads.ts'
 import { handleAdmin, isAdmin } from './admin.ts'
@@ -87,6 +87,7 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
     if (pathname === '/api/account/login') return login(request, env, db)
     if (pathname === '/api/account/logout') return logout(request, db)
     if (pathname === '/api/account/forgot') return forgot(request, env, db)
+    if (pathname === '/api/account/resend') return resendVerification(request, env, db)
     if (pathname === '/api/account/reset') return reset(request, db)
   }
 
