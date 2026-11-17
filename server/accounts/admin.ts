@@ -101,7 +101,15 @@ export async function issueBetaKey(
       await sendMail(
         env,
         t.email,
-        betaInvite(brand(site), { product: product.name, name: t.name, key, expires: until, download: `${site}/account`, guide: env.BETA_GUIDE_URL || undefined }),
+        betaInvite(brand(site), {
+          product: product.name,
+          name: t.name,
+          key,
+          expires: until,
+          // the account page welcomes them, with this address filled in
+          download: `${site}/account?from=beta-invite&email=${encodeURIComponent(t.email)}`,
+          guide: env.BETA_GUIDE_URL || undefined,
+        }),
         env.BETA_REPLY_TO || 'beta@vitalacoustica.com',
       )
       sent = true
@@ -151,7 +159,7 @@ async function decline(request: Request, db: D1Database) {
 
 /** Sample versions of the customer emails, sent only to the signed-in admin: no keys, accounts or lists change. */
 const SAMPLES: Record<string, (site: string) => Mail> = {
-  'beta-invite': (site) => betaInvite(brand(site), { product: 'VANTA', name: 'Sample Tester', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', expires: '31 January 2027', download: `${site}/account` }),
+  'beta-invite': (site) => betaInvite(brand(site), { product: 'VANTA', name: 'Sample Tester', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', expires: '31 January 2027', download: `${site}/account?from=beta-invite&email=sample%40example.com` }),
   'beta-request-received': (site) => betaRequestReceived(brand(site), { product: 'VANTA', name: 'Sample Tester' }),
   'licence-keys': (site) => licenceDelivery(brand(site), [{ product: 'VANTA', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', devices: 2 }], `${site}/account`),
   'confirm-email': (site) => accountVerify(brand(site), `${site}/account`, 'Sample Tester'),

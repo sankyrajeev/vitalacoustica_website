@@ -10022,3 +10022,39 @@ img.cover--screen {
   font-size: 11px;
   font-weight: 600;
 }
+
+/* the welcome for testers arriving from their beta invitation */
+.welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: var(--s5);
+  background: rgba(8, 8, 8, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.welcome__card {
+  width: min(520px, 100%);
+  padding: clamp(28px, 5vw, 44px);
+  border: var(--hair) solid var(--line-strong);
+  border-left: 2px solid var(--accent);
+  background: var(--surface);
+}
+
+.welcome__title {
+  margin: var(--s3) 0 var(--s4);
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(30px, 4vw, 40px);
+  line-height: 1.1;
+}
+
+.welcome__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s4) var(--s6);
+  margin-top: var(--s6);
+}

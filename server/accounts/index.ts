@@ -10,7 +10,7 @@ import { notifyMe } from './launch.ts'
 import { activate, deactivate, feedback, licencesFor, ping, removeDevice } from './licences.ts'
 import { ensureSchema } from './migrate.ts'
 import { paddleWebhook } from './paddle.ts'
-import { latestVersion } from './updates.ts'
+import { latestVersion, pluginLatest } from './updates.ts'
 
 export type { AccountsEnv } from './db.ts'
 
@@ -55,6 +55,7 @@ export async function handleAccounts(request: Request, env: AccountsEnv): Promis
   if (pathname === '/api/account/options') return json({ google: !!env.GOOGLE_CLIENT_ID && !!env.GOOGLE_CLIENT_SECRET })
   // update checks need no database
   if (pathname === '/api/pixelforge/v1/latest') return method === 'GET' || method === 'HEAD' ? latestVersion(request, env, 'pixel-forge') : methodNotAllowed('GET')
+  if (pathname === '/api/licence/v1/latest') return method === 'GET' || method === 'HEAD' ? pluginLatest(request, env) : methodNotAllowed('GET')
   // a new or upgraded database sets itself up on first use
   if (env.DB) await ensureSchema(env.DB)
 

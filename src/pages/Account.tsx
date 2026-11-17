@@ -57,8 +57,49 @@ function ResendLink({ email }: { email: string }) {
   )
 }
 
-function SignIn({ notice }: { notice: string | null }) {
+/**
+ * Arriving from a beta invitation's download link (/account?from=beta-invite&email=…): what to do
+ * first, before the bare sign-in form.
+ */
+function InviteWelcome({ onChoose }: { onChoose: (mode: 'in' | 'up') => void }) {
+  useEffect(() => {
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onChoose('in')
+    window.addEventListener('keydown', esc)
+    return () => window.removeEventListener('keydown', esc)
+  }, [onChoose])
+  return (
+    <div className="welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+      <div className="welcome__card">
+        <p className="label">VANTA beta</p>
+        <h2 id="welcome-title" className="welcome__title">
+          Welcome to the VANTA beta.
+        </h2>
+        <p className="muted">
+          To download VANTA and keep your beta key safe, create your free Vital Acoustica account with the email your invitation was
+          sent to.
+        </p>
+        <div className="welcome__actions">
+          <button className="cta cta--primary" type="button" onClick={() => onChoose('up')} autoFocus>
+            <span>Create my account</span>
+            <Arrow />
+          </button>
+          <button className="text-link" type="button" onClick={() => onChoose('in')}>
+            I already have an account: sign in
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** The note shown when someone signs up or in with another address than their invitation's. */
+const inviteMismatch = (invite: string) =>
+  `Your beta invitation was sent to ${invite}, and your beta key is with that address. Please use it here; if you can’t, write to beta@vitalacoustica.com.`
+
+function SignIn({ notice, invite }: { notice: string | null; invite: string | null }) {
   const [mode, setMode] = useState<'in' | 'up'>('in')
+  const [welcome, setWelcome] = useState(invite !== null)
+  const [typed, setTyped] = useState(invite ?? '')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [sent, setSent] = useState('')
@@ -122,9 +163,18 @@ function SignIn({ notice }: { notice: string | null }) {
         </>
       )}
 
+      {welcome && (
+        <InviteWelcome
+          onChoose={(m) => {
+            setMode(m)
+            setWelcome(false)
+          }}
+        />
+      )}
       <form className="form account__form" onSubmit={submit} key={mode}>
         {mode === 'up' && <Field label="Your name" name="name" autoComplete="name" maxLength={80} />}
-        <Field label="Email" name="email" type="email" autoComplete="email" required />
+        <Field label="Email" name="email" type="email" autoComplete="email" required defaultValue={typed} onChange={(e) => setTyped(e.currentTarget.value)} />
+        {invite && typed.trim() && typed.trim().toLowerCase() !== invite && <p className="muted account__small">{inviteMismatch(invite)}</p>}
         <Field
           label="Password"
           hint={mode === 'up' ? `at least ${MIN_PASSWORD} characters` : undefined}
@@ -404,6 +454,8 @@ export function AccountPage() {
   const [me, setMe] = useState<Me | null>(null)
   const [state, setState] = useState<'loading' | 'in' | 'out' | 'down'>('loading')
   const [notice] = useState(() => queryParam('notice'))
+  // from a beta invitation's link: the address it was sent to ('' if the link doesn't say)
+  const [invite] = useState(() => (queryParam('from') === 'beta-invite' ? (queryParam('email') || '').trim().toLowerCase() : null))
 
   const load = () =>
     api.me().then((r) => {
@@ -426,7 +478,10 @@ export function AccountPage() {
       <div className="wrap account">
         {state === 'loading' && <p className="muted">Loading…</p>}
         {state === 'down' && <Notice tone="error">{explain('not_configured')}</Notice>}
-        {state === 'out' && <SignIn notice={notice} />}
+        {state === 'out' && <SignIn notice={notice} invite={invite} />}
+        {state === 'in' && me && invite && me.user.email !== invite && !me.licences.some((l) => l.product === 'vanta') && (
+          <Notice tone="error">{inviteMismatch(invite)}</Notice>
+        )}
         {state === 'in' && me && <Dashboard me={me} notice={notice} reload={load} />}
       </div>
     </>

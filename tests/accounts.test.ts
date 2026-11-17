@@ -533,6 +533,20 @@ test('a beta tester can download the newest beta build as soon as they have the 
   }
 })
 
+test('VANTA update notice: the newest beta for beta builds, nothing yet for release builds', async () => {
+  const ask = (q: string) => handleAccounts(new Request(`${SITE}/api/licence/v1/latest?${q}`), { SITE_URL: SITE, GITHUB_RELEASES_TOKEN: 'test' })
+  let res = (await ask('product=VANTA&channel=beta&current=v0.4.0-beta.2&os=mac'))!
+  assert.equal(res.status, 200)
+  const body = (await res.json()) as { version: string; url: string; notes: string }
+  assert.deepEqual([body.version, body.url], ['v0.4.0-beta.3', `${SITE}/account`])
+  assert.equal(typeof body.notes, 'string')
+  // no full release yet: the plug-in hears "no update"
+  assert.equal((await ask('product=VANTA&channel=release&current=v0.4.0-beta.2&os=win'))!.status, 404)
+  assert.equal((await ask('product=ORBIT&channel=beta'))!.status, 404)
+  // without the GitHub token: quietly nothing
+  assert.equal((await handleAccounts(new Request(`${SITE}/api/licence/v1/latest?product=VANTA&channel=beta`), { SITE_URL: SITE }))!.status, 404)
+})
+
 test('free beta: people ask, the owner approves (key and invitation) or declines', async () => {
   const ask = (body: Record<string, unknown>, headers: Record<string, string> = {}) => call('/api/beta/request', { method: 'POST', body, headers })
   assert.equal((await ask({ product: 'vanta', email: 'a@example.com' }, { Origin: 'https://evil.example' })).status, 403)
