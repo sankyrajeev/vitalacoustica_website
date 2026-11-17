@@ -94,30 +94,48 @@ export async function issueBetaKey(
     .prepare('INSERT INTO licences (key, product, user_id, email, edition, max_devices, expires, note, created_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)')
     .bind(key, product.id, user?.id ?? null, t.email, 'Beta', t.expires, note, now())
     .run()
-  let sent = false
-  if (t.send) {
-    const until = new Date(`${t.expires}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
-    try {
-      await sendMail(
-        env,
-        t.email,
-        betaInvite(brand(site), {
-          product: product.name,
-          name: t.name,
-          key,
-          expires: until,
-          // the account page welcomes them, with this address filled in
-          download: `${site}/account?from=beta-invite&email=${encodeURIComponent(t.email)}`,
-          guide: env.BETA_GUIDE_URL || undefined,
-        }),
-        env.BETA_REPLY_TO || 'beta@vitalacoustica.com',
-      )
-      sent = true
-    } catch (e) {
-      console.error('beta invite', e)
-    }
-  }
+  const sent = t.send ? await sendBetaInvite(env, site, { email: t.email, name: t.name, key, expires: t.expires }) : false
   return { key, sent }
+}
+
+/** Emails a tester their beta invitation: the key, its end date and the download link. */
+async function sendBetaInvite(env: AccountsEnv, site: string, t: { email: string; name: string; key: string; expires: string | null }) {
+  const until = t.expires
+    ? new Date(`${t.expires}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+    : 'the end of the beta'
+  try {
+    await sendMail(
+      env,
+      t.email,
+      betaInvite(brand(site), {
+        product: PRODUCTS.vanta.name,
+        name: t.name,
+        key: t.key,
+        expires: until,
+        // the account page welcomes them, with this address filled in
+        download: `${site}/account?from=beta-invite&email=${encodeURIComponent(t.email)}`,
+        guide: env.BETA_GUIDE_URL || undefined,
+      }),
+      env.BETA_REPLY_TO || 'beta@vitalacoustica.com',
+    )
+    return true
+  } catch (e) {
+    console.error('beta invite', e)
+    return false
+  }
+}
+
+/** POST /api/admin/beta/resend {key}: the same invitation again, with the current download link. */
+async function resendInvite(request: Request, env: AccountsEnv, db: D1Database) {
+  const key = normaliseKey(String((await readJson<{ key?: string }>(request))?.key ?? ''))
+  const l = await db
+    .prepare("SELECT l.key, l.email, l.expires, l.revoked, u.name AS account_name, r.name AS request_name FROM licences l LEFT JOIN users u ON u.id = l.user_id LEFT JOIN beta_requests r ON r.licence_key = l.key WHERE l.key = ? AND l.edition = 'Beta'")
+    .bind(key)
+    .first<{ key: string; email: string; expires: string | null; revoked: number; account_name: string | null; request_name: string | null }>()
+  if (!l) return json({ error: 'not_found' }, 404)
+  if (l.revoked) return json({ error: 'revoked' }, 409)
+  const sent = await sendBetaInvite(env, siteUrl(env, request), { email: l.email, name: l.account_name || l.request_name || '', key: l.key, expires: l.expires })
+  return sent ? json({ sent: l.email }) : json({ error: 'unavailable' }, 503)
 }
 
 const validExpiry = (d: string) => DATE.test(d) && d > new Date().toISOString().slice(0, 10)
@@ -235,6 +253,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
   if (request.method === 'POST') {
     if (pathname === '/api/admin/beta/issue') return issue(request, env, db)
     if (pathname === '/api/admin/beta/revoke') return revoke(request, db)
+    if (pathname === '/api/admin/beta/resend') return resendInvite(request, env, db)
     if (pathname === '/api/admin/beta/approve') return approve(request, env, db)
     if (pathname === '/api/admin/beta/decline') return decline(request, db)
     if (pathname === '/api/admin/launch/send') return sendLaunch(request, env, db)

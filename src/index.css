@@ -10058,3 +10058,10 @@ img.cover--screen {
   gap: var(--s4) var(--s6);
   margin-top: var(--s6);
 }
+
+.admin__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s5);
+  white-space: nowrap;
+}

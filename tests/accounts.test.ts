@@ -505,9 +505,19 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   assert.deepEqual([mail.at(-1)!.to, mail.at(-1)!.subject], ['buyer@example.com', '[Test] Your VANTA beta key'])
   assert.equal((await call('/api/admin/test-email', { method: 'POST', body: { which: 'beta-invite' } })).status, 404)
 
+  // the invitation again, with the key and the welcome link; admins only
+  assert.equal((await call('/api/admin/beta/resend', { method: 'POST', body: { key: betaKey } })).status, 404)
+  res = await call('/api/admin/beta/resend', { method: 'POST', cookie: session, body: { key: betaKey.toLowerCase() } })
+  assert.deepEqual(await res.json(), { sent: 'tester@example.com' })
+  const again = mail.at(-1)!
+  assert.deepEqual([again.to, again.subject], ['tester@example.com', 'Your VANTA beta key'])
+  assert.ok(again.text.includes(betaKey) && again.text.includes('30 June 2099'))
+  assert.ok(again.text.includes(`${SITE}/account?from=beta-invite&email=tester%40example.com`))
+
   // revoking stops the key
   assert.equal((await call('/api/admin/beta/revoke', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 200)
   assert.equal((await activate('c'.repeat(32))).status, 403)
+  assert.equal((await call('/api/admin/beta/resend', { method: 'POST', cookie: session, body: { key: betaKey } })).status, 409)
 })
 
 test('a beta tester can download the newest beta build as soon as they have the key', async () => {

@@ -424,6 +424,15 @@ function LaunchAlerts() {
 }
 
 function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => void }) {
+  const [sending, setSending] = useState('')
+  const [msg, setMsg] = useState('')
+  async function resend(t: Tester) {
+    if (!window.confirm(`Email ${t.email} their beta invitation again, with their key and the download link?`)) return
+    setSending(t.key)
+    const r = await api.admin.resendInvite(t.key)
+    setSending('')
+    setMsg(r.ok ? `Invitation sent again to ${r.data.sent}.` : 'Couldn’t send it. Check Resend’s Emails page for the error.')
+  }
   async function revoke(t: Tester) {
     if (!window.confirm(`Revoke ${t.key} (${t.email})? VANTA stops working on their computer.`)) return
     await api.admin.revoke(t.key)
@@ -431,55 +440,67 @@ function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => voi
   }
   if (!testers.length) return <p className="muted">No beta keys yet.</p>
   return (
-    <div className="admin__scroll">
-      <table className="admin__table">
-        <thead>
-          <tr>
-            <th>Tester</th>
-            <th>Key</th>
-            <th>Ends</th>
-            <th>Computer</th>
-            <th>Terms</th>
-            <th>Last seen</th>
-            <th>Version</th>
-            <th>Sessions</th>
-            <th>Reports</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {testers.map((t) => (
-            <tr key={t.key} className={t.revoked ? 'is-revoked' : ''}>
-              <td>
-                {t.email}
-                {t.note && <span className="muted admin__sub">{t.note}</span>}
-              </td>
-              <td>
-                <code>{t.key}</code>
-                {t.revoked && <span className="admin__flag">Revoked</span>}
-              </td>
-              <td>{t.expires ?? '—'}</td>
-              <td>{t.devices ? 'Active' : <span className="muted">Not yet</span>}</td>
-              <td>{t.termsAccepted ? `${t.termsAccepted.slice(0, 10)}${t.termsVersion ? ` (${t.termsVersion})` : ''}` : '—'}</td>
-              <td>{day(t.lastSeen)}</td>
-              <td>{t.version ?? '—'}</td>
-              <td>{t.sessions}</td>
-              <td>
-                {t.feedback}
-                {t.crashes > 0 && <span className="admin__flag">{t.crashes} crash</span>}
-              </td>
-              <td>
-                {!t.revoked && (
-                  <button className="text-link text-link--quiet" type="button" onClick={() => revoke(t)}>
-                    Revoke
-                  </button>
-                )}
-              </td>
+    <>
+      {msg && (
+        <p className="notice account__notice" role="status">
+          {msg}
+        </p>
+      )}
+      <div className="admin__scroll">
+        <table className="admin__table">
+          <thead>
+            <tr>
+              <th>Tester</th>
+              <th>Key</th>
+              <th>Ends</th>
+              <th>Computer</th>
+              <th>Terms</th>
+              <th>Last seen</th>
+              <th>Version</th>
+              <th>Sessions</th>
+              <th>Reports</th>
+              <th />
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {testers.map((t) => (
+              <tr key={t.key} className={t.revoked ? 'is-revoked' : ''}>
+                <td>
+                  {t.email}
+                  {t.note && <span className="muted admin__sub">{t.note}</span>}
+                </td>
+                <td>
+                  <code>{t.key}</code>
+                  {t.revoked && <span className="admin__flag">Revoked</span>}
+                </td>
+                <td>{t.expires ?? '—'}</td>
+                <td>{t.devices ? 'Active' : <span className="muted">Not yet</span>}</td>
+                <td>{t.termsAccepted ? `${t.termsAccepted.slice(0, 10)}${t.termsVersion ? ` (${t.termsVersion})` : ''}` : '—'}</td>
+                <td>{day(t.lastSeen)}</td>
+                <td>{t.version ?? '—'}</td>
+                <td>{t.sessions}</td>
+                <td>
+                  {t.feedback}
+                  {t.crashes > 0 && <span className="admin__flag">{t.crashes} crash</span>}
+                </td>
+                <td>
+                  {!t.revoked && (
+                    <span className="admin__actions">
+                      <button className="text-link" type="button" disabled={sending === t.key} onClick={() => resend(t)}>
+                        {sending === t.key ? 'Sending…' : 'Send invitation again'}
+                      </button>
+                      <button className="text-link text-link--quiet" type="button" onClick={() => revoke(t)}>
+                        Revoke
+                      </button>
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
 

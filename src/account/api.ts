@@ -129,6 +129,7 @@ export const api = {
     report: (id: number) => request<{ item: Report }>(`/api/admin/feedback/item?id=${id}`),
     issue: (b: { email: string; name: string; expires: string; note: string; send: boolean }) => request<{ key: string; sent: boolean }>('/api/admin/beta/issue', b),
     revoke: (key: string) => request('/api/admin/beta/revoke', { key }),
+    resendInvite: (key: string) => request<{ sent: string }>('/api/admin/beta/resend', { key }),
     requests: (status: BetaRequest['status']) => request<{ requests: BetaRequest[] }>(`/api/admin/beta/requests?status=${status}`),
     approve: (id: number, expires: string) => request<{ key: string; sent: boolean }>('/api/admin/beta/approve', { id, expires }),
     decline: (id: number) => request('/api/admin/beta/decline', { id }),
