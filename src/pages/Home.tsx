@@ -4,15 +4,16 @@ import { ArticleCard } from '../components/journal/Cards'
 import { featuredFirst, loadJournal, useLoad } from '../journal/data'
 import { TestimonialSlider } from '../components/TestimonialSlider'
 import { ResonanceBackdrop } from '../components/ResonanceBackdrop'
+import { VantaHero } from '../components/shop/VantaHero'
 import { Arrow, Cta, Label, Logo, TextLink } from '../components/ui'
 import { published, site } from '../content/site'
 import { testimonials } from '../content/testimonials'
 import { useSectionSnap } from '../hooks/useSectionSnap'
 import { scrollToId } from '../router'
 
-const SNAP_SECTIONS = '.intro, .entrance, .statement, .voices, .home-journal, .final'
+const SNAP_SECTIONS = '.intro, .entrance, .statement, .voices, .vanta-hero--band, .home-journal, .final'
 
-// The homepage: the brand, what clients say, three stories from the Blog, and the enquiry. The Resonance Form
+// The homepage: the brand, what clients say, VANTA, three stories from the Blog, and the enquiry. The Resonance Form
 // (a fixed 3D layer) changes with each section. Equipment, services and work have their own pages.
 export function Home() {
   // each section settles centred on screen instead of stopping wherever the scroll ends
@@ -24,6 +25,7 @@ export function Home() {
       <Entrance />
       <Statement />
       <Voices />
+      <VantaHero variant="band" />
       <JournalPicks />
       <FinalEnquiry />
     </>

@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { api, explain, type Licence, type Me } from '../../account/api'
 import type { Software } from '../../content/shop'
+import { queryParam, scrollToId } from '../../router'
 import { Link } from '../Link'
 import { Arrow } from '../ui'
 
@@ -17,7 +18,8 @@ const longDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('e
  * in who already has a key for this product sees that instead, with the way to their download.
  */
 export function BetaRequest({ p }: { p: Software }) {
-  const [open, setOpen] = useState(false)
+  // arriving from "Request beta access" elsewhere (/shop/vanta?beta=1): the form, open and in view
+  const [open, setOpen] = useState(() => queryParam('beta') === '1')
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
@@ -25,13 +27,18 @@ export function BetaRequest({ p }: { p: Software }) {
   useEffect(() => {
     // signed out (or no accounts on this copy of the site): the request form as usual
     void api.me().then((r) => r.ok && setMe(r.data))
+    if (queryParam('beta') === '1') setTimeout(() => scrollToId('beta-access'), 300)
+    // the hero's "Request beta access" button opens the form
+    const openForm = () => setOpen(true)
+    window.addEventListener('vanta:request-beta', openForm)
+    return () => window.removeEventListener('vanta:request-beta', openForm)
   }, [])
   if (!p.beta) return null
 
   const has = access(me, p.id)
   if (has)
     return (
-      <section className="beta-request" aria-labelledby="beta-request-title">
+      <section id="beta-access" className="beta-request" aria-labelledby="beta-request-title">
         <p className="label">{has.edition === 'Beta' ? 'Free beta' : 'Your licence'}</p>
         <h2 id="beta-request-title" className="beta-request__title">
           {has.edition === 'Beta' ? `You’re in the ${p.name} beta.` : `You already own ${p.name}.`}
@@ -66,7 +73,7 @@ export function BetaRequest({ p }: { p: Software }) {
   }
 
   return (
-    <section className="beta-request" aria-labelledby="beta-request-title">
+    <section id="beta-access" className="beta-request" aria-labelledby="beta-request-title">
       <p className="label">Free beta</p>
       <h2 id="beta-request-title" className="beta-request__title">
         Test {p.name} before it launches.

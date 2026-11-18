@@ -555,13 +555,17 @@ ${text('Everything here is confidential until release: please don’t post scree
   }
 }
 
-/** When the owner turns off a key from the admin page: what it means, and who to ask. */
-export function licenceRevoked(b: Brand, r: { product: string; name: string; key: string; beta: boolean }): Mail {
+/**
+ * When a key is turned off (from the admin page, or by a refund or chargeback): what it means, and
+ * who to ask. Only the key's last block is shown.
+ */
+export function licenceRevoked(b: Brand, r: { product: string; name: string; key: string; beta: boolean; reason?: 'refund' | 'chargeback' }): Mail {
   const ending = r.key.split('-').pop() ?? ''
   const what = r.beta ? `${r.product} beta key` : `${r.product} licence key`
+  const why = r.reason === 'refund' ? ', because its order was refunded' : r.reason === 'chargeback' ? ', because its payment was reversed' : ''
   const body = `${label(r.beta ? 'Beta access' : 'Your licence')}
 ${headline(`Your ${esc(what)} has been turned off.`)}
-${text(`${r.name ? `Hi ${esc(first(r.name))}, we` : 'We'}’ve turned off the ${esc(what)} ending in <strong>${esc(ending)}</strong>. ${esc(r.product)} will stop working with it the next time it checks in, and it can’t be activated again.`)}
+${text(`${r.name ? `Hi ${esc(first(r.name))}, we` : 'We'}’ve turned off the ${esc(what)} ending in <strong>${esc(ending)}</strong>${why}. ${esc(r.product)} will stop working with it the next time it checks in, and it can’t be activated again.`)}
 ${r.beta ? text(`Thank you for the time you gave to testing ${esc(r.product)}: it has helped shape the release.`) : ''}
 ${text('If you think this is a mistake, or have a question, just reply to this email.')}`
   return {
@@ -570,7 +574,7 @@ ${text('If you think this is a mistake, or have a question, just reply to this e
     text: plain([
       `Your ${what} has been turned off.`,
       '',
-      `We’ve turned off the ${what} ending in ${ending}. ${r.product} will stop working with it the next time it checks in, and it can’t be activated again.`,
+      `We’ve turned off the ${what} ending in ${ending}${why}. ${r.product} will stop working with it the next time it checks in, and it can’t be activated again.`,
       r.beta && `Thank you for the time you gave to testing ${r.product}.`,
       '',
       'If you think this is a mistake, or have a question, just reply to this email.',

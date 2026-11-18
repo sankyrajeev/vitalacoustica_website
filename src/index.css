@@ -10065,3 +10065,167 @@ img.cover--screen {
   gap: var(--s2) var(--s5);
   white-space: nowrap;
 }
+
+/* ─────────────── VANTA's video hero (/shop/vanta and the homepage) ─────────────── */
+
+.vanta-hero {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  min-height: 460px;
+  aspect-ratio: 2.4 / 1;
+  overflow: hidden;
+  background: #050505;
+  color: #f0ede5;
+}
+
+.vanta-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.vanta-hero__media video,
+.vanta-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 50%;
+}
+
+/* the text side darkened a touch, and a fade into the page below */
+.vanta-hero__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 5, 0.78) 0%, rgba(5, 5, 5, 0.35) 38%, rgba(5, 5, 5, 0) 58%),
+    linear-gradient(180deg, rgba(5, 5, 5, 0) 70%, var(--bg) 100%);
+}
+
+.vanta-hero__text {
+  /* the editor starts at about 37% of the frame */
+  max-width: min(35%, 520px);
+  padding: clamp(96px, 9vw, 150px) 0 clamp(56px, 6vw, 96px) clamp(20px, 6vw, 96px);
+}
+
+.vanta-hero__eyebrow {
+  margin: 0 0 var(--s4);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #d6a84f;
+}
+
+.vanta-hero__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(56px, 7.5vw, 120px);
+  line-height: 0.9;
+  letter-spacing: 0.04em;
+  color: #f0ede5;
+}
+
+.vanta-hero__line {
+  margin: var(--s5) 0 0;
+  max-width: 26em;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.55;
+  color: #c9c5bc;
+}
+
+.vanta-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s4) var(--s6);
+  margin-top: var(--s7);
+}
+
+.vanta-hero__actions .text-link {
+  color: #f0ede5;
+}
+
+.vanta-hero__note {
+  margin: 0;
+  font-size: 13px;
+  color: #aaa69e;
+}
+
+/* the product page: the hero sits under the header, the rest of the page follows */
+.shop-item--hero {
+  padding-top: 0;
+}
+
+/* the editor starts below the site's header, not under it */
+.vanta-hero--page {
+  aspect-ratio: auto;
+  min-height: calc(min(100vw / 2.4, 760px) + 88px);
+}
+
+.vanta-hero--page .vanta-hero__media {
+  top: 88px;
+}
+
+.vanta-hero--page .vanta-hero__text {
+  padding-top: calc(88px + clamp(24px, 4vw, 64px));
+}
+
+.shop-item--hero .crumbs {
+  margin-top: var(--s7);
+}
+
+.vanta-hero--band {
+  margin-block: clamp(40px, 6vw, 96px);
+}
+
+.vanta-hero--band .vanta-hero__text {
+  padding-top: clamp(56px, 6vw, 96px);
+}
+
+/* narrow screens: the text first, then the editor at 16:9 */
+@media (max-width: 760px) {
+  .vanta-hero {
+    display: flex;
+    flex-direction: column-reverse;
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+
+  .vanta-hero__media,
+  .vanta-hero--page .vanta-hero__media {
+    position: relative;
+    inset: auto;
+    top: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .vanta-hero--page {
+    min-height: 0;
+  }
+
+  .vanta-hero__media::after {
+    background: linear-gradient(180deg, #050505 0%, rgba(5, 5, 5, 0) 22%, rgba(5, 5, 5, 0) 75%, var(--bg) 100%);
+  }
+
+  .vanta-hero__text,
+  .vanta-hero--page .vanta-hero__text {
+    max-width: none;
+    padding: clamp(96px, 26vw, 120px) 20px var(--s5);
+  }
+
+  .vanta-hero--band .vanta-hero__text {
+    padding-top: var(--s8);
+  }
+}
+
+/* on the homepage the band fades in from the page above as well */
+.vanta-hero--band .vanta-hero__media::after {
+  background:
+    linear-gradient(90deg, rgba(5, 5, 5, 0.78) 0%, rgba(5, 5, 5, 0.35) 38%, rgba(5, 5, 5, 0) 58%),
+    linear-gradient(180deg, var(--bg) 0%, rgba(5, 5, 5, 0) 14%, rgba(5, 5, 5, 0) 82%, var(--bg) 100%);
+}

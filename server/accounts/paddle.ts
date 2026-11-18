@@ -7,12 +7,12 @@
 // Paddle retries until it gets a 2xx, so each event is handled once (webhook_events, and orders'
 // unique provider_ref). Products are matched by Paddle product id through PADDLE_PRODUCTS.
 
-import { licenceDelivery } from '../emails.ts'
+import { licenceDelivery, licenceRevoked } from '../emails.ts'
 import { hmacHex, newId, sameString } from './crypto.ts'
 import { json, now, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { issueLicences } from './licences.ts'
 import { brand, sendMail } from './mail.ts'
-import { isProduct, type ProductId } from './products.ts'
+import { PRODUCTS, isProduct, type ProductId } from './products.ts'
 
 const TOLERANCE = 300 // seconds a signature stays acceptable
 
@@ -88,16 +88,33 @@ async function completed(env: AccountsEnv, db: D1Database, request: Request, t: 
   await sendMail(env, email, licenceDelivery(brand(site), keys, `${site}/account`)).catch((e) => console.error('licence email', t.id, e))
 }
 
-async function refunded(db: D1Database, a: Adjustment) {
+async function refunded(env: AccountsEnv, db: D1Database, request: Request, a: Adjustment) {
   const fullRefund = a.action === 'refund' && a.status === 'approved' && (a.type ?? 'full') === 'full'
   const chargeback = a.action === 'chargeback' && a.status === 'approved'
   if (!fullRefund && !chargeback) return
   const order = await db.prepare("UPDATE orders SET status = 'refunded' WHERE provider_ref = ? RETURNING id").bind(a.transaction_id).first<{ id: string }>()
   if (!order) return
+  // only keys still on are turned off and told about, so a repeated event emails no one twice
+  const keys = (
+    await db
+      .prepare(
+        `SELECT l.key, l.product, l.email, l.edition, u.name FROM licences l LEFT JOIN users u ON u.id = l.user_id
+         WHERE l.order_id = ? AND l.revoked = 0`,
+      )
+      .bind(order.id)
+      .all<{ key: string; product: string; email: string; edition: string | null; name: string | null }>()
+  ).results
   await db.batch([
     db.prepare('UPDATE licences SET revoked = 1 WHERE order_id = ?').bind(order.id),
     db.prepare('DELETE FROM activations WHERE key IN (SELECT key FROM licences WHERE order_id = ?)').bind(order.id),
   ])
+  const site = siteUrl(env, request)
+  for (const k of keys) {
+    const product = isProduct(k.product) ? PRODUCTS[k.product].name : k.product
+    const mail = licenceRevoked(brand(site), { product, name: k.name ?? '', key: k.key, beta: k.edition === 'Beta', reason: chargeback ? 'chargeback' : 'refund' })
+    // the keys are off either way; a failed email mustn't make Paddle retry the refund
+    await sendMail(env, k.email, mail, 'support@vitalacoustica.com').catch((e) => console.error('revoked email', k.key, e))
+  }
 }
 
 export async function paddleWebhook(request: Request, env: AccountsEnv, db: D1Database) {
@@ -108,7 +125,7 @@ export async function paddleWebhook(request: Request, env: AccountsEnv, db: D1Da
   if (await db.prepare('SELECT id FROM webhook_events WHERE id = ?').bind(event.event_id).first()) return json({ status: 'duplicate' })
 
   if (event.event_type === 'transaction.completed') await completed(env, db, request, event.data as Transaction)
-  else if (event.event_type === 'adjustment.created' || event.event_type === 'adjustment.updated') await refunded(db, event.data as Adjustment)
+  else if (event.event_type === 'adjustment.created' || event.event_type === 'adjustment.updated') await refunded(env, db, request, event.data as Adjustment)
 
   // recorded only once handled: if anything above failed, Paddle's retry runs it again
   await db.prepare('INSERT INTO webhook_events (id, received_at) VALUES (?, ?) ON CONFLICT DO NOTHING').bind(event.event_id, now()).run()

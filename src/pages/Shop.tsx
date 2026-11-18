@@ -4,6 +4,7 @@ import { AudioPreview, DemoTrack } from '../components/shop/AudioPreview'
 import PEAKS from '../content/audio-peaks.json'
 import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
 import { BetaRequest } from '../components/shop/BetaRequest'
+import { VantaHero } from '../components/shop/VantaHero'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
 import { price, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind } from '../content/shop'
@@ -187,7 +188,8 @@ export function ShopItem({ id }: { id: string }) {
   const option = p.kind === 'merch' ? [p.colours[colour].name, size].filter(Boolean).join(', ') : undefined
 
   return (
-    <article className="gear-detail shop-item">
+    <article className={`gear-detail shop-item ${p.id === 'vanta' ? 'shop-item--hero' : ''}`}>
+      {p.id === 'vanta' && <VantaHero variant="page" />}
       <div className="wrap">
         <nav className="crumbs" aria-label="Breadcrumb">
           <Link to="/shop">Shop</Link>

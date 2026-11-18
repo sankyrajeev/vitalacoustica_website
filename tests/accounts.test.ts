@@ -334,8 +334,17 @@ test('a guest purchase joins the account made later with that email', async () =
   assert.equal(me.orders.length, 1)
 })
 
-test('a full refund revokes the order’s keys', async () => {
+test('a full refund revokes the order’s keys, and tells the buyer once', async () => {
+  const before = mail.length
   await paddle({ event_id: 'evt_3', event_type: 'adjustment.updated', data: { id: 'adj_1', action: 'refund', status: 'approved', type: 'full', transaction_id: 'txn_1' } })
+  const told = mail.slice(before)
+  assert.ok(told.length >= 1)
+  assert.equal(told[0].subject, 'Your VANTA licence key has been turned off')
+  assert.ok(told[0].text.includes('because its order was refunded') && told[0].text.includes(key.split('-').pop()!) && !told[0].text.includes(key))
+  assert.equal(told[0].replyTo, 'support@vitalacoustica.com')
+  // Paddle sends the same adjustment again: nothing more
+  await paddle({ event_id: 'evt_3b', event_type: 'adjustment.updated', data: { id: 'adj_1', action: 'refund', status: 'approved', type: 'full', transaction_id: 'txn_1' } })
+  assert.equal(mail.length, before + told.length)
   const res = await call('/api/licence/v1/activate', { method: 'POST', body: { key, machine: 'a'.repeat(32) } })
   assert.equal(res.status, 403)
   const me = (await (await call('/api/account/me', { cookie: session })).json()) as { licences: { key: string; revoked: boolean }[]; orders: { status: string }[] }
