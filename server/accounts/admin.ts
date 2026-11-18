@@ -14,6 +14,7 @@
 
 import { accountReset, accountVerify, betaInvite, betaRequestReceived, launchAlertOut, launchAlertSaved, leaseReminder, licenceDelivery, licenceRevoked, type Mail } from '../emails.ts'
 import type { User } from './auth.ts'
+import { chatOverview, dismiss, forget, teach } from '../assistant/chat.ts'
 import { newsletterOverview, sendTestEdition } from '../newsletter.ts'
 import { json, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { newLicenceKey, normaliseKey } from './licence.ts'
@@ -244,6 +245,7 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     if (pathname === '/api/admin/launch') return json({ alerts: await launchAlertCounts(db) })
     if (pathname === '/api/admin/status') return json(setupStatus(env))
     if (pathname === '/api/admin/newsletter') return json(await newsletterOverview(env, db))
+    if (pathname === '/api/admin/chat') return json(await chatOverview(db))
     if (pathname === '/api/admin/beta/requests') {
       const status = ['pending', 'approved', 'declined'].includes(url.searchParams.get('status') || '') ? url.searchParams.get('status') : 'pending'
       const rows = (await db.prepare('SELECT * FROM beta_requests WHERE status = ? ORDER BY created_at DESC LIMIT 300').bind(status).all<BetaRequest>()).results
@@ -275,6 +277,9 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     if (pathname === '/api/admin/launch/send') return sendLaunch(request, env, db)
     if (pathname === '/api/admin/test-email') return testEmail(request, env, user!)
     if (pathname === '/api/admin/newsletter/test') return testEdition(request, env, user!)
+    if (pathname === '/api/admin/chat/teach') return teach(db, await readJson(request))
+    if (pathname === '/api/admin/chat/forget') return forget(db, await readJson(request))
+    if (pathname === '/api/admin/chat/dismiss') return dismiss(db, await readJson(request))
   }
   return json({ error: 'not_found' }, 404)
 }

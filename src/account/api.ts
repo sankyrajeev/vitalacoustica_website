@@ -138,6 +138,10 @@ export const api = {
     launchAlerts: () => request<{ alerts: { product: string; name: string; waiting: number; told: number }[] }>('/api/admin/launch'),
     sendLaunch: (product: string) => request<{ sent: number; left: number }>('/api/admin/launch/send', { product }),
     newsletter: () => request<NewsletterOverview>('/api/admin/newsletter'),
+    chat: () => request<ChatOverview>('/api/admin/chat'),
+    teach: (b: { question: string; answer: string; id?: number; logId?: number }) => request('/api/admin/chat/teach', b),
+    forget: (id: number) => request('/api/admin/chat/forget', { id }),
+    dismiss: (id: number) => request('/api/admin/chat/dismiss', { id }),
     testEdition: () => request<{ sent: string; posts: number }>('/api/admin/newsletter/test', {}),
   },
   notifyMe: (b: { product: string; email: string; detail: string; _gotcha: string }) => request('/api/notify', b),
@@ -178,4 +182,12 @@ export type NewsletterOverview = {
   subscribers: { active: number; pending: number; unsubscribed: number }
   editions: { id: string; subject: string; status: 'sending' | 'sent' | 'empty'; sent: number; created_at: number; finished_at: number | null; posts: number }[]
   dailyLimit: number
+}
+
+export type ChatLogRow = { id: number; asked_at: number; question: string; answer: string; unsure?: number; page: string | null }
+export type ChatOverview = {
+  open: ChatLogRow[]
+  recent: ChatLogRow[]
+  taught: { id: number; question: string; answer: string; updated_at: number }[]
+  week: { asked: number; unsure: number }
 }

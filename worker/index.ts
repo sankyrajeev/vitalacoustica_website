@@ -3,6 +3,8 @@
 // writes the sitemap, and serves the built site (dist/) for everything else. Settings are in wrangler.jsonc.
 
 import { handleAccounts, type AccountsEnv } from '../server/accounts/index.ts'
+import { limited } from '../server/accounts/db.ts'
+import { chat, pruneChatLog, setChatPosts, type ChatEnv } from '../server/assistant/chat.ts'
 import { ensureSchema } from '../server/accounts/migrate.ts'
 import { sendLeaseReminders } from '../server/accounts/reminders.ts'
 import { handleEnquiry, type EnquiryEnv } from '../server/enquiry.ts'
@@ -12,10 +14,12 @@ import { handlePulse, type PulseEnv } from '../server/pulse.ts'
 import { sitePage } from '../server/seo.ts'
 import { sitemap } from '../server/sitemap.ts'
 
-type Env = AccountsEnv & EnquiryEnv & JournalEnv & NewsletterEnv & PulseEnv & { ASSETS: { fetch: (request: Request) => Promise<Response> } }
+type Env = AccountsEnv & ChatEnv & EnquiryEnv & JournalEnv & NewsletterEnv & PulseEnv & { ASSETS: { fetch: (request: Request) => Promise<Response> } }
 
 // the admin page's test edition reads the blog's live posts
 setPostSource(() => liveArticles())
+// the site assistant knows the blog's live posts too
+setChatPosts(() => liveArticles())
 
 const notAllowed = (allow: string) => new Response('Method not allowed', { status: 405, headers: { Allow: allow } })
 
@@ -29,6 +33,12 @@ export default {
     if (pathname === '/api/enquiry') return method === 'POST' ? handleEnquiry(request, env) : notAllowed('POST')
     if (pathname === '/api/journal' || pathname.startsWith('/api/journal/')) return read ? handleJournalApi(request, env) : notAllowed('GET')
     if (pathname === '/api/pulse') return read ? handlePulse(request, env, ctx) : notAllowed('GET')
+    if (pathname === '/api/chat') {
+      if (method !== 'POST') return notAllowed('POST')
+      const db = env.DB
+      // 40 questions an hour per address keeps the free daily allowance for real visitors
+      return chat(request, env, db ? (bucket) => limited(db, bucket, 40, 3600) : undefined)
+    }
     if (pathname === '/api/newsletter') return method === 'POST' ? subscribe(request, env) : notAllowed('POST')
     if (pathname === '/api/newsletter/confirm') return read ? confirm(request, env) : notAllowed('GET')
     if (pathname === '/api/newsletter/unsubscribe') return read || method === 'POST' ? unsubscribe(request, env) : notAllowed('GET, POST')
@@ -53,6 +63,7 @@ export default {
       ensureSchema(db).then(async () => {
         const reminders = await sendLeaseReminders(env, db).catch((e) => (console.error('lease reminders', e), 0))
         const edit = await runNewsletter(env, db, liveArticles()).catch((e) => (console.error('newsletter', e), null))
+        await pruneChatLog(db).catch((e) => console.error('chat log', e))
         console.log(`lease reminders sent: ${reminders}; newsletter: ${JSON.stringify(edit)}`)
       }),
     )

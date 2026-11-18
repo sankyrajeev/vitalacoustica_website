@@ -11,7 +11,7 @@ const LEGAL = {
   company: 'Vital Acoustica',
   address: 'Bangalore, Karnataka, India', // DUMMY: full registered address
   gstin: site.gst,
-  updated: '14 November 2026',
+  updated: '18 November 2026',
   jurisdiction: 'Bengaluru, Karnataka',
 }
 
@@ -92,6 +92,10 @@ export function PrivacyPage() {
                 receive it, when you confirmed, and which weekly editions we have sent you. You are added only after you confirm by clicking the link we email you.
               </li>
               <li>
+                <strong>The chat assistant:</strong> what you type into the chat on this site, the answers it gives and the page you
+                were on, so we can see what it couldn’t answer and improve it. Please don’t type personal details into it.
+              </li>
+              <li>
                 <strong>Your account and software:</strong> if you create an account, your email address, your name if you give
                 it, and your password, which your browser scrambles before it reaches us so that we never see or store it (if you
                 sign in with Google, we receive your name, email address and Google account id from Google instead). For software
@@ -150,7 +154,7 @@ export function PrivacyPage() {
             <ul>
               <li>the form or email service that delivers your enquiry to us;</li>
               <li>our email provider (Resend), which delivers our emails, The Acoustica Edit included (the newsletter list itself is kept on our own website’s database);</li>
-              <li>our website hosting provider;</li>
+              <li>our website hosting provider (Cloudflare), whose AI service writes the chat assistant’s answers;</li>
               <li>
                 for shop orders, the checkout provider (Paddle, which sells our software as the merchant of record, or Gumroad)
                 and our print-on-demand partner, to take payment and deliver. Paddle handles your payment details; we never see
@@ -172,7 +176,7 @@ export function PrivacyPage() {
               as long as Indian tax law requires, currently up to eight years. A published testimonial stays up until you ask us
               to remove it. Your account stays until you ask us to delete it; sign-in sessions end after 30 days. Order and licence
               records are kept as long as your licences are valid and the tax law requires, so we can reissue keys and support you.
-              Your newsletter address stays on the list until you unsubscribe; after that it is kept only as a record
+              Chat conversations are deleted after 90 days. Your newsletter address stays on the list until you unsubscribe; after that it is kept only as a record
               that you unsubscribed, so we never write to you again by mistake.
             </p>
           </Section>

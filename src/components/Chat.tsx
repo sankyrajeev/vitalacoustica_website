@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { loadModel } from '../assistant/model'
-import { answer, GREETING, type Action, type Reply } from '../content/chat'
+import { answer, GREETING, wa, type Action, type Reply } from '../content/chat'
 import { fullName } from '../content/gear'
 import { waLink } from '../content/site'
 import { openExplore } from '../events'
@@ -12,6 +12,60 @@ type Message = { from: 'bot'; reply: Reply } | { from: 'you'; text: string }
 
 const STORE = 'va-chat'
 
+
+/**
+ * Asks the site's language model (server/assistant/chat.ts), with the last few turns for context.
+ * Null when it isn't there (a review copy of the site, offline) or can't answer just now: the
+ * small model in the page answers instead.
+ */
+async function askModel(history: Message[], question: string): Promise<Reply | null> {
+  const turns = history
+    .slice(-6)
+    .map((m) => (m.from === 'you' ? { role: 'user', text: m.text } : { role: 'assistant', text: m.reply.text }))
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [...turns, { role: 'user', text: question }], page: window.location.pathname }),
+      signal: AbortSignal.timeout(15000),
+    })
+    if (!res.ok) return null
+    const { reply, unsure } = (await res.json()) as { reply?: string; unsure?: boolean }
+    if (!reply) return null
+    return { text: reply, actions: unsure ? [wa(`Hi Vital Acoustica, ${question.trim()}`)] : undefined }
+  } catch {
+    return null
+  }
+}
+
+/** The reply's text, with its [label](/path) links made into in-site links. */
+function RichText({ text, go }: { text: string; go: (to: string) => void }) {
+  const parts = text.split(/(\[[^\]]+\]\([^)\s]+\))/g)
+  return (
+    <p>
+      {parts.map((part, i) => {
+        const m = part.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/)
+        if (!m) return part.replace(/\*\*/g, '')
+        // only pages of this site: anything else stays as plain text
+        return m[2].startsWith('/') && !m[2].startsWith('//') ? (
+          <a
+            key={i}
+            href={m[2]}
+            className="msg__link"
+            onClick={(e) => {
+              e.preventDefault()
+              go(m[2])
+            }}
+          >
+            {m[1]}
+          </a>
+        ) : (
+          m[1]
+        )
+      })}
+    </p>
+  )
+}
 
 function load(): Message[] {
   try {
@@ -56,7 +110,9 @@ export function Chat() {
     setMessages((m) => [...m, { from: 'you', text: shown }])
     setTyping(true)
     // at least a short pause, so the reply reads as a reply
-    const [reply] = await Promise.all([answer(q, intent), new Promise((r) => window.setTimeout(r, 550))])
+    // a tapped suggestion has its own written answer; anything typed goes to the language model
+    const thinking = intent ? Promise.resolve(null) : askModel(messages, q)
+    const [reply] = await Promise.all([thinking.then((r) => r ?? answer(q, intent)), new Promise((r) => window.setTimeout(r, 550))])
     setTyping(false)
     setMessages((m) => [...m, { from: 'bot', reply }])
   }
@@ -106,7 +162,7 @@ export function Chat() {
                 </p>
               ) : (
                 <div key={i} className="msg msg--bot">
-                  <p>{m.reply.text}</p>
+                  <RichText text={m.reply.text} go={(to) => act({ kind: 'link', label: '', to })} />
                   {m.reply.gear && (
                     <div className="msg__gear">
                       {m.reply.gear.map((g) => (

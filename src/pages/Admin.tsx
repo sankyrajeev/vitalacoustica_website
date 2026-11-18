@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { api, explain, type BetaRequest, type NewsletterOverview, type Report, type Tester } from '../account/api'
+import { api, explain, type BetaRequest, type ChatOverview, type NewsletterOverview, type Report, type Tester } from '../account/api'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { Arrow } from '../components/ui'
@@ -306,6 +306,187 @@ function SigningKeys() {
   )
 }
 
+const when = (t: number) => new Date(t * 1000).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+
+/** One answer to teach (or edit): the question as people ask it, and what the assistant should say. */
+function TeachForm({ question, answer = '', onSave, onCancel }: { question: string; answer?: string; onSave: (q: string, a: string) => Promise<void>; onCancel?: () => void }) {
+  const [q, setQ] = useState(question)
+  const [a, setA] = useState(answer)
+  const [busy, setBusy] = useState(false)
+  return (
+    <div className="admin__teach">
+      <label className="field">
+        <span>Question</span>
+        <input value={q} onChange={(e) => setQ(e.target.value)} maxLength={300} />
+      </label>
+      <label className="field">
+        <span>The answer it should give</span>
+        <textarea value={a} onChange={(e) => setA(e.target.value)} rows={3} maxLength={2000} placeholder="Write it as you’d tell a customer. It uses these facts from the next question on." />
+      </label>
+      <div className="admin__teach-actions">
+        <button
+          className="cta cta--primary"
+          type="button"
+          disabled={busy || !q.trim() || !a.trim()}
+          onClick={async () => {
+            setBusy(true)
+            await onSave(q, a)
+            setBusy(false)
+          }}
+        >
+          <span>{busy ? 'Saving…' : 'Teach it'}</span>
+        </button>
+        {onCancel && (
+          <button className="text-link text-link--quiet" type="button" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function Assistant() {
+  const [o, setO] = useState<ChatOverview | null>(null)
+  const [teaching, setTeaching] = useState<number | null>(null)
+  const [editing, setEditing] = useState<number | null>(null)
+  const [adding, setAdding] = useState(false)
+  const [showRecent, setShowRecent] = useState(false)
+  const load = () => api.admin.chat().then((r) => r.ok && setO(r.data))
+  useEffect(() => {
+    void load()
+  }, [])
+  if (!o) return <p className="muted">Loading…</p>
+  return (
+    <>
+      <p className="muted">
+        This week: {o.week.asked} {o.week.asked === 1 ? 'question' : 'questions'}, {o.week.unsure} it couldn’t answer. It knows everything published on
+        the site (products, equipment, services, the blog) and the answers you teach it here. Chats are kept for 90 days.
+      </p>
+
+      <h3 className="admin__h3">Couldn’t answer</h3>
+      {o.open.length === 0 ? (
+        <p className="muted">Nothing waiting.</p>
+      ) : (
+        <ul className="admin__chat">
+          {o.open.map((r) => (
+            <li key={r.id}>
+              <p>
+                <strong>“{r.question}”</strong> <span className="muted admin__sub">{when(r.asked_at)}{r.page ? ` · ${r.page}` : ''}</span>
+              </p>
+              <p className="muted admin__sub">It said: {r.answer}</p>
+              {teaching === r.id ? (
+                <TeachForm
+                  question={r.question}
+                  onCancel={() => setTeaching(null)}
+                  onSave={async (q, a) => {
+                    await api.admin.teach({ question: q, answer: a, logId: r.id })
+                    setTeaching(null)
+                    void load()
+                  }}
+                />
+              ) : (
+                <span className="admin__actions">
+                  <button className="text-link" type="button" onClick={() => setTeaching(r.id)}>
+                    Teach the answer
+                  </button>
+                  <button
+                    className="text-link text-link--quiet"
+                    type="button"
+                    onClick={async () => {
+                      await api.admin.dismiss(r.id)
+                      void load()
+                    }}
+                  >
+                    Dismiss
+                  </button>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h3 className="admin__h3">What you’ve taught it</h3>
+      {o.taught.length === 0 && !adding && <p className="muted">Nothing yet.</p>}
+      <ul className="admin__chat">
+        {o.taught.map((t) => (
+          <li key={t.id}>
+            {editing === t.id ? (
+              <TeachForm
+                question={t.question}
+                answer={t.answer}
+                onCancel={() => setEditing(null)}
+                onSave={async (q, a) => {
+                  await api.admin.teach({ id: t.id, question: q, answer: a })
+                  setEditing(null)
+                  void load()
+                }}
+              />
+            ) : (
+              <>
+                <p>
+                  <strong>{t.question}</strong>
+                </p>
+                <p className="muted admin__sub">{t.answer}</p>
+                <span className="admin__actions">
+                  <button className="text-link" type="button" onClick={() => setEditing(t.id)}>
+                    Edit
+                  </button>
+                  <button
+                    className="text-link text-link--quiet"
+                    type="button"
+                    onClick={async () => {
+                      if (!window.confirm('Forget this answer?')) return
+                      await api.admin.forget(t.id)
+                      void load()
+                    }}
+                  >
+                    Forget
+                  </button>
+                </span>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+      {adding ? (
+        <TeachForm
+          question=""
+          onCancel={() => setAdding(false)}
+          onSave={async (q, a) => {
+            await api.admin.teach({ question: q, answer: a })
+            setAdding(false)
+            void load()
+          }}
+        />
+      ) : (
+        <button className="cta" type="button" onClick={() => setAdding(true)}>
+          <span>Teach it something new</span>
+        </button>
+      )}
+
+      <h3 className="admin__h3">
+        <button className="text-link" type="button" onClick={() => setShowRecent((s) => !s)} aria-expanded={showRecent}>
+          {showRecent ? 'Hide' : 'Show'} recent conversations ({o.recent.length})
+        </button>
+      </h3>
+      {showRecent && (
+        <ul className="admin__chat">
+          {o.recent.map((r) => (
+            <li key={r.id}>
+              <p>
+                <strong>“{r.question}”</strong> <span className="muted admin__sub">{when(r.asked_at)}{r.unsure ? ' · couldn’t answer' : ''}</span>
+              </p>
+              <p className="muted admin__sub">{r.answer}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  )
+}
+
 const EDITION_STATUS = { sending: 'Sending', sent: 'Sent', empty: 'Skipped (no new posts)' } as const
 
 function Newsletter() {
@@ -599,6 +780,10 @@ export function AdminPage() {
             <section className="account__section">
               <h2 className="account__h">Testers</h2>
               <Testers testers={testers} onChange={loadTesters} />
+            </section>
+            <section className="account__section">
+              <h2 className="account__h">Chat assistant</h2>
+              <Assistant />
             </section>
             <section className="account__section">
               <h2 className="account__h">Newsletter</h2>

@@ -25,6 +25,9 @@
   // creates and upgrades its own tables on first use (server/accounts/migrate.ts).
   "d1_databases": [{ "binding": "DB", "database_name": "vitalacoustica", "database_id": "9cb083b9-0fb7-4d09-984e-3f234488209e" }],
   // once a day at 03:17 UTC: licence reminder emails (server/accounts/reminders.ts); does nothing until the database is set up
+  // the site assistant's language model (server/assistant/chat.ts): Cloudflare Workers AI, free within
+  // the account's daily allowance
+  "ai": { "binding": "AI" },
   "triggers": { "crons": ["17 3 * * *"] },
   "observability": { "enabled": true }
 }

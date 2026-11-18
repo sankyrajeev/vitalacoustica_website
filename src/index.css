@@ -10240,3 +10240,52 @@ img.cover--screen {
 .vanta-hero--band .vanta-hero__media::after {
   background: linear-gradient(90deg, rgba(5, 5, 5, 0.78) 0%, rgba(5, 5, 5, 0.35) 38%, rgba(5, 5, 5, 0) 58%);
 }
+
+/* links in the assistant's replies */
+.msg__link {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* the admin page's chat assistant section */
+.admin__h3 {
+  margin: var(--s7) 0 var(--s3);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.admin__chat {
+  display: grid;
+  gap: var(--s4);
+  margin: 0 0 var(--s5);
+  padding: 0;
+  list-style: none;
+}
+
+.admin__chat li {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s4) var(--s5);
+  border: var(--hair) solid var(--line);
+}
+
+.admin__chat p {
+  margin: 0;
+}
+
+.admin__teach {
+  display: grid;
+  gap: var(--s4);
+  margin-top: var(--s2);
+}
+
+.admin__teach-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s4);
+}

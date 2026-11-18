@@ -27,14 +27,14 @@ export const SUGGESTIONS: Action[] = [
 ]
 
 export const GREETING: Reply = {
-  text: 'Hi! I’m the Vital Acoustica assistant. Ask me about our equipment, services or how hiring works, or tap one of these.',
+  text: 'Hi! I’m the Vital Acoustica assistant. Ask me anything about our equipment, services and hiring, or our software like VANTA, or tap one of these.',
   actions: SUGGESTIONS,
 }
 
 // below this the model is guessing, so we ask rather than answer
 const SURE = 0.42
 
-const wa = (text: string): Action => ({ kind: 'whatsapp', label: 'Ask the team on WhatsApp', text })
+export const wa = (text: string): Action => ({ kind: 'whatsapp', label: 'Ask the team on WhatsApp', text })
 const quote: Action = { kind: 'link', label: 'Request a quote', to: '/contact' }
 
 // words people use for each item, beyond its name
@@ -239,7 +239,7 @@ const HANDLERS: Record<string, Handler> = {
   },
 
   equipment: () => ({
-    text: `We hire out ${gear.length} kinds of kit in four groups. Which would you like to see?`,
+    text: `We hire out ${gear.length} kinds of kit in ${GEAR_GROUPS.filter((g) => gear.some((x) => x.group === g)).length} groups. Which would you like to see?`,
     actions: GEAR_GROUPS.filter((g) => gear.some((x) => x.group === g)).map(
       (g) => ({ kind: 'ask', label: g, query: g, intent: Object.keys(GROUP_OF).find((k) => GROUP_OF[k] === g) }) as Action,
     ),
