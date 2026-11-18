@@ -11,9 +11,9 @@ import { testimonials } from '../content/testimonials'
 import { useSectionSnap } from '../hooks/useSectionSnap'
 import { scrollToId } from '../router'
 
-const SNAP_SECTIONS = '.intro, .entrance, .statement, .voices, .vanta-hero--band, .home-journal, .final'
+const SNAP_SECTIONS = '.intro, .vanta-hero--band, .entrance, .statement, .voices, .home-journal, .final'
 
-// The homepage: the brand, what clients say, VANTA, three stories from the Blog, and the enquiry. The Resonance Form
+// The homepage: the brand, VANTA, what clients say, three stories from the Blog, and the enquiry. The Resonance Form
 // (a fixed 3D layer) changes with each section. Equipment, services and work have their own pages.
 export function Home() {
   // each section settles centred on screen instead of stopping wherever the scroll ends
@@ -22,10 +22,10 @@ export function Home() {
     <>
       <ResonanceBackdrop />
       <Intro />
+      <VantaHero variant="band" />
       <Entrance />
       <Statement />
       <Voices />
-      <VantaHero variant="band" />
       <JournalPicks />
       <FinalEnquiry />
     </>
