@@ -12,6 +12,27 @@ const day = (s: number | null) => (s ? new Date(s * 1000).toLocaleDateString('en
 const time = (s: number) => new Date(s * 1000).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 const inDays = (n: number) => new Date(Date.now() + n * 86400e3).toISOString().slice(0, 10)
 
+/**
+ * "A personal note" for the invitation email: shown at the top of it, in italics, signed with the
+ * first name on your account. Optional; left empty, the email goes as usual.
+ */
+function PersonalNote({ name, value, onChange }: { name?: string; value?: string; onChange?: (v: string) => void }) {
+  return (
+    <label className="field field--wide admin__note">
+      <span>
+        Personal note <em>optional · at the top of their email, signed with your name</em>
+      </span>
+      <textarea
+        name={name}
+        rows={3}
+        maxLength={1200}
+        placeholder="e.g. Loved the tracks you sent. Try the Sample Lab on your own vocals first, and tell me what you think."
+        {...(onChange ? { value, onChange: (e) => onChange(e.target.value) } : {})}
+      />
+    </label>
+  )
+}
+
 function IssueBeta({ onIssued }: { onIssued: () => void }) {
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<{ tone: 'info' | 'error'; text: string } | null>(null)
@@ -27,6 +48,7 @@ function IssueBeta({ onIssued }: { onIssued: () => void }) {
       expires: String(f.get('expires') || ''),
       note: String(f.get('note') || ''),
       send: f.get('send') === 'on',
+      message: String(f.get('message') || ''),
     })
     setBusy(false)
     if (!r.ok) return setMsg({ tone: 'error', text: explain(r.data.error) })
@@ -60,6 +82,7 @@ function IssueBeta({ onIssued }: { onIssued: () => void }) {
       <label className="admin__check">
         <input type="checkbox" name="send" defaultChecked /> Email the invitation with the key and download link
       </label>
+      <PersonalNote name="message" />
       {msg && (
         <p className={msg.tone === 'error' ? 'form__error' : 'notice account__notice'} role="status">
           {msg.text}
@@ -81,6 +104,7 @@ function Requests({ onChange }: { onChange: () => void }) {
   const [expires, setExpires] = useState(inDays(60))
   const [busy, setBusy] = useState<number | null>(null)
   const [msg, setMsg] = useState('')
+  const [notes, setNotes] = useState<Record<number, string>>({})
 
   const load = (s = status) => api.admin.requests(s).then((r) => setRows(r.ok ? r.data.requests : []))
   useEffect(() => {
@@ -89,7 +113,7 @@ function Requests({ onChange }: { onChange: () => void }) {
 
   async function approve(r: BetaRequest) {
     setBusy(r.id)
-    const res = await api.admin.approve(r.id, expires)
+    const res = await api.admin.approve(r.id, expires, notes[r.id] ?? '')
     setBusy(null)
     setMsg(res.ok ? `Approved ${r.email}: key ${res.data.key}${res.data.sent ? ', invitation sent.' : '. The invitation could not be sent: send the key yourself.'}` : explain(res.data.error))
     void load()
@@ -142,14 +166,17 @@ function Requests({ onChange }: { onChange: () => void }) {
             </header>
             {r.about && <p className="admin__msg">{r.about}</p>}
             {r.status === 'pending' ? (
-              <div className="admin__actions">
-                <button className="cta cta--primary" type="button" disabled={busy === r.id} onClick={() => approve(r)}>
-                  <span>{busy === r.id ? 'Approving…' : 'Approve and send key'}</span>
-                </button>
-                <button className="text-link text-link--quiet" type="button" disabled={busy === r.id} onClick={() => decline(r)}>
-                  Decline
-                </button>
-              </div>
+              <>
+                <PersonalNote value={notes[r.id] ?? ''} onChange={(v) => setNotes((n) => ({ ...n, [r.id]: v }))} />
+                <div className="admin__actions">
+                  <button className="cta cta--primary" type="button" disabled={busy === r.id} onClick={() => approve(r)}>
+                    <span>{busy === r.id ? 'Approving…' : 'Approve and send key'}</span>
+                  </button>
+                  <button className="text-link text-link--quiet" type="button" disabled={busy === r.id} onClick={() => decline(r)}>
+                    Decline
+                  </button>
+                </div>
+              </>
             ) : (
               <p className="muted admin__sys">
                 {r.status === 'approved' ? `Approved ${day(r.decided_at)} · ${r.licence_key}` : `Declined ${day(r.decided_at)}`}
@@ -608,11 +635,15 @@ function LaunchAlerts() {
 function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => void }) {
   const [sending, setSending] = useState('')
   const [msg, setMsg] = useState('')
+  // the tester whose invitation is about to go again, and the note to go with it
+  const [resending, setResending] = useState<Tester | null>(null)
+  const [note, setNote] = useState('')
   async function resend(t: Tester) {
-    if (!window.confirm(`Email ${t.email} their beta invitation again, with their key and the download link?`)) return
     setSending(t.key)
-    const r = await api.admin.resendInvite(t.key)
+    const r = await api.admin.resendInvite(t.key, note)
     setSending('')
+    setResending(null)
+    setNote('')
     setMsg(r.ok ? `Invitation sent again to ${r.data.sent}.` : 'Couldn’t send it. Check Resend’s Emails page for the error.')
   }
   async function revoke(t: Tester) {
@@ -628,6 +659,22 @@ function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => voi
         <p className="notice account__notice" role="status">
           {msg}
         </p>
+      )}
+      {resending && (
+        <div className="admin__resend" role="group" aria-label={`Send ${resending.email} their invitation again`}>
+          <p>
+            Send <strong>{resending.email}</strong> their invitation again, with their key and the download link.
+          </p>
+          <PersonalNote value={note} onChange={setNote} />
+          <div className="admin__actions">
+            <button className="cta cta--primary" type="button" disabled={sending === resending.key} onClick={() => resend(resending)}>
+              <span>{sending === resending.key ? 'Sending…' : 'Send it'}</span>
+            </button>
+            <button className="text-link text-link--quiet" type="button" onClick={() => setResending(null)}>
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
       <div className="admin__scroll">
         <table className="admin__table">
@@ -669,7 +716,7 @@ function Testers({ testers, onChange }: { testers: Tester[]; onChange: () => voi
                 <td>
                   {!t.revoked && (
                     <span className="admin__actions">
-                      <button className="text-link" type="button" disabled={sending === t.key} onClick={() => resend(t)}>
+                      <button className="text-link" type="button" disabled={sending === t.key} onClick={() => (setResending(t), setNote(''))}>
                         {sending === t.key ? 'Sending…' : 'Send invitation again'}
                       </button>
                       <button className="text-link text-link--quiet" type="button" onClick={() => revoke(t)}>

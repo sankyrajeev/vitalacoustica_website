@@ -478,6 +478,7 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   assert.equal(invite.subject, 'Your VANTA beta key')
   assert.equal(invite.replyTo, 'beta@vitalacoustica.com')
   assert.ok(invite.text.includes(betaKey) && invite.text.includes('30 June 2099'))
+  assert.ok(!invite.text.includes('A note from'), 'no note unless one is written')
 
   // one computer, and the licence carries the beta's end date
   const activate = (machine: string) => call('/api/licence/v1/activate', { method: 'POST', body: { key: betaKey, machine, machineName: 'Ravi’s MacBook', termsVersion: '2026-11-beta-1', termsAccepted: '2026-11-12T09:00:00Z' } })
@@ -514,14 +515,16 @@ test('beta testing: feedback, check-ins, beta keys and the admin page', async ()
   assert.deepEqual([mail.at(-1)!.to, mail.at(-1)!.subject], ['buyer@example.com', '[Test] Your VANTA beta key'])
   assert.equal((await call('/api/admin/test-email', { method: 'POST', body: { which: 'beta-invite' } })).status, 404)
 
-  // the invitation again, with the key and the welcome link; admins only
+  // the invitation again, with the key, the welcome link and a personal note signed by the admin; admins only
   assert.equal((await call('/api/admin/beta/resend', { method: 'POST', body: { key: betaKey } })).status, 404)
-  res = await call('/api/admin/beta/resend', { method: 'POST', cookie: session, body: { key: betaKey.toLowerCase() } })
+  res = await call('/api/admin/beta/resend', { method: 'POST', cookie: session, body: { key: betaKey.toLowerCase(), message: 'Try the Sample Lab on <your> vocals first.' } })
   assert.deepEqual(await res.json(), { sent: 'tester@example.com' })
   const again = mail.at(-1)!
   assert.deepEqual([again.to, again.subject], ['tester@example.com', 'Your VANTA beta key'])
   assert.ok(again.text.includes(betaKey) && again.text.includes('30 June 2099'))
   assert.ok(again.text.includes(`${SITE}/account?from=beta-invite&email=tester%40example.com`))
+  assert.ok(again.text.includes('A note from Asha:') && again.text.includes('Try the Sample Lab on <your> vocals first.') && again.text.includes('— Asha'))
+  assert.ok(again.html.includes('A note from Asha') && again.html.includes('on &lt;your&gt; vocals'), 'the note is escaped in the email')
 
   // the app's daily check: active here, not on a computer it isn't activated on, 404 for made-up keys
   const check = async (key: string, machine: string) => {

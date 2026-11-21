@@ -83,7 +83,7 @@ export async function issueBetaKey(
   env: AccountsEnv,
   db: D1Database,
   site: string,
-  t: { email: string; name: string; expires: string; note: string; send: boolean },
+  t: { email: string; name: string; expires: string; note: string; send: boolean; message?: Note },
 ) {
   const product = PRODUCTS.vanta
   const key = newLicenceKey(product.keyPrefix)
@@ -95,12 +95,23 @@ export async function issueBetaKey(
     .prepare('INSERT INTO licences (key, product, user_id, email, edition, max_devices, expires, note, created_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)')
     .bind(key, product.id, user?.id ?? null, t.email, 'Beta', t.expires, note, now())
     .run()
-  const sent = t.send ? await sendBetaInvite(env, site, { email: t.email, name: t.name, key, expires: t.expires }) : false
+  const sent = t.send ? await sendBetaInvite(env, site, { email: t.email, name: t.name, key, expires: t.expires, message: t.message }) : false
   return { key, sent }
 }
 
-/** Emails a tester their beta invitation: the key, its end date and the download link. */
-async function sendBetaInvite(env: AccountsEnv, site: string, t: { email: string; name: string; key: string; expires: string | null }) {
+type Note = { text: string; from: string }
+
+/**
+ * The personal note typed on the admin page, if any, signed with the admin's name (their
+ * account's first name, or the team's if their account has none).
+ */
+const noteFrom = (text: unknown, user: User): Note | undefined => {
+  const t = typeof text === 'string' ? text.trim().slice(0, 1200) : ''
+  return t ? { text: t, from: user.name?.trim().split(/\s+/)[0] || 'the Vital Acoustica team' } : undefined
+}
+
+/** Emails a tester their beta invitation: the key, its end date, the download link, and any personal note. */
+async function sendBetaInvite(env: AccountsEnv, site: string, t: { email: string; name: string; key: string; expires: string | null; message?: Note }) {
   const until = t.expires
     ? new Date(`${t.expires}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
     : 'the end of the beta'
@@ -116,6 +127,7 @@ async function sendBetaInvite(env: AccountsEnv, site: string, t: { email: string
         // the account page welcomes them, with this address filled in
         download: `${site}/account?from=beta-invite&email=${encodeURIComponent(t.email)}`,
         guide: env.BETA_GUIDE_URL || undefined,
+        note: t.message,
       }),
       env.BETA_REPLY_TO || 'beta@vitalacoustica.com',
     )
@@ -126,35 +138,42 @@ async function sendBetaInvite(env: AccountsEnv, site: string, t: { email: string
   }
 }
 
-/** POST /api/admin/beta/resend {key}: the same invitation again, with the current download link. */
-async function resendInvite(request: Request, env: AccountsEnv, db: D1Database) {
-  const key = normaliseKey(String((await readJson<{ key?: string }>(request))?.key ?? ''))
+/** POST /api/admin/beta/resend {key, message?}: the same invitation again, with the current download link. */
+async function resendInvite(request: Request, env: AccountsEnv, db: D1Database, user: User) {
+  const body = await readJson<{ key?: string; message?: string }>(request)
+  const key = normaliseKey(String(body?.key ?? ''))
   const l = await db
     .prepare("SELECT l.key, l.email, l.expires, l.revoked, u.name AS account_name, r.name AS request_name FROM licences l LEFT JOIN users u ON u.id = l.user_id LEFT JOIN beta_requests r ON r.licence_key = l.key WHERE l.key = ? AND l.edition = 'Beta'")
     .bind(key)
     .first<{ key: string; email: string; expires: string | null; revoked: number; account_name: string | null; request_name: string | null }>()
   if (!l) return json({ error: 'not_found' }, 404)
   if (l.revoked) return json({ error: 'revoked' }, 409)
-  const sent = await sendBetaInvite(env, siteUrl(env, request), { email: l.email, name: l.account_name || l.request_name || '', key: l.key, expires: l.expires })
+  const sent = await sendBetaInvite(env, siteUrl(env, request), {
+    email: l.email,
+    name: l.account_name || l.request_name || '',
+    key: l.key,
+    expires: l.expires,
+    message: noteFrom(body?.message, user),
+  })
   return sent ? json({ sent: l.email }) : json({ error: 'unavailable' }, 503)
 }
 
 const validExpiry = (d: string) => DATE.test(d) && d > new Date().toISOString().slice(0, 10)
 
-async function issue(request: Request, env: AccountsEnv, db: D1Database) {
-  const body = await readJson<{ email?: string; name?: string; expires?: string; note?: string; send?: boolean }>(request)
+async function issue(request: Request, env: AccountsEnv, db: D1Database, user: User) {
+  const body = await readJson<{ email?: string; name?: string; expires?: string; note?: string; send?: boolean; message?: string }>(request)
   const email = (body?.email || '').trim().toLowerCase()
   const expires = (body?.expires || '').trim()
   if (!EMAIL.test(email)) return json({ error: 'invalid_email' }, 400)
   if (!validExpiry(expires)) return json({ error: 'invalid_expiry' }, 400)
-  const t = { email, name: (body?.name || '').trim().slice(0, 80), expires, note: (body?.note || '').trim(), send: !!body?.send }
+  const t = { email, name: (body?.name || '').trim().slice(0, 80), expires, note: (body?.note || '').trim(), send: !!body?.send, message: noteFrom(body?.message, user) }
   return json(await issueBetaKey(env, db, siteUrl(env, request), t))
 }
 
 type BetaRequest = { id: number; product: string; email: string; name: string | null; about: string | null; system: string | null; daw: string | null; status: string; licence_key: string | null; created_at: number; decided_at: number | null }
 
-async function approve(request: Request, env: AccountsEnv, db: D1Database) {
-  const body = await readJson<{ id?: number; expires?: string }>(request)
+async function approve(request: Request, env: AccountsEnv, db: D1Database, user: User) {
+  const body = await readJson<{ id?: number; expires?: string; message?: string }>(request)
   const expires = (body?.expires || '').trim()
   if (!validExpiry(expires)) return json({ error: 'invalid_expiry' }, 400)
   const r = await db.prepare("SELECT * FROM beta_requests WHERE id = ? AND status = 'pending'").bind(Number(body?.id)).first<BetaRequest>()
@@ -165,6 +184,7 @@ async function approve(request: Request, env: AccountsEnv, db: D1Database) {
     expires,
     note: [r.system, r.daw].filter(Boolean).join(', '),
     send: true,
+    message: noteFrom(body?.message, user),
   })
   await db.prepare("UPDATE beta_requests SET status = 'approved', licence_key = ?, decided_at = ? WHERE id = ?").bind(result.key, now(), r.id).run()
   return json(result)
@@ -178,7 +198,15 @@ async function decline(request: Request, db: D1Database) {
 
 /** Sample versions of the customer emails, sent only to the signed-in admin: no keys, accounts or lists change. */
 const SAMPLES: Record<string, (site: string) => Mail> = {
-  'beta-invite': (site) => betaInvite(brand(site), { product: 'VANTA', name: 'Sample Tester', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', expires: '31 January 2027', download: `${site}/account?from=beta-invite&email=sample%40example.com` }),
+  'beta-invite': (site) =>
+    betaInvite(brand(site), {
+      product: 'VANTA',
+      name: 'Sample Tester',
+      key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234',
+      expires: '31 January 2027',
+      download: `${site}/account?from=beta-invite&email=sample%40example.com`,
+      note: { text: 'Loved the tracks you sent over. I think the Sample Lab will be right up your street: try it on your own vocal chops first.\n\nCan’t wait to hear what you make with it.', from: 'Sankarsh' },
+    }),
   'beta-request-received': (site) => betaRequestReceived(brand(site), { product: 'VANTA', name: 'Sample Tester' }),
   'licence-keys': (site) => licenceDelivery(brand(site), [{ product: 'VANTA', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', devices: 2 }], `${site}/account`),
   'confirm-email': (site) => accountVerify(brand(site), `${site}/account`, 'Sample Tester'),
@@ -269,10 +297,10 @@ export async function handleAdmin(request: Request, env: AccountsEnv, db: D1Data
     }
   }
   if (request.method === 'POST') {
-    if (pathname === '/api/admin/beta/issue') return issue(request, env, db)
+    if (pathname === '/api/admin/beta/issue') return issue(request, env, db, user!)
     if (pathname === '/api/admin/beta/revoke') return revoke(request, env, db)
-    if (pathname === '/api/admin/beta/resend') return resendInvite(request, env, db)
-    if (pathname === '/api/admin/beta/approve') return approve(request, env, db)
+    if (pathname === '/api/admin/beta/resend') return resendInvite(request, env, db, user!)
+    if (pathname === '/api/admin/beta/approve') return approve(request, env, db, user!)
     if (pathname === '/api/admin/beta/decline') return decline(request, db)
     if (pathname === '/api/admin/launch/send') return sendLaunch(request, env, db)
     if (pathname === '/api/admin/test-email') return testEmail(request, env, user!)

@@ -10289,3 +10289,27 @@ img.cover--screen {
   align-items: center;
   gap: var(--s4);
 }
+
+/* the personal note that goes at the top of an invitation */
+.admin__note {
+  margin-block: var(--s3);
+}
+
+.admin__note textarea {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+}
+
+.admin__resend {
+  display: grid;
+  gap: var(--s3);
+  margin-bottom: var(--s5);
+  padding: var(--s5);
+  border: var(--hair) solid var(--line-strong);
+  border-left: 2px solid var(--accent);
+}
+
+.admin__resend p {
+  margin: 0;
+}

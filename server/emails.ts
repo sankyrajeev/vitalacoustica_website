@@ -504,7 +504,19 @@ ${button(accountLink, 'Open my account')}`
 }
 
 /** A beta tester's invitation, with their key (the wording is VANTA's docs/email/beta-invite.txt). */
-export function betaInvite(b: Brand, r: { product: string; name: string; key: string; expires: string; download: string; guide?: string }): Mail {
+/** A personal note from whoever sent the key, in their own words, signed with their name. */
+function personalNote(n: { text: string; from: string }) {
+  return `<div style="margin:0 0 24px;padding:16px 20px;border-left:2px solid ${C.brass};background-color:${C.page};${LOCK(C.page)}">
+<p style="margin:0 0 10px;font:600 10px ${SANS};letter-spacing:2px;text-transform:uppercase;color:${C.brass};">A note from ${esc(n.from)}</p>
+<p style="margin:0 0 10px;font:italic 17px/1.6 ${SERIF};color:${C.ink};">${para(n.text)}</p>
+<p style="margin:0;font:14px ${SANS};color:${C.soft};">&mdash; ${esc(n.from)}</p>
+</div>`
+}
+
+export function betaInvite(
+  b: Brand,
+  r: { product: string; name: string; key: string; expires: string; download: string; guide?: string; note?: { text: string; from: string } },
+): Mail {
   const steps = [
     'Download the installer for your system and run it.',
     `Read and accept the terms when the installer (and ${r.product} on first launch) asks.`,
@@ -521,6 +533,7 @@ export function betaInvite(b: Brand, r: { product: string; name: string; key: st
     `<ol style="margin:0 0 20px;padding-left:20px;font:15px/1.65 ${SANS};color:${C.ink};">${items.map((i) => `<li style="margin:0 0 6px;">${esc(i)}</li>`).join('')}</ol>`
   const body = `${label('Beta invitation')}
 ${headline(`Thank you for testing ${esc(r.product)}${r.name ? `, ${esc(first(r.name))}` : ''}.`)}
+${r.note ? personalNote(r.note) : ''}
 ${text(`${esc(r.product)} is Vital Acoustica’s new hybrid synthesizer with the Sample Lab: drop in a sound and it builds a playable patch that approximates it. Here’s your beta key. It activates ${esc(r.product)} on one computer; please keep it private and don’t share the installer.`)}
 <p style="margin:8px 0 24px;padding:16px 18px;border:1px solid ${C.line};font:600 18px/1.4 'SFMono-Regular',Menlo,Consolas,monospace;letter-spacing:1px;color:${C.ink};">${esc(r.key)}</p>
 ${text(`Download the installers (macOS and Windows) from your account: sign in, or create an account, with this email address. The beta runs until ${esc(r.expires)}, then asks you to install the next version.`)}
@@ -540,6 +553,7 @@ ${text('Everything here is confidential until release: please don’t post scree
     text: plain([
       `Thank you for helping test ${r.product}.`,
       '',
+      ...(r.note ? [`A note from ${r.note.from}:`, r.note.text, `— ${r.note.from}`, ''] : []),
       `Your beta key: ${r.key}`,
       `It activates ${r.product} on one computer. Please keep it private and don't share the installer.`,
       '',
