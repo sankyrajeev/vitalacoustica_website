@@ -39,7 +39,7 @@ export function JournalIndex() {
     <>
       <header className="page-head wrap j-hero">
         <Label>Blog</Label>
-        <h1 className="display display--sm">Sound, light and visuals, today.</h1>
+        <h1 className="display display--sm">Sound, light and visuals, today</h1>
         <p className="lede">{JOURNAL_LINE}</p>
       </header>
 
@@ -153,7 +153,7 @@ export function JournalIndex() {
           <header className="section-head">
             <Label>From the studio</Label>
             <h2 id="studio-title" className="h2">
-              Studies, experiments and field notes.
+              Studies, experiments and field notes
             </h2>
           </header>
           <ol className="journal">
@@ -195,7 +195,7 @@ function IndustryPulse() {
         <header className="section-head j-pulse__head">
           <Label>Industry Pulse</Label>
           <h2 id="pulse-title" className="h1">
-            The week in sound, light and live production.
+            The week in sound, light and live production
           </h2>
           <p className="section-head__sub">
             Current news from the professional audio, lighting and event-production trade press. Every headline links to its original

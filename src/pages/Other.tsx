@@ -12,7 +12,7 @@ import { queryParam } from '../router'
 export function StudioPage() {
   return (
     <>
-      <PageHead label="Studio" title="Selective by design.">
+      <PageHead label="Studio" title="Selective by design">
         We believe good production begins with asking better questions.
       </PageHead>
       <section className="section section--tight">
@@ -70,7 +70,7 @@ export function StudioPage() {
 export function DeckPage() {
   return (
     <>
-      <PageHead label="Capability deck" title="Vital Acoustica at a glance.">
+      <PageHead label="Capability deck" title="Vital Acoustica at a glance">
         A one-page summary for production managers, agencies and procurement teams.
       </PageHead>
       <section className="section section--tight">
@@ -152,7 +152,7 @@ export function ContactPage() {
 
   return (
     <>
-      <PageHead label="Get a quote" title="Tell us about your event.">
+      <PageHead label="Get a quote" title="Tell us about your event">
         The date, the venue and roughly how many people. We’ll come back with the right system, a quote, and who will be on site
         to run it.
       </PageHead>
@@ -203,7 +203,7 @@ export function NotFoundPage() {
     <section className="section not-found">
       <div className="wrap">
         <Label>Not found</Label>
-        <h1 className="display display--sm">Nothing here.</h1>
+        <h1 className="display display--sm">Nothing here</h1>
         <p className="lede">The page may have moved. Everything else is a click away.</p>
         <Cta to="/">Back to the start</Cta>
       </div>

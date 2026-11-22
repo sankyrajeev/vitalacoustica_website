@@ -75,7 +75,7 @@ export function ProductionPage() {
 
       <Banner
         photo="club-neon"
-        title="We engineer the entire experience."
+        title="We engineer the entire experience"
         lines={[
           'More than equipment. A complete technical environment.',
           'Every connection considered. Every system accounted for.',
@@ -87,7 +87,7 @@ export function ProductionPage() {
       <Feature
         n="01"
         kicker="We see the entire system"
-        title="Not departments. One connected environment."
+        title="Not departments. One connected environment"
         line="The same night, planned two ways."
         scene={<IntegrationScene />}
       >
@@ -109,7 +109,7 @@ export function ProductionPage() {
           <header className="section-head">
             <Label index="02">Our disciplines</Label>
             <h2 id="pdisc-title" className="h1">
-              Five disciplines, one environment.
+              Five disciplines, one environment
             </h2>
             <p className="section-head__sub">
               Many companies can provide sound and lights. What we bring is how they behave: in the room, with the music, on the
@@ -122,7 +122,7 @@ export function ProductionPage() {
 
       <Banner
         photo="park-dusk"
-        title="Different systems. One cohesive experience."
+        title="Different systems. One cohesive experience"
         lines={[
           'Sound sets the foundation. Light defines the atmosphere. Visuals transform the space.',
           'We design the relationships between the elements.',
@@ -136,7 +136,7 @@ export function ProductionPage() {
           <header className="section-head">
             <Label index="03">End-to-end production</Label>
             <h2 id="pprocess-title" className="h1">
-              One partner, from concept to execution.
+              One partner, from concept to execution
             </h2>
             <p className="section-head__sub">
               What should the audience experience? What does the venue allow? How should the systems interact, and what has to
@@ -151,7 +151,7 @@ export function ProductionPage() {
       <Feature
         n="04"
         kicker="The invisible infrastructure, and our own tools"
-        title="Everything works better when systems communicate."
+        title="Everything works better when systems communicate"
         line="Follow a signal from the music to the room."
         scene={<SignalScene />}
         flip
@@ -173,7 +173,7 @@ export function ProductionPage() {
       <Feature
         n="05"
         kicker="Built around the venue"
-        title="The venue sets the constraints. The design explores the possibilities."
+        title="The venue sets the constraints. The design explores the possibilities"
         line="Five kinds of venue, five different plans."
         scene={<VenuePlans />}
       >
@@ -195,7 +195,7 @@ export function ProductionPage() {
           <header className="section-head">
             <Label index="06">Applications</Label>
             <h2 id="papps-title" className="h1">
-              Every event has its own running order.
+              Every event has its own running order
             </h2>
             <p className="section-head__sub">
               The same approach, adapted to the occasion: watch how the sound, the light and the image change, moment by moment,
@@ -208,7 +208,7 @@ export function ProductionPage() {
 
       <Banner
         photo="club-full"
-        title="The show starts long before the audience arrives."
+        title="The show starts long before the audience arrives"
         lines={[
           'Prepared before the doors open.',
           'From technical planning to final system verification.',
@@ -220,7 +220,7 @@ export function ProductionPage() {
       <Feature
         n="07"
         kicker="Precision is a production standard"
-        title="We care about the details that make everything else possible."
+        title="We care about the details that make everything else possible"
         line="Nothing is assumed. Everything is checked."
         scene={<Preflight />}
       >
@@ -240,7 +240,7 @@ export function ProductionPage() {
       <Feature
         n="08"
         kicker="Our production philosophy"
-        title="Make the complex feel effortless."
+        title="Make the complex feel effortless"
         line="Slide from the experience to the system behind it."
         scene={<EffortlessScene />}
         flip
@@ -262,7 +262,7 @@ export function ProductionPage() {
           <header className="section-head">
             <Label index="09">From first brief to final pack-down</Label>
             <h2 id="pscope-title" className="h1">
-              We take ownership of the whole process.
+              We take ownership of the whole process
             </h2>
             <p className="section-head__sub">
               End-to-end means looking beyond the equipment list. Depending on the event, a production can bring together:
@@ -280,7 +280,7 @@ export function ProductionPage() {
 
       <Banner
         photo="park-blue"
-        title="Not just production. Experience engineering."
+        title="Not just production. Experience engineering"
         lines={[
           'We make complex systems feel effortless.',
           'Creative ambition, backed by technical understanding.',

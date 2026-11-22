@@ -72,7 +72,7 @@ function InviteWelcome({ onChoose }: { onChoose: (mode: 'in' | 'up') => void }) 
       <div className="welcome__card">
         <p className="label">VANTA beta</p>
         <h2 id="welcome-title" className="welcome__title">
-          Welcome to the VANTA beta.
+          Welcome to the VANTA beta
         </h2>
         <p className="muted">
           To download VANTA and keep your beta key safe, create your free Vital Acoustica account with the email your invitation was
@@ -131,7 +131,7 @@ function SignIn({ notice, invite }: { notice: string | null; invite: string | nu
     return (
       <div className="form-done account__card" role="status">
         <p className="label">One more step</p>
-        <h3>Check your email.</h3>
+        <h3>Check your email</h3>
         <p className="muted">
           We’ve sent a link to <strong>{sent}</strong>. Open it to confirm your address and sign in. It works for 24 hours, and may take a
           minute to arrive: check your spam folder too.
@@ -512,7 +512,7 @@ export function ForgotPage() {
           {sent ? (
             <div className="form-done" role="status">
               <p className="label">Sent</p>
-              <h3>Check your email.</h3>
+              <h3>Check your email</h3>
               <p className="muted">If there’s an account for that address, a link to reset its password is on its way. It works for an hour.</p>
             </div>
           ) : (

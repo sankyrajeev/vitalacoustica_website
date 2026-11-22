@@ -28,7 +28,7 @@ function showSlides(only?: Project): Slide[] {
 function WorkSoon() {
   return (
     <>
-      <PageHead label="Selected work" title="Our work, coming soon.">
+      <PageHead label="Selected work" title="Our work, coming soon">
         We’re preparing our productions to post here: the systems, the light and the decisions behind each one.
       </PageHead>
       <section className="section section--tight">
@@ -56,7 +56,7 @@ export function WorkIndex() {
   if (!published.work) return <WorkSoon />
   return (
     <>
-      <PageHead label="Selected work" title="A selection of what we do.">
+      <PageHead label="Selected work" title="A selection of what we do">
         Productions we have shaped. Each case study covers the system, the light and the decisions behind them.
       </PageHead>
       <section className="work-flow" aria-label="Photographs from our shows">

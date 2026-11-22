@@ -128,12 +128,12 @@ export function AcousticaEdit() {
           </div>
         ) : state.kind === 'pending' ? (
           <div className="edit__done" role="status">
-            <h3>Check your inbox.</h3>
+            <h3>Check your inbox</h3>
             <p className="muted">{PENDING}</p>
           </div>
         ) : state.kind === 'soon' ? (
           <div className="edit__done" role="status">
-            <h3>Sign-ups open soon.</h3>
+            <h3>Sign-ups open soon</h3>
             <p className="muted">The Acoustica Edit isn’t taking subscribers just yet. Nothing has been saved. Please come back shortly.</p>
           </div>
         ) : (

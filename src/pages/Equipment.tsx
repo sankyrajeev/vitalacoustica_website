@@ -11,7 +11,7 @@ import { NotFound } from './NotFound'
 export function EquipmentIndex() {
   return (
     <>
-      <PageHead label="Equipment" title="The rig we hire out.">
+      <PageHead label="Equipment" title="The rig we hire out">
         Every item comes with delivery, setup and, if you want it, a technician to run it. Open any piece for its specs, or see it
         in place on our 3D stage.
       </PageHead>
@@ -69,7 +69,7 @@ function HowHiringWorks() {
         <header className="section-head">
           <Label>How hiring works</Label>
           <h2 id="hiring-title" className="h1">
-            From enquiry to load-out.
+            From enquiry to load-out
           </h2>
         </header>
         <ol className="steps">

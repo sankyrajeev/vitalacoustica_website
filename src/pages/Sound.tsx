@@ -172,7 +172,7 @@ export function SoundPage() {
       <Feature
         n="01"
         kicker="Read the room"
-        title="Every space has a sound."
+        title="Every space has a sound"
         line="We make sure it’s the right one."
         scene={<RoomPlanner />}
       >
@@ -191,7 +191,7 @@ export function SoundPage() {
       <Feature
         n="02"
         kicker="Tune on site"
-        title="Not by guesswork."
+        title="Not by guesswork"
         line="The room you designed for isn’t always the room you arrive at."
         scene={<TuneScene />}
         flip
@@ -209,7 +209,7 @@ export function SoundPage() {
       <Feature
         n="03"
         kicker="Source to output"
-        title="Every connection has a purpose."
+        title="Every connection has a purpose"
         line="The right equipment is only the beginning."
         scene={<SignalChain />}
       >
@@ -240,7 +240,7 @@ export function SoundPage() {
       <Feature
         n="04"
         kicker="Low frequencies"
-        title="Under control."
+        title="Under control"
         line="Feel the energy. Keep the definition."
         scene={<SubArray />}
         flip
@@ -261,7 +261,7 @@ export function SoundPage() {
           <header className="section-head">
             <Label index="05">Built for the dance floor</Label>
             <h2 id="floor-title" className="h1">
-              Energy is easy. Control is the craft.
+              Energy is easy. Control is the craft
             </h2>
           </header>
           <div className="sound-floor__grid">
@@ -301,7 +301,7 @@ export function SoundPage() {
           <header className="section-head">
             <Label index="06">From load-in to last track</Label>
             <h2 id="process-title" className="h1">
-              Professional execution is a process.
+              Professional execution is a process
             </h2>
           </header>
           <Process steps={STEPS} label="From load-in to last track" />
@@ -314,7 +314,7 @@ export function SoundPage() {
           <header className="section-head">
             <Label index="07">The details others overlook</Label>
             <h2 id="details-title" className="h1">
-              The difference lives between the specifications.
+              The difference lives between the specifications
             </h2>
             <p className="section-head__sub">
               A spec sheet tells you what a system can do. It can’t tell you how it will perform in your room. That comes down to
@@ -330,7 +330,7 @@ export function SoundPage() {
           <header className="section-head">
             <Label index="08">Designed around the event</Label>
             <h2 id="events-title" className="h1">
-              The right system isn’t the largest. It’s the one that meets the brief.
+              The right system isn’t the largest. It’s the one that meets the brief
             </h2>
           </header>
           <Events />

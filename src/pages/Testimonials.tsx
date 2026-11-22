@@ -9,7 +9,7 @@ import { testimonials } from '../content/testimonials'
 export function TestimonialsPage() {
   return (
     <>
-      <PageHead label="Testimonials" title="In their words.">
+      <PageHead label="Testimonials" title="In their words">
         What promoters, artists and hosts say after working with us. Every testimonial here is published with the person's
         permission, in their own words.
       </PageHead>
@@ -35,7 +35,7 @@ export function TestimonialsPage() {
           <div>
             <Label>Worked with us?</Label>
             <h2 id="invite-title" className="h1">
-              Tell us how it felt.
+              Tell us how it felt
             </h2>
             <p className="lede">
               A few lines about your event: the sound, the light, the crew. We'll only publish it if you say yes below.

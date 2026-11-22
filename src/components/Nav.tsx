@@ -41,12 +41,9 @@ export function Nav({ path }: { path: string }) {
 
       <nav id="site-menu" className="nav__menu" aria-label="Main">
         <ul>
-          {site.nav.map((item, i) => (
+          {site.nav.map((item) => (
             <li key={item.to}>
               <Link to={item.to} aria-current={isActive(item.to) ? 'page' : undefined} onClick={close}>
-                <span className="nav__num" aria-hidden>
-                  0{i + 1}
-                </span>
                 {item.label}
               </Link>
             </li>

@@ -324,7 +324,7 @@ export function StoryPage() {
       </Chapter>
 
       <Chapter id="why" scene="story-end" side="centre">
-        <h2 className="display display--sm why__title">That’s why we do what we do.</h2>
+        <h2 className="display display--sm why__title">That’s why we do what we do</h2>
         <p className="chapter__body chapter__body--narrow">
           Vital Acoustica is our way of giving people the experience we always wanted for ourselves — one where sound is felt,
           light has meaning, and music is experienced in its entirety.

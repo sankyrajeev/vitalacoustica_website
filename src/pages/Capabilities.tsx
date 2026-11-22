@@ -13,7 +13,7 @@ import { ServiceFader } from '../components/service/ServiceFader'
 export function CapabilitiesIndex() {
   return (
     <>
-      <PageHead label="Services" title="Sound, light, visuals, and the systems that connect them.">
+      <PageHead label="Services" title="Sound, light, visuals, and the systems that connect them">
         How a sound system behaves in a room, how lighting responds to the music, how visuals can occupy unconventional
         surfaces, and how it all runs together. Each discipline has its own page; Production brings them into one experience, and
         for venues that want a system of their own, we consult on permanent installations.

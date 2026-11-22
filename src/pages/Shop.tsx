@@ -127,7 +127,7 @@ export function ShopIndex() {
           <header className="section-head">
             <Label>How buying works</Label>
             <h2 id="shop-how" className="h1">
-              Simple, wherever you are.
+              Simple, wherever you are
             </h2>
           </header>
           <ol className="steps">

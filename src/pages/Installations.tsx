@@ -91,7 +91,7 @@ export function InstallationsPage() {
           <header className="section-head">
             <Label index="01">What we integrate</Label>
             <h2 id="isys-title" className="h1">
-              Four systems, one installation.
+              Four systems, one installation
             </h2>
           </header>
           <Details items={SYSTEMS} />
@@ -103,7 +103,7 @@ export function InstallationsPage() {
           <header className="section-head">
             <Label index="02">How an installation comes together</Label>
             <h2 id="iprocess-title" className="h1">
-              From the first visit to the everyday.
+              From the first visit to the everyday
             </h2>
           </header>
           <Process steps={STEPS} label="How an installation comes together" />

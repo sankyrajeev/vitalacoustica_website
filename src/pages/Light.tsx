@@ -85,7 +85,7 @@ export function LightPage() {
       <Feature
         n="01"
         kicker="Every light has a purpose"
-        title="Illumination, or atmosphere."
+        title="Illumination, or atmosphere"
         line="Programming is the difference."
         scene={<PurposeScene />}
       >
@@ -101,7 +101,7 @@ export function LightPage() {
       <Feature
         n="02"
         kicker="The music is the clock"
-        title="Real-time audio, in the light."
+        title="Real-time audio, in the light"
         line="When the music changes, the room can change with it."
         scene={<AudioReactive />}
         flip
@@ -121,7 +121,7 @@ export function LightPage() {
       <Feature
         n="03"
         kicker="We build our own tools"
-        title="Software as creative as the lighting."
+        title="Software as creative as the lighting"
         line="Some ideas need more than an off-the-shelf workflow."
         scene={<ToolsGraph />}
       >
@@ -149,7 +149,7 @@ export function LightPage() {
       <Feature
         n="04"
         kicker="MIDI, mapped with intention"
-        title="Every control has a reason to exist."
+        title="Every control has a reason to exist"
         line="Play it: pads, faders and the messages they send."
         scene={<MidiScene />}
         flip
@@ -168,7 +168,7 @@ export function LightPage() {
       <Feature
         n="05"
         kicker="Every cue is a decision"
-        title="We program the transitions, not just the moments."
+        title="We program the transitions, not just the moments"
         line="Press GO. Change the fade, and press it again."
         scene={<CueScene />}
       >
@@ -187,7 +187,7 @@ export function LightPage() {
       <Feature
         n="06"
         kicker="Pixel mapping"
-        title="When the fixture becomes a canvas."
+        title="When the fixture becomes a canvas"
         line="Visuals at the level of the LED."
         scene={<PixelScene />}
         flip
@@ -203,7 +203,7 @@ export function LightPage() {
       <Feature
         n="07"
         kicker="The control system behind the show"
-        title="Precision begins with architecture."
+        title="Precision begins with architecture"
         line="DMX512, Art-Net, sACN and MIDI, each with a role."
         scene={<PatchScene />}
       >
@@ -220,7 +220,7 @@ export function LightPage() {
           <header className="section-head">
             <Label index="08">Engineered to the detail</Label>
             <h2 id="ldetails-title" className="h1">
-              The technical decisions that shape the result.
+              The technical decisions that shape the result
             </h2>
             <p className="section-head__sub">
               The difference between a collection of working fixtures and a coherent lighting environment.
@@ -235,7 +235,7 @@ export function LightPage() {
           <header className="section-head">
             <Label index="09">Our lighting workflow</Label>
             <h2 id="lprocess-title" className="h1">
-              From specification to a fully realised environment.
+              From specification to a fully realised environment
             </h2>
           </header>
           <Process steps={STEPS} label="Our lighting workflow" />

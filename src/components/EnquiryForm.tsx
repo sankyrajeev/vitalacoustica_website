@@ -96,7 +96,7 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
     return status.viaWhatsApp ? (
       <div className="form-done" role="status">
         <p className="label">One more step</p>
-        <h3>Send it to us on WhatsApp.</h3>
+        <h3>Send it to us on WhatsApp</h3>
         <p className="muted">
           We couldn’t send your enquiry from the site just now, so it’s written out and ready in WhatsApp. Tap the button, then
           press send.
@@ -108,7 +108,7 @@ export function EnquiryForm({ id = 'enquiry', initialServices = [], initialDescr
     ) : (
       <div className="form-done" role="status">
         <p className="label">Received</p>
-        <h3>Thank you. We’ll be in touch.</h3>
+        <h3>Thank you. We’ll be in touch</h3>
         <p className="muted">We read every enquiry and reply personally.</p>
       </div>
     )

@@ -82,7 +82,7 @@ export function VisualsPage() {
       <Feature
         n="01"
         kicker="The wall is just the beginning"
-        title="Every surface is a potential canvas."
+        title="Every surface is a potential canvas"
         line="Choose a surface, and drag to look around it."
         scene={<SurfaceScene />}
       >
@@ -101,7 +101,7 @@ export function VisualsPage() {
       <Feature
         n="02"
         kicker="Generative visuals"
-        title="Designed by algorithms. Directed by imagination."
+        title="Designed by algorithms. Directed by imagination"
         line="A system of parameters, not a finished video."
         scene={<GenerativeScene />}
         flip
@@ -121,7 +121,7 @@ export function VisualsPage() {
       <Feature
         n="03"
         kicker="Audio-reactive visuals"
-        title="When the music moves, the image responds."
+        title="When the music moves, the image responds"
         line="Musical signals, mapped to visual behaviour."
         scene={<AudioVisualScene />}
       >
@@ -140,7 +140,7 @@ export function VisualsPage() {
       <Feature
         n="04"
         kicker="TouchDesigner"
-        title="Our real-time visual playground."
+        title="Our real-time visual playground"
         line="Where graphics become systems."
         scene={<NetworkScene />}
         flip
@@ -161,7 +161,7 @@ export function VisualsPage() {
       <Feature
         n="05"
         kicker="AI-assisted creative development"
-        title="From abstract ideas to executable visual systems."
+        title="From abstract ideas to executable visual systems"
         line="An idea, a draft, then an engineered system."
         scene={<AiScene />}
       >
@@ -180,7 +180,7 @@ export function VisualsPage() {
       <Feature
         n="06"
         kicker="Abstraction without limits"
-        title="Geometry. Distortion. Motion. Depth."
+        title="Geometry. Distortion. Motion. Depth"
         line="Slide from precision towards the unpredictable."
         scene={<AbstractScene />}
         flip
@@ -200,7 +200,7 @@ export function VisualsPage() {
       <Feature
         n="07"
         kicker="Projection mapping & spatial visuals"
-        title="The image doesn’t have to stay inside a rectangle."
+        title="The image doesn’t have to stay inside a rectangle"
         line="The same building, three ways."
         scene={<MappingScene />}
       >
@@ -221,7 +221,7 @@ export function VisualsPage() {
           <header className="section-head">
             <Label index="08">Designed for the unexpected</Label>
             <h2 id="vprocess-title" className="h1">
-              Every installation is a different visual challenge.
+              Every installation is a different visual challenge
             </h2>
             <p className="section-head__sub">
               A wall, a suspended mesh and a translucent screen are not interchangeable. We treat each installation as content
@@ -238,7 +238,7 @@ export function VisualsPage() {
           <header className="section-head">
             <Label index="09">Currently in development</Label>
             <h2 id="vdev-title" className="h1">
-              We’re building what comes next.
+              We’re building what comes next
             </h2>
             <p className="section-head__sub">
               Our real-time visual work is an ongoing research and development project. We’re refining the technical architecture,
@@ -256,7 +256,7 @@ export function VisualsPage() {
           <VisionScene />
           <Label>Our vision</Label>
           <h2 id="vclose-title" className="display display--sm">
-            A new relationship between sound, light and space.
+            A new relationship between sound, light and space
           </h2>
           <p>
             Imagine a visual composition that evolves with the music, projected across a suspended mesh, surrounded by precisely

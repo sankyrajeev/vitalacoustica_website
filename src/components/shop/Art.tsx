@@ -150,7 +150,7 @@ export function SoftwareCover({ p }: { p: Software }) {
   if (p.logo)
     return (
       <div className={`cover cover--software cover--logo cover--${p.art}`}>
-        <span className="cover__kicker">Vital Acoustica · {p.type}</span>
+        <span className="cover__kicker">Vital Acoustica</span>
         <div className="cover__logo">
           <img src={`${import.meta.env.BASE_URL}${p.logo.src}`} alt={p.name} loading="lazy" />
           {p.logo.name && <span className="cover__logo-name">{p.logo.name}</span>}
@@ -170,7 +170,7 @@ export function SoftwareCover({ p }: { p: Software }) {
         {/* the artwork keeps to the upper part, clear of the wordmark */}
         <g transform="translate(56 18) scale(0.72)">{SOFTWARE_ART[p.art]()}</g>
       </svg>
-      <span className="cover__kicker">Vital Acoustica · {p.type}</span>
+      <span className="cover__kicker">Vital Acoustica</span>
       <span className="cover__name cover__name--software">
         {p.name.startsWith('Lumière') ? (
           <>

@@ -6,7 +6,7 @@ export const site = {
   domain: 'vitalacoustica.com',
   gst: '29ABCFV2853P1ZF',
   eyebrow: 'Sound & lighting rental · Production',
-  headline: 'We shape the way an experience feels.',
+  headline: 'We shape the way an experience feels',
   supporting: 'Sound, light and production. Conceived as one.',
   intro:
     'Sound, light and production, conceived as one. We create carefully considered experiences where technical precision meets creative intent.',

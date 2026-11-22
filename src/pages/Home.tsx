@@ -67,7 +67,7 @@ function Entrance() {
       <div className="wrap entrance__inner">
         <Label>{site.eyebrow}</Label>
         <h1 id="entrance-title" className="display">
-          We shape the way an experience <em>feels.</em>
+          We shape the way an experience <em>feels</em>
         </h1>
         <p className="entrance__intro">{site.rental}</p>
         <div className="entrance__actions">
@@ -94,7 +94,7 @@ function Statement() {
       <div className="wrap statement__inner">
         <Label index="01">Vital Acoustica</Label>
         <h2 id="statement-title" className="h1">
-          Production is more than equipment.
+          Production is more than equipment
         </h2>
         <p className="statement__body">
           We hire out professional sound and lighting, and we bring the people who know how to make it feel right: system design,
@@ -122,7 +122,7 @@ function Voices() {
         <header className="section-head">
           <Label index="02">Testimonials</Label>
           <h2 id="voices-title" className="h1">
-            In their words.
+            In their words
           </h2>
           <TextLink to="/testimonials">All testimonials</TextLink>
         </header>
@@ -171,7 +171,7 @@ function FinalEnquiry() {
       <div className="wrap final__inner">
         <Label index={journalShown ? '04' : '03'}>Get a quote</Label>
         <h2 id="final-title" className="display display--sm">
-          Let’s shape something exceptional.
+          Let’s shape something exceptional
         </h2>
         <p className="lede">
           Tell us the date, the venue and roughly how many people. We’ll reply with the right system, a quote, and who will be on
