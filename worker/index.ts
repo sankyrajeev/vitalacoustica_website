@@ -12,6 +12,7 @@ import { handleJournalApi, journalPage, liveArticles, type JournalEnv } from '..
 import { confirm, runNewsletter, setPostSource, subscribe, unsubscribe, type NewsletterEnv } from '../server/newsletter.ts'
 import { handlePulse, type PulseEnv } from '../server/pulse.ts'
 import { sitePage } from '../server/seo.ts'
+import { movedSoftwarePath } from '../src/content/shop.ts'
 import { sitemap } from '../server/sitemap.ts'
 
 type Env = AccountsEnv & ChatEnv & EnquiryEnv & JournalEnv & NewsletterEnv & PulseEnv & { ASSETS: { fetch: (request: Request) => Promise<Response> } }
@@ -47,6 +48,13 @@ export default {
     if (pathname === '/sitemap.xml') return sitemap((env.SITE_URL || url.origin).replace(/\/$/, ''))
     // the Journal is now the Blog: old links keep working
     if (pathname === '/journal' || pathname.startsWith('/journal/')) return Response.redirect(`${url.origin}/blog${pathname.slice('/journal'.length)}${url.search}`, 301)
+    // software moved out of the shop: /shop/vanta → /software/vanta, and the shop's software shelf → /software
+    const moved = movedSoftwarePath(pathname)
+    if (moved && read) return Response.redirect(`${url.origin}${moved}${url.search}`, 301)
+    if (pathname === '/shop' && url.searchParams.get('section') === 'software' && read) {
+      const area = url.searchParams.get('area')
+      return Response.redirect(`${url.origin}/software${area ? `?area=${encodeURIComponent(area)}` : ''}`, 301)
+    }
     if ((pathname === '/blog' || pathname.startsWith('/blog/')) && read) return journalPage(request, env, env.ASSETS)
     // every other page of the app, with its own title, description, preview and structured data;
     // files (anything with an extension) go straight out

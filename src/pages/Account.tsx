@@ -419,8 +419,8 @@ function Dashboard({ me, notice, reload }: { me: Me; notice: string | null; relo
             <p>
               When you buy software from us, its licence key and downloads appear here. Bought with another email address? Sign in with that one.
             </p>
-            <Link to="/shop" className="text-link">
-              Visit the shop <Arrow />
+            <Link to="/software" className="text-link">
+              See our software <Arrow />
             </Link>
           </div>
         )}

@@ -1,4 +1,4 @@
-import type { Software } from '../../content/shop'
+import { productPath, type Software } from '../../content/shop'
 import { Link } from '../Link'
 import { Arrow } from '../ui'
 
@@ -14,7 +14,7 @@ export function ComingSoon({ items, title = 'Coming soon' }: { items: Software[]
       <ul className="soon__list">
         {items.map((p) => (
           <li key={p.id}>
-            <Link to={`/shop/${p.id}`} className="soon__item">
+            <Link to={productPath(p)} className="soon__item">
               <span className="soon__name">{p.name}</span>
               <span className="soon__type">{p.type}</span>
               <span className="soon__line">{p.tagline}</span>

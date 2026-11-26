@@ -62,8 +62,8 @@ const LOCK = (hex: string) => `background-image:linear-gradient(${hex},${hex});`
 type Hero = 'stage' | 'none' | { src: string; alt: string; href: string }
 
 const HEROES = {
-  vanta: { src: '/email/vanta.jpg', alt: 'VANTA', href: '/shop/vanta' },
-  pixelForge: { src: '/email/pixel-forge.jpg', alt: 'Pixel Forge', href: '/shop/pixel-forge' },
+  vanta: { src: '/email/vanta.jpg', alt: 'VANTA', href: '/software/vanta' },
+  pixelForge: { src: '/email/pixel-forge.jpg', alt: 'Pixel Forge', href: '/software/pixel-forge' },
 } as const
 
 function heroRows(b: Brand, hero: Hero) {

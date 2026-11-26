@@ -9,7 +9,7 @@ import { SoftwareFeature } from '../components/shop/SoftwareFeature'
 import { VantaHero } from '../components/shop/VantaHero'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
-import { price, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind, type Software } from '../content/shop'
+import { price, productPath, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind, type Software } from '../content/shop'
 import { href, queryParam } from '../router'
 import { NotFound } from './NotFound'
 
@@ -33,7 +33,7 @@ function ProductCard({ p }: { p: Product }) {
   return (
     <article className={`shop-card is-${status}`}>
       <div className="shop-card__media">
-        <Link to={`/shop/${p.id}`} aria-label={`${p.name}: details`}>
+        <Link to={productPath(p)} aria-label={`${p.name}: details`}>
           <Art p={p} />
         </Link>
         {p.kind === 'audio' && (
@@ -45,7 +45,7 @@ function ProductCard({ p }: { p: Product }) {
       </div>
       <div className="shop-card__body">
         <h3 className="shop-card__name">
-          <Link to={`/shop/${p.id}`}>{p.name}</Link>
+          <Link to={productPath(p)}>{p.name}</Link>
         </h3>
         {p.kind === 'software' && <p className="shop-card__type">{p.type}</p>}
         <p className="shop-card__tagline">{p.tagline}</p>
@@ -55,7 +55,7 @@ function ProductCard({ p }: { p: Product }) {
           ) : (
             <span className={`shop-status shop-status--${status}`}>{STATUS_LABEL[status]}</span>
           )}
-          <Link to={`/shop/${p.id}`} className="text-link">
+          <Link to={productPath(p)} className="text-link">
             {status === 'available' ? 'Buy' : status === 'beta' ? 'Join the beta' : 'Details'} <Arrow />
           </Link>
         </p>
@@ -208,11 +208,19 @@ export function ShopItem({ id }: { id: string }) {
       {p.id === 'vanta' && <VantaHero variant="page" />}
       <div className="wrap">
         <nav className="crumbs" aria-label="Breadcrumb">
-          <Link to="/shop">Shop</Link>
-          <span aria-hidden>/</span>
-          <Link to={p.kind === 'software' ? (p.area === 'audio' ? '/shop' : '/shop?section=software&area=lighting') : `/shop?section=${p.kind}`}>
-            {p.kind === 'software' ? `${section.title} · ${p.area === 'audio' ? 'Audio' : 'Lighting'}` : section.title}
-          </Link>
+          {p.kind === 'software' ? (
+            <>
+              <Link to="/software">Software</Link>
+              <span aria-hidden>/</span>
+              <Link to={`/software?area=${p.area}`}>{p.area === 'audio' ? 'Audio' : 'Lighting'}</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/shop">Shop</Link>
+              <span aria-hidden>/</span>
+              <Link to={`/shop?section=${p.kind}`}>{section.title}</Link>
+            </>
+          )}
         </nav>
       </div>
 

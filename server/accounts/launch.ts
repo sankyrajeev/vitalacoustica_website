@@ -4,7 +4,7 @@
 
 import { launchAlertAdmin, launchAlertOut, launchAlertSaved } from '../emails.ts'
 import { teamInbox } from '../enquiry.ts'
-import { products } from '../../src/content/shop.ts'
+import { productPath, products } from '../../src/content/shop.ts'
 import { clientIp, json, limited, now, readJson, siteUrl, type AccountsEnv, type D1Database } from './db.ts'
 import { brand, sendMail } from './mail.ts'
 
@@ -31,7 +31,7 @@ export async function notifyMe(request: Request, env: AccountsEnv, db: D1Databas
       console.error('launch alert (email only)', e)
       return json({ error: 'unavailable' }, 503)
     }
-    await sendMail(env, email, launchAlertSaved(brand(site), { product: p.name, detail, link: `${site}/shop/${p.id}` })).catch((e) => console.error('launch alert email', e))
+    await sendMail(env, email, launchAlertSaved(brand(site), { product: p.name, detail, link: `${site}${productPath(p)}` })).catch((e) => console.error('launch alert email', e))
     return json({ status: 'saved' })
   }
 
@@ -41,7 +41,7 @@ export async function notifyMe(request: Request, env: AccountsEnv, db: D1Databas
     .bind(p.id, email, detail || null, now())
     .run()
   if (res.meta.changes) {
-    await sendMail(env, email, launchAlertSaved(brand(site), { product: p.name, detail, link: `${site}/shop/${p.id}` })).catch((e) => console.error('launch alert email', e))
+    await sendMail(env, email, launchAlertSaved(brand(site), { product: p.name, detail, link: `${site}${productPath(p)}` })).catch((e) => console.error('launch alert email', e))
   }
   return json({ status: 'saved' })
 }
@@ -65,7 +65,7 @@ export async function sendLaunch(request: Request, env: AccountsEnv, db: D1Datab
   let sent = 0
   for (const w of waiting) {
     try {
-      await sendMail(env, w.email, launchAlertOut(brand(site), { product: p.name, detail: w.detail || '', link: `${site}/shop/${p.id}` }))
+      await sendMail(env, w.email, launchAlertOut(brand(site), { product: p.name, detail: w.detail || '', link: `${site}${productPath(p)}` }))
       await db.prepare('UPDATE launch_alerts SET notified_at = ? WHERE product = ? AND email = ?').bind(now(), p.id, w.email).run()
       sent++
     } catch (e) {

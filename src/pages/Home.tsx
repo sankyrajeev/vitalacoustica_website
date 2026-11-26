@@ -63,7 +63,7 @@ function Opening() {
           South India.
         </p>
         <div className="home-hero__actions">
-          <Cta to="/shop">Our software</Cta>
+          <Cta to="/software">Our software</Cta>
           <Cta to="/capabilities" variant="quiet">
             Shows
           </Cta>
@@ -151,7 +151,7 @@ function Both() {
           real shows, and our shows are where we try them first.
         </p>
         <div className="both__actions">
-          <Cta to="/shop">Our software</Cta>
+          <Cta to="/software">Our software</Cta>
           <Cta to="/story" variant="quiet">
             Our story
           </Cta>

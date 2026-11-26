@@ -5,7 +5,7 @@
 
 import { capabilities, process as steps } from '../../src/content/capabilities.ts'
 import { fullName, gear } from '../../src/content/gear.ts'
-import { price, products, statusOf } from '../../src/content/shop.ts'
+import { price, productPath, products, statusOf } from '../../src/content/shop.ts'
 import { testimonials } from '../../src/content/testimonials.ts'
 
 export type Passage = { id: string; title: string; text: string; link?: string }
@@ -121,7 +121,7 @@ export function buildKnowledge(posts: PostInfo[], taught: Taught[] = []): Passag
     if (p.sample) continue
     const status = statusOf(p)
     const state =
-      status === 'available' ? `On sale for ${price(p)}.` : status === 'beta' ? 'In free beta: people can ask to join from its shop page (testing is free and by invitation). Not on sale yet.' : 'Coming soon: not on sale yet; people can ask to be told when it’s out on its shop page.'
+      status === 'available' ? `On sale for ${price(p)}.` : status === 'beta' ? 'In free beta: people can ask to join from its page (testing is free and by invitation). Not on sale yet.' : 'Coming soon: not on sale yet; people can ask to be told when it’s out on its page.'
     const extra =
       p.kind === 'software'
         ? [
@@ -133,7 +133,7 @@ export function buildKnowledge(posts: PostInfo[], taught: Taught[] = []): Passag
         : 'specs' in p
           ? p.specs.map(([k, v]) => `${k}: ${v}`).join('; ')
           : ''
-    out.push({ id: `product-${p.id}`, title: `Shop: ${p.name} — ${p.tagline}`, text: clean(`${state} ${p.description} ${extra}`), link: `/shop/${p.id}` })
+    out.push({ id: `product-${p.id}`, title: `${p.kind === 'software' ? 'Software' : 'Shop'}: ${p.name} — ${p.tagline}`, text: clean(`${state} ${p.description} ${extra}`), link: productPath(p) })
   }
 
   for (const t of testimonials)

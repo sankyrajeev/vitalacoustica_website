@@ -10617,3 +10617,17 @@ img.cover--screen {
 .page-head + .section--tight {
   padding-top: 0;
 }
+
+/* ─────────────── Software (/software) ─────────────── */
+
+.software-head__areas {
+  margin-top: var(--s7);
+}
+
+.software-head + .software-range {
+  padding-top: var(--s7);
+}
+
+.software-how__actions {
+  margin-top: var(--s7);
+}

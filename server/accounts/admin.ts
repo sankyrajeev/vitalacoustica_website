@@ -211,8 +211,8 @@ const SAMPLES: Record<string, (site: string) => Mail> = {
   'licence-keys': (site) => licenceDelivery(brand(site), [{ product: 'VANTA', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', devices: 2 }], `${site}/account`),
   'confirm-email': (site) => accountVerify(brand(site), `${site}/account`, 'Sample Tester'),
   'reset-password': (site) => accountReset(brand(site), `${site}/account`),
-  'launch-signup': (site) => launchAlertSaved(brand(site), { product: 'ORBIT', detail: '', link: `${site}/shop/orbit` }),
-  'launch-out': (site) => launchAlertOut(brand(site), { product: 'ORBIT', detail: '', link: `${site}/shop/orbit` }),
+  'launch-signup': (site) => launchAlertSaved(brand(site), { product: 'ORBIT', detail: '', link: `${site}/software/orbit` }),
+  'launch-out': (site) => launchAlertOut(brand(site), { product: 'ORBIT', detail: '', link: `${site}/software/orbit` }),
   'key-revoked': (site) => licenceRevoked(brand(site), { product: 'VANTA', name: 'Sample Tester', key: 'VNTA-SAMPL-EKEY2-NOTRE-AL234', beta: true }),
   'offline-reminder': (site) => leaseReminder(brand(site), { product: 'Pixel Forge', computer: 'Studio Mac', until: '26 November 2026', daysLeft: 14 }, `${site}/account`),
 }

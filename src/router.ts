@@ -47,6 +47,17 @@ export function navigate(path: string) {
   window.dispatchEvent(new Event(NAV_EVENT))
 }
 
+/** Swaps the current address for another (keeping its query), with no new entry in the history. */
+export function navigateReplace(path: string) {
+  const q = HASH ? window.location.hash.split('?')[1] : window.location.search.slice(1)
+  const target = href(q ? `${path}?${q}` : path)
+  if (HASH) window.location.replace(target)
+  else {
+    window.history.replaceState(null, '', target)
+    window.dispatchEvent(new Event(NAV_EVENT))
+  }
+}
+
 export function useRoute() {
   const [path, setPath] = useState(() => {
     // links shared before clean URLs ("/#/work") still land on the right page

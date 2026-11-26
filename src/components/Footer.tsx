@@ -31,7 +31,7 @@ export function Footer() {
             <p className="label">Explore</p>
             <ul>
               <li>
-                <Link to="/shop">Software</Link>
+                <Link to="/software">Software</Link>
               </li>
               <li>
                 <Link to="/capabilities">Live</Link>

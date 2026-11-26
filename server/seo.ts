@@ -6,7 +6,7 @@
 
 import { capabilities } from '../src/content/capabilities.ts'
 import { fullName, gear } from '../src/content/gear.ts'
-import { products, type Product } from '../src/content/shop.ts'
+import { productPath, products, type Product } from '../src/content/shop.ts'
 
 export const SITE_NAME = 'Vital Acoustica'
 type Assets = { fetch: (request: Request) => Promise<Response> }
@@ -95,6 +95,7 @@ const NAV: [string, string][] = [
   ['/', 'Home'],
   ['/story', 'Our Story'],
   ['/equipment', 'Equipment'],
+  ['/software', 'Software'],
   ['/capabilities', 'Services'],
   ['/shop', 'Shop'],
   ['/testimonials', 'Testimonials'],
@@ -116,7 +117,7 @@ const HOME_DESCRIPTION =
 const SOFTWARE_IMAGE: Record<string, string> = { vanta: '/email/vanta.jpg', 'pixel-forge': '/email/pixel-forge.jpg' }
 
 function productMeta(site: string, p: Product): PageMeta {
-  const canonical = `${site}/shop/${p.id}`
+  const canonical = `${site}${productPath(p)}`
   const image =
     p.kind === 'software' && SOFTWARE_IMAGE[p.id]
       ? `${site}${SOFTWARE_IMAGE[p.id]}`
@@ -160,7 +161,7 @@ function productMeta(site: string, p: Product): PageMeta {
       thing,
       crumbs([
         ['Home', `${site}/`],
-        ['Shop', `${site}/shop`],
+        p.kind === 'software' ? ['Software', `${site}/software`] : ['Shop', `${site}/shop`],
         [p.name, canonical],
       ]),
     ],
@@ -272,15 +273,23 @@ export function metaFor(path: string, site: string): PageMeta | null {
     })
   }
 
+  if (path === '/software') {
+    const software = products.filter((p) => p.kind === 'software' && !p.sample)
+    return base('Software', 'Software for artists and audio engineers from Vital Acoustica: VANTA, a hybrid synthesizer in free beta, and tools for lighting and mixing on the way.', {
+      body: plain('Instruments and tools for sound and light', 'Software for artists and audio engineers, made by the people who run the show.', list(software.map((p) => [productPath(p), p.name, p.tagline]))),
+    })
+  }
+
   if (path === '/shop')
-    return base('Shop', 'Software from Vital Acoustica (VANTA, Pixel Forge, Lumière Link, ORBIT), merch, sample packs and VJ loops.', {
-      body: plain('Shop', 'Software we make for music and lighting, and things to wear to the next show.', list(products.filter((p) => !p.sample).map((p) => [`/shop/${p.id}`, p.name, p.tagline]))),
+    return base('Shop', 'Merch, sample packs and VJ loops from Vital Acoustica, and the software we make.', {
+      body: plain('Shop', 'Software we make for music and lighting, and things to wear to the next show.', list(products.filter((p) => !p.sample).map((p) => [productPath(p), p.name, p.tagline]))),
     })
 
-  const prod = path.match(/^\/shop\/([^/]+)$/)
+  // software pages live under /software; the shop keeps the rest (old /shop/vanta links are redirected)
+  const prod = path.match(/^\/(shop|software)\/([^/]+)$/)
   if (prod) {
-    const p = products.find((x) => x.id === prod[1])
-    return p ? productMeta(site, p) : null
+    const p = products.find((x) => x.id === prod[2])
+    return p && productPath(p) === path ? productMeta(site, p) : null
   }
 
   const simple: Record<string, [string, string, boolean?]> = {

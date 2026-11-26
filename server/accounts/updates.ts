@@ -26,7 +26,7 @@ export function releaseInfo(release: Release, site: string, product: ProductId) 
   return {
     version: release.tag_name.replace(/^v/i, ''),
     url: `${site}/account`,
-    shop: `${site}/shop/${product}`,
+    shop: `${site}/software/${product}`, // the field keeps its name: the plugins read it
     notes,
     released: release.published_at?.slice(0, 10) || undefined,
     critical: /\[critical\]/i.test(release.body || ''),

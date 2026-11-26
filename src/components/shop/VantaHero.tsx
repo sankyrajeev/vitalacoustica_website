@@ -7,7 +7,7 @@ import { Arrow } from '../ui'
 
 // VANTA's video hero: a silent 10-second loop of the real editor playing, over a gold wavetable
 // landscape (from the VANTA repository's marketing/banner/, the "clean" cut with room on the left
-// for real text). At the top of /shop/vanta, and as a band on the homepage.
+// for real text). At the top of /software/vanta, and as a band on the homepage.
 //
 // The call to action follows the visitor: a signed-in tester with a working key is sent to their
 // downloads; everyone else is offered beta access. With reduced motion, the still frame is shown.
@@ -40,7 +40,7 @@ export function VantaHero({ variant }: { variant: 'page' | 'band' }) {
 
   // the request form is on the product page (?beta=1 opens it there)
   const requestBeta = () => {
-    if (variant === 'band') return navigate('/shop/vanta?beta=1')
+    if (variant === 'band') return navigate('/software/vanta?beta=1')
     window.dispatchEvent(new Event('vanta:request-beta'))
     scrollToId('beta-access')
   }
@@ -88,7 +88,7 @@ export function VantaHero({ variant }: { variant: 'page' | 'band' }) {
             </button>
           )}
           {variant === 'band' && (
-            <Link to="/shop/vanta" className="text-link">
+            <Link to="/software/vanta" className="text-link">
               Discover VANTA <Arrow />
             </Link>
           )}

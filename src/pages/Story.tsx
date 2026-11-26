@@ -312,7 +312,7 @@ export function StoryPage() {
           artists and audio engineers, made by people who stand behind the desk.
         </p>
         <p className="chapter__links">
-          <TextLink to="/shop">See our software</TextLink>
+          <TextLink to="/software">See our software</TextLink>
         </p>
       </Chapter>
 
@@ -363,7 +363,7 @@ export function StoryPage() {
           </p>
         </div>
         <div className="why__actions">
-          <Cta to="/shop">Our software</Cta>
+          <Cta to="/software">Our software</Cta>
           <Cta to="/capabilities" variant="quiet">
             Live shows
           </Cta>

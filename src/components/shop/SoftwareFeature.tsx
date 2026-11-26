@@ -1,4 +1,4 @@
-import { statusOf, type Software } from '../../content/shop'
+import { productPath, statusOf, type Software } from '../../content/shop'
 import { Link } from '../Link'
 import { Cta } from '../ui'
 import { SoftwareCover } from './Art'
@@ -21,13 +21,13 @@ export function SoftwareFeature({ p }: { p: Software }) {
         <p className="soft-feature__type">{p.type}</p>
         <p className="soft-feature__line">{p.description.split(/(?<=\.)\s/)[0]}</p>
         <div className="soft-feature__actions">
-          {status === 'beta' ? <Cta to={`/shop/${p.id}?beta=1`}>Join the free beta</Cta> : <Cta to={`/shop/${p.id}`}>Get {p.name}</Cta>}
-          <Cta to={`/shop/${p.id}`} variant="quiet">
+          {status === 'beta' ? <Cta to={`${productPath(p)}?beta=1`}>Join the free beta</Cta> : <Cta to={productPath(p)}>Get {p.name}</Cta>}
+          <Cta to={productPath(p)} variant="quiet">
             More about {p.name}
           </Cta>
         </div>
       </div>
-      <Link to={`/shop/${p.id}`} className="soft-feature__shot" aria-hidden tabIndex={-1}>
+      <Link to={productPath(p)} className="soft-feature__shot" aria-hidden tabIndex={-1}>
         {shot ? <img src={`${import.meta.env.BASE_URL}${shot.src}`} alt="" loading="lazy" /> : <SoftwareCover p={p} />}
       </Link>
     </article>

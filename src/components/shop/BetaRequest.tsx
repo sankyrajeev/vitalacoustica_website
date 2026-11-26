@@ -18,7 +18,7 @@ const longDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('e
  * in who already has a key for this product sees that instead, with the way to their download.
  */
 export function BetaRequest({ p }: { p: Software }) {
-  // arriving from "Request beta access" elsewhere (/shop/vanta?beta=1): the form, open and in view
+  // arriving from "Request beta access" elsewhere (/software/vanta?beta=1): the form, open and in view
   const [open, setOpen] = useState(() => queryParam('beta') === '1')
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)

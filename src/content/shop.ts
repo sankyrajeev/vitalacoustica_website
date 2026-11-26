@@ -633,6 +633,16 @@ export const products: Product[] = [
 ]
 
 export const productById = (id: string) => products.find((p) => p.id === id)
+
+/** A product's page: software lives under /software, everything else in the shop. */
+export const productPath = (p: Pick<Product, 'id' | 'kind'>) => (p.kind === 'software' ? `/software/${p.id}` : `/shop/${p.id}`)
+
+/** Old shop addresses of software (/shop/vanta) now live at /software/vanta: the new path, or null. */
+export function movedSoftwarePath(path: string) {
+  const m = path.match(/^\/shop\/([^/]+)\/?$/)
+  const p = m ? productById(m[1]) : undefined
+  return p?.kind === 'software' ? productPath(p) : null
+}
 export const sectionOf = (kind: ShopKind) => SECTIONS.find((s) => s.kind === kind)!
 
 /** "$12" or "₹1,299". */

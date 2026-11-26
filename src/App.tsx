@@ -10,8 +10,8 @@ import { site } from './content/site'
 import { useRevealOnScroll } from './hooks/useMedia'
 import { ThemeProvider } from './hooks/useTheme'
 import { Home } from './pages/Home'
-import { productById } from './content/shop'
-import { match, useRoute } from './router'
+import { movedSoftwarePath, productById } from './content/shop'
+import { match, navigateReplace, useRoute } from './router'
 
 // every page but the homepage loads its own code when it's first opened
 const AccountPage = lazy(() => import('./pages/Account').then((m) => ({ default: m.AccountPage })))
@@ -36,6 +36,7 @@ const EquipmentDetail = lazy(() => import('./pages/Equipment').then((m) => ({ de
 const EquipmentIndex = lazy(() => import('./pages/Equipment').then((m) => ({ default: m.EquipmentIndex })))
 const ShopIndex = lazy(() => import('./pages/Shop').then((m) => ({ default: m.ShopIndex })))
 const ShopItem = lazy(() => import('./pages/Shop').then((m) => ({ default: m.ShopItem })))
+const SoftwareIndex = lazy(() => import('./pages/Software').then((m) => ({ default: m.SoftwareIndex })))
 
 type Resolved = { title: string; page: ReactNode }
 
@@ -49,6 +50,12 @@ function resolve(path: string): Resolved {
   if (item) {
     const g = gearById[item.id as GearId]
     return { title: g ? `${fullName(g)} for hire` : 'Not found', page: <EquipmentDetail id={item.id} /> }
+  }
+  if (path === '/software') return { title: 'Software', page: <SoftwareIndex /> }
+  const soft = match('/software/:id', path)
+  if (soft) {
+    const p = productById(soft.id)
+    return p?.kind === 'software' ? { title: p.name, page: <ShopItem id={p.id} /> } : { title: 'Not found', page: <NotFoundPage /> }
   }
   if (path === '/shop') return { title: 'Shop', page: <ShopIndex /> }
   const prod = match('/shop/:id', path)
@@ -95,6 +102,11 @@ function Page({ path }: { path: string }) {
 
 export default function App() {
   const path = useRoute()
+  // software moved from the shop to /software: an old link (/shop/vanta?beta=1) goes to its new page
+  const moved = movedSoftwarePath(path)
+  useEffect(() => {
+    if (moved) navigateReplace(moved)
+  }, [moved])
   return (
     <ThemeProvider>
       <a className="skip" href="#main" onClick={(e) => (e.preventDefault(), document.getElementById('main')?.focus())}>

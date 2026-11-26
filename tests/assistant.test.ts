@@ -41,7 +41,7 @@ const POSTS: PostInfo[] = [
 
 const SITE = 'https://vitalacoustica.com'
 let calls: { model: string; messages: { role: string; content: string }[] }[] = []
-let reply = 'VANTA is in a free beta: ask to join on [its page](/shop/vanta).'
+let reply = 'VANTA is in a free beta: ask to join on [its page](/software/vanta).'
 let failing = new Set<string>()
 const ai: WorkersAI = {
   run: async (model, input) => {
@@ -58,7 +58,7 @@ beforeEach(async () => {
   await ensureSchema(db)
   calls = []
   failing = new Set()
-  reply = 'VANTA is in a free beta: ask to join on [its page](/shop/vanta).'
+  reply = 'VANTA is in a free beta: ask to join on [its page](/software/vanta).'
   setChatPosts(() => POSTS)
 })
 
@@ -78,10 +78,10 @@ test('it knows the site: VANTA, equipment, services and the blog', () => {
 test('the answer is written from the matching passages, and logged', async () => {
   const res = await ask('Is VANTA out yet?')
   assert.equal(res.status, 200)
-  assert.deepEqual(await res.json(), { reply: 'VANTA is in a free beta: ask to join on [its page](/shop/vanta).', unsure: false })
+  assert.deepEqual(await res.json(), { reply: 'VANTA is in a free beta: ask to join on [its page](/software/vanta).', unsure: false })
   const system = calls[0].messages[0].content
-  assert.match(system, /Shop: VANTA/)
-  assert.match(system, /page: \/shop\/vanta/)
+  assert.match(system, /Software: VANTA/)
+  assert.match(system, /page: \/software\/vanta/)
   assert.match(system, /Bengaluru/, 'the basics are always there')
   assert.equal(calls[0].messages.at(-1)!.content, 'Is VANTA out yet?')
   const { recent } = await chatOverview(db)
@@ -142,7 +142,7 @@ test('follow-ups keep their subject, and the conversation goes along', async () 
     { AI: ai, DB: db },
   )
   assert.equal(res.status, 200)
-  assert.match(calls[0].messages[0].content, /Shop: VANTA/)
+  assert.match(calls[0].messages[0].content, /Software: VANTA/)
   assert.deepEqual(
     calls[0].messages.slice(1).map((m) => m.role),
     ['user', 'assistant', 'user'],

@@ -688,7 +688,7 @@ test('Pixel Forge update check: the latest release, public and without the datab
   assert.deepEqual(await res.json(), {
     version: '1.0.1',
     url: `${SITE}/account`,
-    shop: `${SITE}/shop/pixel-forge`,
+    shop: `${SITE}/software/pixel-forge`,
     notes: ['Fixed sACN output on Windows', 'Added a timeline zoom'],
     released: '2026-11-20',
     critical: false,
