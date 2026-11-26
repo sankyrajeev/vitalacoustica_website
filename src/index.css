@@ -1759,10 +1759,13 @@ select {
   }
 }
 
-@media (max-width: 760px) {
+/* narrow windows (phones, tablets, a side panel): text on top, the editor full width below it,
+   both lined up with the logo */
+@media (max-width: 1000px) {
   .home-hero {
     display: flex;
     flex-direction: column-reverse;
+    align-items: stretch;
     min-height: 0;
   }
   .home-hero__media {
@@ -1773,7 +1776,7 @@ select {
     -webkit-mask-image: none;
     mask-image: none;
   }
-  /* the editor in the middle of the phone's frame */
+  /* the editor in the middle of the frame */
   .home-hero__media video,
   .home-hero__media img {
     object-position: 96% 50%;
@@ -1783,8 +1786,11 @@ select {
   }
   .home-hero__text {
     max-width: none;
-    padding: 104px 20px var(--s6);
+    padding: 104px var(--gutter) var(--s6);
   }
+}
+
+@media (max-width: 760px) {
   .soft-feature {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s6);
@@ -10471,10 +10477,11 @@ img.cover--screen {
 }
 
 /* narrow screens: the text first, then the editor at 16:9 */
-@media (max-width: 760px) {
+@media (max-width: 1000px) {
   .vanta-hero {
     display: flex;
     flex-direction: column-reverse;
+    align-items: stretch;
     aspect-ratio: auto;
     min-height: 0;
   }
@@ -10508,7 +10515,7 @@ img.cover--screen {
   .vanta-hero__text,
   .vanta-hero--page .vanta-hero__text {
     max-width: none;
-    padding: clamp(96px, 26vw, 120px) 20px var(--s5);
+    padding: clamp(96px, 26vw, 120px) var(--gutter) var(--s5);
   }
 
   .vanta-hero--band .vanta-hero__text {
