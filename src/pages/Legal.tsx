@@ -2,6 +2,10 @@ import type { ReactNode } from 'react'
 import { Link } from '../components/Link'
 import { PageHead } from '../components/PageHead'
 import { site } from '../content/site'
+import { products, statusOf } from '../content/shop'
+
+// the early-access terms appear only while something is actually sold in early access
+const earlyAccessOnSale = products.some((p) => p.kind === 'software' && !!p.earlyAccess && statusOf(p) === 'available')
 
 // Privacy notice and legal information.
 // Written for an Indian business under the Digital Personal Data Protection Act, 2023 and the
@@ -336,12 +340,14 @@ export function LegalPage() {
               days, we'll still refund you if the software doesn't work as described on a supported system and we can't fix it.
               When an order is refunded, its licence keys stop working. None of this affects your rights under consumer law.
             </p>
+            {earlyAccessOnSale && (
             <p id="early-access">
               <strong>Early access.</strong> Before an app's full release, we may sell it in early access at a lower price. You
               get your licence key and the current beta build straight away, then the full version when it's released, at no
               extra cost and with the same key. Beta builds are still being finished and can have bugs; please tell us about
               anything that goes wrong. The same 14-day refund applies from the day you buy.
             </p>
+            )}
             <p>
               <strong>Sample packs and VJ loops</strong> are sold through Gumroad, which processes the payment, charges any tax
               due in your country and delivers the download. Buying one gives you a non-exclusive, royalty-free licence to use it
