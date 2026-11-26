@@ -406,10 +406,19 @@ select {
   vertical-align: middle;
 }
 
-.logo--full {
-  aspect-ratio: 1100 / 251;
-  -webkit-mask-image: url('./brand/logo-full.webp');
-  mask-image: url('./brand/logo-full.webp');
+/* the lockup with the brand line set under it */
+.logo-full {
+  display: inline-grid;
+  justify-items: center;
+  gap: var(--s3);
+}
+
+.logo-full__line {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .logo--lg {
@@ -1421,121 +1430,138 @@ select {
   gap: var(--s4);
 }
 
-/* ─────────────── 00 Opening frame ─────────────── */
+/* ─────────────── 00 Opening: the two sides ─────────────── */
 
-.intro {
+.opening {
   position: relative;
+  z-index: 1;
+  padding-top: clamp(112px, 14vh, 160px);
+  padding-bottom: var(--s8);
+}
+
+.opening__head {
   display: grid;
-  align-items: center;
-  min-height: 100svh;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--s6) var(--s9);
+  align-items: end;
 }
 
-.intro__logo {
-  width: min(42vw, 680px);
-  height: auto;
-  animation: intro-in 2.2s var(--ease) both 0.2s;
+.opening__head .label {
+  margin: 0 0 var(--s5);
 }
 
-@keyframes intro-in {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-    filter: blur(6px);
-  }
+.opening__title {
+  margin: 0;
 }
 
-.intro__scroll {
+.opening__lede {
+  max-width: 30em;
+  margin: 0;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+.opening__doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s4);
+  margin-top: var(--s7);
+}
+
+/* a way in: the picture fills it, what's behind it sits on the dark lower edge */
+.door {
+  position: relative;
+  display: block;
+  /* both doors and their captions fit on the first screen of a laptop */
+  height: clamp(320px, calc(100svh - 470px), 600px);
+  overflow: hidden;
+  border: var(--hair) solid var(--line);
+  background: #050505;
+  color: #f0ede5;
+  transition: border-color var(--t-fast) var(--ease);
+}
+
+.door__media {
   position: absolute;
-  left: 50%;
-  bottom: clamp(28px, 6vh, 56px);
-  display: grid;
-  justify-items: center;
-  gap: var(--s3);
-  padding: 0;
-  border: 0;
-  background: none;
-  transform: translateX(-50%);
-  font-size: 10px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--muted);
-  cursor: pointer;
-  animation: rise 1.6s var(--ease) both 1.4s;
+  inset: 0;
 }
 
-.intro__scroll.is-hidden {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--t-med) var(--ease);
+.door__media img,
+.door__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
 }
 
-.intro__scroll span {
-  width: var(--hair);
-  height: 48px;
-  background: linear-gradient(var(--accent), transparent);
-  transform-origin: top;
+.door:last-child .door__media img,
+.door:last-child .door__media video {
+  object-position: 72% 50%;
 }
 
-/* the nav logo waits until the big one has scrolled away */
-.nav .nav__brand {
-  transition: opacity var(--t-med) var(--ease);
-}
-
-.nav--intro .nav__brand {
-  opacity: 0;
-  pointer-events: none;
-}
-
-@media (max-width: 760px) {
-  .intro__logo {
-    width: 86vw;
-  }
-}
-
-/* ─────────────── 01 Entrance ─────────────── */
-
-.entrance {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 100svh;
-  padding-block: clamp(88px, 12vh, 128px);
-}
-
-.entrance::before {
+.door__media::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(var(--shade), 0.7) 0%, rgba(var(--shade), 0.2) 48%, transparent 70%);
-  pointer-events: none;
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0) 30%, rgba(5, 5, 5, 0.72) 62%, rgba(5, 5, 5, 0.94) 100%);
 }
 
-.entrance__inner {
-  position: relative;
-}
-
-.entrance .display {
-  animation: rise 1.6s var(--ease) both 0.2s;
-}
-
-.entrance .label {
-  animation: rise 1.6s var(--ease) both 0.05s;
-}
-
-.entrance__intro {
-  max-width: 30em;
-  margin-top: var(--s6);
-  font-size: clamp(16px, 1.3vw, 18px);
-  color: var(--text-soft);
-  animation: rise 1.6s var(--ease) both 0.4s;
-}
-
-.entrance__actions {
+.door__cap {
+  position: absolute;
+  inset: auto var(--s6) var(--s6);
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--s3);
-  margin-top: var(--s7);
-  animation: rise 1.6s var(--ease) both 0.55s;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s5);
+}
+
+.door__label {
+  display: block;
+  margin-bottom: var(--s2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #c7b07f;
+}
+
+.door__title {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(30px, 3vw, 44px);
+  line-height: 1.02;
+}
+
+.door__line {
+  display: block;
+  max-width: 28em;
+  margin-top: var(--s3);
+  font-size: 15px;
+  line-height: 1.55;
+  color: #c9c5bc;
+}
+
+.door__go {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: var(--hair) solid rgba(240, 237, 229, 0.3);
+  transition:
+    background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.door:hover {
+  border-color: var(--accent);
+}
+
+.door:hover .door__go {
+  background-color: #f0ede5;
+  color: #141414;
 }
 
 @keyframes rise {
@@ -1546,20 +1572,50 @@ select {
 }
 
 @media (max-width: 760px) {
-  .entrance::before {
-    background: linear-gradient(0deg, rgba(var(--shade), 0.92) 0%, rgba(var(--shade), 0.4) 55%, transparent 80%);
+  .opening {
+    padding-top: 104px;
   }
-  .entrance__actions .cta {
-    flex: 1 1 100%;
+  .opening__head {
+    grid-template-columns: minmax(0, 1fr);
   }
+  .opening__doors {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s3);
+    margin-top: var(--s6);
+  }
+  .door {
+    height: 320px;
+  }
+  .door__cap {
+    inset: auto var(--s5) var(--s5);
+  }
+  .door__go {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ─────────────── Why both ─────────────── */
+
+.both__inner {
+  display: grid;
+  gap: var(--s6);
+}
+
+.both__inner .label {
+  margin: 0;
+}
+
+.statement__actions,
+.both__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
 }
 
 /* ─────────────── 02 Statement ─────────────── */
 
 .statement {
-  display: grid;
-  align-items: center;
-  min-height: 100svh;
   padding-block: var(--section);
 }
 

@@ -29,14 +29,17 @@ const fromHtml = (html: string) =>
 
 /** The basics, true for every question: always given to the model. */
 export const BASICS = clean(`
-Vital Acoustica is a sound and lighting rental and production company based in Bengaluru, India,
-started by two best friends, Sankarsh and Harsh. It hires out professional sound (d&b audiotechnik
-systems), lighting and production gear, with the crew to deliver, set up and run it, for club
-nights, festivals, open-airs, brand events and private celebrations of up to around 1,000 people.
-It works across Bengaluru, Karnataka and South India (Mysuru, Hubballi, Belagavi, Mangaluru,
-Hyderabad and more). It also makes its own music software (VANTA and others, in the Shop) and
-writes a blog with a daily news roundup. Prices are quoted per event: people get a quote through
-the quote form (/contact) or on WhatsApp (the WhatsApp button in this chat).
+Vital Acoustica is a sound, light and software company based in Bengaluru, India, started by two
+best friends, Sankarsh and Harsh. It has two sides. Live: it hires out professional sound
+(d&b audiotechnik systems), lighting and production gear, with the crew to deliver, set up and run
+it, for club nights, festivals, open-airs, brand events and private celebrations of up to around
+1,000 people, across Bengaluru, Karnataka and South India (Mysuru, Hubballi, Belagavi, Mangaluru,
+Hyderabad and more). Software: it makes its own software for musicians and lighting designers:
+VANTA (a synthesizer plugin, in free beta), VANTA Dynamics, ORBIT, Pixel Forge (LED pixel mapping),
+Lumière Link and Lumière Resident (see the Software pages). It does not build custom software for
+clients. It also writes a blog with a daily news roundup. Prices for live events are quoted per
+event: people get a quote through the quote form (/contact) or on WhatsApp (the WhatsApp button in
+this chat).
 `)
 
 /** Facts the old assistant answered, kept as passages. */

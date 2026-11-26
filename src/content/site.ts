@@ -5,7 +5,9 @@ export const site = {
   name: 'Vital Acoustica',
   domain: 'vitalacoustica.com',
   gst: '29ABCFV2853P1ZF',
-  eyebrow: 'Sound & lighting rental · Production',
+  eyebrow: 'Sound · Light · Software',
+  // the line under the logo, in the footer and wherever the full logo appears
+  tagline: 'Sound · Light · Software',
   headline: 'We shape the way an experience feels',
   supporting: 'Sound, light and production. Conceived as one.',
   intro:
@@ -34,12 +36,9 @@ export const site = {
 
   nav: [
     { label: 'Home', to: '/' },
-    { label: 'Our Story', to: '/story' },
-    { label: 'Equipment', to: '/equipment' },
-    { label: 'Services', to: '/capabilities' },
-    { label: 'Work', to: '/work' },
-    { label: 'Shop', to: '/shop' },
-    { label: 'Testimonials', to: '/testimonials' },
+    { label: 'Live', to: '/capabilities' },
+    { label: 'Software', to: '/shop' },
+    { label: 'Studio', to: '/story' },
     { label: 'Blog', to: '/blog' },
   ],
 

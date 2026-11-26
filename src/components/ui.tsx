@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
 import { fullName, gearById, type RigId } from '../content/gear'
+import { site } from '../content/site'
 import type { Hotspot, Media } from '../content/projects'
 import { openExplore } from '../events'
 import { img, imgSet, preview } from '../media'
@@ -7,15 +8,16 @@ import { Link } from './Link'
 
 /**
  * The Vital Acoustica logo (VA mark + VITAL ACOUSTICA), drawn in the current text colour so it
- * follows the light and dark editions. `tagline` adds "PRO AUDIO • LIGHTING • RENTALS".
+ * follows the light and dark editions. `tagline` adds the brand line under it (site.tagline).
  */
 export function Logo({ tagline, className = '' }: { tagline?: boolean; className?: string }) {
+  if (!tagline) return <span className={`logo ${className}`} role="img" aria-label="Vital Acoustica" />
+  // the lockup with the brand line set as text under it (the old artwork had "rentals" drawn in)
   return (
-    <span
-      className={`logo ${tagline ? 'logo--full' : ''} ${className}`}
-      role="img"
-      aria-label={tagline ? 'Vital Acoustica: pro audio, lighting, rentals' : 'Vital Acoustica'}
-    />
+    <span className="logo-full">
+      <span className={`logo ${className}`} role="img" aria-label="Vital Acoustica" />
+      <span className="logo-full__line">{site.tagline}</span>
+    </span>
   )
 }
 

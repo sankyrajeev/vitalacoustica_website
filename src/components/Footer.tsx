@@ -31,22 +31,22 @@ export function Footer() {
             <p className="label">Explore</p>
             <ul>
               <li>
-                <Link to="/story">Our Story</Link>
+                <Link to="/capabilities">Live</Link>
               </li>
               <li>
                 <Link to="/equipment">Equipment</Link>
               </li>
               <li>
-                <Link to="/capabilities">Services</Link>
+                <Link to="/shop">Software</Link>
               </li>
               <li>
-                <Link to="/work">Selected work</Link>
-              </li>
-              <li>
-                <Link to="/shop">Shop</Link>
+                <Link to="/story">Our Story</Link>
               </li>
               <li>
                 <Link to="/testimonials">Testimonials</Link>
+              </li>
+              <li>
+                <Link to="/work">Selected work</Link>
               </li>
               <li>
                 <Link to="/careers">Careers</Link>

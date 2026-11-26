@@ -40,7 +40,7 @@ const ShopItem = lazy(() => import('./pages/Shop').then((m) => ({ default: m.Sho
 type Resolved = { title: string; page: ReactNode }
 
 function resolve(path: string): Resolved {
-  if (path === '/') return { title: `${site.name} — Sound & lighting rental and production`, page: <Home /> }
+  if (path === '/') return { title: `${site.name} — Sound, light and software`, page: <Home /> }
   if (path === '/work') return { title: 'Selected work', page: <WorkIndex /> }
   const work = match('/work/:slug', path)
   if (work) return { title: projectBySlug(work.slug)?.title ?? 'Not found', page: <CaseStudy slug={work.slug} /> }

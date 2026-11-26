@@ -7,15 +7,12 @@ import { Logo } from './ui'
 /** Top navigation: logo, the main sections, and the quote CTA. */
 export function Nav({ path }: { path: string }) {
   const [scrolled, setScrolled] = useState(false)
-  // on the homepage's opening frame the big logo is the brand; the nav logo appears after it
-  const [atIntro, setAtIntro] = useState(true)
   const [open, setOpen] = useState(false)
   const { theme, toggle } = useTheme()
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40)
-      setAtIntro(window.scrollY < window.innerHeight * 0.55)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -34,7 +31,7 @@ export function Nav({ path }: { path: string }) {
   const close = () => setOpen(false)
 
   return (
-    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''} ${path === '/' && atIntro && !open ? 'nav--intro' : ''}`}>
+    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''}`}>
       <Link to="/" className="nav__brand" onClick={close}>
         <Logo />
       </Link>

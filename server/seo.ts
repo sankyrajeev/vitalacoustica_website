@@ -110,7 +110,7 @@ const plain = (h1: string, lead: string, more = '') => `${nav()}<h1>${esc(h1)}</
 /* ─────────────── every page ─────────────── */
 
 const HOME_DESCRIPTION =
-  'Sound and lighting hire with the crew to run it: d&b audiotechnik V10P and B22 systems, beam moving heads, LED matrices and pixel bars, delivered and operated.'
+  'Sound and lighting hire with the crew to run it, and the software behind it: VANTA, Pixel Forge and Lumière. A sound and light company from Bengaluru.'
 
 /** Preview images for the software (its logo above its real interface). */
 const SOFTWARE_IMAGE: Record<string, string> = { vanta: '/email/vanta.jpg', 'pixel-forge': '/email/pixel-forge.jpg' }
@@ -181,7 +181,7 @@ export function metaFor(path: string, site: string): PageMeta | null {
 
   if (path === '/')
     return {
-      title: `${SITE_NAME} — Sound & lighting rental and production`,
+      title: `${SITE_NAME} — Sound, light and software`,
       description: HOME_DESCRIPTION,
       canonical: `${site}/`,
       image: `${site}/media/og.jpg`,
@@ -191,8 +191,8 @@ export function metaFor(path: string, site: string): PageMeta | null {
         { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE_NAME, url: `${site}/` },
       ],
       body: plain(
-        'We shape the way an experience feels.',
-        'Sound, light and production, conceived as one. Professional sound and lighting hire with the crew to run it: d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated for club nights, festivals, brand events and private celebrations.',
+        'We run the show. We build the tools.',
+        'Vital Acoustica designs and runs sound and lighting for live events across South India, and makes software for musicians and lighting designers. Live: professional sound and lighting hire with the crew to run it, d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated. Software: VANTA, a synthesizer plugin in free beta, Pixel Forge for LED pixel mapping, Lumière and ORBIT.',
         list(capabilities.map((c) => [`/capabilities/${c.id}`, c.name, c.statement])),
       ),
     }

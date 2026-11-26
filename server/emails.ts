@@ -102,7 +102,7 @@ body, .page { background-color: ${C.page} !important; }
 <tr><td align="center" bgcolor="${C.page}" style="padding:32px 16px;background-color:${C.page};${LOCK(C.page)}">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
 <tr><td style="padding:8px 4px 28px;">
-<a href="${b.site}" style="text-decoration:none;"><img src="${b.site}/brand/logo-full-white.png" width="180" alt="VITAL ACOUSTICA" style="display:block;width:180px;max-width:60%;height:auto;border:0;color:${C.ink};font:600 18px ${SANS};letter-spacing:3px;"></a>
+<a href="${b.site}" style="text-decoration:none;"><img src="${b.site}/brand/logo-white.png" width="180" alt="VITAL ACOUSTICA" style="display:block;width:180px;max-width:60%;height:auto;border:0;color:${C.ink};font:600 18px ${SANS};letter-spacing:3px;"></a>
 </td></tr>
 ${heroRows(b, hero)}
 <tr><td bgcolor="${C.card}" style="background-color:${C.card};${LOCK(C.card)}border:1px solid ${C.line};border-radius:10px;padding:36px 32px;">
