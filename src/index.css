@@ -10696,3 +10696,16 @@ img.cover--screen {
 .shop-head__line {
   margin-bottom: var(--s7);
 }
+
+/* the account's email, with "Change password" beside it */
+.account__signin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3) var(--s6);
+}
+
+.account__signin p {
+  margin: 0;
+}

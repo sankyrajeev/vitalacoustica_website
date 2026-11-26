@@ -341,9 +341,11 @@ function LicenceCard({ l, onChange }: { l: Licence; onChange: () => void }) {
   )
 }
 
+/** The account's email, with the password form folded away until it's asked for. */
 function Settings({ me }: { me: Me }) {
   const [msg, setMsg] = useState<{ tone: 'info' | 'error'; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
+  const [open, setOpen] = useState(false)
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -355,29 +357,45 @@ function Settings({ me }: { me: Me }) {
     setBusy(true)
     const r = await api.changePassword(me.user.email, me.user.hasPassword ? String(f.get('current') || '') : null, next)
     setBusy(false)
-    if (r.ok) form.reset()
+    if (r.ok) {
+      form.reset()
+      setOpen(false)
+    }
     setMsg(r.ok ? { tone: 'info', text: 'Password saved. You’ve been signed out on your other devices.' } : { tone: 'error', text: explain(r.data.error) })
   }
 
   return (
     <section className="account__section">
       <h2 className="account__h">Sign-in</h2>
-      <p className="muted">
-        {me.user.email}
-        {me.user.google ? ' · linked to Google' : ''}
-      </p>
-      <form className="form account__form" onSubmit={submit}>
-        <p className="label">{me.user.hasPassword ? 'Change your password' : 'Add a password'}</p>
-        {me.user.hasPassword && <Field label="Current password" name="current" type="password" autoComplete="current-password" required />}
-        <Field label="New password" hint={`at least ${MIN_PASSWORD} characters`} name="next" type="password" autoComplete="new-password" minLength={MIN_PASSWORD} required />
-        <Field label="New password, again" name="confirm" type="password" autoComplete="new-password" required />
-        {msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
-        <div className="form__foot">
-          <button className="cta" type="submit" disabled={busy}>
-            <span>{busy ? 'Saving…' : 'Save password'}</span>
+      <div className="account__signin">
+        <p className="muted">
+          {me.user.email}
+          {me.user.google ? ' · linked to Google' : ''}
+        </p>
+        {!open && (
+          <button className="text-link" type="button" onClick={() => (setOpen(true), setMsg(null))}>
+            {me.user.hasPassword ? 'Change password' : 'Add a password'}
           </button>
-        </div>
-      </form>
+        )}
+      </div>
+      {!open && msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
+      {open && (
+        <form className="form account__form" onSubmit={submit}>
+          <p className="label">{me.user.hasPassword ? 'Change your password' : 'Add a password'}</p>
+          {me.user.hasPassword && <Field label="Current password" name="current" type="password" autoComplete="current-password" required />}
+          <Field label="New password" hint={`at least ${MIN_PASSWORD} characters`} name="next" type="password" autoComplete="new-password" minLength={MIN_PASSWORD} required />
+          <Field label="New password, again" name="confirm" type="password" autoComplete="new-password" required />
+          {msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
+          <div className="form__foot">
+            <button className="cta" type="submit" disabled={busy}>
+              <span>{busy ? 'Saving…' : 'Save password'}</span>
+            </button>
+            <button className="text-link" type="button" onClick={() => (setOpen(false), setMsg(null))}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </section>
   )
 }
