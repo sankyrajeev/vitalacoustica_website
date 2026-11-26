@@ -111,6 +111,11 @@ export default function App() {
   useEffect(() => {
     if (moved) navigateReplace(moved)
   }, [moved])
+  // a Paddle checkout link (…?_ptxn=txn_…): Paddle's script loads only when there is one
+  useEffect(() => {
+    const txn = queryParam('_ptxn')
+    if (txn) void import('./components/shop/paddle').then((m) => m.openPaddleLink(txn))
+  }, [])
   return (
     <ThemeProvider>
       <a className="skip" href="#main" onClick={(e) => (e.preventDefault(), document.getElementById('main')?.focus())}>

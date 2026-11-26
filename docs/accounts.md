@@ -205,7 +205,7 @@ Which products have an open beta is set in `server/accounts/beta.ts` (`OPEN_BETA
    - terms: `https://vitalacoustica.com/legal`;
    - privacy notice: `/privacy`;
    - refund policy: `/legal#refunds`, a 14-day no-questions refund for software, which is within Paddle's required 14–90 days.
-3. In **Checkout → Checkout settings**, set the default payment link to `https://vitalacoustica.com/shop`. Paddle asks you to approve the domain.
+3. In **Checkout → Checkout settings**, set the default payment link to `https://vitalacoustica.com/software`. Paddle asks you to approve the domain. A Paddle link (`…?_ptxn=txn_…`, from an invoice or the dashboard) opens its checkout on any page of the site.
 4. In **Developer tools → Notifications**, add a destination:
    - URL: `https://vitalacoustica.com/api/paddle/webhook`
    - Events: `transaction.completed`, `adjustment.created`, `adjustment.updated`
