@@ -3751,7 +3751,35 @@ html.menu-open .chat {
   z-index: 1;
 }
 
+/* the "Read" cue at the foot of the Our Story opening */
+.intro__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(28px, 6vh, 56px);
+  display: grid;
+  justify-items: center;
+  gap: var(--s3);
+  padding: 0;
+  border: 0;
+  background: none;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  animation: rise 1.6s var(--ease) both 1.4s;
+}
+
+.intro__scroll span {
+  width: var(--hair);
+  height: 48px;
+  background: linear-gradient(var(--accent), transparent);
+  transform-origin: top;
+}
+
 .story-hero {
+  position: relative;
   display: grid;
   align-items: center;
   min-height: 100svh;

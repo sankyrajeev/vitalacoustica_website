@@ -109,7 +109,7 @@ ${heroRows(b, hero)}
 ${body}
 </td></tr>
 <tr><td style="padding:28px 4px 8px;font:600 11px ${SANS};letter-spacing:2.5px;text-transform:uppercase;color:${C.brass};">
-Sound. Light. Space. Connected.
+Sound · Light · Software
 </td></tr>
 <tr><td style="padding:0 4px 8px;font:13px/1.6 ${SANS};color:${C.muted};">
 <a href="${b.site}" style="color:${C.soft};text-decoration:none;">vitalacoustica.com</a>
@@ -267,7 +267,7 @@ ${button(`${b.site}/equipment`, 'Explore our rig', false)}`
       '',
       'To add anything, reply to this email and it goes straight to our team.',
       '',
-      'Vital Acoustica · Sound. Light. Space. Connected.',
+      'Vital Acoustica · Sound · Light · Software',
       b.site,
     ]),
   }

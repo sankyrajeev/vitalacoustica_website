@@ -12,6 +12,7 @@ import {
 import { Details, Feature, Process } from '../components/service/Blocks'
 import { Cta, Label, TextLink } from '../components/ui'
 import { capabilities } from '../content/capabilities'
+import { site } from '../content/site'
 
 // The Visuals page: real-time, generative and projected visuals, still in development, told through
 // scenes you can play with.
@@ -263,7 +264,7 @@ export function VisualsPage() {
             programmed lighting. Not separate systems competing for attention, but one coordinated environment where sound, light
             and imagery work together. We’re building towards it one experiment, one visual system and one installation at a time.
           </p>
-          <p className="sound-close__tag">Sound. Light. Space. Connected.</p>
+          <p className="sound-close__tag">{site.tagline}</p>
           <div className="sound-close__actions">
             <Cta to="/contact">Talk to us about visuals</Cta>
           </div>
