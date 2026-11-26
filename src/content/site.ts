@@ -52,6 +52,7 @@ export const site = {
     phone: '+91 89048 58422' as string,
     whatsapp: '918904858422' as string, // digits only with country code
     instagram: 'vitalacoustica' as string, // handle without @
+    linkedin: 'vital-acoustica' as string, // the company page's name in linkedin.com/company/…
     x: 'vitalacoustica' as string, // DUMMY: confirm the X handle (without @)
     location: '' as string, // e.g. 'Bangalore, India' — only once approved for publication
   },

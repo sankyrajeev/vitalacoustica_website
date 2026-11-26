@@ -75,7 +75,7 @@ const FACTS: Passage[] = [
   {
     id: 'contact',
     title: 'Contacting the team',
-    text: 'The quickest way is WhatsApp (the button in this chat), or the enquiry form on the site (/contact). We’re on Instagram as @vitalacoustica. For an account or licence problem, write to support@vitalacoustica.com; for the VANTA beta, beta@vitalacoustica.com.',
+    text: 'The quickest way is WhatsApp (the button in this chat), or the enquiry form on the site (/contact). We’re on Instagram as @vitalacoustica and on LinkedIn (linkedin.com/company/vital-acoustica). For an account or licence problem, write to support@vitalacoustica.com; for the VANTA beta, beta@vitalacoustica.com.',
   },
   {
     id: 'account',

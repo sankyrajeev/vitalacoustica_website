@@ -80,7 +80,7 @@ export const organisation = (site: string) => ({
   name: SITE_NAME,
   url: site,
   logo: { '@type': 'ImageObject', url: `${site}/brand/logo-full-black.png` },
-  sameAs: ['https://instagram.com/vitalacoustica'],
+  sameAs: ['https://instagram.com/vitalacoustica', 'https://www.linkedin.com/company/vital-acoustica/'],
 })
 
 export const crumbs = (items: [string, string][]) => ({

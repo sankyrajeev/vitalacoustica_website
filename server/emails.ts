@@ -28,7 +28,7 @@ export type Testimonial = {
 
 export type Mail = { subject: string; html: string; text: string }
 
-type Brand = { site: string; whatsapp: string; instagram: string; x: string }
+type Brand = { site: string; whatsapp: string; instagram: string; linkedin?: string; x: string }
 
 const C = {
   page: '#0b0b0a',
@@ -114,6 +114,7 @@ Sound. Light. Space. Connected.
 <tr><td style="padding:0 4px 8px;font:13px/1.6 ${SANS};color:${C.muted};">
 <a href="${b.site}" style="color:${C.soft};text-decoration:none;">vitalacoustica.com</a>
 ${b.instagram ? ` &nbsp;·&nbsp; <a href="https://instagram.com/${b.instagram}" style="color:${C.soft};text-decoration:none;">Instagram</a>` : ''}
+${b.linkedin ? ` &nbsp;·&nbsp; <a href="https://www.linkedin.com/company/${b.linkedin}/" style="color:${C.soft};text-decoration:none;">LinkedIn</a>` : ''}
 ${b.x ? ` &nbsp;·&nbsp; <a href="https://x.com/${b.x}" style="color:${C.soft};text-decoration:none;">X</a>` : ''}
 </td></tr>
 <tr><td style="padding:0 4px;font:12px/1.6 ${SANS};color:${C.muted};">${footnote}</td></tr>

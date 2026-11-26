@@ -7,7 +7,7 @@ import { Logo } from './ui'
 const YEAR = new Date().getFullYear()
 
 export function Footer() {
-  const { instagram, x, whatsapp, location } = site.contact
+  const { instagram, linkedin, x, whatsapp, location } = site.contact
   return (
     <footer className="footer">
       <div className="footer__inner wrap">
@@ -66,6 +66,13 @@ export function Footer() {
                 <li>
                   <a href={`https://instagram.com/${instagram}`} target="_blank" rel="noreferrer">
                     Instagram
+                  </a>
+                </li>
+              )}
+              {linkedin && (
+                <li>
+                  <a href={`https://www.linkedin.com/company/${linkedin}/`} target="_blank" rel="noreferrer">
+                    LinkedIn
                   </a>
                 </li>
               )}

@@ -41,7 +41,7 @@ export const teamInbox = (env: EnquiryEnv) =>
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
-export const BRAND = { whatsapp: '918904858422', instagram: 'vitalacoustica', x: 'vitalacoustica' } // DUMMY: confirm the X handle
+export const BRAND = { whatsapp: '918904858422', instagram: 'vitalacoustica', linkedin: 'vital-acoustica', x: 'vitalacoustica' } // DUMMY: confirm the X handle
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const LIMITS: Record<string, number> = { description: 4000, quote: 2000 } // characters; everything else 200
