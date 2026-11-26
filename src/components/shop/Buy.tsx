@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { api, explain } from '../../account/api'
-import { price, type Product } from '../../content/shop'
+import { price, priceNow, type Product } from '../../content/shop'
 import { loadPaddle, PADDLE_TOKEN } from './paddle'
 import { Arrow } from '../ui'
 
@@ -19,6 +19,7 @@ function useGumroad(on: boolean) {
 
 /** Software sold through Paddle: the licence key joins the buyer's account when they're signed in. */
 function PaddleBuy({ p, priceId }: { p: Product; priceId: string }) {
+  const early = p.kind === 'software' && !!p.earlyAccess
   const [busy, setBusy] = useState(false)
   const [failed, setFailed] = useState(false)
 
@@ -41,7 +42,7 @@ function PaddleBuy({ p, priceId }: { p: Product; priceId: string }) {
   return (
     <div className="buy">
       <button className="cta cta--primary" type="button" onClick={open} disabled={busy}>
-        <span>{busy ? 'Opening checkout…' : `Buy · ${price(p)}`}</span>
+        <span>{busy ? 'Opening checkout…' : `${early ? 'Get early access' : 'Buy'} · ${priceNow(p)}`}</span>
         <Arrow />
       </button>
       {failed && (
@@ -49,7 +50,11 @@ function PaddleBuy({ p, priceId }: { p: Product; priceId: string }) {
           The checkout couldn’t open. Please check your connection and try again.
         </p>
       )}
-      <p className="muted buy__note">Instant licence key by email and in your account. Payments by Paddle.</p>
+      <p className="muted buy__note">
+        {early
+          ? `Early access: your licence key and the current beta build straight away, by email and in your account, and the full version when it’s released. ${price(p)} after launch. Payments by Paddle.`
+          : 'Instant licence key by email and in your account. Payments by Paddle.'}
+      </p>
     </div>
   )
 }

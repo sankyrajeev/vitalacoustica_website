@@ -72,6 +72,15 @@ export async function latest(env: AccountsEnv, repos: readonly string[], opts: {
   return null
 }
 
+/**
+ * The build a key holder gets: beta testers the newest build of either kind; everyone else the
+ * latest full release, or, before the first one is out (early access), the newest beta build.
+ */
+async function buildFor(env: AccountsEnv, repos: readonly string[], beta: boolean) {
+  if (beta) return latest(env, repos, { prerelease: true })
+  return (await latest(env, repos)) ?? (await latest(env, repos, { prerelease: true }))
+}
+
 /** Does this account hold a working key for the product, and is it a beta tester's? */
 async function owns(db: D1Database, userId: string, product: string) {
   const rows = (
@@ -90,7 +99,7 @@ export async function listDownloads(request: Request, env: AccountsEnv, db: D1Da
   if (!isProduct(product) || !has?.any) return json({ error: 'not_found' }, 404)
   const repos = PRODUCTS[product].releases ?? []
   if (!repos.length || !hasReleasesToken(env)) return json({ files: [], note: 'not_yet' })
-  const found = await latest(env, repos, { prerelease: has.beta })
+  const found = await buildFor(env, repos, has.beta)
   if (!found) return json({ files: [], note: 'not_yet' })
   const { release } = found
   return json({
@@ -110,7 +119,7 @@ export async function download(request: Request, env: AccountsEnv, db: D1Databas
   const repos = PRODUCTS[product].releases ?? []
   if (!repos.length || !hasReleasesToken(env)) return json({ error: 'not_found' }, 404)
   // only files of the latest release, so older builds and other repositories can't be fetched by id
-  const found = await latest(env, repos, { prerelease: has.beta })
+  const found = await buildFor(env, repos, has.beta)
   if (!found?.release.assets.some((a) => a.id === fileId)) return json({ error: 'not_found' }, 404)
   // the file comes from the same repository, with the same token, as the release that lists it
   const res = await gh(releasesToken(env, found.repo)!, `https://api.github.com/repos/${found.repo}/releases/assets/${fileId}`, 'application/octet-stream')

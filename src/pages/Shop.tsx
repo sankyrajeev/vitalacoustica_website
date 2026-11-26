@@ -7,7 +7,7 @@ import { BetaRequest } from '../components/shop/BetaRequest'
 import { VantaHero } from '../components/shop/VantaHero'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
-import { price, productPath, products, SECTIONS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind } from '../content/shop'
+import { price, priceNow, productPath, products, SECTIONS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind } from '../content/shop'
 import { href, queryParam } from '../router'
 import { NotFound } from './NotFound'
 
@@ -49,7 +49,7 @@ function ProductCard({ p }: { p: Product }) {
         <p className="shop-card__tagline">{p.tagline}</p>
         <p className="shop-card__foot">
           {status === 'available' ? (
-            <span className="shop-card__price">{price(p)}</span>
+            <span className="shop-card__price">{priceNow(p)}</span>
           ) : (
             <span className={`shop-status shop-status--${status}`}>{STATUS_LABEL[status]}</span>
           )}

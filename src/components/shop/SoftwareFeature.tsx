@@ -1,4 +1,4 @@
-import { productPath, statusOf, type Software } from '../../content/shop'
+import { priceNow, productPath, statusOf, type Software } from '../../content/shop'
 import { Link } from '../Link'
 import { Cta } from '../ui'
 import { SoftwareCover } from './Art'
@@ -11,17 +11,18 @@ const STATUS = { available: 'Available', beta: 'Free beta', soon: 'Coming soon' 
  */
 export function SoftwareFeature({ p }: { p: Software }) {
   const status = statusOf(p)
+  const early = status === 'available' && !!p.earlyAccess
   const shot = p.screenshots?.[0]
   return (
     <article className="soft-feature">
       <div className="soft-feature__text">
         {p.logo && <img className="soft-feature__logo" src={`${import.meta.env.BASE_URL}${p.logo.src}`} alt="" />}
-        <span className={`shop-status shop-status--${status}`}>{STATUS[status]}</span>
+        <span className={`shop-status shop-status--${status}`}>{early ? 'Early access' : STATUS[status]}</span>
         <h3 className="soft-feature__name">{p.name}</h3>
         <p className="soft-feature__type">{p.type}</p>
         <p className="soft-feature__line">{p.description.split(/(?<=\.)\s/)[0]}</p>
         <div className="soft-feature__actions">
-          {status === 'beta' ? <Cta to={`${productPath(p)}?beta=1`}>Join the free beta</Cta> : <Cta to={productPath(p)}>Get {p.name}</Cta>}
+          {status === 'beta' ? <Cta to={`${productPath(p)}?beta=1`}>Join the free beta</Cta> : <Cta to={productPath(p)}>{early ? `Get early access · ${priceNow(p)}` : `Get ${p.name}`}</Cta>}
           <Cta to={productPath(p)} variant="quiet">
             More about {p.name}
           </Cta>

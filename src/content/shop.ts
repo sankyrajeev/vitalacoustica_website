@@ -75,6 +75,13 @@ export type Software = Base & {
    * (docs/accounts.md). Hardware can't be sold through Paddle, so it keeps `checkout` instead.
    */
   paddlePrice?: string
+  /**
+   * Sold before its full release at this price (US dollars): buyers get their key and the current
+   * beta build straight away, and the full version when it's out. `price` is the price after
+   * launch. While this is set, `paddlePrice` is the early-access price's id; at launch, remove this
+   * and point `paddlePrice` at the full price.
+   */
+  earlyAccess?: number
   /** real screenshots for the product page (files in public/), first shown first; cards keep the cover */
   screenshots?: { src: string; caption: string }[]
   /** a free beta people can ask to join (the admin page approves them); the server's list is server/accounts/beta.ts */
@@ -142,7 +149,8 @@ export const products: Product[] = [
     tagline: 'Sound, reconstructed.',
     description:
       'VANTA is a hybrid wavetable and additive synthesizer, built to be played and shaped: three oscillators with sample, granular and spectral modes, a deep filter, modulation you drag onto any knob, nine studio effects and 216 presets ready to go. And when you hear a sound you love, it can start from that too: drop it into the Sample Lab and VANTA rebuilds it as a patch you can play, showing you exactly how close it got.',
-    price: 0,
+    price: 40,
+    earlyAccess: 15,
     checkout: '',
     art: 'vanta',
     logo: { src: 'shop/vanta/vanta-logo.webp' },
@@ -645,15 +653,18 @@ export function movedSoftwarePath(path: string) {
 }
 export const sectionOf = (kind: ShopKind) => SECTIONS.find((s) => s.kind === kind)!
 
-/** "$12" or "₹1,299". */
-export function price(p: Product) {
+/** "$12" or "₹1,299": the price (after launch, for software in early access), or `amount` in its currency. */
+export function price(p: Product, amount = p.price) {
   const currency = sectionOf(p.kind).currency
   return new Intl.NumberFormat(currency === 'INR' ? 'en-IN' : 'en-US', {
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(p.price)
+  }).format(amount)
 }
+
+/** What it costs today: the early-access price while there is one. */
+export const priceNow = (p: Product) => price(p, p.kind === 'software' && p.earlyAccess ? p.earlyAccess : p.price)
 
 /**
  * Where a product stands, for its badge and its place on the shelf:

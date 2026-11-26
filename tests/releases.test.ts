@@ -94,3 +94,20 @@ test('only files of the latest release can be downloaded', async () => {
   const res = await download(new Request('https://x/api/account/download?product=vanta&file=99'), env, owner, 'u1')
   assert.equal(res.status, 404)
 })
+
+test('early access: before the first full release, a paid key gets the newest beta build', async () => {
+  const listUrl = (repo: string) => `https://api.github.com/repos/${repo}/releases?per_page=20`
+  mockGitHub({
+    [latestUrl(ORG)]: status(404),
+    [latestUrl(OLD)]: status(404),
+    [listUrl(ORG)]: ok([{ ...release('v0.9.0-beta.3', 21), prerelease: true, draft: false }]),
+  })
+  const res = await listDownloads(new Request('https://x/api/account/downloads?product=vanta'), env, owner, 'u1')
+  const body = (await res.json()) as { version: string; files: { id: number }[] }
+  assert.equal(body.version, 'VANTA v0.9.0-beta.3')
+  assert.deepEqual(body.files.map((f) => f.id), [21])
+  // once a full release is out, that's what a paid key gets
+  mockGitHub({ [latestUrl(ORG)]: ok(release('v1.0.0', 31)) })
+  const after = (await (await listDownloads(new Request('https://x/api/account/downloads?product=vanta'), env, owner, 'u1')).json()) as { version: string }
+  assert.equal(after.version, 'VANTA v1.0.0')
+})
