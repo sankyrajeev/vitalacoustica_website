@@ -38,7 +38,7 @@ export const site = {
     { label: 'Home', to: '/' },
     { label: 'Software', to: '/shop' },
     { label: 'Live', to: '/capabilities' },
-    { label: 'Studio', to: '/story' },
+    { label: 'Our Story', to: '/story' },
     { label: 'Blog', to: '/blog' },
   ],
 

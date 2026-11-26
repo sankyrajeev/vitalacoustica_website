@@ -38,6 +38,7 @@ export const SCENES: Record<string, Partial<SceneParams>> = {
   'story-feeling': { dist: 12, x: 0, turn: 3.0, wave: 0.5, opacity: 0.3 },
   'story-sound': { dist: 9.5, x: 0, y: 0.9, turn: 3.6, wave: 1, opacity: 0.55 },
   'story-curious': { dist: 13, x: 0, turn: 4.2, mesh: 1, tilt: 0.1, opacity: 0.28 },
+  'story-tools': { dist: 12.5, x: 0, turn: 4.5, mesh: 0.5, opacity: 0.26 },
   'story-purpose': { dist: 12, x: 0, turn: 4.8, sweep: 1, tilt: -0.15, opacity: 0.3 },
   'story-night': { dist: 13.5, x: 0, turn: 5.4, tilt: 0.55, grid: 0.8, calm: 1, opacity: 0.38 },
   'story-end': { dist: 12, x: 0, y: 0.1, turn: 6.2, scale: 0.9, calm: 0.6, opacity: 0.6 },

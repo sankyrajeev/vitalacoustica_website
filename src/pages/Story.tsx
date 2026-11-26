@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { ResonanceBackdrop } from '../components/ResonanceBackdrop'
-import { Cta, Logo } from '../components/ui'
+import { Cta, Logo, TextLink } from '../components/ui'
 import { pointAt } from '../three/resonance/director'
 import {
   StoryBeams,
@@ -22,10 +22,21 @@ const CHAPTERS = [
   { id: 'feeling', n: '04', title: 'A feeling' },
   { id: 'sound', n: '05', title: 'Sound is felt' },
   { id: 'curiosity', n: '06', title: 'Curiosity' },
-  { id: 'purpose', n: '07', title: 'Purpose' },
-  { id: 'after', n: '08', title: 'After the last track' },
-  { id: 'why', n: '09', title: 'Why we do it' },
+  { id: 'tools', n: '07', title: 'Our own tools' },
+  { id: 'purpose', n: '08', title: 'Purpose' },
+  { id: 'after', n: '09', title: 'After the last track' },
+  { id: 'why', n: '10', title: 'Why we do it' },
 ]
+
+/** 07: VANTA's interface, the first of our own tools. */
+function StoryTools() {
+  return (
+    <figure className="story-tools">
+      <img src={`${import.meta.env.BASE_URL}shop/vanta/vanta-synth.webp`} alt="" loading="lazy" decoding="async" />
+      <figcaption>VANTA, our first instrument</figcaption>
+    </figure>
+  )
+}
 
 /** Sets --p (0 → 1) on the element as it travels from the bottom of the screen to above the middle. */
 function useScrollProgress<T extends HTMLElement>(start = 0.88, end = 0.42) {
@@ -293,6 +304,18 @@ export function StoryPage() {
         </p>
       </Chapter>
 
+      <Chapter id="tools" scene="story-tools" visual={<StoryTools />}>
+        <p className="chapter__lede">Then we started building our own tools.</p>
+        <p className="chapter__body">
+          Running shows showed us where the tools we used fell short, so we began writing software for the work we love. VANTA,
+          a synthesizer for artists and producers, came first, and tools for lighting and mixing are on the way. Software for
+          artists and audio engineers, made by people who stand behind the desk.
+        </p>
+        <p className="chapter__links">
+          <TextLink to="/shop">See our software</TextLink>
+        </p>
+      </Chapter>
+
       <Chapter id="purpose" scene="story-purpose" visual={<StoryBeams />}>
         <p className="chapter__body">
           That mindset continues to define us. We aren’t interested in simply putting speakers in a room or pointing lights at a
@@ -340,9 +363,9 @@ export function StoryPage() {
           </p>
         </div>
         <div className="why__actions">
-          <Cta to="/contact">Plan your night</Cta>
-          <Cta to="/work" variant="quiet">
-            See our shows
+          <Cta to="/shop">Our software</Cta>
+          <Cta to="/capabilities" variant="quiet">
+            Live shows
           </Cta>
         </div>
       </Chapter>

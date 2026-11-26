@@ -3870,6 +3870,30 @@ html.menu-open .chat {
   order: -1;
 }
 
+/* 07 Our own tools: VANTA's interface, framed like the software features */
+.story-tools {
+  display: grid;
+  gap: var(--s3);
+  margin: 0;
+}
+
+.story-tools img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.7);
+}
+
+.story-tools figcaption {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
 .chapter__text {
   display: grid;
   gap: var(--s6);
