@@ -1,28 +1,29 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { EnquiryForm } from '../components/EnquiryForm'
 import { ArticleCard } from '../components/journal/Cards'
 import { featuredFirst, loadJournal, useLoad } from '../journal/data'
 import { TestimonialSlider } from '../components/TestimonialSlider'
 import { Link } from '../components/Link'
-import { VantaHero } from '../components/shop/VantaHero'
+import { SoftwareCover } from '../components/shop/Art'
 import { Arrow, Cta, Label, TextLink } from '../components/ui'
+import { products, statusOf, type Software } from '../content/shop'
 import { img, imgSet, mediaUrl } from '../media'
 import { published, site } from '../content/site'
 import { testimonials } from '../content/testimonials'
 import { useSectionSnap } from '../hooks/useSectionSnap'
 
-const SNAP_SECTIONS = '.opening, .statement, .vanta-hero--band, .both, .voices, .home-journal, .final'
+const SNAP_SECTIONS = '.home-hero, .home-software, .home-live, .both, .voices, .home-journal, .final'
 
-// The homepage: the two sides of the company (Live and Software) on the first screen, then each in
-// turn, why we do both, what clients say, three stories from the Blog, and the enquiry.
+// The homepage, software first: the opening over VANTA's editor, our software, the live side over a
+// night we ran, why we do both, what clients say, three stories from the Blog, and the enquiry.
 export function Home() {
   // each section settles centred on screen instead of stopping wherever the scroll ends
   useSectionSnap(SNAP_SECTIONS)
   return (
     <>
       <Opening />
-      <Statement />
-      <VantaHero variant="band" />
+      <SoftwareRange />
+      <Live />
       <Both />
       <Voices />
       <JournalPicks />
@@ -31,83 +32,40 @@ export function Home() {
   )
 }
 
-/** One of the two ways in: a photo (or VANTA's loop) with what's behind the door. */
-function Door({ to, label, title, line, children }: { to: string; label: string; title: string; line: string; children: ReactNode }) {
-  return (
-    <Link to={to} className="door">
-      <span className="door__media" aria-hidden>
-        {children}
-      </span>
-      <span className="door__cap">
-        <span>
-          <span className="door__label">{label}</span>
-          <span className="door__title">{title}</span>
-          <span className="door__line">{line}</span>
-        </span>
-        <span className="door__go" aria-hidden>
-          <Arrow />
-        </span>
-      </span>
-    </Link>
-  )
-}
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/* 00 — The opening: what we are, and the two sides of it */
+/* 00 — The opening: the line, over VANTA's editor playing (the "clean" loop, made with room for it) */
 function Opening() {
-  const [still] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const [still] = useState(reducedMotion)
+  const poster = mediaUrl('vanta/vanta-banner-clean-poster-1920.webp')
   return (
-    <section className="opening" aria-labelledby="opening-title">
-      <div className="wrap opening__head">
-        <div>
-          <Label>{site.eyebrow}</Label>
-          <h1 id="opening-title" className="display opening__title">
-            We run the show.
-            <br />
-            We build the <em>tools</em>
-          </h1>
-        </div>
-        <p className="opening__lede">
-          Vital Acoustica designs and runs sound and lighting for live events across South India, and makes software for
-          musicians and lighting designers.
-        </p>
+    <section className="home-hero" aria-labelledby="opening-title">
+      <div className="home-hero__media" aria-hidden>
+        {still ? (
+          <img src={poster} alt="" />
+        ) : (
+          <video autoPlay muted loop playsInline preload="metadata" poster={poster}>
+            <source src={mediaUrl('vanta/vanta-banner-clean-1080.mp4')} type="video/mp4" media="(max-width: 900px)" />
+            <source src={mediaUrl('vanta/vanta-banner-clean-4k.webm')} type="video/webm" />
+            <source src={mediaUrl('vanta/vanta-banner-clean-4k.mp4')} type="video/mp4" />
+          </video>
+        )}
       </div>
-      <div className="wrap opening__doors">
-        <Door to="/capabilities" label="Live" title="Sound, light and production" line="d&b systems, beam and LED lighting, with the crew to run your night">
-          <img src={img('club-full', 1600)} srcSet={imgSet('club-full')} sizes="(max-width: 760px) 100vw, 50vw" alt="" />
-        </Door>
-        <Door to="/shop" label="Software" title="Instruments and tools" line="VANTA, Pixel Forge, Lumière and ORBIT, for music and for light">
-          {still ? (
-            <img src={mediaUrl('vanta/vanta-banner-clean-poster-1920.webp')} alt="" />
-          ) : (
-            <video autoPlay muted loop playsInline preload="metadata" poster={mediaUrl('vanta/vanta-banner-clean-poster-1920.webp')}>
-              <source src={mediaUrl('vanta/vanta-banner-clean-1080.mp4')} type="video/mp4" media="(max-width: 900px)" />
-              <source src={mediaUrl('vanta/vanta-banner-clean-4k.webm')} type="video/webm" />
-              <source src={mediaUrl('vanta/vanta-banner-clean-4k.mp4')} type="video/mp4" />
-            </video>
-          )}
-        </Door>
-      </div>
-    </section>
-  )
-}
-
-/* 03 — Why we do both */
-function Both() {
-  return (
-    <section className="section both" aria-labelledby="both-title">
-      <div className="wrap both__inner">
-        <Label index="02">Why both</Label>
-        <h2 id="both-title" className="h1">
-          Built behind the desk
-        </h2>
-        <p className="statement__body">
-          The people who rig and run your night are the people who write the software. Our tools start from problems we meet on
-          real shows, and our shows are where we try them first.
+      <div className="home-hero__text">
+        <Label>{site.eyebrow}</Label>
+        <h1 id="opening-title" className="display home-hero__title">
+          We build the <em>tools</em>.
+          <br />
+          We run the show
+        </h1>
+        <p className="home-hero__lede">
+          Vital Acoustica makes software for musicians and lighting designers, and designs and runs sound and lighting for live
+          events across South India.
         </p>
-        <div className="both__actions">
+        <div className="home-hero__actions">
           <Cta to="/shop">Our software</Cta>
-          <Cta to="/story" variant="quiet">
-            Our story
+          <Cta to="/capabilities" variant="quiet">
+            Live events
           </Cta>
         </div>
       </div>
@@ -115,8 +73,51 @@ function Both() {
   )
 }
 
-/* 02 — A short statement and the four things we are known for */
-function Statement() {
+/* 01 — Software: the whole range, each with its cover and where it stands */
+function SoftwareRange() {
+  const range = products.filter((p): p is Software => p.kind === 'software' && !p.sample)
+  return (
+    <section className="section home-software" aria-labelledby="software-title">
+      <div className="wrap">
+        <header className="section-head home-software__head">
+          <Label index="01">Software</Label>
+          <h2 id="software-title" className="h1">
+            Instruments and tools for sound and light
+          </h2>
+          <p className="section-head__sub">For producers, DJs and lighting designers: plugins, apps and the hardware that runs them.</p>
+        </header>
+        <ul className="home-software__grid">
+          {range.map((p) => {
+            const status = statusOf(p)
+            return (
+              <li key={p.id}>
+                <Link to={`/shop/${p.id}`} className={`soft-card is-${status}`}>
+                  <span className="soft-card__cover" aria-hidden>
+                    <SoftwareCover p={p} />
+                  </span>
+                  <span className="soft-card__body">
+                    <span className="soft-card__name">{p.name}</span>
+                    <span className="soft-card__type">{p.type}</span>
+                    <span className="soft-card__line">{p.tagline}</span>
+                    <span className={`shop-status shop-status--${status}`}>{STATUS[status]}</span>
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="home-software__all">
+          <TextLink to="/shop">All software</TextLink>
+        </p>
+      </div>
+    </section>
+  )
+}
+
+const STATUS = { available: 'Available', beta: 'Free beta', soon: 'Coming soon' } as const
+
+/* 02 — Live: what we do on the night, over a night we ran */
+function Live() {
   const facts = [
     ['d&b audiotechnik', 'Sound systems'],
     ['Beam · Retro · LED', 'Lighting'],
@@ -124,13 +125,16 @@ function Statement() {
     ['Audio & Lighting Integration', 'Consulting'],
   ]
   return (
-    <section id="statement" className="statement" aria-labelledby="statement-title">
-      <div className="wrap statement__inner">
-        <Label index="01">Live</Label>
-        <h2 id="statement-title" className="h1">
+    <section className="home-live" aria-labelledby="live-title">
+      <div className="home-live__media" aria-hidden>
+        <img src={img('club-full', 1600)} srcSet={imgSet('club-full')} sizes="100vw" alt="" loading="lazy" />
+      </div>
+      <div className="wrap home-live__inner">
+        <Label index="02">Live</Label>
+        <h2 id="live-title" className="h1">
           Production is more than equipment
         </h2>
-        <p className="statement__body">
+        <p className="home-live__body">
           We hire out professional sound and lighting, and we bring the people who know how to make it feel right: system design,
           rigging, tuning and an operator at the desk until the last track.
         </p>
@@ -153,6 +157,30 @@ function Statement() {
   )
 }
 
+/* 03 — Why we do both */
+function Both() {
+  return (
+    <section className="section both" aria-labelledby="both-title">
+      <div className="wrap both__inner">
+        <Label index="03">Why both</Label>
+        <h2 id="both-title" className="h1">
+          Built behind the desk
+        </h2>
+        <p className="statement__body">
+          The people who rig and run your night are the people who write the software. Our tools start from problems we meet on
+          real shows, and our shows are where we try them first.
+        </p>
+        <div className="both__actions">
+          <Cta to="/shop">Our software</Cta>
+          <Cta to="/story" variant="quiet">
+            Our story
+          </Cta>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* 02 — Testimonials: a few voices over the sculpture's light sweep */
 function Voices() {
   if (!published.testimonials || testimonials.length === 0) return null
@@ -160,7 +188,7 @@ function Voices() {
     <section className="section voices" aria-labelledby="voices-title">
       <div className="wrap">
         <header className="section-head">
-          <Label index="03">Testimonials</Label>
+          <Label index="04">Testimonials</Label>
           <h2 id="voices-title" className="h1">
             In their words
           </h2>
@@ -182,7 +210,7 @@ function JournalPicks() {
     <section className="section home-journal" aria-labelledby="home-journal-title">
       <div className="wrap">
         <header className="section-head home-journal__head">
-          <Label index="04">Blog</Label>
+          <Label index="05">Blog</Label>
           <h2 id="home-journal-title" className="h1">
             Sound, light and visuals, today
           </h2>
@@ -209,7 +237,7 @@ function FinalEnquiry() {
   return (
     <section className="final" aria-labelledby="final-title">
       <div className="wrap final__inner">
-        <Label index={journalShown ? '05' : '04'}>Get a quote</Label>
+        <Label index={journalShown ? '06' : '05'}>Get a quote</Label>
         <h2 id="final-title" className="display display--sm">
           Let’s shape something exceptional
         </h2>
