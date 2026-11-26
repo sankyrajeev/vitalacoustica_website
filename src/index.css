@@ -1518,69 +1518,155 @@ select {
   padding-top: var(--s8);
 }
 
-.home-software__grid {
+/* what's out: one row each, the text beside its real interface */
+.soft-feature {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--s4);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: var(--s8);
+  align-items: center;
+  padding-block: 0 var(--s7);
+}
+
+.soft-feature + .soft-feature {
+  padding-top: var(--s7);
+  border-top: var(--hair) solid var(--line);
+}
+
+.shop-section .soft-feature {
+  padding-top: var(--s6);
+}
+
+.soft-feature__text {
+  display: grid;
+  justify-items: start;
+  gap: var(--s3);
+}
+
+.soft-feature__logo {
+  height: 40px;
+  width: auto;
+  margin-bottom: var(--s3);
+}
+
+.soft-feature__name {
+  margin: var(--s2) 0 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 4vw, 56px);
+  line-height: 1;
+}
+
+.soft-feature__type {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.soft-feature__line {
+  max-width: 30em;
+  margin: var(--s2) 0 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+.soft-feature__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-top: var(--s4);
+}
+
+.soft-feature__shot {
+  display: block;
+  border: var(--hair) solid var(--line);
+  transition: border-color var(--t-fast) var(--ease);
+}
+
+.soft-feature__shot:hover {
+  border-color: var(--accent);
+}
+
+.soft-feature__shot img,
+.soft-feature__shot .cover {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* what's coming: a quiet list, smaller than what's out */
+.soon {
+  margin-top: var(--s6);
+  padding-top: var(--s6);
+  border-top: var(--hair) solid var(--line);
+}
+
+.soon__title {
+  margin: 0 0 var(--s4);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.soon__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--s3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.soft-card {
+.soon__item {
+  position: relative;
   display: grid;
+  gap: var(--s1);
   height: 100%;
+  padding: var(--s4) var(--s8) var(--s4) var(--s4);
   border: var(--hair) solid var(--line);
-  background: var(--surface);
   transition: border-color var(--t-fast) var(--ease);
 }
 
-.soft-card:hover {
+.soon__item:hover {
   border-color: var(--accent);
 }
 
-.soft-card__cover .cover__kicker {
-  display: none;
-}
-
-.soft-card__body {
-  display: grid;
-  align-content: start;
-  gap: var(--s2);
-  padding: var(--s4);
-}
-
-.soft-card__name {
+.soon__name {
   font-family: var(--serif);
-  font-size: 24px;
-  line-height: 1.05;
+  font-size: 22px;
+  line-height: 1.1;
 }
 
-.soft-card__type {
+.soon__type {
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent-text);
+  color: var(--muted);
 }
 
-.soft-card__line {
-  font-size: 14px;
+.soon__line {
+  margin-top: var(--s1);
+  font-size: 13.5px;
   line-height: 1.5;
   color: var(--text-soft);
 }
 
-.soft-card .shop-status {
-  justify-self: start;
-  margin-top: var(--s2);
+.soon__go {
+  position: absolute;
+  top: var(--s4);
+  right: var(--s4);
+  color: var(--muted);
 }
 
-.soft-card.is-soon .soft-card__cover {
-  opacity: 0.72;
-}
-
-.home-software__all {
-  margin: var(--s6) 0 0;
+.shop-section__empty {
+  margin: 0;
+  color: var(--text-soft);
 }
 
 /* ─────────────── 02 Live: over a night we ran ─────────────── */
@@ -1660,12 +1746,6 @@ select {
   }
 }
 
-@media (max-width: 1080px) and (min-width: 761px) {
-  .home-software__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 760px) {
   .home-hero {
     display: flex;
@@ -1689,21 +1769,30 @@ select {
     max-width: none;
     padding: 104px 20px var(--s6);
   }
-  /* on a phone the range scrolls sideways, a card and a bit at a time */
-  .home-software__grid {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 78%;
-    gap: var(--s3);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    margin-inline: -20px;
-    padding-inline: 20px;
-    scroll-padding-inline: 20px;
-    scrollbar-width: none;
+  .soft-feature {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6);
   }
-  .home-software__grid > li {
-    scroll-snap-align: start;
+  .soft-feature__shot {
+    order: -1;
+  }
+  /* what's coming stays small on a phone: name and type, two to a row */
+  .soon__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s2);
+  }
+  .soon__item {
+    padding: var(--s3) var(--s7) var(--s3) var(--s3);
+  }
+  .soon__name {
+    font-size: 18px;
+  }
+  .soon__line {
+    display: none;
+  }
+  .soon__go {
+    top: var(--s3);
+    right: var(--s3);
   }
   .home-live__media::after {
     background: linear-gradient(180deg, var(--bg) 0%, rgba(5, 5, 5, 0.82) 30%, rgba(5, 5, 5, 0.9) 100%);

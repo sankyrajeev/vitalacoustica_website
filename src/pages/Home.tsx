@@ -3,8 +3,8 @@ import { EnquiryForm } from '../components/EnquiryForm'
 import { ArticleCard } from '../components/journal/Cards'
 import { featuredFirst, loadJournal, useLoad } from '../journal/data'
 import { TestimonialSlider } from '../components/TestimonialSlider'
-import { Link } from '../components/Link'
-import { SoftwareCover } from '../components/shop/Art'
+import { ComingSoon } from '../components/shop/ComingSoon'
+import { SoftwareFeature } from '../components/shop/SoftwareFeature'
 import { Arrow, Cta, Label, TextLink } from '../components/ui'
 import { products, statusOf, type Software } from '../content/shop'
 import { img, imgSet, mediaUrl } from '../media'
@@ -73,9 +73,11 @@ function Opening() {
   )
 }
 
-/* 01 — Software: the whole range, each with its cover and where it stands */
+/* 01 — Software: what's out, each with its real interface; what's coming, in a quiet list below */
 function SoftwareRange() {
   const range = products.filter((p): p is Software => p.kind === 'software' && !p.sample)
+  const out = range.filter((p) => statusOf(p) !== 'soon')
+  const soon = range.filter((p) => statusOf(p) === 'soon')
   return (
     <section className="section home-software" aria-labelledby="software-title">
       <div className="wrap">
@@ -84,37 +86,15 @@ function SoftwareRange() {
           <h2 id="software-title" className="h1">
             Instruments and tools for sound and light
           </h2>
-          <p className="section-head__sub">For producers, DJs and lighting designers: plugins, apps and the hardware that runs them.</p>
         </header>
-        <ul className="home-software__grid">
-          {range.map((p) => {
-            const status = statusOf(p)
-            return (
-              <li key={p.id}>
-                <Link to={`/shop/${p.id}`} className={`soft-card is-${status}`}>
-                  <span className="soft-card__cover" aria-hidden>
-                    <SoftwareCover p={p} />
-                  </span>
-                  <span className="soft-card__body">
-                    <span className="soft-card__name">{p.name}</span>
-                    <span className="soft-card__type">{p.type}</span>
-                    <span className="soft-card__line">{p.tagline}</span>
-                    <span className={`shop-status shop-status--${status}`}>{STATUS[status]}</span>
-                  </span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="home-software__all">
-          <TextLink to="/shop">All software</TextLink>
-        </p>
+        {out.map((p) => (
+          <SoftwareFeature key={p.id} p={p} />
+        ))}
+        <ComingSoon items={soon} />
       </div>
     </section>
   )
 }
-
-const STATUS = { available: 'Available', beta: 'Free beta', soon: 'Coming soon' } as const
 
 /* 02 — Live: what we do on the night, over a night we ran */
 function Live() {

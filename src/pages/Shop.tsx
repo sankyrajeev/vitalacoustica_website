@@ -4,10 +4,12 @@ import { AudioPreview, DemoTrack } from '../components/shop/AudioPreview'
 import PEAKS from '../content/audio-peaks.json'
 import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
 import { BetaRequest } from '../components/shop/BetaRequest'
+import { ComingSoon } from '../components/shop/ComingSoon'
+import { SoftwareFeature } from '../components/shop/SoftwareFeature'
 import { VantaHero } from '../components/shop/VantaHero'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
-import { price, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind } from '../content/shop'
+import { price, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind, type Software } from '../content/shop'
 import { href, queryParam } from '../router'
 import { NotFound } from './NotFound'
 
@@ -87,6 +89,8 @@ export function ShopIndex() {
   const shown = products
     .filter((p) => p.kind === shelf && (p.kind !== 'software' || p.area === area))
     .sort((a, b) => STATUS_ORDER[statusOf(a)] - STATUS_ORDER[statusOf(b)])
+  const out = shown.filter((p) => statusOf(p) !== 'soon')
+  const soon = shown.filter((p): p is Software => p.kind === 'software' && statusOf(p) === 'soon')
 
   return (
     <>
@@ -113,11 +117,23 @@ export function ShopIndex() {
 
       <section className="section section--tight shop-section" aria-label={shelf === 'software' ? `${area === 'audio' ? 'Audio' : 'Lighting'} software` : section.title}>
         <div className="wrap">
-          <div className={`shop-grid shop-grid--${shelf}`} key={`${shelf}-${area}`}>
-            {shown.map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
+          {shelf === 'software' ? (
+            // what's out, full size; what's coming, in a quiet list below
+            <>
+              {out.length ? (
+                out.map((p) => p.kind === 'software' && <SoftwareFeature key={p.id} p={p} />)
+              ) : (
+                <p className="shop-section__empty">Nothing out in {area} software yet. Here’s what we’re making.</p>
+              )}
+              <ComingSoon items={soon} />
+            </>
+          ) : (
+            <div className={`shop-grid shop-grid--${shelf}`} key={`${shelf}-${area}`}>
+              {shown.map((p) => (
+                <ProductCard key={p.id} p={p} />
+              ))}
+            </div>
+          )}
           <p className="shop-section__note">{section.note}</p>
         </div>
       </section>
