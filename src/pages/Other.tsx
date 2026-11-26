@@ -152,7 +152,7 @@ export function ContactPage() {
 
   return (
     <>
-      <PageHead label="Get a quote" title="Tell us about your event">
+      <PageHead label="Plan your event" title="Tell us about your event">
         The date, the venue and roughly how many people. We’ll come back with the right system, a quote, and who will be on site
         to run it.
       </PageHead>

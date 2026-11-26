@@ -68,7 +68,7 @@ function resolve(path: string): Resolved {
   const article = match('/blog/:slug', path)
   if (article) return { title: 'The Acoustica Journal', page: <JournalArticle slug={article.slug} /> }
   if (path === '/deck') return { title: 'Capability deck', page: <DeckPage /> }
-  if (path === '/contact') return { title: 'Get a quote', page: <ContactPage /> }
+  if (path === '/contact') return { title: 'Plan your event', page: <ContactPage /> }
   if (path === '/story') return { title: 'Our Story', page: <StoryPage /> }
   if (path === '/careers') return { title: 'Careers', page: <CareersPage /> }
   if (path === '/testimonials') return { title: 'Testimonials', page: <TestimonialsPage /> }

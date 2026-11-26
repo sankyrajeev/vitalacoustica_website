@@ -100,7 +100,7 @@ const NAV: [string, string][] = [
   ['/shop', 'Shop'],
   ['/testimonials', 'Testimonials'],
   ['/blog', 'Blog'],
-  ['/contact', 'Get a quote'],
+  ['/contact', 'Plan your event'],
 ]
 
 const nav = () => `<nav><p>${NAV.map(([href, label]) => `<a href="${href}">${esc(label)}</a>`).join(' · ')}</p></nav>`
@@ -294,7 +294,7 @@ export function metaFor(path: string, site: string): PageMeta | null {
 
   const simple: Record<string, [string, string, boolean?]> = {
     '/testimonials': ['Testimonials', 'What clubs, promoters and artists say about working with Vital Acoustica.'],
-    '/contact': ['Get a quote', 'Tell us about your event and we’ll put together the sound, lighting and crew for it.'],
+    '/contact': ['Plan your event', 'Tell us about your event and we’ll put together the sound, lighting and crew for it.'],
     '/careers': ['Careers', 'Work with Vital Acoustica: crew, engineers and lighting designers.'],
     '/deck': ['Capability deck', 'Vital Acoustica at a glance: sound, lighting, visuals, production and installations.'],
     '/privacy': ['Privacy notice', 'How Vital Acoustica collects, uses and protects personal data.'],

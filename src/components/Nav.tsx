@@ -47,7 +47,7 @@ export function Nav({ path }: { path: string }) {
           ))}
           <li className="nav__cta">
             <Link to="/contact" aria-current={isActive('/contact') ? 'page' : undefined} onClick={close}>
-              Get a quote
+              Plan your event
             </Link>
           </li>
         </ul>

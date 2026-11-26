@@ -22,7 +22,7 @@ export type Reply = {
 export const SUGGESTIONS: Action[] = [
   { kind: 'ask', label: 'What equipment do you hire?', query: 'what equipment do you have', intent: 'equipment' },
   { kind: 'ask', label: 'How does hiring work?', query: 'how does hiring work', intent: 'process' },
-  { kind: 'ask', label: 'Get a quote', query: 'i want a quote', intent: 'quote' },
+  { kind: 'ask', label: 'Plan your event', query: 'i want a quote', intent: 'quote' },
   { kind: 'ask', label: 'Where do you work?', query: 'where are you based', intent: 'location' },
 ]
 
@@ -35,7 +35,7 @@ export const GREETING: Reply = {
 const SURE = 0.42
 
 export const wa = (text: string): Action => ({ kind: 'whatsapp', label: 'Ask the team on WhatsApp', text })
-const quote: Action = { kind: 'link', label: 'Request a quote', to: '/contact' }
+const quote: Action = { kind: 'link', label: 'Plan your event', to: '/contact' }
 
 // words people use for each item, beyond its name
 const ALIASES: Partial<Record<Gear['id'], string[]>> = {
@@ -149,7 +149,7 @@ function gearReply(items: Gear[]): Reply {
       actions: [
         { kind: 'link', label: 'Full details', to: `/equipment/${g.id}` },
         ...(inRig(g) ? [{ kind: 'explore', label: 'View in 3D', gear: g.id } satisfies Action] : []),
-        { kind: 'link', label: 'Get a quote for this', to: `/contact?item=${g.id}` },
+        { kind: 'link', label: 'Plan an event with this', to: `/contact?item=${g.id}` },
       ],
     }
   }
@@ -182,15 +182,15 @@ const HANDLERS: Record<string, Handler> = {
       items.length === 1 ? ` For the ${fullName(items[0])}, tell` : ' Tell'
     } us a little about your event and we’ll send a clear, itemised quote, usually within a day.`,
     actions: [
-      items.length === 1 ? { kind: 'link', label: 'Get a quote for this', to: `/contact?item=${items[0].id}` } : quote,
+      items.length === 1 ? { kind: 'link', label: 'Plan an event with this', to: `/contact?item=${items[0].id}` } : quote,
       wa(`Hi Vital Acoustica, I'd like a price for ${items.length === 1 ? `the ${fullName(items[0])}` : 'an event'}.`),
     ],
   }),
 
   quote: (items) => ({
-    text: 'Happy to help! Send us the date, the venue and roughly how many people through the quote form, or message us on WhatsApp if that’s quicker.',
+    text: 'Happy to help! Send us the date, the venue and roughly how many people through the event form, or message us on WhatsApp if that’s quicker.',
     actions: [
-      items.length === 1 ? { kind: 'link', label: 'Get a quote for this', to: `/contact?item=${items[0].id}` } : quote,
+      items.length === 1 ? { kind: 'link', label: 'Plan an event with this', to: `/contact?item=${items[0].id}` } : quote,
       wa("Hi Vital Acoustica, I'd like to check availability for an event."),
     ],
   }),

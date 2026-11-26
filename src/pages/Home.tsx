@@ -129,7 +129,7 @@ function Live() {
         <div className="statement__actions">
           <Cta to="/equipment">Explore equipment</Cta>
           <Cta to="/contact" variant="quiet">
-            Get a quote
+            Plan your event
           </Cta>
         </div>
       </div>
@@ -217,7 +217,7 @@ function FinalEnquiry() {
   return (
     <section className="final" aria-labelledby="final-title">
       <div className="wrap final__inner">
-        <Label index={journalShown ? '06' : '05'}>Get a quote</Label>
+        <Label index={journalShown ? '06' : '05'}>Plan your event</Label>
         <h2 id="final-title" className="display display--sm">
           Let’s shape something exceptional
         </h2>
@@ -231,7 +231,7 @@ function FinalEnquiry() {
           </div>
         ) : (
           <button className="cta cta--primary" onClick={() => setOpen(true)} aria-expanded={open}>
-            <span>Get a quote</span>
+            <span>Plan your event</span>
             <Arrow />
           </button>
         )}

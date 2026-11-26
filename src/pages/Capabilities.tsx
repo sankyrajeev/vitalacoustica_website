@@ -18,7 +18,7 @@ const FACTS = [
   ['Audio & Lighting Integration', 'Consulting'],
 ]
 
-/** Live: the hire side. What we do, the kit and the crew, and how to get a quote. */
+/** Live: the hire side. What we do, the kit and the crew, and how to plan an event with us. */
 export function CapabilitiesIndex() {
   return (
     <>
@@ -76,13 +76,13 @@ export function CapabilitiesIndex() {
 
       <section className="section live-quote" aria-labelledby="live-quote">
         <div className="wrap live-quote__inner">
-          <Label index="03">Get a quote</Label>
+          <Label index="03">Plan your event</Label>
           <h2 id="live-quote" className="h1">
             Tell us about your show
           </h2>
           <p>Send the date, the venue and roughly how many people. We send a clear, itemised quote, usually within a day.</p>
           <div className="statement__actions">
-            <Cta to="/contact">Get a quote</Cta>
+            <Cta to="/contact">Plan your event</Cta>
             <Cta to="/testimonials" variant="quiet">
               What clients say
             </Cta>

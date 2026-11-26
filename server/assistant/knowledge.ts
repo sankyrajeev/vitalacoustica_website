@@ -38,7 +38,7 @@ Hyderabad and more). Software: it makes its own software for artists and audio e
 VANTA (a synthesizer plugin, in free beta), VANTA Dynamics, ORBIT, Pixel Forge (LED pixel mapping),
 Lumière Link and Lumière Resident (see the Software pages). It does not build custom software for
 clients. It also writes a blog with a daily news roundup. Prices for live events are quoted per
-event: people get a quote through the quote form (/contact) or on WhatsApp (the WhatsApp button in
+event: people get a quote through the event form, Plan your event (/contact) or on WhatsApp (the WhatsApp button in
 this chat).
 `)
 
@@ -53,7 +53,7 @@ const FACTS: Passage[] = [
   {
     id: 'prices',
     title: 'Prices and quotes',
-    text: 'Every quote depends on the venue, the date, the crowd and how much of the setup we run, so each event is priced individually. Send the date, the venue and roughly how many people through the quote form, or on WhatsApp, and we send a clear, itemised quote, usually within a day. There is no public price list for hire.',
+    text: 'Every quote depends on the venue, the date, the crowd and how much of the setup we run, so each event is priced individually. Send the date, the venue and roughly how many people through Plan your event (the form at /contact), or on WhatsApp, and we send a clear, itemised quote, usually within a day. There is no public price list for hire.',
     link: '/contact',
   },
   {

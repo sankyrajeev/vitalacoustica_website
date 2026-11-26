@@ -82,7 +82,7 @@ function HowHiringWorks() {
           ))}
         </ol>
         <div className="hiring__cta">
-          <Cta to="/contact">Get a quote</Cta>
+          <Cta to="/contact">Plan your event</Cta>
         </div>
       </div>
     </section>
@@ -143,7 +143,7 @@ export function EquipmentDetail({ id }: { id: string }) {
               </button>
             )}
             <Cta to={`/contact?item=${g.id}`} variant={inRig(g) ? 'quiet' : 'primary'}>
-              Get a quote for this
+              Plan an event with this
             </Cta>
           </div>
         </div>
