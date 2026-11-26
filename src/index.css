@@ -1444,12 +1444,25 @@ select {
   color: #f0ede5;
 }
 
-/* the editor starts below the site's header, and sits centred in the space beside the text (the
-   loop has it left of centre, so the frame moves right a little; its empty right edge is cut) */
-.home-hero__media {
+/* The VANTA loop is 2.4:1 with the editor between 37% and 87% of its width (centre 62%). The
+   frame is never cropped top or bottom: it's as wide as the screen up to 1824px (760px tall),
+   starts below the site's header, and slides so the editor's centre sits at 67.5%, the middle of
+   the space beside the text. On wider screens its edges fade into the black. */
+.home-hero,
+.vanta-hero--page {
+  --loop-w: min(100vw, 1824px);
+}
+
+.home-hero__media,
+.vanta-hero--page .vanta-hero__media {
   position: absolute;
-  inset: 88px -6% 0 6%;
+  inset: 88px auto auto calc(67.5% - 0.62 * var(--loop-w));
+  width: var(--loop-w);
+  height: auto;
+  aspect-ratio: 2.4 / 1;
   z-index: -1;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 90%, transparent 100%);
 }
 
 .home-hero__media video,
@@ -1755,7 +1768,10 @@ select {
   .home-hero__media {
     position: relative;
     inset: auto;
+    width: auto;
     aspect-ratio: 16 / 9;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
   /* the editor in the middle of the phone's frame */
   .home-hero__media video,
@@ -10437,9 +10453,6 @@ img.cover--screen {
   min-height: calc(min(100vw / 2.4, 760px) + 88px);
 }
 
-.vanta-hero--page .vanta-hero__media {
-  top: 88px;
-}
 
 .vanta-hero--page .vanta-hero__text {
   padding-top: calc(88px + clamp(24px, 4vw, 64px));
@@ -10471,7 +10484,16 @@ img.cover--screen {
     position: relative;
     inset: auto;
     top: auto;
+    width: auto;
     aspect-ratio: 16 / 9;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* the editor in the middle of the phone's frame */
+  .vanta-hero__media video,
+  .vanta-hero__media img {
+    object-position: 96% 50%;
   }
 
   .vanta-hero--page {
