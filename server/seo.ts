@@ -281,8 +281,8 @@ export function metaFor(path: string, site: string): PageMeta | null {
   }
 
   if (path === '/shop')
-    return base('Shop', 'Merch, sample packs and VJ loops from Vital Acoustica: oversized tees and hoodies, sounds for your tracks and visuals for your shows.', {
-      body: plain('Shop', 'Things to wear to the next show, sounds for your tracks and visuals for your sets. Our software has its own page.', list(products.filter((p) => !p.sample && p.kind !== 'software').map((p) => [productPath(p), p.name, p.tagline]))),
+    return base('Shop', 'Merch from Vital Acoustica: oversized tees, hoodies and caps to wear to the next show, printed to order and shipped across India.', {
+      body: plain('Shop', 'Things to wear to the next show, printed when you order. Our software has its own page.', list(products.filter((p) => !p.sample && p.kind !== 'software').map((p) => [productPath(p), p.name, p.tagline]))),
     })
 
   // software pages live under /software; the shop keeps the rest (old /shop/vanta links are redirected)

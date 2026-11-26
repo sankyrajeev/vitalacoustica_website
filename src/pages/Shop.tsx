@@ -64,8 +64,18 @@ function ProductCard({ p }: { p: Product }) {
 
 type Shelf = ShopKind
 
-// The shop: merch, sample packs and VJ loops. Software has its own page (/software).
-const SHELVES = SECTIONS.filter((s) => s.kind !== 'software')
+// The shop: merch, sample packs and VJ loops. Software has its own page (/software). A shelf
+// appears once it has a real product (not only the sample placeholders), so for now it's merch.
+const SHELVES = SECTIONS.filter((s) => s.kind !== 'software' && products.some((p) => p.kind === s.kind && !p.sample))
+
+/** How buying works, for the shelves that are showing. */
+const STEPS: { title: string; text: string; kinds?: ShopKind[] }[] = [
+  { title: 'Packs and loops', text: 'Pay by card, PayPal or UPI. Your download link arrives by email straight away, and you can download again any time.', kinds: ['audio', 'loops'] },
+  { title: 'Merch', text: 'Each piece is printed when you order it and shipped across India, usually within a week.', kinds: ['merch'] },
+  { title: 'Licence', text: 'Use the sounds in your tracks and sets, and the loops in your shows and streams, royalty-free. Just don’t resell them as they are.', kinds: ['audio', 'loops'] },
+  { title: 'Questions', text: 'Something not right with an order? Message us on WhatsApp and we’ll sort it out.' },
+]
+const steps = STEPS.filter((x) => !x.kinds || x.kinds.some((k) => SHELVES.some((s) => s.kind === k)))
 
 /** The shelf in the address (/shop?section=audio), so links and Back work. */
 function useShelf(): [Shelf, (s: Shelf) => void] {
@@ -84,7 +94,7 @@ function useShelf(): [Shelf, (s: Shelf) => void] {
 export function ShopIndex() {
   const [shelf, choose] = useShelf()
   const section = sectionOf(shelf)
-  const shown = products.filter((p) => p.kind === shelf).sort((a, b) => STATUS_ORDER[statusOf(a)] - STATUS_ORDER[statusOf(b)])
+  const shown = products.filter((p) => p.kind === shelf && !p.sample).sort((a, b) => STATUS_ORDER[statusOf(a)] - STATUS_ORDER[statusOf(b)])
 
   return (
     <>
@@ -122,32 +132,13 @@ export function ShopIndex() {
             </h2>
           </header>
           <ol className="steps">
-            <li>
-              <span className="steps__n">01</span>
-              <strong>Packs and loops</strong>
-              <p>
-                Pay by card, PayPal or UPI. Your download link arrives by email straight away, and you can download again any
-                time.
-              </p>
-            </li>
-            <li>
-              <span className="steps__n">02</span>
-              <strong>Merch</strong>
-              <p>Each piece is printed when you order it and shipped across India, usually within a week.</p>
-            </li>
-            <li>
-              <span className="steps__n">03</span>
-              <strong>Licence</strong>
-              <p>
-                Use the sounds in your tracks and sets, and the loops in your shows and streams, royalty-free. Just don’t resell
-                them as they are.
-              </p>
-            </li>
-            <li>
-              <span className="steps__n">04</span>
-              <strong>Questions</strong>
-              <p>Something not right with an order? Message us on WhatsApp and we’ll sort it out.</p>
-            </li>
+            {steps.map((x, i) => (
+              <li key={x.title}>
+                <span className="steps__n">{String(i + 1).padStart(2, '0')}</span>
+                <strong>{x.title}</strong>
+                <p>{x.text}</p>
+              </li>
+            ))}
           </ol>
         </div>
       </section>
