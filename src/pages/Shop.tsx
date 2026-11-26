@@ -4,12 +4,10 @@ import { AudioPreview, DemoTrack } from '../components/shop/AudioPreview'
 import PEAKS from '../content/audio-peaks.json'
 import { AudioCover, GarmentMock, LoopPreview, SoftwareCover } from '../components/shop/Art'
 import { BetaRequest } from '../components/shop/BetaRequest'
-import { ComingSoon } from '../components/shop/ComingSoon'
-import { SoftwareFeature } from '../components/shop/SoftwareFeature'
 import { VantaHero } from '../components/shop/VantaHero'
 import { Buy } from '../components/shop/Buy'
 import { Arrow, Label } from '../components/ui'
-import { price, productPath, products, SECTIONS, SOFTWARE_AREAS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind, type Software } from '../content/shop'
+import { price, productPath, products, SECTIONS, STATUS_ORDER, sectionOf, statusOf, type Product, type ShopKind } from '../content/shop'
 import { href, queryParam } from '../router'
 import { NotFound } from './NotFound'
 
@@ -65,75 +63,52 @@ function ProductCard({ p }: { p: Product }) {
 }
 
 type Shelf = ShopKind
-type Area = (typeof SOFTWARE_AREAS)[number]['id']
 
-/** The shelf and software area in the address (/shop?section=software&area=lighting), so links and Back work. */
-function useShelf(): [Shelf, Area, (s: Shelf, a?: Area) => void] {
-  const read = (): [Shelf, Area] => {
+// The shop: merch, sample packs and VJ loops. Software has its own page (/software).
+const SHELVES = SECTIONS.filter((s) => s.kind !== 'software')
+
+/** The shelf in the address (/shop?section=audio), so links and Back work. */
+function useShelf(): [Shelf, (s: Shelf) => void] {
+  const read = (): Shelf => {
     const s = queryParam('section')
-    const a = queryParam('area')
-    return [SECTIONS.some((x) => x.kind === s) ? (s as Shelf) : 'software', a === 'lighting' ? 'lighting' : 'audio']
+    return SHELVES.some((x) => x.kind === s) ? (s as Shelf) : SHELVES[0].kind
   }
-  const [[shelf, area], set] = useState(read)
-  const choose = (s: Shelf, a: Area = 'audio') => {
-    set([s, a])
-    const q = s === 'software' ? (a === 'audio' ? '' : `?section=software&area=${a}`) : `?section=${s}`
-    window.history.replaceState(null, '', href(`/shop${q}`))
+  const [shelf, set] = useState(read)
+  const choose = (s: Shelf) => {
+    set(s)
+    window.history.replaceState(null, '', href(s === SHELVES[0].kind ? '/shop' : `/shop?section=${s}`))
   }
-  return [shelf, area, choose]
+  return [shelf, choose]
 }
 
 export function ShopIndex() {
-  const [shelf, area, choose] = useShelf()
+  const [shelf, choose] = useShelf()
   const section = sectionOf(shelf)
-  const shown = products
-    .filter((p) => p.kind === shelf && (p.kind !== 'software' || p.area === area))
-    .sort((a, b) => STATUS_ORDER[statusOf(a)] - STATUS_ORDER[statusOf(b)])
-  const out = shown.filter((p) => statusOf(p) !== 'soon')
-  const soon = shown.filter((p): p is Software => p.kind === 'software' && statusOf(p) === 'soon')
+  const shown = products.filter((p) => p.kind === shelf).sort((a, b) => STATUS_ORDER[statusOf(a)] - STATUS_ORDER[statusOf(b)])
 
   return (
     <>
       <header className="page-head wrap shop-head">
         <h1 className="label shop-head__title">Shop</h1>
         <nav className="shop-shelves" aria-label="Shop">
-          {SECTIONS.map((s) => (
+          {SHELVES.map((s) => (
             <button key={s.kind} type="button" className="shop-shelves__item" aria-pressed={shelf === s.kind} onClick={() => choose(s.kind)}>
               {s.title}
             </button>
           ))}
         </nav>
-        {shelf === 'software' && (
-          <nav className="shop-areas" aria-label="Software">
-            {SOFTWARE_AREAS.map((a) => (
-              <button key={a.id} type="button" aria-pressed={area === a.id} onClick={() => choose('software', a.id)}>
-                {a.title}
-                <span>{products.filter((p) => p.kind === 'software' && p.area === a.id).length}</span>
-              </button>
-            ))}
-          </nav>
-        )}
+        <p className="shop-head__line">
+          {section.line} Looking for our software? <Link to="/software">It has its own page.</Link>
+        </p>
       </header>
 
-      <section className="section section--tight shop-section" aria-label={shelf === 'software' ? `${area === 'audio' ? 'Audio' : 'Lighting'} software` : section.title}>
+      <section className="section section--tight shop-section" aria-label={section.title}>
         <div className="wrap">
-          {shelf === 'software' ? (
-            // what's out, full size; what's coming, in a quiet list below
-            <>
-              {out.length ? (
-                out.map((p) => p.kind === 'software' && <SoftwareFeature key={p.id} p={p} />)
-              ) : (
-                <p className="shop-section__empty">Nothing out in {area} software yet. Here’s what we’re making.</p>
-              )}
-              <ComingSoon items={soon} />
-            </>
-          ) : (
-            <div className={`shop-grid shop-grid--${shelf}`} key={`${shelf}-${area}`}>
-              {shown.map((p) => (
-                <ProductCard key={p.id} p={p} />
-              ))}
-            </div>
-          )}
+          <div className={`shop-grid shop-grid--${shelf}`} key={shelf}>
+            {shown.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
+          </div>
           <p className="shop-section__note">{section.note}</p>
         </div>
       </section>
@@ -157,19 +132,11 @@ export function ShopIndex() {
             </li>
             <li>
               <span className="steps__n">02</span>
-              <strong>Software</strong>
-              <p>
-                Download the installer and get a licence key by email. Activate it once in the plugin or app; after that it works
-                offline.
-              </p>
-            </li>
-            <li>
-              <span className="steps__n">03</span>
               <strong>Merch</strong>
               <p>Each piece is printed when you order it and shipped across India, usually within a week.</p>
             </li>
             <li>
-              <span className="steps__n">04</span>
+              <span className="steps__n">03</span>
               <strong>Licence</strong>
               <p>
                 Use the sounds in your tracks and sets, and the loops in your shows and streams, royalty-free. Just don’t resell
@@ -177,7 +144,7 @@ export function ShopIndex() {
               </p>
             </li>
             <li>
-              <span className="steps__n">05</span>
+              <span className="steps__n">04</span>
               <strong>Questions</strong>
               <p>Something not right with an order? Message us on WhatsApp and we’ll sort it out.</p>
             </li>

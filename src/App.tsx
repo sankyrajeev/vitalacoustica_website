@@ -11,7 +11,7 @@ import { useRevealOnScroll } from './hooks/useMedia'
 import { ThemeProvider } from './hooks/useTheme'
 import { Home } from './pages/Home'
 import { movedSoftwarePath, productById } from './content/shop'
-import { match, navigateReplace, useRoute } from './router'
+import { match, navigateReplace, queryParam, useRoute } from './router'
 
 // every page but the homepage loads its own code when it's first opened
 const AccountPage = lazy(() => import('./pages/Account').then((m) => ({ default: m.AccountPage })))
@@ -60,8 +60,8 @@ function resolve(path: string): Resolved {
   if (path === '/shop') return { title: 'Shop', page: <ShopIndex /> }
   const prod = match('/shop/:id', path)
   if (prod) return { title: productById(prod.id)?.name ?? 'Not found', page: <ShopItem id={prod.id} /> }
-  if (path === '/capabilities') return { title: 'Services', page: <CapabilitiesIndex /> }
-  const cap = match('/capabilities/:id', path)
+  if (path === '/live') return { title: 'Live', page: <CapabilitiesIndex /> }
+  const cap = match('/live/:id', path)
   if (cap) return { title: capabilityById(cap.id)?.name ?? 'Not found', page: <CapabilityPage id={cap.id} /> }
   // Studio is retired for now (the name is kept for the real studio); its page stays in Other.tsx
   if (path === '/blog') return { title: 'The Acoustica Journal', page: <JournalIndex /> }
@@ -102,8 +102,12 @@ function Page({ path }: { path: string }) {
 
 export default function App() {
   const path = useRoute()
-  // software moved from the shop to /software: an old link (/shop/vanta?beta=1) goes to its new page
-  const moved = movedSoftwarePath(path)
+  // pages that moved: software from the shop to /software (/shop/vanta?beta=1 keeps its query), and
+  // Services to /live; an old link goes to the new page
+  const moved =
+    movedSoftwarePath(path) ??
+    (path === '/capabilities' || path.startsWith('/capabilities/') ? `/live${path.slice('/capabilities'.length)}` : null) ??
+    (path === '/shop' && queryParam('section') === 'software' ? '/software' : null)
   useEffect(() => {
     if (moved) navigateReplace(moved)
   }, [moved])

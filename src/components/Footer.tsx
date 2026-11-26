@@ -19,7 +19,7 @@ export function Footer() {
             {capabilities.map((c, i) => (
               <span key={c.id}>
                 {i > 0 && <i aria-hidden> / </i>}
-                <Link to={`/capabilities/${c.id}`}>{c.name}</Link>
+                <Link to={`/live/${c.id}`}>{c.name}</Link>
               </span>
             ))}
           </p>
@@ -34,10 +34,13 @@ export function Footer() {
                 <Link to="/software">Software</Link>
               </li>
               <li>
-                <Link to="/capabilities">Live</Link>
+                <Link to="/live">Live</Link>
               </li>
               <li>
                 <Link to="/equipment">Equipment</Link>
+              </li>
+              <li>
+                <Link to="/shop">Shop</Link>
               </li>
               <li>
                 <Link to="/story">Our Story</Link>

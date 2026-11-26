@@ -10631,3 +10631,68 @@ img.cover--screen {
 .software-how__actions {
   margin-top: var(--s7);
 }
+
+/* ─────────────── Live (/live) ─────────────── */
+
+.live-kit__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--s8);
+  align-items: center;
+}
+
+.live-kit__text {
+  display: grid;
+  gap: var(--s5);
+  align-content: center;
+}
+
+.live-kit__text p {
+  max-width: 34rem;
+  color: var(--text-soft);
+}
+
+.live-kit__facts {
+  margin-block: var(--s3);
+}
+
+.live-quote__inner {
+  display: grid;
+  gap: var(--s5);
+  justify-items: start;
+  max-width: 46rem;
+}
+
+.live-quote__inner p {
+  color: var(--text-soft);
+}
+
+@media (max-width: 1000px) {
+  .live-kit__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s7);
+  }
+}
+
+.shop-head__line {
+  max-width: 44rem;
+  margin: var(--s5) 0 0;
+  color: var(--text-soft);
+}
+
+.shop-head__line a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* beside the stage model, the four facts sit two by two */
+@media (min-width: 1001px) {
+  .live-kit__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.shop-head__line {
+  margin-bottom: var(--s7);
+}

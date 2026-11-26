@@ -97,4 +97,4 @@ At the end, everything is taken down in reverse order, packed and checked, often
 
 ## Why this matters to you
 
-If you are hiring sound, it is worth asking how much of this is included in the quote. Measurement and tuning, line checks and an engineer at the console throughout are what turn equipment into a performance. Read more about our [sound services](/capabilities/sound), or [tell us about your event](/contact).
+If you are hiring sound, it is worth asking how much of this is included in the quote. Measurement and tuning, line checks and an engineer at the console throughout are what turn equipment into a performance. Read more about our [sound services](/live/sound), or [tell us about your event](/contact).

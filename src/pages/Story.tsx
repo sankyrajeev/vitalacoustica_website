@@ -364,7 +364,7 @@ export function StoryPage() {
         </div>
         <div className="why__actions">
           <Cta to="/software">Our software</Cta>
-          <Cta to="/capabilities" variant="quiet">
+          <Cta to="/live" variant="quiet">
             Live shows
           </Cta>
         </div>

@@ -29,7 +29,7 @@ export const journal: JournalEntry[] = [
     date: '2026',
     body:
       'A 3D model of a typical Vital Acoustica stage with our d&b system and lighting rig. Orbit it, inspect each fixture, run the lighting desk, or fly through the venue as a drone.',
-    link: { to: '/capabilities/production', label: 'Open the stage model' },
+    link: { to: '/live/production', label: 'Open the stage model' },
   },
   {
     slug: 'field-notes',

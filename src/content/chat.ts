@@ -218,14 +218,14 @@ const HANDLERS: Record<string, Handler> = {
   installations: () => ({
     text: 'We design and set up permanent sound and lighting for venues: assessment, system design, installation, tuning and training for your team.',
     actions: [
-      { kind: 'link', label: 'Audio & Lighting Integration', to: '/capabilities/installations' },
+      { kind: 'link', label: 'Audio & Lighting Integration', to: '/live/installations' },
       wa("Hi Vital Acoustica, I'd like to talk about a permanent installation."),
     ],
   }),
 
   visuals: () => ({
     text: 'Our visual work is in development: real-time, audio-reactive and generative visuals built in TouchDesigner, for projection onto walls, suspended mesh and translucent screens, and projection mapping. For now we do LED matrix panels and pixel mapping as part of the lighting.',
-    actions: [{ kind: 'link', label: 'Visuals', to: '/capabilities/visuals' }],
+    actions: [{ kind: 'link', label: 'Visuals', to: '/live/visuals' }],
   }),
 
   explore3d: (items) => {
@@ -252,7 +252,7 @@ const HANDLERS: Record<string, Handler> = {
 
   services: () => ({
     text: `We do ${capabilities.map((c) => c.name.toLowerCase()).join(', ')}: hire the kit on its own, or with the crew to design, set up and run the night.`,
-    actions: [{ kind: 'link', label: 'Our services', to: '/capabilities' }, quote],
+    actions: [{ kind: 'link', label: 'Our services', to: '/live' }, quote],
   }),
 
   shop: () => ({

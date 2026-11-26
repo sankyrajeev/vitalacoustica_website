@@ -64,7 +64,7 @@ function Opening() {
         </p>
         <div className="home-hero__actions">
           <Cta to="/software">Our software</Cta>
-          <Cta to="/capabilities" variant="quiet">
+          <Cta to="/live" variant="quiet">
             Shows
           </Cta>
         </div>

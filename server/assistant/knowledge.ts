@@ -48,7 +48,7 @@ const FACTS: Passage[] = [
     id: 'process',
     title: 'How hiring works',
     text: `Four steps: 1) Enquire with the date, venue and audience. 2) We recommend a system and send an itemised quote, usually within a day. 3) We deliver, rig and cable everything, then tune the sound and focus the lights before doors. 4) Our engineer and lighting operator can run the show, and we load out afterwards. The fuller production process: ${steps.map((s) => `${s.title}: ${s.body}`).join(' ')}`,
-    link: '/capabilities',
+    link: '/live',
   },
   {
     id: 'prices',
@@ -70,7 +70,7 @@ const FACTS: Passage[] = [
     id: 'installations',
     title: 'Permanent installations',
     text: 'We design and set up permanent sound and lighting for venues: assessment, system design, installation, tuning and training for the venue’s team.',
-    link: '/capabilities/installations',
+    link: '/live/installations',
   },
   {
     id: 'contact',
@@ -106,7 +106,7 @@ export function buildKnowledge(posts: PostInfo[], taught: Taught[] = []): Passag
       id: `service-${c.id}`,
       title: `Service: ${c.name}`,
       text: `${c.statement} ${c.summary} It covers: ${c.covers.join(', ')}. ${c.approach.map((a) => `${a.title}: ${a.body}`).join(' ')}`,
-      link: `/capabilities/${c.id}`,
+      link: `/live/${c.id}`,
     })
 
   for (const g of gear)

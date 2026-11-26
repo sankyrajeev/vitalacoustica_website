@@ -75,4 +75,4 @@ Touring productions and festivals increasingly measure the environmental impact 
 
 Most of these developments point the same way: away from improvisation and towards systems that are designed, predicted, measured and connected. For anyone planning an event, the practical question to ask a provider is not "which brand do you use?" but "how do you design, verify and run the system?"
 
-Read more about how we approach [sound](/capabilities/sound), or [tell us about your event](/contact).
+Read more about how we approach [sound](/live/sound), or [tell us about your event](/contact).

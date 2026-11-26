@@ -105,4 +105,4 @@ The difference between an adequate and an excellent corporate event is often the
 5. Venue information: rigging, power, load-in times and rules on haze.
 6. Rehearsal time with the people who will be on stage.
 
-Planned this way, lighting stops being decoration and becomes part of how the event communicates. Read more about our [lighting services](/capabilities/light) and [production](/capabilities/production), or [talk to us about your event](/contact).
+Planned this way, lighting stops being decoration and becomes part of how the event communicates. Read more about our [lighting services](/live/light) and [production](/live/production), or [talk to us about your event](/contact).

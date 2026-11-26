@@ -6,12 +6,12 @@ import { capabilities } from '../src/content/capabilities.ts'
 import { gear } from '../src/content/gear.ts'
 import { productPath, products } from '../src/content/shop.ts'
 
-const PAGES = ['/', '/story', '/equipment', '/software', '/capabilities', '/shop', '/testimonials', '/blog', '/contact', '/careers', '/privacy', '/legal']
+const PAGES = ['/', '/story', '/equipment', '/software', '/live', '/shop', '/testimonials', '/blog', '/contact', '/careers', '/privacy', '/legal']
 
 export const sitePaths = () => [
   ...PAGES,
   ...gear.map((g) => `/equipment/${g.id}`),
-  ...capabilities.map((c) => `/capabilities/${c.id}`),
+  ...capabilities.map((c) => `/live/${c.id}`),
   // sample products (placeholders) stay out of search results
   ...products.filter((p) => !p.sample).map(productPath),
 ]

@@ -96,7 +96,7 @@ const NAV: [string, string][] = [
   ['/story', 'Our Story'],
   ['/equipment', 'Equipment'],
   ['/software', 'Software'],
-  ['/capabilities', 'Services'],
+  ['/live', 'Live'],
   ['/shop', 'Shop'],
   ['/testimonials', 'Testimonials'],
   ['/blog', 'Blog'],
@@ -194,7 +194,7 @@ export function metaFor(path: string, site: string): PageMeta | null {
       body: plain(
         'We build the tools. We run the show.',
         'Vital Acoustica makes software for artists and audio engineers, and designs and runs sound and lighting for shows across South India. Live: professional sound and lighting hire with the crew to run it, d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated. Software: VANTA, a synthesizer plugin in free beta, Pixel Forge for LED pixel mapping, Lumière and ORBIT.',
-        list(capabilities.map((c) => [`/capabilities/${c.id}`, c.name, c.statement])),
+        list(capabilities.map((c) => [`/live/${c.id}`, c.name, c.statement])),
       ),
     }
 
@@ -248,24 +248,24 @@ export function metaFor(path: string, site: string): PageMeta | null {
     })
   }
 
-  if (path === '/capabilities')
-    return base('Services', 'Sound, lighting, visuals, production and installations, designed and run as one by Vital Acoustica.', {
-      body: plain('Services', 'Sound, light, visuals and systems, designed and run as one cohesive experience.', list(capabilities.map((c) => [`/capabilities/${c.id}`, c.name, c.statement]))),
+  if (path === '/live')
+    return base('Live', 'Sound and lighting hire with the crew to run it: sound, light, visuals, production and installations across Bengaluru and South India.', {
+      body: plain('We run the show', 'Sound and lighting hire with the crew to run it, for club nights, festivals, brand events and private celebrations across Bengaluru and South India.', list(capabilities.map((c) => [`/live/${c.id}`, c.name, c.statement]))),
     })
 
-  const cap = path.match(/^\/capabilities\/([^/]+)$/)
+  const cap = path.match(/^\/live\/([^/]+)$/)
   if (cap) {
     const c = capabilities.find((x) => x.id === cap[1])
     if (!c) return null
     const image = c.image ? `${site}/shows/${c.image.src}-1600.webp` : `${site}/media/og.jpg`
-    return base(`${c.name} — Services`, clip(`${c.statement} ${c.summary}`), {
+    return base(`${c.name} — Live`, clip(`${c.statement} ${c.summary}`), {
       image,
       imageAlt: c.image?.alt,
       structured: [
         { '@context': 'https://schema.org', '@type': 'Service', serviceType: c.name, name: `${c.name} by ${SITE_NAME}`, description: clip(c.summary, 300), provider: organisation(site), url: `${site}${path}` },
         crumbs([
           ['Home', `${site}/`],
-          ['Services', `${site}/capabilities`],
+          ['Live', `${site}/live`],
           [c.name, `${site}${path}`],
         ]),
       ],
@@ -281,8 +281,8 @@ export function metaFor(path: string, site: string): PageMeta | null {
   }
 
   if (path === '/shop')
-    return base('Shop', 'Merch, sample packs and VJ loops from Vital Acoustica, and the software we make.', {
-      body: plain('Shop', 'Software we make for music and lighting, and things to wear to the next show.', list(products.filter((p) => !p.sample).map((p) => [productPath(p), p.name, p.tagline]))),
+    return base('Shop', 'Merch, sample packs and VJ loops from Vital Acoustica: oversized tees and hoodies, sounds for your tracks and visuals for your shows.', {
+      body: plain('Shop', 'Things to wear to the next show, sounds for your tracks and visuals for your sets. Our software has its own page.', list(products.filter((p) => !p.sample && p.kind !== 'software').map((p) => [productPath(p), p.name, p.tagline]))),
     })
 
   // software pages live under /software; the shop keeps the rest (old /shop/vanta links are redirected)

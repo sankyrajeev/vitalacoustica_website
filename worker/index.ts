@@ -48,6 +48,9 @@ export default {
     if (pathname === '/sitemap.xml') return sitemap((env.SITE_URL || url.origin).replace(/\/$/, ''))
     // the Journal is now the Blog: old links keep working
     if (pathname === '/journal' || pathname.startsWith('/journal/')) return Response.redirect(`${url.origin}/blog${pathname.slice('/journal'.length)}${url.search}`, 301)
+    // Services became Live: /capabilities/sound → /live/sound
+    if ((pathname === '/capabilities' || pathname.startsWith('/capabilities/')) && read)
+      return Response.redirect(`${url.origin}/live${pathname.slice('/capabilities'.length)}${url.search}`, 301)
     // software moved out of the shop: /shop/vanta → /software/vanta, and the shop's software shelf → /software
     const moved = movedSoftwarePath(pathname)
     if (moved && read) return Response.redirect(`${url.origin}${moved}${url.search}`, 301)

@@ -105,4 +105,4 @@ The answers tell you more than the brand names on the quote.
 5. Any noise limits, curfews and permissions.
 6. Load-in and load-out times.
 
-With those in hand, choosing a system becomes a design conversation rather than a guessing game. If you would like us to look at your venue, [tell us about it](/contact) or read more about our [sound services](/capabilities/sound).
+With those in hand, choosing a system becomes a design conversation rather than a guessing game. If you would like us to look at your venue, [tell us about it](/contact) or read more about our [sound services](/live/sound).

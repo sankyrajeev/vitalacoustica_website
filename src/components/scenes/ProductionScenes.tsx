@@ -355,7 +355,7 @@ const DISCIPLINES: Discipline[] = [
     title: 'Engineered for the environment.',
     body: 'Professional audio is more than enough output. The experience depends on how the system is chosen, placed, configured and tuned for the room: its geometry, the audience’s coverage, how the low end spreads, the signal flow and the processing. We work with d&b audiotechnik, RCF and Pioneer DJ, using system-management software and structured routing from the booth to the main system.',
     kicker: 'Not just more sound. Better-engineered sound.',
-    to: '/capabilities/sound',
+    to: '/live/sound',
   },
   {
     id: 'light',
@@ -364,7 +364,7 @@ const DISCIPLINES: Discipline[] = [
     title: 'Programmed for impact.',
     body: 'Light can define a focal point, build anticipation, change the perceived scale of a room or its energy in an instant. We go beyond placing fixtures: Lightkey, QLC+, control hardware and our own tools build scenes, cues, movement, colour, intensity and timing, with MIDI control and audio-reactive programming tying the light to the music.',
     kicker: 'We don’t simply light the venue. We program its atmosphere.',
-    to: '/capabilities/light',
+    to: '/live/light',
   },
   {
     id: 'visuals',
@@ -373,7 +373,7 @@ const DISCIPLINES: Discipline[] = [
     title: 'Beyond the screen.',
     body: 'A real-time workflow in development: TouchDesigner, generative graphics, audio analysis and AI-assisted development. Abstract, procedural visuals that evolve and respond to the music, made for architectural walls, suspended mesh, translucent materials and haze, so the physical space becomes part of the composition.',
     kicker: 'The visual isn’t just content. It’s another part of the experience.',
-    to: '/capabilities/visuals',
+    to: '/live/visuals',
   },
   {
     id: 'dj',

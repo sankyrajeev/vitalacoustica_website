@@ -103,4 +103,4 @@ False economies:
 - Removing the operator so the system "runs itself".
 - Undersizing the system so it runs at its limit all night.
 
-The cheapest quote is only good value if it delivers the event you planned. If you would like a proposal that shows what is included and why, [send us your event details](/contact), or read about how we approach [full production](/capabilities/production).
+The cheapest quote is only good value if it delivers the event you planned. If you would like a proposal that shows what is included and why, [send us your event details](/contact), or read about how we approach [full production](/live/production).

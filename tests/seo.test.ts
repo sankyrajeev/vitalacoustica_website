@@ -30,6 +30,9 @@ test('software pages describe the software, private pages stay out, unknown page
   assert.equal(metaFor('/account/admin', SITE)?.noindex, true)
   // software lives under /software only (the Worker redirects the old /shop addresses)
   assert.equal(metaFor('/shop/vanta', SITE), null)
+  // Services became Live
+  assert.equal(metaFor('/live/sound', SITE)?.canonical, `${SITE}/live/sound`)
+  assert.equal(metaFor('/capabilities/sound', SITE), null)
   assert.ok(metaFor('/software', SITE))
   assert.equal(metaFor('/no-such-page', SITE), null)
   assert.equal(metaFor('/equipment/no-such-thing', SITE), null)

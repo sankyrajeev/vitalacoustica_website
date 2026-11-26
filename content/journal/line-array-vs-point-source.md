@@ -89,4 +89,4 @@ Ask four questions about the venue:
 3. **What is the programme?** Speech, background music and high-level dance music have very different needs.
 4. **How much time is there?** Arrays need more time to rig, trim and tune.
 
-Then ask your provider to show you the predicted coverage. Whichever design they propose, you should be able to see why it suits your room. Read more about how we approach [sound for events](/capabilities/sound), or [send us your venue details](/contact).
+Then ask your provider to show you the predicted coverage. Whichever design they propose, you should be able to see why it suits your room. Read more about how we approach [sound for events](/live/sound), or [send us your venue details](/contact).

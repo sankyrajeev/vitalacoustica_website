@@ -37,7 +37,7 @@ export const site = {
   nav: [
     { label: 'Home', to: '/' },
     { label: 'Software', to: '/software' },
-    { label: 'Live', to: '/capabilities' },
+    { label: 'Live', to: '/live' },
     { label: 'Our Story', to: '/story' },
     { label: 'Blog', to: '/blog' },
   ],

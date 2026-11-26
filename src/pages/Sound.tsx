@@ -360,7 +360,7 @@ export function SoundPage() {
 
       <nav className="wrap case__next" aria-label="Next service">
         <span className="label">Next</span>
-        <TextLink to={`/capabilities/${next.id}`}>{next.name}</TextLink>
+        <TextLink to={`/live/${next.id}`}>{next.name}</TextLink>
       </nav>
     </article>
   )

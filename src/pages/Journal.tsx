@@ -387,7 +387,7 @@ export function JournalArticle({ slug }: { slug: string }) {
               <ul className="j-aside__list">
                 {services.map((c) => (
                   <li key={c.id}>
-                    <Link to={`/capabilities/${c.id}`} className="text-link">
+                    <Link to={`/live/${c.id}`} className="text-link">
                       {c.name} <Arrow />
                     </Link>
                   </li>

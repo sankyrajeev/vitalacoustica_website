@@ -99,4 +99,4 @@ The same path can take timecode from music or video so that cues land exactly, o
 - **Everything after one point fails:** a faulty fixture or cable in the chain; a splitter would have isolated it.
 - **Network universes missing:** check IP addresses, universe numbering and whether the node is set to Art-Net or sACN.
 
-DMX rewards care. Get the addressing, cabling and network right and the rig disappears, leaving the show. Read more about our [lighting work](/capabilities/light) and [visual systems](/capabilities/visuals), or [ask us about your event](/contact).
+DMX rewards care. Get the addressing, cabling and network right and the rig disappears, leaving the show. Read more about our [lighting work](/live/light) and [visual systems](/live/visuals), or [ask us about your event](/contact).

@@ -97,4 +97,4 @@ A good plan asks "what if?" for the things that matter most:
 
 For the person organising an event, technical planning mostly looks like questions: about the venue, the programme, the timings and the priorities. Those questions are not bureaucracy. They are how a production partner turns a brief into a show that runs smoothly.
 
-If you are planning an event and would like to see how this works in practice, read about our approach to [full production](/capabilities/production), or [tell us about your event](/contact).
+If you are planning an event and would like to see how this works in practice, read about our approach to [full production](/live/production), or [tell us about your event](/contact).

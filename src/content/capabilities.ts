@@ -1,6 +1,6 @@
 import type { GearId } from './gear'
 
-// The services, each with its own page under /capabilities/<id>.
+// The services (the Live side), each with its own page under /live/<id> (formerly /capabilities).
 
 export type CapabilityId = 'sound' | 'light' | 'visuals' | 'production' | 'installations'
 

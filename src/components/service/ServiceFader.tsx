@@ -37,7 +37,7 @@ export function ServiceFader({ current }: { current: string }) {
   const go = (i: number) => {
     const k = Math.max(0, Math.min(n - 1, i))
     setPos(k)
-    if (k !== at) navigate(`/capabilities/${items[k].id}`)
+    if (k !== at) navigate(`/live/${items[k].id}`)
   }
   const fromY = (y: number) => {
     const r = track.current!.getBoundingClientRect()
