@@ -1444,10 +1444,11 @@ select {
   color: #f0ede5;
 }
 
-/* the editor starts below the site's header */
+/* the editor starts below the site's header, and sits centred in the space beside the text (the
+   loop has it left of centre, so the frame moves right a little; its empty right edge is cut) */
 .home-hero__media {
   position: absolute;
-  inset: 88px 0 0;
+  inset: 88px -6% 0 6%;
   z-index: -1;
 }
 
@@ -1675,6 +1676,11 @@ select {
     position: relative;
     inset: auto;
     aspect-ratio: 16 / 9;
+  }
+  /* the editor in the middle of the phone's frame */
+  .home-hero__media video,
+  .home-hero__media img {
+    object-position: 96% 50%;
   }
   .home-hero__media::after {
     background: linear-gradient(180deg, #050505 0%, rgba(5, 5, 5, 0) 25%);

@@ -59,13 +59,13 @@ function Opening() {
           We run the show
         </h1>
         <p className="home-hero__lede">
-          Vital Acoustica makes software for musicians and lighting designers, and designs and runs sound and lighting for live
-          events across South India.
+          Vital Acoustica makes software for artists and audio engineers, and designs and runs sound and lighting for shows across
+          South India.
         </p>
         <div className="home-hero__actions">
           <Cta to="/shop">Our software</Cta>
           <Cta to="/capabilities" variant="quiet">
-            Live events
+            Shows
           </Cta>
         </div>
       </div>

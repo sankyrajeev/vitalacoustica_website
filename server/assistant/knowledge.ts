@@ -34,7 +34,7 @@ best friends, Sankarsh and Harsh. It has two sides. Live: it hires out professio
 (d&b audiotechnik systems), lighting and production gear, with the crew to deliver, set up and run
 it, for club nights, festivals, open-airs, brand events and private celebrations of up to around
 1,000 people, across Bengaluru, Karnataka and South India (Mysuru, Hubballi, Belagavi, Mangaluru,
-Hyderabad and more). Software: it makes its own software for musicians and lighting designers:
+Hyderabad and more). Software: it makes its own software for artists and audio engineers:
 VANTA (a synthesizer plugin, in free beta), VANTA Dynamics, ORBIT, Pixel Forge (LED pixel mapping),
 Lumière Link and Lumière Resident (see the Software pages). It does not build custom software for
 clients. It also writes a blog with a daily news roundup. Prices for live events are quoted per

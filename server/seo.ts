@@ -110,7 +110,7 @@ const plain = (h1: string, lead: string, more = '') => `${nav()}<h1>${esc(h1)}</
 /* ─────────────── every page ─────────────── */
 
 const HOME_DESCRIPTION =
-  'Software for musicians and lighting designers, VANTA, Pixel Forge and Lumière, and sound and lighting hire with the crew to run it, from Bengaluru.'
+  'Software for artists and audio engineers, VANTA, Pixel Forge and Lumière, and sound and lighting hire with the crew to run it, from Bengaluru.'
 
 /** Preview images for the software (its logo above its real interface). */
 const SOFTWARE_IMAGE: Record<string, string> = { vanta: '/email/vanta.jpg', 'pixel-forge': '/email/pixel-forge.jpg' }
@@ -192,7 +192,7 @@ export function metaFor(path: string, site: string): PageMeta | null {
       ],
       body: plain(
         'We build the tools. We run the show.',
-        'Vital Acoustica designs and runs sound and lighting for live events across South India, and makes software for musicians and lighting designers. Live: professional sound and lighting hire with the crew to run it, d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated. Software: VANTA, a synthesizer plugin in free beta, Pixel Forge for LED pixel mapping, Lumière and ORBIT.',
+        'Vital Acoustica makes software for artists and audio engineers, and designs and runs sound and lighting for shows across South India. Live: professional sound and lighting hire with the crew to run it, d&b audiotechnik systems, beam and LED lighting, delivered, set up and operated. Software: VANTA, a synthesizer plugin in free beta, Pixel Forge for LED pixel mapping, Lumière and ORBIT.',
         list(capabilities.map((c) => [`/capabilities/${c.id}`, c.name, c.statement])),
       ),
     }
