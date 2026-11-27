@@ -1,4 +1,6 @@
 import { priceNow, productPath, statusOf, type Software } from '../../content/shop'
+import { useEffect, useRef, useState } from 'react'
+import { mediaUrl } from '../../media'
 import { Link } from '../Link'
 import { Cta } from '../ui'
 import { SoftwareCover } from './Art'
@@ -29,8 +31,29 @@ export function SoftwareFeature({ p }: { p: Software }) {
         </div>
       </div>
       <Link to={productPath(p)} className="soft-feature__shot" aria-hidden tabIndex={-1}>
-        {shot ? <img src={`${import.meta.env.BASE_URL}${shot.src}`} alt="" loading="lazy" /> : <SoftwareCover p={p} />}
+        {p.loop ? <Loop src={p.loop.src} poster={p.loop.poster} /> : shot ? <img src={`${import.meta.env.BASE_URL}${shot.src}`} alt="" loading="lazy" /> : <SoftwareCover p={p} />}
       </Link>
     </article>
   )
+}
+
+/** The product's loop: loads and plays only while it's on screen; a still for reduced motion. */
+function Loop({ src, poster }: { src: string; poster: string }) {
+  const ref = useRef<HTMLVideoElement>(null)
+  const [still] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  useEffect(() => {
+    const v = ref.current
+    if (!v || still) return
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) void v.play().catch(() => {})
+        else v.pause()
+      },
+      { threshold: 0.25 },
+    )
+    io.observe(v)
+    return () => io.disconnect()
+  }, [still])
+  if (still) return <img src={mediaUrl(poster)} alt="" loading="lazy" />
+  return <video ref={ref} src={mediaUrl(src)} poster={mediaUrl(poster)} muted loop playsInline preload="none" />
 }

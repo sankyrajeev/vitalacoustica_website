@@ -1604,10 +1604,18 @@ select {
 }
 
 .soft-feature__shot img,
+.soft-feature__shot video,
 .soft-feature__shot .cover {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* the loop keeps its shape before it loads */
+.soft-feature__shot video {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: #0b0b0a;
 }
 
 /* what's coming: a quiet list, smaller than what's out */

@@ -82,6 +82,8 @@ export type Software = Base & {
    * and point `paddlePrice` at the full price.
    */
   earlyAccess?: number
+  /** a short silent loop for where it's shown large (files in public/media/), instead of the first screenshot */
+  loop?: { src: string; poster: string }
   /** real screenshots for the product page (files in public/), first shown first; cards keep the cover */
   screenshots?: { src: string; caption: string }[]
   /** a free beta people can ask to join (the admin page approves them); the server's list is server/accounts/beta.ts */
@@ -230,6 +232,7 @@ export const products: Product[] = [
         text: 'No subscription and no cloud. Activate once and VANTA runs without the internet; your audio never leaves your computer. One licence works on two computers, and you can move it whenever you like.',
       },
     ],
+    loop: { src: 'vanta/vanta-tour-1280.mp4', poster: 'vanta/vanta-tour-poster-1280.webp' },
     screenshots: [
       { src: 'shop/vanta/vanta-synth.webp', caption: 'Three wavetable oscillators, a sub, noise and a deep filter.' },
       { src: 'shop/vanta/vanta-sample-lab.webp', caption: 'The Sample Lab: your sound rebuilt as a patch, measured dimension by dimension.' },
